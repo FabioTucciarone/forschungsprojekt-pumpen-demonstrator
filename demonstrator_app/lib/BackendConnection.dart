@@ -84,6 +84,7 @@ class BackendConnection {
       return response.body;
     } else {
       stderr.writeln("HTTP-request failed with status code ${response.statusCode}");
+      terminateConnection();
       return response.body;
     }
   }

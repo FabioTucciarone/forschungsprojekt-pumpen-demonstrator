@@ -11,5 +11,5 @@ def add():
     data = request.json
     print(data.get('permeability'))
     print(data.get('density'))
-    return data.get('permeability') + data.get('density')
+    return str(data.get('permeability') + data.get('density'))
 
