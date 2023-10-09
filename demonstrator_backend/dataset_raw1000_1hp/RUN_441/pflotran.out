@@ -1,0 +1,3045 @@
+
+===================
+  PFLOTRAN v3.0.1
+===================
+
+ Extent of Gridded Domain
+  X: 2.5000000000000000 - 97.500000000000000
+  Y: 2.5000000000000000 - 1277.5000000000000
+  Z: 2.5000000000000000 - 2.5000000000000000
+
+
+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+  Initial Condition
+
+--------------------------------------------------------------------------------
+          Flow Condition:   initial
+                  Region:   all
+--------------------------------------------------------------------------------
+
+  Flow Condition: initial
+    Synchronize time with update: no
+    Time units: yr
+    Length units: m
+      Datum:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  3
+
+    Sub Condition: pressure
+      Type: hydrostatic
+      Gradient:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  3
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+    Sub Condition: temperature
+      Type: dirichlet
+      Gradient:
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+--------------------------------------------------------------------------------
+
+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+  Boundary Condition
+
+--------------------------------------------------------------------------------
+          Flow Condition:   initial
+                  Region:   north
+--------------------------------------------------------------------------------
+
+  Flow Condition: initial
+    Synchronize time with update: no
+    Time units: yr
+    Length units: m
+      Datum:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  3
+
+    Sub Condition: pressure
+      Type: hydrostatic
+      Gradient:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  3
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+    Sub Condition: temperature
+      Type: dirichlet
+      Gradient:
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+--------------------------------------------------------------------------------
+
+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+  Boundary Condition
+
+--------------------------------------------------------------------------------
+          Flow Condition:   initial
+                  Region:   south
+--------------------------------------------------------------------------------
+
+  Flow Condition: initial
+    Synchronize time with update: no
+    Time units: yr
+    Length units: m
+      Datum:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  3
+
+    Sub Condition: pressure
+      Type: hydrostatic
+      Gradient:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  3
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+    Sub Condition: temperature
+      Type: dirichlet
+      Gradient:
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+--------------------------------------------------------------------------------
+
+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+  Source Sink
+
+--------------------------------------------------------------------------------
+          Flow Condition:   injection
+                  Region:   heatpump_inject0
+--------------------------------------------------------------------------------
+
+  Flow Condition: injection
+    Synchronize time with update: no
+    Time units: yr
+    Length units: m
+      Datum:
+
+    Sub Condition: rate
+      Type: scaled volumetric rate
+      Gradient:
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Is transient?: yes
+          Number of times:      3
+          Is cyclic?: no
+          Buffer:
+            Rank:  2
+            Dims:    1   3
+            Buffer Slice Size:   0
+          Array Rank:  1
+
+    Sub Condition: temperature
+      Type: dirichlet
+      Gradient:
+      Data:
+        Dataset: Unnamed Ascii Dataset
+          Type: dataset_ascii_type
+          Transient: no
+          Array Rank:  1
+
+--------------------------------------------------------------------------------
+
+ Requested processors =    16
+
+FLOW Time Stepper
+                 acceleration: on
+       acceleration threshold: 5
+       number of ramp entries: 5
+                ramp entry #1: 2.0000
+                ramp entry #2: 2.0000
+                ramp entry #3: 2.0000
+                ramp entry #4: 2.0000
+                ramp entry #5: 2.0000
+                ramp entry #6: 1.8000
+                ramp entry #7: 1.6000
+                ramp entry #8: 1.4000
+                ramp entry #9: 1.2000
+               ramp entry #10: 1.0000
+               ramp entry #11: 1.0000
+               ramp entry #12: 1.0000
+               ramp entry #13: 1.0000
+      maximum number of steps: 999999
+constant time steps threshold: 5
+       maximum number of cuts: 16
+             reduction factor: 5.000000E-01
+        maximum growth factor: 2.000000E+00
+
+FLOW Newton Solver
+                         atol: 1.000000E-50
+                         rtol: 1.000000E-03
+                         stol: 1.000000E-08
+                         dtol: 1.000000E+04
+                      maxnorm: 1.000000E+20
+                    inftolres: -9.990000E+02
+                    inftolupd: 1.000000E+00
+                 inftolrelupd: -9.990000E+02
+                 inftolsclres: -9.990000E+02
+                     max iter: 50
+                     min iter: 1
+                         maxf: 10000
+                  matrix type: baij
+         precond. matrix type: baij
+               inexact newton: off
+            print convergence: on
+   print detailed convergence: off
+          check infinity norm: on
+
+FLOW Linear Solver
+                       solver: bcgs
+               preconditioner: bjacobi
+                         atol: 1.000000E-50
+                         rtol: 1.000000E-05
+                         dtol: 1.000000E+04
+            maximum iteration: 10000
+
+== TH FLOW =====================================================================
+ Step      1 Time=  1.00000E-05 Dt=  1.00000E-05 [y] snes_conv_reason:   11
+  newton =   1 [       1] linear =    67 [        67] cuts =  0 [   0]
+  --> max chng: dpmx=   1.0956E-01 dtmpmx=   6.8631E-08
+
+== TH FLOW =====================================================================
+ Step      2 Time=  3.00000E-05 Dt=  2.00000E-05 [y] snes_conv_reason:   11
+  newton =   1 [       2] linear =   100 [       167] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6831E-03 dtmpmx=   1.3699E-07
+
+== TH FLOW =====================================================================
+ Step      3 Time=  7.00000E-05 Dt=  4.00000E-05 [y] snes_conv_reason:   11
+  newton =   1 [       3] linear =   113 [       280] cuts =  0 [   0]
+  --> max chng: dpmx=   9.8102E-05 dtmpmx=   2.7398E-07
+
+== TH FLOW =====================================================================
+ Step      4 Time=  1.50000E-04 Dt=  8.00000E-05 [y] snes_conv_reason:   11
+  newton =   1 [       4] linear =   123 [       403] cuts =  0 [   0]
+  --> max chng: dpmx=   2.1468E-06 dtmpmx=   5.4797E-07
+
+== TH FLOW =====================================================================
+ Step      5 Time=  3.10000E-04 Dt=  1.60000E-04 [y] snes_conv_reason:   11
+  newton =   1 [       5] linear =   123 [       526] cuts =  0 [   0]
+  --> max chng: dpmx=   4.4925E-06 dtmpmx=   1.0959E-06
+
+== TH FLOW =====================================================================
+ Step      6 Time=  6.30000E-04 Dt=  3.20000E-04 [y] snes_conv_reason:   11
+  newton =   1 [       6] linear =   112 [       638] cuts =  0 [   0]
+  --> max chng: dpmx=   9.5185E-06 dtmpmx=   2.1919E-06
+
+== TH FLOW =====================================================================
+ Step      7 Time=  1.27000E-03 Dt=  6.40000E-04 [y] snes_conv_reason:   11
+  newton =   1 [       7] linear =   123 [       761] cuts =  0 [   0]
+  --> max chng: dpmx=   2.1237E-05 dtmpmx=   4.3837E-06
+
+== TH FLOW =====================================================================
+ Step      8 Time=  2.55000E-03 Dt=  1.28000E-03 [y] snes_conv_reason:   11
+  newton =   1 [       8] linear =   120 [       881] cuts =  0 [   0]
+  --> max chng: dpmx=   5.1172E-05 dtmpmx=   8.7675E-06
+
+== TH FLOW =====================================================================
+ Step      9 Time=  5.11000E-03 Dt=  2.56000E-03 [y] snes_conv_reason:   11
+  newton =   1 [       9] linear =   117 [       998] cuts =  0 [   0]
+  --> max chng: dpmx=   1.3690E-04 dtmpmx=   1.7535E-05
+
+== TH FLOW =====================================================================
+ Step     10 Time=  1.02300E-02 Dt=  5.12000E-03 [y] snes_conv_reason:   11
+  newton =   1 [      10] linear =   122 [      1120] cuts =  0 [   0]
+  --> max chng: dpmx=   4.0928E-04 dtmpmx=   3.5070E-05
+
+== TH FLOW =====================================================================
+ Step     11 Time=  2.04700E-02 Dt=  1.02400E-02 [y] snes_conv_reason:   11
+  newton =   1 [      11] linear =   122 [      1242] cuts =  0 [   0]
+  --> max chng: dpmx=   1.3433E-03 dtmpmx=   7.0140E-05
+
+== TH FLOW =====================================================================
+ Step     12 Time=  4.09500E-02 Dt=  2.04800E-02 [y] snes_conv_reason:   11
+  newton =   1 [      12] linear =   123 [      1365] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6527E-03 dtmpmx=   1.4028E-04
+
+== TH FLOW =====================================================================
+ Step     13 Time=  8.19100E-02 Dt=  4.09600E-02 [y] snes_conv_reason:   11
+  newton =   1 [      13] linear =   125 [      1490] cuts =  0 [   0]
+  --> max chng: dpmx=   1.6269E-02 dtmpmx=   2.8056E-04
+
+== TH FLOW =====================================================================
+ Step     14 Time=  1.00000E-01 Dt=  1.80900E-02 [y] snes_conv_reason:   11
+  newton =   1 [      14] linear =   115 [      1605] cuts =  0 [   0]
+  --> max chng: dpmx=   8.5451E-03 dtmpmx=   1.2391E-04
+
+== TH FLOW =====================================================================
+ Step     15 Time=  1.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      15] linear =   115 [      1720] cuts =  0 [   0]
+  --> max chng: dpmx=   3.2385E-02 dtmpmx=   3.4248E-04
+
+== TH FLOW =====================================================================
+ Step     16 Time=  2.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      16] linear =   112 [      1832] cuts =  0 [   0]
+  --> max chng: dpmx=   4.0108E-02 dtmpmx=   3.4248E-04
+
+== TH FLOW =====================================================================
+ Step     17 Time=  2.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   2 [      18] linear =   240 [      2072] cuts =  0 [   0]
+  --> max chng: dpmx=   4.7607E+01 dtmpmx=   9.1021E-01
+
+== TH FLOW =====================================================================
+ Step     18 Time=  3.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   2 [      20] linear =   244 [      2316] cuts =  0 [   0]
+  --> max chng: dpmx=   1.5178E+00 dtmpmx=   3.4028E-01
+
+== TH FLOW =====================================================================
+ Step     19 Time=  3.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   2 [      22] linear =   230 [      2546] cuts =  0 [   0]
+  --> max chng: dpmx=   1.3567E+00 dtmpmx=   2.4538E-01
+
+== TH FLOW =====================================================================
+ Step     20 Time=  4.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   2 [      24] linear =   239 [      2785] cuts =  0 [   0]
+  --> max chng: dpmx=   1.2110E+00 dtmpmx=   1.9928E-01
+
+== TH FLOW =====================================================================
+ Step     21 Time=  4.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   2 [      26] linear =   238 [      3023] cuts =  0 [   0]
+  --> max chng: dpmx=   1.0741E+00 dtmpmx=   1.7042E-01
+
+== TH FLOW =====================================================================
+ Step     22 Time=  5.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      27] linear =   108 [      3131] cuts =  0 [   0]
+  --> max chng: dpmx=   9.4338E-01 dtmpmx=   1.5018E-01
+
+== TH FLOW =====================================================================
+ Step     23 Time=  5.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      28] linear =   109 [      3240] cuts =  0 [   0]
+  --> max chng: dpmx=   8.1872E-01 dtmpmx=   1.3491E-01
+
+== TH FLOW =====================================================================
+ Step     24 Time=  6.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      29] linear =   108 [      3348] cuts =  0 [   0]
+  --> max chng: dpmx=   6.9753E-01 dtmpmx=   1.2280E-01
+
+== TH FLOW =====================================================================
+ Step     25 Time=  6.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      30] linear =   109 [      3457] cuts =  0 [   0]
+  --> max chng: dpmx=   6.1562E-01 dtmpmx=   1.1290E-01
+
+== TH FLOW =====================================================================
+ Step     26 Time=  7.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      31] linear =   104 [      3561] cuts =  0 [   0]
+  --> max chng: dpmx=   6.8214E-01 dtmpmx=   1.0460E-01
+
+== TH FLOW =====================================================================
+ Step     27 Time=  7.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      32] linear =   105 [      3666] cuts =  0 [   0]
+  --> max chng: dpmx=   7.4946E-01 dtmpmx=   9.7504E-02
+
+== TH FLOW =====================================================================
+ Step     28 Time=  8.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      33] linear =   102 [      3768] cuts =  0 [   0]
+  --> max chng: dpmx=   8.1572E-01 dtmpmx=   9.1360E-02
+
+== TH FLOW =====================================================================
+ Step     29 Time=  8.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      34] linear =   110 [      3878] cuts =  0 [   0]
+  --> max chng: dpmx=   8.7901E-01 dtmpmx=   8.5959E-02
+
+== TH FLOW =====================================================================
+ Step     30 Time=  9.00000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      35] linear =   107 [      3985] cuts =  0 [   0]
+  --> max chng: dpmx=   9.3599E-01 dtmpmx=   8.1166E-02
+
+== TH FLOW =====================================================================
+ Step     31 Time=  9.50000E-01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      36] linear =   110 [      4095] cuts =  0 [   0]
+  --> max chng: dpmx=   9.8307E-01 dtmpmx=   7.6886E-02
+
+== TH FLOW =====================================================================
+ Step     32 Time=  1.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:    3
+  newton =   1 [      37] linear =   103 [      4198] cuts =  0 [   0]
+  --> max chng: dpmx=   1.0160E+00 dtmpmx=   7.3022E-02
+
+== TH FLOW =====================================================================
+ Step     33 Time=  1.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:    3
+  newton =   1 [      38] linear =   111 [      4309] cuts =  0 [   0]
+  --> max chng: dpmx=   1.0310E+00 dtmpmx=   6.9524E-02
+
+== TH FLOW =====================================================================
+ Step     34 Time=  1.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:    3
+  newton =   1 [      39] linear =   115 [      4424] cuts =  0 [   0]
+  --> max chng: dpmx=   1.0240E+00 dtmpmx=   6.6334E-02
+
+== TH FLOW =====================================================================
+ Step     35 Time=  1.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      40] linear =   113 [      4537] cuts =  0 [   0]
+  --> max chng: dpmx=   9.9364E-01 dtmpmx=   6.3408E-02
+
+== TH FLOW =====================================================================
+ Step     36 Time=  1.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      41] linear =   112 [      4649] cuts =  0 [   0]
+  --> max chng: dpmx=   9.3980E-01 dtmpmx=   6.0722E-02
+
+== TH FLOW =====================================================================
+ Step     37 Time=  1.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      42] linear =   110 [      4759] cuts =  0 [   0]
+  --> max chng: dpmx=   8.6496E-01 dtmpmx=   5.8237E-02
+
+== TH FLOW =====================================================================
+ Step     38 Time=  1.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      43] linear =   113 [      4872] cuts =  0 [   0]
+  --> max chng: dpmx=   7.7395E-01 dtmpmx=   5.5939E-02
+
+== TH FLOW =====================================================================
+ Step     39 Time=  1.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      44] linear =   109 [      4981] cuts =  0 [   0]
+  --> max chng: dpmx=   6.7268E-01 dtmpmx=   5.3801E-02
+
+== TH FLOW =====================================================================
+ Step     40 Time=  1.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      45] linear =   109 [      5090] cuts =  0 [   0]
+  --> max chng: dpmx=   5.6775E-01 dtmpmx=   5.1245E-02
+
+== TH FLOW =====================================================================
+ Step     41 Time=  1.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      46] linear =   115 [      5205] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6529E-01 dtmpmx=   4.7104E-02
+
+== TH FLOW =====================================================================
+ Step     42 Time=  1.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      47] linear =   117 [      5322] cuts =  0 [   0]
+  --> max chng: dpmx=   3.7034E-01 dtmpmx=   4.1652E-02
+
+== TH FLOW =====================================================================
+ Step     43 Time=  1.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      48] linear =   115 [      5437] cuts =  0 [   0]
+  --> max chng: dpmx=   2.8652E-01 dtmpmx=   3.5495E-02
+
+== TH FLOW =====================================================================
+ Step     44 Time=  1.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      49] linear =   120 [      5557] cuts =  0 [   0]
+  --> max chng: dpmx=   2.1549E-01 dtmpmx=   2.9202E-02
+
+== TH FLOW =====================================================================
+ Step     45 Time=  1.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      50] linear =   118 [      5675] cuts =  0 [   0]
+  --> max chng: dpmx=   1.5768E-01 dtmpmx=   2.3231E-02
+
+== TH FLOW =====================================================================
+ Step     46 Time=  1.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      51] linear =   120 [      5795] cuts =  0 [   0]
+  --> max chng: dpmx=   1.1227E-01 dtmpmx=   1.7897E-02
+
+== TH FLOW =====================================================================
+ Step     47 Time=  1.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      52] linear =   118 [      5913] cuts =  0 [   0]
+  --> max chng: dpmx=   7.7890E-02 dtmpmx=   1.3370E-02
+
+== TH FLOW =====================================================================
+ Step     48 Time=  1.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      53] linear =   120 [      6033] cuts =  0 [   0]
+  --> max chng: dpmx=   5.2658E-02 dtmpmx=   9.6963E-03
+
+== TH FLOW =====================================================================
+ Step     49 Time=  1.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      54] linear =   121 [      6154] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4687E-02 dtmpmx=   6.8339E-03
+
+== TH FLOW =====================================================================
+ Step     50 Time=  1.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      55] linear =   121 [      6275] cuts =  0 [   0]
+  --> max chng: dpmx=   2.2276E-02 dtmpmx=   4.6844E-03
+
+== TH FLOW =====================================================================
+ Step     51 Time=  1.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      56] linear =   121 [      6396] cuts =  0 [   0]
+  --> max chng: dpmx=   1.3941E-02 dtmpmx=   3.1248E-03
+
+== TH FLOW =====================================================================
+ Step     52 Time=  2.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      57] linear =   121 [      6517] cuts =  0 [   0]
+  --> max chng: dpmx=   8.4892E-03 dtmpmx=   2.0290E-03
+
+== TH FLOW =====================================================================
+ Step     53 Time=  2.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      58] linear =   122 [      6639] cuts =  0 [   0]
+  --> max chng: dpmx=   5.0233E-03 dtmpmx=   1.2820E-03
+
+== TH FLOW =====================================================================
+ Step     54 Time=  2.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      59] linear =   123 [      6762] cuts =  0 [   0]
+  --> max chng: dpmx=   2.8756E-03 dtmpmx=   7.8746E-04
+
+== TH FLOW =====================================================================
+ Step     55 Time=  2.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      60] linear =   125 [      6887] cuts =  0 [   0]
+  --> max chng: dpmx=   1.5815E-03 dtmpmx=   4.6905E-04
+
+== TH FLOW =====================================================================
+ Step     56 Time=  2.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      61] linear =   126 [      7013] cuts =  0 [   0]
+  --> max chng: dpmx=   8.2636E-04 dtmpmx=   2.6961E-04
+
+== TH FLOW =====================================================================
+ Step     57 Time=  2.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      62] linear =   126 [      7139] cuts =  0 [   0]
+  --> max chng: dpmx=   4.0208E-04 dtmpmx=   1.4810E-04
+
+== TH FLOW =====================================================================
+ Step     58 Time=  2.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      63] linear =   122 [      7261] cuts =  0 [   0]
+  --> max chng: dpmx=   1.7597E-04 dtmpmx=   7.6171E-05
+
+== TH FLOW =====================================================================
+ Step     59 Time=  2.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      64] linear =   122 [      7383] cuts =  0 [   0]
+  --> max chng: dpmx=   1.2905E-04 dtmpmx=   3.4944E-05
+
+== TH FLOW =====================================================================
+ Step     60 Time=  2.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      65] linear =   119 [      7502] cuts =  0 [   0]
+  --> max chng: dpmx=   1.4931E-04 dtmpmx=   1.2226E-05
+
+== TH FLOW =====================================================================
+ Step     61 Time=  2.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      66] linear =   112 [      7614] cuts =  0 [   0]
+  --> max chng: dpmx=   1.4793E-04 dtmpmx=   9.8542E-06
+
+== TH FLOW =====================================================================
+ Step     62 Time=  2.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      67] linear =   115 [      7729] cuts =  0 [   0]
+  --> max chng: dpmx=   1.3516E-04 dtmpmx=   9.2042E-06
+
+== TH FLOW =====================================================================
+ Step     63 Time=  2.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      68] linear =    99 [      7828] cuts =  0 [   0]
+  --> max chng: dpmx=   1.1754E-04 dtmpmx=   8.5938E-06
+
+== TH FLOW =====================================================================
+ Step     64 Time=  2.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      69] linear =   110 [      7938] cuts =  0 [   0]
+  --> max chng: dpmx=   9.8803E-05 dtmpmx=   8.0212E-06
+
+== TH FLOW =====================================================================
+ Step     65 Time=  2.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      70] linear =   113 [      8051] cuts =  0 [   0]
+  --> max chng: dpmx=   8.1018E-05 dtmpmx=   7.4101E-06
+
+== TH FLOW =====================================================================
+ Step     66 Time=  2.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      71] linear =   117 [      8168] cuts =  0 [   0]
+  --> max chng: dpmx=   6.5045E-05 dtmpmx=   6.5232E-06
+
+== TH FLOW =====================================================================
+ Step     67 Time=  2.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      72] linear =   117 [      8285] cuts =  0 [   0]
+  --> max chng: dpmx=   5.1332E-05 dtmpmx=   5.5185E-06
+
+== TH FLOW =====================================================================
+ Step     68 Time=  2.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      73] linear =   119 [      8404] cuts =  0 [   0]
+  --> max chng: dpmx=   3.9867E-05 dtmpmx=   4.5378E-06
+
+== TH FLOW =====================================================================
+ Step     69 Time=  2.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      74] linear =   118 [      8522] cuts =  0 [   0]
+  --> max chng: dpmx=   3.0497E-05 dtmpmx=   3.6489E-06
+
+== TH FLOW =====================================================================
+ Step     70 Time=  2.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      75] linear =   118 [      8640] cuts =  0 [   0]
+  --> max chng: dpmx=   2.2996E-05 dtmpmx=   2.8794E-06
+
+== TH FLOW =====================================================================
+ Step     71 Time=  2.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      76] linear =   119 [      8759] cuts =  0 [   0]
+  --> max chng: dpmx=   1.7091E-05 dtmpmx=   2.2338E-06
+
+== TH FLOW =====================================================================
+ Step     72 Time=  3.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      77] linear =   115 [      8874] cuts =  0 [   0]
+  --> max chng: dpmx=   1.2534E-05 dtmpmx=   1.7058E-06
+
+== TH FLOW =====================================================================
+ Step     73 Time=  3.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      78] linear =   119 [      8993] cuts =  0 [   0]
+  --> max chng: dpmx=   9.0572E-06 dtmpmx=   1.2829E-06
+
+== TH FLOW =====================================================================
+ Step     74 Time=  3.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      79] linear =   118 [      9111] cuts =  0 [   0]
+  --> max chng: dpmx=   6.4574E-06 dtmpmx=   9.5067E-07
+
+== TH FLOW =====================================================================
+ Step     75 Time=  3.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      80] linear =   120 [      9231] cuts =  0 [   0]
+  --> max chng: dpmx=   4.5362E-06 dtmpmx=   6.9419E-07
+
+== TH FLOW =====================================================================
+ Step     76 Time=  3.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      81] linear =   120 [      9351] cuts =  0 [   0]
+  --> max chng: dpmx=   3.1398E-06 dtmpmx=   4.9943E-07
+
+== TH FLOW =====================================================================
+ Step     77 Time=  3.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      82] linear =   115 [      9466] cuts =  0 [   0]
+  --> max chng: dpmx=   2.1402E-06 dtmpmx=   3.5395E-07
+
+== TH FLOW =====================================================================
+ Step     78 Time=  3.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      83] linear =   121 [      9587] cuts =  0 [   0]
+  --> max chng: dpmx=   1.4345E-06 dtmpmx=   2.4714E-07
+
+== TH FLOW =====================================================================
+ Step     79 Time=  3.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      84] linear =   120 [      9707] cuts =  0 [   0]
+  --> max chng: dpmx=   9.4459E-07 dtmpmx=   1.6975E-07
+
+== TH FLOW =====================================================================
+ Step     80 Time=  3.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      85] linear =   121 [      9828] cuts =  0 [   0]
+  --> max chng: dpmx=   6.1013E-07 dtmpmx=   1.1466E-07
+
+== TH FLOW =====================================================================
+ Step     81 Time=  3.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      86] linear =   121 [      9949] cuts =  0 [   0]
+  --> max chng: dpmx=   3.8545E-07 dtmpmx=   7.6123E-08
+
+== TH FLOW =====================================================================
+ Step     82 Time=  3.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      87] linear =   123 [     10072] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3702E-07 dtmpmx=   4.9385E-08
+
+== TH FLOW =====================================================================
+ Step     83 Time=  3.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      88] linear =   123 [     10195] cuts =  0 [   0]
+  --> max chng: dpmx=   1.4133E-07 dtmpmx=   3.1429E-08
+
+== TH FLOW =====================================================================
+ Step     84 Time=  3.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      89] linear =   124 [     10319] cuts =  0 [   0]
+  --> max chng: dpmx=   8.0676E-08 dtmpmx=   1.9338E-08
+
+== TH FLOW =====================================================================
+ Step     85 Time=  3.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      90] linear =   125 [     10444] cuts =  0 [   0]
+  --> max chng: dpmx=   4.3772E-08 dtmpmx=   1.1541E-08
+
+== TH FLOW =====================================================================
+ Step     86 Time=  3.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      91] linear =   128 [     10572] cuts =  0 [   0]
+  --> max chng: dpmx=   2.1886E-08 dtmpmx=   6.5352E-09
+
+== TH FLOW =====================================================================
+ Step     87 Time=  3.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      92] linear =   126 [     10698] cuts =  0 [   0]
+  --> max chng: dpmx=   9.8953E-09 dtmpmx=   3.4741E-09
+
+== TH FLOW =====================================================================
+ Step     88 Time=  3.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      93] linear =   122 [     10820] cuts =  0 [   0]
+  --> max chng: dpmx=   8.2655E-09 dtmpmx=   1.5109E-09
+
+== TH FLOW =====================================================================
+ Step     89 Time=  3.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      94] linear =   105 [     10925] cuts =  0 [   0]
+  --> max chng: dpmx=   9.1968E-09 dtmpmx=   6.9446E-10
+
+== TH FLOW =====================================================================
+ Step     90 Time=  3.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      95] linear =   109 [     11034] cuts =  0 [   0]
+  --> max chng: dpmx=   9.0804E-09 dtmpmx=   6.7909E-10
+
+== TH FLOW =====================================================================
+ Step     91 Time=  3.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      96] linear =   105 [     11139] cuts =  0 [   0]
+  --> max chng: dpmx=   8.1491E-09 dtmpmx=   6.1921E-10
+
+== TH FLOW =====================================================================
+ Step     92 Time=  4.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      97] linear =   114 [     11253] cuts =  0 [   0]
+  --> max chng: dpmx=   6.9849E-09 dtmpmx=   5.8762E-10
+
+== TH FLOW =====================================================================
+ Step     93 Time=  4.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      98] linear =   119 [     11372] cuts =  0 [   0]
+  --> max chng: dpmx=   5.8208E-09 dtmpmx=   5.3512E-10
+
+== TH FLOW =====================================================================
+ Step     94 Time=  4.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [      99] linear =   119 [     11491] cuts =  0 [   0]
+  --> max chng: dpmx=   4.7730E-09 dtmpmx=   4.9487E-10
+
+== TH FLOW =====================================================================
+ Step     95 Time=  4.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     100] linear =   114 [     11605] cuts =  0 [   0]
+  --> max chng: dpmx=   3.7253E-09 dtmpmx=   4.5019E-10
+
+== TH FLOW =====================================================================
+ Step     96 Time=  4.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     101] linear =   115 [     11720] cuts =  0 [   0]
+  --> max chng: dpmx=   2.9104E-09 dtmpmx=   3.1457E-10
+
+== TH FLOW =====================================================================
+ Step     97 Time=  4.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     102] linear =   119 [     11839] cuts =  0 [   0]
+  --> max chng: dpmx=   2.2119E-09 dtmpmx=   2.8033E-10
+
+== TH FLOW =====================================================================
+ Step     98 Time=  4.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     103] linear =   120 [     11959] cuts =  0 [   0]
+  --> max chng: dpmx=   1.6298E-09 dtmpmx=   2.4322E-10
+
+== TH FLOW =====================================================================
+ Step     99 Time=  4.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     104] linear =   110 [     12069] cuts =  0 [   0]
+  --> max chng: dpmx=   1.2806E-09 dtmpmx=   1.8562E-10
+
+== TH FLOW =====================================================================
+ Step    100 Time=  4.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     105] linear =   123 [     12192] cuts =  0 [   0]
+  --> max chng: dpmx=   9.3132E-10 dtmpmx=   1.5109E-10
+
+== TH FLOW =====================================================================
+ Step    101 Time=  4.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     106] linear =   118 [     12310] cuts =  0 [   0]
+  --> max chng: dpmx=   8.1491E-10 dtmpmx=   1.1925E-10
+
+== TH FLOW =====================================================================
+ Step    102 Time=  4.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     107] linear =   125 [     12435] cuts =  0 [   0]
+  --> max chng: dpmx=   5.8208E-10 dtmpmx=   9.7995E-11
+
+== TH FLOW =====================================================================
+ Step    103 Time=  4.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     108] linear =   123 [     12558] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.4929E-11
+
+== TH FLOW =====================================================================
+ Step    104 Time=  4.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     109] linear =   111 [     12669] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.1500E-10
+
+== TH FLOW =====================================================================
+ Step    105 Time=  4.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     110] linear =   100 [     12769] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.2546E-11
+
+== TH FLOW =====================================================================
+ Step    106 Time=  4.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     111] linear =   113 [     12882] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2726E-11
+
+== TH FLOW =====================================================================
+ Step    107 Time=  4.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     112] linear =   124 [     13006] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0194E-10
+
+== TH FLOW =====================================================================
+ Step    108 Time=  4.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     113] linear =   102 [     13108] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0575E-10
+
+== TH FLOW =====================================================================
+ Step    109 Time=  4.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     114] linear =    78 [     13186] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0696E-10
+
+== TH FLOW =====================================================================
+ Step    110 Time=  4.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     115] linear =   108 [     13294] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.5273E-11
+
+== TH FLOW =====================================================================
+ Step    111 Time=  4.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     116] linear =   108 [     13402] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   8.9605E-11
+
+== TH FLOW =====================================================================
+ Step    112 Time=  5.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     117] linear =   122 [     13524] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5174E-11
+
+== TH FLOW =====================================================================
+ Step    113 Time=  5.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     118] linear =   105 [     13629] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8385E-11
+
+== TH FLOW =====================================================================
+ Step    114 Time=  5.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     119] linear =    94 [     13723] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0242E-10
+
+== TH FLOW =====================================================================
+ Step    115 Time=  5.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     120] linear =   112 [     13835] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0051E-10
+
+== TH FLOW =====================================================================
+ Step    116 Time=  5.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     121] linear =   110 [     13945] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1207E-10
+
+== TH FLOW =====================================================================
+ Step    117 Time=  5.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     122] linear =   106 [     14051] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3907E-11
+
+== TH FLOW =====================================================================
+ Step    118 Time=  5.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     123] linear =   109 [     14160] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5813E-11
+
+== TH FLOW =====================================================================
+ Step    119 Time=  5.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     124] linear =   105 [     14265] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4492E-11
+
+== TH FLOW =====================================================================
+ Step    120 Time=  5.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     125] linear =   107 [     14372] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0851E-10
+
+== TH FLOW =====================================================================
+ Step    121 Time=  5.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     126] linear =   112 [     14484] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0211E-10
+
+== TH FLOW =====================================================================
+ Step    122 Time=  5.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     127] linear =   102 [     14586] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0142E-10
+
+== TH FLOW =====================================================================
+ Step    123 Time=  5.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     128] linear =   118 [     14704] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1403E-10
+
+== TH FLOW =====================================================================
+ Step    124 Time=  5.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     129] linear =   109 [     14813] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0503E-10
+
+== TH FLOW =====================================================================
+ Step    125 Time=  5.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     130] linear =    87 [     14900] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0141E-10
+
+== TH FLOW =====================================================================
+ Step    126 Time=  5.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     131] linear =    73 [     14973] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0071E-10
+
+== TH FLOW =====================================================================
+ Step    127 Time=  5.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     132] linear =    88 [     15061] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1191E-10
+
+== TH FLOW =====================================================================
+ Step    128 Time=  5.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     133] linear =   107 [     15168] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1146E-10
+
+== TH FLOW =====================================================================
+ Step    129 Time=  5.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     134] linear =   115 [     15283] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8424E-11
+
+== TH FLOW =====================================================================
+ Step    130 Time=  5.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     135] linear =   123 [     15406] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.0284E-10
+
+== TH FLOW =====================================================================
+ Step    131 Time=  5.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     136] linear =   113 [     15519] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1621E-10
+
+== TH FLOW =====================================================================
+ Step    132 Time=  6.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     137] linear =    94 [     15613] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7213E-11
+
+== TH FLOW =====================================================================
+ Step    133 Time=  6.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     138] linear =    82 [     15695] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4781E-11
+
+== TH FLOW =====================================================================
+ Step    134 Time=  6.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     139] linear =   114 [     15809] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0227E-10
+
+== TH FLOW =====================================================================
+ Step    135 Time=  6.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     140] linear =   101 [     15910] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0074E-10
+
+== TH FLOW =====================================================================
+ Step    136 Time=  6.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     141] linear =   117 [     16027] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.7813E-11
+
+== TH FLOW =====================================================================
+ Step    137 Time=  6.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     142] linear =    84 [     16111] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5891E-11
+
+== TH FLOW =====================================================================
+ Step    138 Time=  6.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     143] linear =   108 [     16219] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0987E-10
+
+== TH FLOW =====================================================================
+ Step    139 Time=  6.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     144] linear =   112 [     16331] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4065E-11
+
+== TH FLOW =====================================================================
+ Step    140 Time=  6.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     145] linear =   102 [     16433] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.2662E-11
+
+== TH FLOW =====================================================================
+ Step    141 Time=  6.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     146] linear =   111 [     16544] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0146E-10
+
+== TH FLOW =====================================================================
+ Step    142 Time=  6.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     147] linear =   111 [     16655] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0095E-10
+
+== TH FLOW =====================================================================
+ Step    143 Time=  6.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     148] linear =   120 [     16775] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.6945E-11
+
+== TH FLOW =====================================================================
+ Step    144 Time=  6.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     149] linear =   100 [     16875] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0161E-10
+
+== TH FLOW =====================================================================
+ Step    145 Time=  6.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     150] linear =   109 [     16984] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5394E-11
+
+== TH FLOW =====================================================================
+ Step    146 Time=  6.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     151] linear =   107 [     17091] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0050E-10
+
+== TH FLOW =====================================================================
+ Step    147 Time=  6.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     152] linear =    77 [     17168] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0331E-10
+
+== TH FLOW =====================================================================
+ Step    148 Time=  6.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     153] linear =   122 [     17290] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0084E-10
+
+== TH FLOW =====================================================================
+ Step    149 Time=  6.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     154] linear =    74 [     17364] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1288E-10
+
+== TH FLOW =====================================================================
+ Step    150 Time=  6.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     155] linear =   111 [     17475] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1126E-10
+
+== TH FLOW =====================================================================
+ Step    151 Time=  6.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     156] linear =   107 [     17582] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1042E-11
+
+== TH FLOW =====================================================================
+ Step    152 Time=  7.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     157] linear =    71 [     17653] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0075E-10
+
+== TH FLOW =====================================================================
+ Step    153 Time=  7.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     158] linear =   116 [     17769] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0217E-10
+
+== TH FLOW =====================================================================
+ Step    154 Time=  7.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     159] linear =   111 [     17880] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.0296E-10
+
+== TH FLOW =====================================================================
+ Step    155 Time=  7.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     160] linear =    96 [     17976] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3200E-11
+
+== TH FLOW =====================================================================
+ Step    156 Time=  7.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     161] linear =    99 [     18075] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4763E-11
+
+== TH FLOW =====================================================================
+ Step    157 Time=  7.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     162] linear =   118 [     18193] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0694E-10
+
+== TH FLOW =====================================================================
+ Step    158 Time=  7.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     163] linear =   120 [     18313] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3101E-11
+
+== TH FLOW =====================================================================
+ Step    159 Time=  7.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     164] linear =   104 [     18417] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4781E-11
+
+== TH FLOW =====================================================================
+ Step    160 Time=  7.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     165] linear =   106 [     18523] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7229E-11
+
+== TH FLOW =====================================================================
+ Step    161 Time=  7.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     166] linear =   114 [     18637] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1065E-11
+
+== TH FLOW =====================================================================
+ Step    162 Time=  7.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     167] linear =    96 [     18733] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0651E-10
+
+== TH FLOW =====================================================================
+ Step    163 Time=  7.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     168] linear =    93 [     18826] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1230E-10
+
+== TH FLOW =====================================================================
+ Step    164 Time=  7.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     169] linear =   116 [     18942] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4582E-11
+
+== TH FLOW =====================================================================
+ Step    165 Time=  7.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     170] linear =    86 [     19028] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8522E-11
+
+== TH FLOW =====================================================================
+ Step    166 Time=  7.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     171] linear =   111 [     19139] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6087E-11
+
+== TH FLOW =====================================================================
+ Step    167 Time=  7.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     172] linear =    89 [     19228] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0940E-10
+
+== TH FLOW =====================================================================
+ Step    168 Time=  7.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     173] linear =   121 [     19349] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1105E-10
+
+== TH FLOW =====================================================================
+ Step    169 Time=  7.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     174] linear =   104 [     19453] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6785E-11
+
+== TH FLOW =====================================================================
+ Step    170 Time=  7.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     175] linear =   111 [     19564] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7634E-11
+
+== TH FLOW =====================================================================
+ Step    171 Time=  7.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     176] linear =   112 [     19676] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1557E-10
+
+== TH FLOW =====================================================================
+ Step    172 Time=  8.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     177] linear =   109 [     19785] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0589E-10
+
+== TH FLOW =====================================================================
+ Step    173 Time=  8.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     178] linear =   109 [     19894] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0182E-10
+
+== TH FLOW =====================================================================
+ Step    174 Time=  8.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     179] linear =   106 [     20000] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9003E-11
+
+== TH FLOW =====================================================================
+ Step    175 Time=  8.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     180] linear =    91 [     20091] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   8.9734E-11
+
+== TH FLOW =====================================================================
+ Step    176 Time=  8.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     181] linear =   107 [     20198] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   8.9367E-11
+
+== TH FLOW =====================================================================
+ Step    177 Time=  8.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     182] linear =   105 [     20303] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1335E-11
+
+== TH FLOW =====================================================================
+ Step    178 Time=  8.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     183] linear =   121 [     20424] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0484E-10
+
+== TH FLOW =====================================================================
+ Step    179 Time=  8.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     184] linear =    88 [     20512] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1496E-10
+
+== TH FLOW =====================================================================
+ Step    180 Time=  8.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     185] linear =   108 [     20620] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0033E-10
+
+== TH FLOW =====================================================================
+ Step    181 Time=  8.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     186] linear =   123 [     20743] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0613E-10
+
+== TH FLOW =====================================================================
+ Step    182 Time=  8.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     187] linear =   100 [     20843] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0579E-10
+
+== TH FLOW =====================================================================
+ Step    183 Time=  8.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     188] linear =   121 [     20964] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0341E-10
+
+== TH FLOW =====================================================================
+ Step    184 Time=  8.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     189] linear =   117 [     21081] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0066E-10
+
+== TH FLOW =====================================================================
+ Step    185 Time=  8.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     190] linear =    98 [     21179] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0284E-10
+
+== TH FLOW =====================================================================
+ Step    186 Time=  8.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     191] linear =   110 [     21289] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1576E-10
+
+== TH FLOW =====================================================================
+ Step    187 Time=  8.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     192] linear =   123 [     21412] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3459E-11
+
+== TH FLOW =====================================================================
+ Step    188 Time=  8.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     193] linear =   113 [     21525] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0730E-10
+
+== TH FLOW =====================================================================
+ Step    189 Time=  8.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     194] linear =    99 [     21624] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0895E-10
+
+== TH FLOW =====================================================================
+ Step    190 Time=  8.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     195] linear =   107 [     21731] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3300E-11
+
+== TH FLOW =====================================================================
+ Step    191 Time=  8.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     196] linear =   126 [     21857] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0112E-10
+
+== TH FLOW =====================================================================
+ Step    192 Time=  9.00000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     197] linear =   117 [     21974] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2488E-11
+
+== TH FLOW =====================================================================
+ Step    193 Time=  9.05000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     198] linear =   109 [     22083] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0075E-10
+
+== TH FLOW =====================================================================
+ Step    194 Time=  9.10000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     199] linear =   125 [     22208] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0783E-10
+
+== TH FLOW =====================================================================
+ Step    195 Time=  9.15000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     200] linear =   104 [     22312] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0468E-10
+
+== TH FLOW =====================================================================
+ Step    196 Time=  9.20000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     201] linear =   100 [     22412] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7799E-11
+
+== TH FLOW =====================================================================
+ Step    197 Time=  9.25000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     202] linear =    65 [     22477] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0244E-10
+
+== TH FLOW =====================================================================
+ Step    198 Time=  9.30000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     203] linear =   108 [     22585] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.6069E-11
+
+== TH FLOW =====================================================================
+ Step    199 Time=  9.35000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     204] linear =   104 [     22689] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0378E-10
+
+== TH FLOW =====================================================================
+ Step    200 Time=  9.40000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     205] linear =   108 [     22797] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6897E-11
+
+== TH FLOW =====================================================================
+ Step    201 Time=  9.45000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     206] linear =    94 [     22891] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0807E-10
+
+== TH FLOW =====================================================================
+ Step    202 Time=  9.50000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     207] linear =   111 [     23002] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0334E-10
+
+== TH FLOW =====================================================================
+ Step    203 Time=  9.55000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     208] linear =    78 [     23080] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0407E-10
+
+== TH FLOW =====================================================================
+ Step    204 Time=  9.60000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     209] linear =    86 [     23166] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2108E-10
+
+== TH FLOW =====================================================================
+ Step    205 Time=  9.65000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     210] linear =    96 [     23262] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0017E-10
+
+== TH FLOW =====================================================================
+ Step    206 Time=  9.70000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     211] linear =   103 [     23365] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1458E-11
+
+== TH FLOW =====================================================================
+ Step    207 Time=  9.75000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     212] linear =    92 [     23457] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4884E-11
+
+== TH FLOW =====================================================================
+ Step    208 Time=  9.80000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     213] linear =   102 [     23559] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.5627E-11
+
+== TH FLOW =====================================================================
+ Step    209 Time=  9.85000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     214] linear =    99 [     23658] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4524E-11
+
+== TH FLOW =====================================================================
+ Step    210 Time=  9.90000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     215] linear =   112 [     23770] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0302E-10
+
+== TH FLOW =====================================================================
+ Step    211 Time=  9.95000E+00 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     216] linear =   110 [     23880] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0231E-10
+
+== TH FLOW =====================================================================
+ Step    212 Time=  1.00000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     217] linear =    99 [     23979] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0090E-10
+
+== TH FLOW =====================================================================
+ Step    213 Time=  1.00500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     218] linear =   101 [     24080] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0260E-10
+
+== TH FLOW =====================================================================
+ Step    214 Time=  1.01000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     219] linear =    90 [     24170] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1286E-10
+
+== TH FLOW =====================================================================
+ Step    215 Time=  1.01500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     220] linear =    83 [     24253] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7023E-11
+
+== TH FLOW =====================================================================
+ Step    216 Time=  1.02000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     221] linear =    96 [     24349] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0214E-10
+
+== TH FLOW =====================================================================
+ Step    217 Time=  1.02500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     222] linear =   113 [     24462] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1416E-10
+
+== TH FLOW =====================================================================
+ Step    218 Time=  1.03000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     223] linear =   100 [     24562] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1256E-10
+
+== TH FLOW =====================================================================
+ Step    219 Time=  1.03500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     224] linear =    66 [     24628] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1100E-10
+
+== TH FLOW =====================================================================
+ Step    220 Time=  1.04000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     225] linear =   121 [     24749] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0263E-10
+
+== TH FLOW =====================================================================
+ Step    221 Time=  1.04500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     226] linear =   113 [     24862] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0453E-10
+
+== TH FLOW =====================================================================
+ Step    222 Time=  1.05000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     227] linear =   116 [     24978] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0322E-10
+
+== TH FLOW =====================================================================
+ Step    223 Time=  1.05500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     228] linear =   118 [     25096] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3191E-11
+
+== TH FLOW =====================================================================
+ Step    224 Time=  1.06000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     229] linear =   103 [     25199] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0021E-10
+
+== TH FLOW =====================================================================
+ Step    225 Time=  1.06500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     230] linear =   108 [     25307] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0101E-10
+
+== TH FLOW =====================================================================
+ Step    226 Time=  1.07000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     231] linear =    82 [     25389] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6602E-11
+
+== TH FLOW =====================================================================
+ Step    227 Time=  1.07500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     232] linear =   100 [     25489] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8005E-11
+
+== TH FLOW =====================================================================
+ Step    228 Time=  1.08000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     233] linear =   116 [     25605] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4913E-11
+
+== TH FLOW =====================================================================
+ Step    229 Time=  1.08500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     234] linear =    89 [     25694] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2881E-10
+
+== TH FLOW =====================================================================
+ Step    230 Time=  1.09000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     235] linear =    90 [     25784] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7653E-11
+
+== TH FLOW =====================================================================
+ Step    231 Time=  1.09500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     236] linear =    86 [     25870] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0458E-10
+
+== TH FLOW =====================================================================
+ Step    232 Time=  1.10000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     237] linear =   111 [     25981] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8682E-11
+
+== TH FLOW =====================================================================
+ Step    233 Time=  1.10500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     238] linear =    94 [     26075] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0728E-10
+
+== TH FLOW =====================================================================
+ Step    234 Time=  1.11000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     239] linear =   123 [     26198] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0514E-10
+
+== TH FLOW =====================================================================
+ Step    235 Time=  1.11500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     240] linear =   110 [     26308] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0401E-10
+
+== TH FLOW =====================================================================
+ Step    236 Time=  1.12000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     241] linear =    98 [     26406] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2045E-10
+
+== TH FLOW =====================================================================
+ Step    237 Time=  1.12500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     242] linear =   116 [     26522] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0642E-10
+
+== TH FLOW =====================================================================
+ Step    238 Time=  1.13000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     243] linear =   102 [     26624] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.9693E-11
+
+== TH FLOW =====================================================================
+ Step    239 Time=  1.13500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     244] linear =   110 [     26734] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0637E-10
+
+== TH FLOW =====================================================================
+ Step    240 Time=  1.14000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     245] linear =    80 [     26814] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0852E-10
+
+== TH FLOW =====================================================================
+ Step    241 Time=  1.14500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     246] linear =   110 [     26924] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1082E-10
+
+== TH FLOW =====================================================================
+ Step    242 Time=  1.15000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     247] linear =    80 [     27004] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0020E-10
+
+== TH FLOW =====================================================================
+ Step    243 Time=  1.15500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     248] linear =    94 [     27098] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0628E-10
+
+== TH FLOW =====================================================================
+ Step    244 Time=  1.16000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     249] linear =    72 [     27170] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0661E-10
+
+== TH FLOW =====================================================================
+ Step    245 Time=  1.16500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     250] linear =   113 [     27283] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5870E-11
+
+== TH FLOW =====================================================================
+ Step    246 Time=  1.17000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     251] linear =   113 [     27396] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9122E-11
+
+== TH FLOW =====================================================================
+ Step    247 Time=  1.17500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     252] linear =   116 [     27512] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7181E-11
+
+== TH FLOW =====================================================================
+ Step    248 Time=  1.18000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     253] linear =   127 [     27639] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1404E-10
+
+== TH FLOW =====================================================================
+ Step    249 Time=  1.18500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     254] linear =   109 [     27748] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1000E-10
+
+== TH FLOW =====================================================================
+ Step    250 Time=  1.19000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     255] linear =   116 [     27864] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1039E-10
+
+== TH FLOW =====================================================================
+ Step    251 Time=  1.19500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     256] linear =   109 [     27973] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1177E-10
+
+== TH FLOW =====================================================================
+ Step    252 Time=  1.20000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     257] linear =   109 [     28082] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0334E-10
+
+== TH FLOW =====================================================================
+ Step    253 Time=  1.20500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     258] linear =   106 [     28188] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6824E-11
+
+== TH FLOW =====================================================================
+ Step    254 Time=  1.21000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     259] linear =    90 [     28278] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2184E-11
+
+== TH FLOW =====================================================================
+ Step    255 Time=  1.21500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     260] linear =    61 [     28339] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2097E-11
+
+== TH FLOW =====================================================================
+ Step    256 Time=  1.22000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     261] linear =   118 [     28457] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0223E-10
+
+== TH FLOW =====================================================================
+ Step    257 Time=  1.22500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     262] linear =   116 [     28573] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1374E-10
+
+== TH FLOW =====================================================================
+ Step    258 Time=  1.23000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     263] linear =   116 [     28689] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1278E-11
+
+== TH FLOW =====================================================================
+ Step    259 Time=  1.23500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     264] linear =   115 [     28804] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1266E-10
+
+== TH FLOW =====================================================================
+ Step    260 Time=  1.24000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     265] linear =   113 [     28917] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.8890E-11
+
+== TH FLOW =====================================================================
+ Step    261 Time=  1.24500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     266] linear =   114 [     29031] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1620E-10
+
+== TH FLOW =====================================================================
+ Step    262 Time=  1.25000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     267] linear =    97 [     29128] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.1971E-11
+
+== TH FLOW =====================================================================
+ Step    263 Time=  1.25500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     268] linear =   108 [     29236] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.8465E-11
+
+== TH FLOW =====================================================================
+ Step    264 Time=  1.26000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     269] linear =    94 [     29330] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1005E-10
+
+== TH FLOW =====================================================================
+ Step    265 Time=  1.26500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     270] linear =   112 [     29442] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.3785E-10
+
+== TH FLOW =====================================================================
+ Step    266 Time=  1.27000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     271] linear =   108 [     29550] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2166E-11
+
+== TH FLOW =====================================================================
+ Step    267 Time=  1.27500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     272] linear =   117 [     29667] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.7296E-11
+
+== TH FLOW =====================================================================
+ Step    268 Time=  1.28000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     273] linear =   129 [     29796] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7183E-11
+
+== TH FLOW =====================================================================
+ Step    269 Time=  1.28500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     274] linear =   109 [     29905] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4184E-11
+
+== TH FLOW =====================================================================
+ Step    270 Time=  1.29000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     275] linear =    94 [     29999] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1289E-10
+
+== TH FLOW =====================================================================
+ Step    271 Time=  1.29500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     276] linear =   113 [     30112] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.6213E-11
+
+== TH FLOW =====================================================================
+ Step    272 Time=  1.30000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     277] linear =   105 [     30217] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6570E-11
+
+== TH FLOW =====================================================================
+ Step    273 Time=  1.30500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     278] linear =   125 [     30342] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1297E-10
+
+== TH FLOW =====================================================================
+ Step    274 Time=  1.31000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     279] linear =   101 [     30443] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0705E-10
+
+== TH FLOW =====================================================================
+ Step    275 Time=  1.31500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     280] linear =   121 [     30564] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7163E-11
+
+== TH FLOW =====================================================================
+ Step    276 Time=  1.32000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     281] linear =    71 [     30635] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7439E-11
+
+== TH FLOW =====================================================================
+ Step    277 Time=  1.32500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     282] linear =   119 [     30754] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0126E-10
+
+== TH FLOW =====================================================================
+ Step    278 Time=  1.33000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     283] linear =   102 [     30856] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0233E-10
+
+== TH FLOW =====================================================================
+ Step    279 Time=  1.33500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     284] linear =    79 [     30935] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1131E-10
+
+== TH FLOW =====================================================================
+ Step    280 Time=  1.34000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     285] linear =   104 [     31039] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0232E-10
+
+== TH FLOW =====================================================================
+ Step    281 Time=  1.34500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     286] linear =   125 [     31164] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0269E-10
+
+== TH FLOW =====================================================================
+ Step    282 Time=  1.35000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     287] linear =   110 [     31274] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.6595E-11
+
+== TH FLOW =====================================================================
+ Step    283 Time=  1.35500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     288] linear =   113 [     31387] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0696E-10
+
+== TH FLOW =====================================================================
+ Step    284 Time=  1.36000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     289] linear =   112 [     31499] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1745E-11
+
+== TH FLOW =====================================================================
+ Step    285 Time=  1.36500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     290] linear =   101 [     31600] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6177E-11
+
+== TH FLOW =====================================================================
+ Step    286 Time=  1.37000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     291] linear =    74 [     31674] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6255E-11
+
+== TH FLOW =====================================================================
+ Step    287 Time=  1.37500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     292] linear =   107 [     31781] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1349E-10
+
+== TH FLOW =====================================================================
+ Step    288 Time=  1.38000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     293] linear =    82 [     31863] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0075E-10
+
+== TH FLOW =====================================================================
+ Step    289 Time=  1.38500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     294] linear =   123 [     31986] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1011E-10
+
+== TH FLOW =====================================================================
+ Step    290 Time=  1.39000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     295] linear =   110 [     32096] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0835E-10
+
+== TH FLOW =====================================================================
+ Step    291 Time=  1.39500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     296] linear =   106 [     32202] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5673E-11
+
+== TH FLOW =====================================================================
+ Step    292 Time=  1.40000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     297] linear =   104 [     32306] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.9332E-11
+
+== TH FLOW =====================================================================
+ Step    293 Time=  1.40500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     298] linear =   104 [     32410] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3143E-11
+
+== TH FLOW =====================================================================
+ Step    294 Time=  1.41000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     299] linear =   104 [     32514] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1823E-10
+
+== TH FLOW =====================================================================
+ Step    295 Time=  1.41500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     300] linear =   125 [     32639] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0671E-10
+
+== TH FLOW =====================================================================
+ Step    296 Time=  1.42000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     301] linear =   120 [     32759] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0682E-10
+
+== TH FLOW =====================================================================
+ Step    297 Time=  1.42500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     302] linear =   110 [     32869] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0284E-10
+
+== TH FLOW =====================================================================
+ Step    298 Time=  1.43000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     303] linear =    93 [     32962] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0709E-10
+
+== TH FLOW =====================================================================
+ Step    299 Time=  1.43500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     304] linear =    82 [     33044] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1280E-10
+
+== TH FLOW =====================================================================
+ Step    300 Time=  1.44000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     305] linear =    64 [     33108] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4039E-11
+
+== TH FLOW =====================================================================
+ Step    301 Time=  1.44500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     306] linear =    99 [     33207] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0214E-10
+
+== TH FLOW =====================================================================
+ Step    302 Time=  1.45000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     307] linear =   121 [     33328] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9901E-11
+
+== TH FLOW =====================================================================
+ Step    303 Time=  1.45500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     308] linear =    77 [     33405] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0332E-10
+
+== TH FLOW =====================================================================
+ Step    304 Time=  1.46000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     309] linear =   116 [     33521] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8376E-11
+
+== TH FLOW =====================================================================
+ Step    305 Time=  1.46500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     310] linear =   125 [     33646] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6355E-11
+
+== TH FLOW =====================================================================
+ Step    306 Time=  1.47000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     311] linear =    68 [     33714] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0088E-10
+
+== TH FLOW =====================================================================
+ Step    307 Time=  1.47500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     312] linear =    90 [     33804] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4408E-11
+
+== TH FLOW =====================================================================
+ Step    308 Time=  1.48000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     313] linear =   113 [     33917] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7216E-11
+
+== TH FLOW =====================================================================
+ Step    309 Time=  1.48500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     314] linear =    77 [     33994] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2816E-11
+
+== TH FLOW =====================================================================
+ Step    310 Time=  1.49000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     315] linear =   100 [     34094] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9382E-11
+
+== TH FLOW =====================================================================
+ Step    311 Time=  1.49500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     316] linear =    89 [     34183] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0645E-10
+
+== TH FLOW =====================================================================
+ Step    312 Time=  1.50000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     317] linear =   113 [     34296] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0505E-10
+
+== TH FLOW =====================================================================
+ Step    313 Time=  1.50500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     318] linear =   116 [     34412] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1366E-10
+
+== TH FLOW =====================================================================
+ Step    314 Time=  1.51000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     319] linear =   119 [     34531] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.5454E-11
+
+== TH FLOW =====================================================================
+ Step    315 Time=  1.51500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     320] linear =   104 [     34635] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1936E-10
+
+== TH FLOW =====================================================================
+ Step    316 Time=  1.52000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     321] linear =   106 [     34741] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.0281E-10
+
+== TH FLOW =====================================================================
+ Step    317 Time=  1.52500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     322] linear =   115 [     34856] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9929E-11
+
+== TH FLOW =====================================================================
+ Step    318 Time=  1.53000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     323] linear =   113 [     34969] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1076E-10
+
+== TH FLOW =====================================================================
+ Step    319 Time=  1.53500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     324] linear =   118 [     35087] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4714E-11
+
+== TH FLOW =====================================================================
+ Step    320 Time=  1.54000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     325] linear =   108 [     35195] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0491E-10
+
+== TH FLOW =====================================================================
+ Step    321 Time=  1.54500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     326] linear =   106 [     35301] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0515E-10
+
+== TH FLOW =====================================================================
+ Step    322 Time=  1.55000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     327] linear =   116 [     35417] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0071E-10
+
+== TH FLOW =====================================================================
+ Step    323 Time=  1.55500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     328] linear =    96 [     35513] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0387E-10
+
+== TH FLOW =====================================================================
+ Step    324 Time=  1.56000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     329] linear =   105 [     35618] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1593E-11
+
+== TH FLOW =====================================================================
+ Step    325 Time=  1.56500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     330] linear =   108 [     35726] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1603E-10
+
+== TH FLOW =====================================================================
+ Step    326 Time=  1.57000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     331] linear =    71 [     35797] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0156E-10
+
+== TH FLOW =====================================================================
+ Step    327 Time=  1.57500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     332] linear =    80 [     35877] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0221E-10
+
+== TH FLOW =====================================================================
+ Step    328 Time=  1.58000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     333] linear =   110 [     35987] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1079E-10
+
+== TH FLOW =====================================================================
+ Step    329 Time=  1.58500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     334] linear =   113 [     36100] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1944E-10
+
+== TH FLOW =====================================================================
+ Step    330 Time=  1.59000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     335] linear =   115 [     36215] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0763E-10
+
+== TH FLOW =====================================================================
+ Step    331 Time=  1.59500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     336] linear =   112 [     36327] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.7113E-11
+
+== TH FLOW =====================================================================
+ Step    332 Time=  1.60000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     337] linear =   111 [     36438] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1246E-10
+
+== TH FLOW =====================================================================
+ Step    333 Time=  1.60500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     338] linear =    87 [     36525] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0446E-10
+
+== TH FLOW =====================================================================
+ Step    334 Time=  1.61000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     339] linear =   108 [     36633] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0130E-10
+
+== TH FLOW =====================================================================
+ Step    335 Time=  1.61500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     340] linear =   104 [     36737] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1256E-10
+
+== TH FLOW =====================================================================
+ Step    336 Time=  1.62000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     341] linear =    87 [     36824] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0107E-10
+
+== TH FLOW =====================================================================
+ Step    337 Time=  1.62500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     342] linear =   110 [     36934] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0037E-10
+
+== TH FLOW =====================================================================
+ Step    338 Time=  1.63000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     343] linear =    69 [     37003] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0813E-10
+
+== TH FLOW =====================================================================
+ Step    339 Time=  1.63500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     344] linear =   122 [     37125] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0098E-10
+
+== TH FLOW =====================================================================
+ Step    340 Time=  1.64000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     345] linear =   102 [     37227] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7709E-11
+
+== TH FLOW =====================================================================
+ Step    341 Time=  1.64500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     346] linear =    71 [     37298] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0425E-10
+
+== TH FLOW =====================================================================
+ Step    342 Time=  1.65000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     347] linear =    51 [     37349] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4296E-11
+
+== TH FLOW =====================================================================
+ Step    343 Time=  1.65500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     348] linear =    98 [     37447] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0746E-10
+
+== TH FLOW =====================================================================
+ Step    344 Time=  1.66000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     349] linear =   108 [     37555] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0648E-10
+
+== TH FLOW =====================================================================
+ Step    345 Time=  1.66500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     350] linear =   102 [     37657] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8300E-11
+
+== TH FLOW =====================================================================
+ Step    346 Time=  1.67000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     351] linear =   118 [     37775] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2017E-10
+
+== TH FLOW =====================================================================
+ Step    347 Time=  1.67500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     352] linear =   107 [     37882] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   8.9134E-11
+
+== TH FLOW =====================================================================
+ Step    348 Time=  1.68000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     353] linear =   105 [     37987] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.3256E-10
+
+== TH FLOW =====================================================================
+ Step    349 Time=  1.68500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     354] linear =   107 [     38094] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1117E-10
+
+== TH FLOW =====================================================================
+ Step    350 Time=  1.69000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     355] linear =   109 [     38203] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3939E-11
+
+== TH FLOW =====================================================================
+ Step    351 Time=  1.69500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     356] linear =   117 [     38320] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0124E-10
+
+== TH FLOW =====================================================================
+ Step    352 Time=  1.70000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     357] linear =   105 [     38425] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0384E-10
+
+== TH FLOW =====================================================================
+ Step    353 Time=  1.70500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     358] linear =   116 [     38541] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9430E-11
+
+== TH FLOW =====================================================================
+ Step    354 Time=  1.71000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     359] linear =    97 [     38638] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1343E-10
+
+== TH FLOW =====================================================================
+ Step    355 Time=  1.71500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     360] linear =    92 [     38730] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0920E-10
+
+== TH FLOW =====================================================================
+ Step    356 Time=  1.72000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     361] linear =    68 [     38798] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.9970E-11
+
+== TH FLOW =====================================================================
+ Step    357 Time=  1.72500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     362] linear =   113 [     38911] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6772E-11
+
+== TH FLOW =====================================================================
+ Step    358 Time=  1.73000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     363] linear =    86 [     38997] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0277E-10
+
+== TH FLOW =====================================================================
+ Step    359 Time=  1.73500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     364] linear =    95 [     39092] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0987E-10
+
+== TH FLOW =====================================================================
+ Step    360 Time=  1.74000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     365] linear =   104 [     39196] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8998E-11
+
+== TH FLOW =====================================================================
+ Step    361 Time=  1.74500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     366] linear =    99 [     39295] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0592E-10
+
+== TH FLOW =====================================================================
+ Step    362 Time=  1.75000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     367] linear =   109 [     39404] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0761E-10
+
+== TH FLOW =====================================================================
+ Step    363 Time=  1.75500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     368] linear =   111 [     39515] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0807E-10
+
+== TH FLOW =====================================================================
+ Step    364 Time=  1.76000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     369] linear =   117 [     39632] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6151E-11
+
+== TH FLOW =====================================================================
+ Step    365 Time=  1.76500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     370] linear =   117 [     39749] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0228E-10
+
+== TH FLOW =====================================================================
+ Step    366 Time=  1.77000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     371] linear =    82 [     39831] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0769E-10
+
+== TH FLOW =====================================================================
+ Step    367 Time=  1.77500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     372] linear =   119 [     39950] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0414E-10
+
+== TH FLOW =====================================================================
+ Step    368 Time=  1.78000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     373] linear =   121 [     40071] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0410E-10
+
+== TH FLOW =====================================================================
+ Step    369 Time=  1.78500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     374] linear =   102 [     40173] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2841E-11
+
+== TH FLOW =====================================================================
+ Step    370 Time=  1.79000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     375] linear =    67 [     40240] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0025E-10
+
+== TH FLOW =====================================================================
+ Step    371 Time=  1.79500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     376] linear =   105 [     40345] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0589E-10
+
+== TH FLOW =====================================================================
+ Step    372 Time=  1.80000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     377] linear =   120 [     40465] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9371E-11
+
+== TH FLOW =====================================================================
+ Step    373 Time=  1.80500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     378] linear =    93 [     40558] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0143E-10
+
+== TH FLOW =====================================================================
+ Step    374 Time=  1.81000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     379] linear =   111 [     40669] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0964E-10
+
+== TH FLOW =====================================================================
+ Step    375 Time=  1.81500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     380] linear =    80 [     40749] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0330E-10
+
+== TH FLOW =====================================================================
+ Step    376 Time=  1.82000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     381] linear =   118 [     40867] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.0530E-11
+
+== TH FLOW =====================================================================
+ Step    377 Time=  1.82500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     382] linear =   122 [     40989] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4722E-11
+
+== TH FLOW =====================================================================
+ Step    378 Time=  1.83000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     383] linear =    85 [     41074] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0815E-10
+
+== TH FLOW =====================================================================
+ Step    379 Time=  1.83500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     384] linear =    78 [     41152] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0409E-10
+
+== TH FLOW =====================================================================
+ Step    380 Time=  1.84000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     385] linear =   105 [     41257] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5335E-11
+
+== TH FLOW =====================================================================
+ Step    381 Time=  1.84500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     386] linear =   105 [     41362] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0492E-10
+
+== TH FLOW =====================================================================
+ Step    382 Time=  1.85000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     387] linear =   119 [     41481] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7524E-11
+
+== TH FLOW =====================================================================
+ Step    383 Time=  1.85500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     388] linear =   110 [     41591] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0595E-10
+
+== TH FLOW =====================================================================
+ Step    384 Time=  1.86000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     389] linear =   106 [     41697] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6971E-11
+
+== TH FLOW =====================================================================
+ Step    385 Time=  1.86500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     390] linear =   110 [     41807] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7321E-11
+
+== TH FLOW =====================================================================
+ Step    386 Time=  1.87000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     391] linear =    87 [     41894] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0466E-10
+
+== TH FLOW =====================================================================
+ Step    387 Time=  1.87500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     392] linear =   109 [     42003] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0380E-10
+
+== TH FLOW =====================================================================
+ Step    388 Time=  1.88000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     393] linear =   105 [     42108] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3383E-11
+
+== TH FLOW =====================================================================
+ Step    389 Time=  1.88500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     394] linear =   114 [     42222] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5977E-11
+
+== TH FLOW =====================================================================
+ Step    390 Time=  1.89000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     395] linear =   116 [     42338] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0625E-10
+
+== TH FLOW =====================================================================
+ Step    391 Time=  1.89500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     396] linear =   118 [     42456] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1443E-10
+
+== TH FLOW =====================================================================
+ Step    392 Time=  1.90000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     397] linear =   107 [     42563] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1503E-10
+
+== TH FLOW =====================================================================
+ Step    393 Time=  1.90500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     398] linear =   107 [     42670] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9897E-11
+
+== TH FLOW =====================================================================
+ Step    394 Time=  1.91000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     399] linear =    98 [     42768] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5266E-11
+
+== TH FLOW =====================================================================
+ Step    395 Time=  1.91500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     400] linear =   113 [     42881] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1149E-10
+
+== TH FLOW =====================================================================
+ Step    396 Time=  1.92000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     401] linear =   112 [     42993] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0565E-10
+
+== TH FLOW =====================================================================
+ Step    397 Time=  1.92500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     402] linear =    84 [     43077] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7375E-11
+
+== TH FLOW =====================================================================
+ Step    398 Time=  1.93000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     403] linear =   130 [     43207] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.4630E-11
+
+== TH FLOW =====================================================================
+ Step    399 Time=  1.93500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     404] linear =    95 [     43302] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1622E-10
+
+== TH FLOW =====================================================================
+ Step    400 Time=  1.94000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     405] linear =   118 [     43420] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2618E-10
+
+== TH FLOW =====================================================================
+ Step    401 Time=  1.94500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     406] linear =   107 [     43527] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8066E-11
+
+== TH FLOW =====================================================================
+ Step    402 Time=  1.95000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     407] linear =   103 [     43630] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0972E-10
+
+== TH FLOW =====================================================================
+ Step    403 Time=  1.95500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     408] linear =    62 [     43692] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.2749E-11
+
+== TH FLOW =====================================================================
+ Step    404 Time=  1.96000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     409] linear =    84 [     43776] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.9448E-11
+
+== TH FLOW =====================================================================
+ Step    405 Time=  1.96500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     410] linear =   102 [     43878] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0680E-10
+
+== TH FLOW =====================================================================
+ Step    406 Time=  1.97000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     411] linear =   109 [     43987] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0063E-10
+
+== TH FLOW =====================================================================
+ Step    407 Time=  1.97500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     412] linear =   104 [     44091] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5151E-11
+
+== TH FLOW =====================================================================
+ Step    408 Time=  1.98000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     413] linear =   106 [     44197] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0273E-10
+
+== TH FLOW =====================================================================
+ Step    409 Time=  1.98500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     414] linear =   119 [     44316] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0203E-10
+
+== TH FLOW =====================================================================
+ Step    410 Time=  1.99000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     415] linear =    65 [     44381] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0491E-10
+
+== TH FLOW =====================================================================
+ Step    411 Time=  1.99500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     416] linear =   123 [     44504] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7623E-11
+
+== TH FLOW =====================================================================
+ Step    412 Time=  2.00000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     417] linear =   110 [     44614] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1410E-10
+
+== TH FLOW =====================================================================
+ Step    413 Time=  2.00500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     418] linear =   104 [     44718] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.3037E-11
+
+== TH FLOW =====================================================================
+ Step    414 Time=  2.01000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     419] linear =   121 [     44839] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8968E-11
+
+== TH FLOW =====================================================================
+ Step    415 Time=  2.01500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     420] linear =   110 [     44949] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1046E-10
+
+== TH FLOW =====================================================================
+ Step    416 Time=  2.02000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     421] linear =   110 [     45059] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0740E-10
+
+== TH FLOW =====================================================================
+ Step    417 Time=  2.02500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     422] linear =   115 [     45174] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0480E-10
+
+== TH FLOW =====================================================================
+ Step    418 Time=  2.03000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     423] linear =   115 [     45289] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0487E-10
+
+== TH FLOW =====================================================================
+ Step    419 Time=  2.03500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     424] linear =   117 [     45406] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5177E-11
+
+== TH FLOW =====================================================================
+ Step    420 Time=  2.04000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     425] linear =   107 [     45513] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7929E-11
+
+== TH FLOW =====================================================================
+ Step    421 Time=  2.04500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     426] linear =   105 [     45618] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9408E-11
+
+== TH FLOW =====================================================================
+ Step    422 Time=  2.05000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     427] linear =    98 [     45716] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5460E-11
+
+== TH FLOW =====================================================================
+ Step    423 Time=  2.05500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     428] linear =   106 [     45822] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1706E-10
+
+== TH FLOW =====================================================================
+ Step    424 Time=  2.06000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     429] linear =    95 [     45917] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0250E-10
+
+== TH FLOW =====================================================================
+ Step    425 Time=  2.06500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     430] linear =   114 [     46031] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.8568E-11
+
+== TH FLOW =====================================================================
+ Step    426 Time=  2.07000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     431] linear =    94 [     46125] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6222E-11
+
+== TH FLOW =====================================================================
+ Step    427 Time=  2.07500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     432] linear =   103 [     46228] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9304E-11
+
+== TH FLOW =====================================================================
+ Step    428 Time=  2.08000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     433] linear =   108 [     46336] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0728E-10
+
+== TH FLOW =====================================================================
+ Step    429 Time=  2.08500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     434] linear =    97 [     46433] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.1903E-11
+
+== TH FLOW =====================================================================
+ Step    430 Time=  2.09000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     435] linear =   118 [     46551] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2948E-11
+
+== TH FLOW =====================================================================
+ Step    431 Time=  2.09500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     436] linear =   115 [     46666] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0974E-10
+
+== TH FLOW =====================================================================
+ Step    432 Time=  2.10000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     437] linear =   115 [     46781] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1133E-10
+
+== TH FLOW =====================================================================
+ Step    433 Time=  2.10500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     438] linear =   112 [     46893] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0562E-10
+
+== TH FLOW =====================================================================
+ Step    434 Time=  2.11000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     439] linear =    63 [     46956] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.8005E-11
+
+== TH FLOW =====================================================================
+ Step    435 Time=  2.11500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     440] linear =   110 [     47066] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6611E-11
+
+== TH FLOW =====================================================================
+ Step    436 Time=  2.12000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     441] linear =    83 [     47149] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0029E-10
+
+== TH FLOW =====================================================================
+ Step    437 Time=  2.12500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     442] linear =   120 [     47269] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0321E-10
+
+== TH FLOW =====================================================================
+ Step    438 Time=  2.13000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     443] linear =    88 [     47357] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0917E-10
+
+== TH FLOW =====================================================================
+ Step    439 Time=  2.13500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     444] linear =    85 [     47442] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0286E-10
+
+== TH FLOW =====================================================================
+ Step    440 Time=  2.14000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     445] linear =   118 [     47560] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4161E-11
+
+== TH FLOW =====================================================================
+ Step    441 Time=  2.14500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     446] linear =   110 [     47670] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7241E-11
+
+== TH FLOW =====================================================================
+ Step    442 Time=  2.15000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     447] linear =   115 [     47785] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6639E-11
+
+== TH FLOW =====================================================================
+ Step    443 Time=  2.15500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     448] linear =    99 [     47884] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0195E-10
+
+== TH FLOW =====================================================================
+ Step    444 Time=  2.16000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     449] linear =   106 [     47990] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0378E-10
+
+== TH FLOW =====================================================================
+ Step    445 Time=  2.16500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     450] linear =    85 [     48075] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0639E-10
+
+== TH FLOW =====================================================================
+ Step    446 Time=  2.17000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     451] linear =   114 [     48189] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1020E-10
+
+== TH FLOW =====================================================================
+ Step    447 Time=  2.17500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     452] linear =   101 [     48290] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0133E-10
+
+== TH FLOW =====================================================================
+ Step    448 Time=  2.18000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     453] linear =   106 [     48396] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.3181E-10
+
+== TH FLOW =====================================================================
+ Step    449 Time=  2.18500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     454] linear =   128 [     48524] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0300E-10
+
+== TH FLOW =====================================================================
+ Step    450 Time=  2.19000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     455] linear =   123 [     48647] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0619E-10
+
+== TH FLOW =====================================================================
+ Step    451 Time=  2.19500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     456] linear =   110 [     48757] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3916E-11
+
+== TH FLOW =====================================================================
+ Step    452 Time=  2.20000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     457] linear =   103 [     48860] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.9888E-11
+
+== TH FLOW =====================================================================
+ Step    453 Time=  2.20500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     458] linear =    99 [     48959] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.0940E-10
+
+== TH FLOW =====================================================================
+ Step    454 Time=  2.21000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     459] linear =   105 [     49064] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9890E-11
+
+== TH FLOW =====================================================================
+ Step    455 Time=  2.21500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     460] linear =   112 [     49176] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0154E-10
+
+== TH FLOW =====================================================================
+ Step    456 Time=  2.22000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     461] linear =   117 [     49293] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8472E-11
+
+== TH FLOW =====================================================================
+ Step    457 Time=  2.22500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     462] linear =    88 [     49381] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3470E-11
+
+== TH FLOW =====================================================================
+ Step    458 Time=  2.23000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     463] linear =   109 [     49490] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0313E-10
+
+== TH FLOW =====================================================================
+ Step    459 Time=  2.23500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     464] linear =   114 [     49604] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2404E-10
+
+== TH FLOW =====================================================================
+ Step    460 Time=  2.24000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     465] linear =   130 [     49734] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0886E-10
+
+== TH FLOW =====================================================================
+ Step    461 Time=  2.24500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     466] linear =   115 [     49849] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9876E-11
+
+== TH FLOW =====================================================================
+ Step    462 Time=  2.25000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     467] linear =   111 [     49960] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9419E-11
+
+== TH FLOW =====================================================================
+ Step    463 Time=  2.25500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     468] linear =   106 [     50066] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8989E-11
+
+== TH FLOW =====================================================================
+ Step    464 Time=  2.26000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     469] linear =    96 [     50162] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.8584E-11
+
+== TH FLOW =====================================================================
+ Step    465 Time=  2.26500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     470] linear =   127 [     50289] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0571E-10
+
+== TH FLOW =====================================================================
+ Step    466 Time=  2.27000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     471] linear =   102 [     50391] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0708E-10
+
+== TH FLOW =====================================================================
+ Step    467 Time=  2.27500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     472] linear =   104 [     50495] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0185E-10
+
+== TH FLOW =====================================================================
+ Step    468 Time=  2.28000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     473] linear =    73 [     50568] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1059E-10
+
+== TH FLOW =====================================================================
+ Step    469 Time=  2.28500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     474] linear =   118 [     50686] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7744E-11
+
+== TH FLOW =====================================================================
+ Step    470 Time=  2.29000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     475] linear =   116 [     50802] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9710E-11
+
+== TH FLOW =====================================================================
+ Step    471 Time=  2.29500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     476] linear =   123 [     50925] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0708E-10
+
+== TH FLOW =====================================================================
+ Step    472 Time=  2.30000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     477] linear =   108 [     51033] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8154E-11
+
+== TH FLOW =====================================================================
+ Step    473 Time=  2.30500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     478] linear =   118 [     51151] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9492E-11
+
+== TH FLOW =====================================================================
+ Step    474 Time=  2.31000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     479] linear =   121 [     51272] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0913E-10
+
+== TH FLOW =====================================================================
+ Step    475 Time=  2.31500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     480] linear =   102 [     51374] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6708E-11
+
+== TH FLOW =====================================================================
+ Step    476 Time=  2.32000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     481] linear =   106 [     51480] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0175E-10
+
+== TH FLOW =====================================================================
+ Step    477 Time=  2.32500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     482] linear =   105 [     51585] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0520E-10
+
+== TH FLOW =====================================================================
+ Step    478 Time=  2.33000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     483] linear =   120 [     51705] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.0975E-10
+
+== TH FLOW =====================================================================
+ Step    479 Time=  2.33500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     484] linear =   107 [     51812] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1502E-10
+
+== TH FLOW =====================================================================
+ Step    480 Time=  2.34000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     485] linear =   108 [     51920] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2395E-10
+
+== TH FLOW =====================================================================
+ Step    481 Time=  2.34500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     486] linear =   115 [     52035] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0613E-10
+
+== TH FLOW =====================================================================
+ Step    482 Time=  2.35000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     487] linear =   113 [     52148] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0917E-10
+
+== TH FLOW =====================================================================
+ Step    483 Time=  2.35500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     488] linear =   128 [     52276] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1113E-10
+
+== TH FLOW =====================================================================
+ Step    484 Time=  2.36000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     489] linear =    73 [     52349] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0666E-10
+
+== TH FLOW =====================================================================
+ Step    485 Time=  2.36500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     490] linear =   123 [     52472] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0223E-10
+
+== TH FLOW =====================================================================
+ Step    486 Time=  2.37000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     491] linear =   109 [     52581] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1502E-10
+
+== TH FLOW =====================================================================
+ Step    487 Time=  2.37500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     492] linear =   101 [     52682] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0808E-10
+
+== TH FLOW =====================================================================
+ Step    488 Time=  2.38000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     493] linear =   119 [     52801] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0124E-10
+
+== TH FLOW =====================================================================
+ Step    489 Time=  2.38500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     494] linear =   116 [     52917] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2719E-10
+
+== TH FLOW =====================================================================
+ Step    490 Time=  2.39000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     495] linear =   123 [     53040] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0017E-10
+
+== TH FLOW =====================================================================
+ Step    491 Time=  2.39500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     496] linear =   108 [     53148] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0445E-10
+
+== TH FLOW =====================================================================
+ Step    492 Time=  2.40000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     497] linear =   110 [     53258] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6037E-11
+
+== TH FLOW =====================================================================
+ Step    493 Time=  2.40500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     498] linear =   113 [     53371] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0385E-10
+
+== TH FLOW =====================================================================
+ Step    494 Time=  2.41000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     499] linear =   107 [     53478] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8828E-11
+
+== TH FLOW =====================================================================
+ Step    495 Time=  2.41500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     500] linear =   109 [     53587] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1165E-10
+
+== TH FLOW =====================================================================
+ Step    496 Time=  2.42000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     501] linear =   106 [     53693] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0591E-10
+
+== TH FLOW =====================================================================
+ Step    497 Time=  2.42500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     502] linear =    67 [     53760] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0010E-10
+
+== TH FLOW =====================================================================
+ Step    498 Time=  2.43000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     503] linear =    99 [     53859] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0224E-10
+
+== TH FLOW =====================================================================
+ Step    499 Time=  2.43500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     504] linear =   117 [     53976] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.2520E-10
+
+== TH FLOW =====================================================================
+ Step    500 Time=  2.44000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     505] linear =   119 [     54095] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1291E-10
+
+== TH FLOW =====================================================================
+ Step    501 Time=  2.44500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     506] linear =    78 [     54173] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0604E-10
+
+== TH FLOW =====================================================================
+ Step    502 Time=  2.45000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     507] linear =   100 [     54273] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.9666E-11
+
+== TH FLOW =====================================================================
+ Step    503 Time=  2.45500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     508] linear =   108 [     54381] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0661E-10
+
+== TH FLOW =====================================================================
+ Step    504 Time=  2.46000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     509] linear =   120 [     54501] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6787E-11
+
+== TH FLOW =====================================================================
+ Step    505 Time=  2.46500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     510] linear =   112 [     54613] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1560E-10
+
+== TH FLOW =====================================================================
+ Step    506 Time=  2.47000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     511] linear =   114 [     54727] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.5767E-11
+
+== TH FLOW =====================================================================
+ Step    507 Time=  2.47500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     512] linear =   121 [     54848] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0208E-10
+
+== TH FLOW =====================================================================
+ Step    508 Time=  2.48000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     513] linear =   114 [     54962] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7305E-11
+
+== TH FLOW =====================================================================
+ Step    509 Time=  2.48500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     514] linear =   112 [     55074] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0449E-10
+
+== TH FLOW =====================================================================
+ Step    510 Time=  2.49000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     515] linear =   109 [     55183] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0225E-10
+
+== TH FLOW =====================================================================
+ Step    511 Time=  2.49500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     516] linear =   109 [     55292] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.0449E-11
+
+== TH FLOW =====================================================================
+ Step    512 Time=  2.50000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     517] linear =   122 [     55414] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0915E-10
+
+== TH FLOW =====================================================================
+ Step    513 Time=  2.50500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     518] linear =    93 [     55507] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7556E-11
+
+== TH FLOW =====================================================================
+ Step    514 Time=  2.51000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     519] linear =   119 [     55626] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2658E-11
+
+== TH FLOW =====================================================================
+ Step    515 Time=  2.51500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     520] linear =    95 [     55721] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.0688E-11
+
+== TH FLOW =====================================================================
+ Step    516 Time=  2.52000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     521] linear =   105 [     55826] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9917E-11
+
+== TH FLOW =====================================================================
+ Step    517 Time=  2.52500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     522] linear =    98 [     55924] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   8.7542E-11
+
+== TH FLOW =====================================================================
+ Step    518 Time=  2.53000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     523] linear =    78 [     56002] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.7662E-11
+
+== TH FLOW =====================================================================
+ Step    519 Time=  2.53500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     524] linear =   114 [     56116] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0523E-10
+
+== TH FLOW =====================================================================
+ Step    520 Time=  2.54000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     525] linear =   121 [     56237] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5451E-11
+
+== TH FLOW =====================================================================
+ Step    521 Time=  2.54500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     526] linear =   108 [     56345] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   9.3385E-11
+
+== TH FLOW =====================================================================
+ Step    522 Time=  2.55000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     527] linear =    76 [     56421] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0611E-10
+
+== TH FLOW =====================================================================
+ Step    523 Time=  2.55500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     528] linear =   108 [     56529] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.3220E-11
+
+== TH FLOW =====================================================================
+ Step    524 Time=  2.56000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     529] linear =   114 [     56643] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.5696E-11
+
+== TH FLOW =====================================================================
+ Step    525 Time=  2.56500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     530] linear =    81 [     56724] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0366E-10
+
+== TH FLOW =====================================================================
+ Step    526 Time=  2.57000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     531] linear =   100 [     56824] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0377E-10
+
+== TH FLOW =====================================================================
+ Step    527 Time=  2.57500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     532] linear =   109 [     56933] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0599E-10
+
+== TH FLOW =====================================================================
+ Step    528 Time=  2.58000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     533] linear =   107 [     57040] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.2323E-11
+
+== TH FLOW =====================================================================
+ Step    529 Time=  2.58500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     534] linear =    77 [     57117] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.9909E-11
+
+== TH FLOW =====================================================================
+ Step    530 Time=  2.59000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     535] linear =    88 [     57205] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0272E-10
+
+== TH FLOW =====================================================================
+ Step    531 Time=  2.59500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     536] linear =    77 [     57282] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1062E-10
+
+== TH FLOW =====================================================================
+ Step    532 Time=  2.60000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     537] linear =   113 [     57395] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0309E-10
+
+== TH FLOW =====================================================================
+ Step    533 Time=  2.60500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     538] linear =   111 [     57506] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0022E-10
+
+== TH FLOW =====================================================================
+ Step    534 Time=  2.61000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     539] linear =   127 [     57633] cuts =  0 [   0]
+  --> max chng: dpmx=   4.6566E-10 dtmpmx=   1.0722E-10
+
+== TH FLOW =====================================================================
+ Step    535 Time=  2.61500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     540] linear =   101 [     57734] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0170E-10
+
+== TH FLOW =====================================================================
+ Step    536 Time=  2.62000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     541] linear =   110 [     57844] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0333E-10
+
+== TH FLOW =====================================================================
+ Step    537 Time=  2.62500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     542] linear =   112 [     57956] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0659E-10
+
+== TH FLOW =====================================================================
+ Step    538 Time=  2.63000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     543] linear =   117 [     58073] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0421E-10
+
+== TH FLOW =====================================================================
+ Step    539 Time=  2.63500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     544] linear =   116 [     58189] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4012E-11
+
+== TH FLOW =====================================================================
+ Step    540 Time=  2.64000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     545] linear =    98 [     58287] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0832E-10
+
+== TH FLOW =====================================================================
+ Step    541 Time=  2.64500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     546] linear =   126 [     58413] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.4378E-11
+
+== TH FLOW =====================================================================
+ Step    542 Time=  2.65000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     547] linear =    79 [     58492] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0220E-10
+
+== TH FLOW =====================================================================
+ Step    543 Time=  2.65500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     548] linear =    95 [     58587] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0079E-10
+
+== TH FLOW =====================================================================
+ Step    544 Time=  2.66000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     549] linear =   102 [     58689] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0056E-10
+
+== TH FLOW =====================================================================
+ Step    545 Time=  2.66500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     550] linear =   123 [     58812] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6581E-11
+
+== TH FLOW =====================================================================
+ Step    546 Time=  2.67000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     551] linear =   111 [     58923] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0174E-10
+
+== TH FLOW =====================================================================
+ Step    547 Time=  2.67500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     552] linear =    82 [     59005] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0347E-10
+
+== TH FLOW =====================================================================
+ Step    548 Time=  2.68000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     553] linear =   111 [     59116] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0310E-10
+
+== TH FLOW =====================================================================
+ Step    549 Time=  2.68500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     554] linear =   108 [     59224] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0495E-10
+
+== TH FLOW =====================================================================
+ Step    550 Time=  2.69000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     555] linear =    97 [     59321] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.1162E-10
+
+== TH FLOW =====================================================================
+ Step    551 Time=  2.69500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     556] linear =   109 [     59430] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0536E-10
+
+== TH FLOW =====================================================================
+ Step    552 Time=  2.70000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     557] linear =   107 [     59537] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.5117E-11
+
+== TH FLOW =====================================================================
+ Step    553 Time=  2.70500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     558] linear =   107 [     59644] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0177E-10
+
+== TH FLOW =====================================================================
+ Step    554 Time=  2.71000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     559] linear =    93 [     59737] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.0324E-10
+
+== TH FLOW =====================================================================
+ Step    555 Time=  2.71500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     560] linear =   106 [     59843] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0403E-10
+
+== TH FLOW =====================================================================
+ Step    556 Time=  2.72000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     561] linear =   108 [     59951] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8330E-11
+
+== TH FLOW =====================================================================
+ Step    557 Time=  2.72500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     562] linear =   104 [     60055] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.8010E-11
+
+== TH FLOW =====================================================================
+ Step    558 Time=  2.73000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     563] linear =   104 [     60159] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   9.6582E-11
+
+== TH FLOW =====================================================================
+ Step    559 Time=  2.73500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     564] linear =   117 [     60276] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   9.8565E-11
+
+== TH FLOW =====================================================================
+ Step    560 Time=  2.74000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     565] linear =   100 [     60376] cuts =  0 [   0]
+  --> max chng: dpmx=   2.3283E-10 dtmpmx=   1.0440E-10
+
+== TH FLOW =====================================================================
+ Step    561 Time=  2.74500E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     566] linear =   124 [     60500] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1562E-10
+
+== TH FLOW =====================================================================
+ Step    562 Time=  2.75000E+01 Dt=  5.00000E-02 [y] snes_conv_reason:   11
+  newton =   1 [     567] linear =   109 [     60609] cuts =  0 [   0]
+  --> max chng: dpmx=   3.4925E-10 dtmpmx=   1.1379E-10
+
+ Wall Clock Time:  1.9265E+02 [sec]   3.2109E+00 [min]   5.3515E-02 [hr]
