@@ -1,0 +1,5 @@
+SOURCE_SINK heatpump_inject0
+  FLOW_CONDITION injection
+  REGION heatpump_inject0
+END
+

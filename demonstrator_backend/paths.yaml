@@ -1,0 +1,3 @@
+default_raw_dir: /scratch/pelzerja_demonstrator_studis/datasets_domain
+datasets_prepared_dir: /scratch/pelzerja_demonstrator_studis/datasets_prepared_1hpnn
+datasets_prepared_dir_2hp: /scratch/pelzerja_demonstrator_studis/datasets_prepared_2hpnn
