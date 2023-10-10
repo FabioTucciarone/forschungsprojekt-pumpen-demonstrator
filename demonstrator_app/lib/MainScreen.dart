@@ -16,19 +16,19 @@ class MainSlide extends StatelessWidget {
                 ));
             }),
         ),
-        backgroundColor: Colors.amber,
+        backgroundColor: Color.fromARGB(255, 33, 128, 231),
         body: const Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: [
               OutputBox(name: "erste Outputboxx",),
-              SizedBox(height: 100,),
+              SizedBox(height: 50,),
               OutputBox(name: "zweite Outputboxx",),
-              SizedBox(height: 100,),
+              SizedBox(height: 50,),
               SliderBox(text: "erster Slider.",),
-              SizedBox(height: 100,),
+              SizedBox(height: 50,),
               SliderBox(text: "zweiter Slider"),
-              SizedBox(height: 100,),
+              SizedBox(height: 50,),
               CheckboxBox(),
               
               
@@ -61,6 +61,25 @@ class _SliderBoxState extends State<SliderBox> {
     return Color.fromRGBO(redValue, 0, blueValue, 1.0);
   }
 
+  LinearGradient getGradientFromValue(double value) {
+    final colorStops = [
+      ColorStop(0.0, Colors.red),
+      ColorStop(1.0, Colors.blue),
+    ];
+
+    // Create a gradient with color stops based on the slider value
+    final gradient = LinearGradient(
+      colors: colorStops.map((colorStop) => colorStop.color).toList(),
+      stops: colorStops
+          .map((colorStop) => (value * colorStop.stop).clamp(0.0, 1.0))
+          .toList(),
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+    );
+
+    return gradient;
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Column(
@@ -70,13 +89,18 @@ class _SliderBoxState extends State<SliderBox> {
               decoration: BoxDecoration(
                 color: getColorFromValue(_sliderValue),
               ),),
-      Slider(
+      
+      ShaderMask(shaderCallback: (rect) {
+                return getGradientFromValue(_sliderValue).createShader(rect);
+              },
+              child: Slider(
         activeColor: getColorFromValue(_sliderValue),
         value: _sliderValue,
         onChanged: (value){ setState(() {
           _sliderValue=value;
         });},
-        )]
+        ),)
+      ]
       
     );
   }
@@ -115,15 +139,34 @@ class _CheckboxBoxState extends State<CheckboxBox> {
     return ColoredBox(
       color: Colors.green, 
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Checkbox(value: isChecked1, onChanged: (newBool){ setState(() {
-            isChecked1=newBool;
-            isChecked2=false;
-          });},),
-          Checkbox(value: isChecked2, onChanged: (newBool){ setState(() {
-            isChecked2=newBool;
-            isChecked1=false;
-          });},)
+          Text("Modell", textScaleFactor: 2,),
+          Column(
+            children: [
+              Text("Neuronales Netzwerk 1", textScaleFactor: 1.5,),
+              Checkbox(value: isChecked1, onChanged: (newBool){ setState(() {
+                isChecked1=newBool;
+                isChecked2=false;
+              });},),
+            ],
+          ),
+          Column(
+            children: [
+              Text("Neuronales Netzwerk 2", textScaleFactor: 1.5,),
+              Checkbox(value: isChecked2, onChanged: (newBool){ setState(() {
+                isChecked2=newBool;
+                isChecked1=false;
+              });},),
+            ],
+          )
           ],),);
   }
+}
+
+class ColorStop {
+  final double stop;
+  final Color color;
+
+  ColorStop(this.stop, this.color);
 }
