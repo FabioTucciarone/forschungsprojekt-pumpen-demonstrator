@@ -30,6 +30,8 @@ class MainSlide extends StatelessWidget {
               SliderBox(text: "zweiter Slider"),
               SizedBox(height: 50,),
               CheckboxBox(),
+              SizedBox(height: 50,),
+              ElevatedButton(onPressed: anwenden(), child: Text("Anwenden",textScaleFactor: 2,))
               
               
         
@@ -170,3 +172,5 @@ class ColorStop {
 
   ColorStop(this.stop, this.color);
 }
+
+void anwenden(){}
