@@ -91,7 +91,7 @@ class BackendConnection {
   /// 
   /// Returns the json body of the response. (for now) TODO: Read paper and code of model.
   Future<String> sendInputData(double permeability, double density) async {
-    if(!readyForHTTPRequests) {
+    if(!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
     }
 
