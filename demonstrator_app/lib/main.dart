@@ -42,7 +42,7 @@ class MainApp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Text('Durchlässigkeit'),
-                PressureSlider(1000),
+                PressureSlider(800, 870000, 910000),
                 Text('Position der Wärmepumpe'),
               ],
             ),
@@ -146,8 +146,10 @@ class DrawerDemonstrator extends StatelessWidget {
 }
 
 class PressureSlider extends StatefulWidget {
-  final double width;
-  const PressureSlider(this.width);
+  final double sliderWidth;
+  final double start;
+  final double end;
+  const PressureSlider(this.sliderWidth, this.start, this.end);
 
   @override
   State<PressureSlider> createState() => _PressureSliderState();
@@ -173,13 +175,16 @@ class _PressureSliderState extends State<PressureSlider> {
   }
 
   double determineValue(double sliderPos) {
-    //...
-    return 0;
+    double diff = widget.end - widget.start;
+    double interval = widget.sliderWidth / diff;
+    int i = (sliderPos / interval).round();
+    double value = widget.start + i;
+    return value;
   }
 
   void correctingPosition(double position) {
-    if (position > widget.width) {
-      position = widget.width;
+    if (position > widget.sliderWidth) {
+      position = widget.sliderWidth;
     }
     if (position < 0) {
       position = 0;
@@ -195,8 +200,8 @@ class _PressureSliderState extends State<PressureSlider> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        const Text(
-          'Druck: ',
+        Text(
+          'Druck: $currentValue',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Center(
@@ -214,7 +219,7 @@ class _PressureSliderState extends State<PressureSlider> {
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Container(
-                width: 800,
+                width: widget.sliderWidth,
                 height: 50,
                 decoration: BoxDecoration(
                   border: Border.all(width: 0.5, color: Colors.black),
@@ -264,8 +269,12 @@ class SliderThumb extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawLine(Offset(pos, 0), Offset(pos, size.height),
-        Paint()..color = Colors.black);
+    canvas.drawLine(
+        Offset(pos, -5),
+        Offset(pos, size.height),
+        Paint()
+          ..color = Colors.black
+          ..strokeWidth = 2.0);
   }
 
   @override
