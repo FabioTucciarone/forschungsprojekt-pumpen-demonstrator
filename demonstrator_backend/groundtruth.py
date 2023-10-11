@@ -1,14 +1,13 @@
 import os
 import pathlib
-import time
-import h5py
 import numpy as np
 import sys
 import logging 
 import matplotlib.pyplot as plt
-import numpy
-import torch
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 
+# Achtung, bisher alles noch Tests, die höchstwahrscheinlich nur bei mir lokal funktionieren
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 import prepare_dataset
 from networks.models import load_model
@@ -66,21 +65,22 @@ class DataSet:
 
 
     # Test: Temperaturfeld des Trainingsdatensatzes anzeigen
-    def load_run(self, n: int):
-        data = prepare_dataset.load_data(self.dataset_path.joinpath(f"RUN_{n}").joinpath("pflotran.h5"), "   4 Time  2.75000E+01 y", {"Temperature [C]" : "?"}, self.dimensions)
-        plt.imshow(data["Temperature [C]"],interpolation="none", cmap="RdBu_r")
-        plt.colorbar()
-        plt.show()
+    def get_temperature_field(self, run_index: int):
+        data = prepare_dataset.load_data(self.dataset_path.joinpath(f"RUN_{run_index}").joinpath("pflotran.h5"), "   4 Time  2.75000E+01 y", {"Temperature [C]" : ""}, self.dimensions)
+        fig = Figure(figsize=(10, 2))
+        axis = fig.add_subplot(1, 1, 1)
+        axis.imshow(data["Temperature [C]"],interpolation="none", cmap="RdBu_r")
+        return fig
 
-inputs_prep = "pksi" #??
-model_1HP = load_model({"model_choice": "unet", "in_channels": len(inputs_prep)}, "/mnt/d/Entwicklung/02 Studium/Forschungsprojekt/simulation_files/pksi1000/current_unet_dataset_2d_small_1000dp_pksi_v1", "model", "cpu")
+# inputs_prep = "pksi" #??
+# model_1HP = load_model({"model_choice": "unet", "in_channels": len(inputs_prep)}, "/mnt/d/Entwicklung/02 Studium/Forschungsprojekt/simulation_files/pksi1000/current_unet_dataset_2d_small_1000dp_pksi_v1", "model", "cpu")
 
-logging.basicConfig(level=logging.INFO)
-d = DataSet()
-d.read_dataset("/mnt/d/Entwicklung/02 Studium/Forschungsprojekt/simulation_files/datasets/datasets_raw_1000_1HP")
-#d.read_dataset("D:\\Entwicklung\\02 Studium\\Forschungsprojekt\\simulation_files\\datasets\\datasets_raw_1000_1HP") # Testpfad
-#d.get_closest(10**(-9),-0.003)
-#d.load_run(d.get_closest(10**(-9),-0.003))
+# logging.basicConfig(level=logging.INFO)
+# d = DataSet()
+# d.read_dataset("/mnt/d/Entwicklung/02 Studium/Forschungsprojekt/simulation_files/datasets/datasets_raw_1000_1HP")
+# d.read_dataset("D:\\Entwicklung\\02 Studium\\Forschungsprojekt\\simulation_files\\datasets\\datasets_raw_1000_1HP") # Testpfad
+# d.get_closest(10**(-9),-0.003)
+# d.load_run(d.get_closest(10**(-9),-0.003))
 
 
 
