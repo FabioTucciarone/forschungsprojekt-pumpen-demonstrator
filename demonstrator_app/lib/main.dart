@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'Data.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   /*
    * "Notifier"-Widgets sind für alle in der Baumhierarchie absteigenden Widgets sichtbar.
@@ -22,56 +22,11 @@ class MainApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Demonstrator'),
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Demonstrator'),
-              ),
-              ListTile(
-                title: const Text('Start'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Projekterläuterung'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: const DrawerDemonstrator(),
         body: Column(
           //crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Container(
-              width: 1000,
-              height: 100,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.blue,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 235, 229, 229),
-                    offset: Offset(10.0, 10.0),
-                  ),
-                ],
-              ),
-              child: const Center(
-                  child: Text(
-                'Einführungstext: ...',
-              )),
-            ),
             ChangeNotifierProvider(
               create: (context) => InputData(),
               child: ChangeNotifierProvider(
@@ -103,9 +58,88 @@ class MainApp extends StatelessWidget {
                 ButtonAnalytical()
               ],
             ),
-            ButtonAnwenden(),
+            const ButtonAnwenden(),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ProjekterlaeuterungApp extends StatelessWidget {
+  const ProjekterlaeuterungApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Demonstrator'),
+        ),
+        drawer: const DrawerDemonstrator(),
+        body: Center(
+          child: Container(
+            width: 1000,
+            height: 100,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.blue,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromARGB(255, 235, 229, 229),
+                  offset: Offset(10.0, 10.0),
+                ),
+              ],
+            ),
+            child: const Center(
+                child: Text(
+              'Einführungstext: ...',
+            )),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DrawerDemonstrator extends StatelessWidget {
+  const DrawerDemonstrator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Text('Demonstrator'),
+          ),
+          ListTile(
+            title: const Text('Start'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MainApp()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Projekterläuterung'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ProjekterlaeuterungApp()),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
