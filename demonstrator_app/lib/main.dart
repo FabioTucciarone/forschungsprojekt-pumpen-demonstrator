@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 import 'Data.dart';
 
 void main() {
-  runApp(Introduction());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   /*
    * "Notifier"-Widgets sind für alle in der Baumhierarchie absteigenden Widgets sichtbar.
@@ -23,56 +23,11 @@ class MainApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Demonstrator'),
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Demonstrator'),
-              ),
-              ListTile(
-                title: const Text('Start'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Projekterläuterung'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: const DrawerDemonstrator(),
         body: Column(
           //crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Container(
-              width: 1000,
-              height: 100,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.blue,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 235, 229, 229),
-                    offset: Offset(10.0, 10.0),
-                  ),
-                ],
-              ),
-              child: const Center(
-                  child: Text(
-                'Einführungstext: ...',
-              )),
-            ),
             ChangeNotifierProvider(
               create: (context) => InputData(),
               child: ChangeNotifierProvider(
@@ -88,7 +43,7 @@ class MainApp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Text('Durchlässigkeit'),
-                Text('Druck'),
+                PressureSlider(800, 870000, 910000),
                 Text('Position der Wärmepumpe'),
               ],
             ),
@@ -104,11 +59,228 @@ class MainApp extends StatelessWidget {
                 ButtonAnalytical()
               ],
             ),
-            ButtonAnwenden(),
+            const ButtonAnwenden(),
           ],
         ),
       ),
     );
+  }
+}
+
+class ProjekterlaeuterungApp extends StatelessWidget {
+  const ProjekterlaeuterungApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Demonstrator'),
+        ),
+        drawer: const DrawerDemonstrator(),
+        body: Center(
+          child: Container(
+            width: 1000,
+            height: 100,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.blue,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromARGB(255, 235, 229, 229),
+                  offset: Offset(10.0, 10.0),
+                ),
+              ],
+            ),
+            child: const Center(
+                child: Text(
+              'Einführungstext: ...',
+            )),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DrawerDemonstrator extends StatelessWidget {
+  const DrawerDemonstrator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Text('Demonstrator'),
+          ),
+          ListTile(
+            title: const Text('Start'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MainApp()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Projekterläuterung'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ProjekterlaeuterungApp()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PressureSlider extends StatefulWidget {
+  final double sliderWidth;
+  final double start;
+  final double end;
+  const PressureSlider(this.sliderWidth, this.start, this.end);
+
+  @override
+  State<PressureSlider> createState() => _PressureSliderState();
+}
+
+class _PressureSliderState extends State<PressureSlider> {
+  final List<Color> colorsGradient = [
+    const Color.fromARGB(255, 182, 2, 2),
+    const Color.fromARGB(255, 255, 0, 0),
+    const Color.fromARGB(255, 244, 153, 153),
+    const Color.fromARGB(255, 255, 255, 255),
+    const Color.fromARGB(255, 64, 141, 235),
+    const Color.fromARGB(255, 0, 115, 255),
+    const Color.fromARGB(255, 2, 69, 152),
+  ];
+  double currentValue = 870000;
+  double sliderPos = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    currentValue = determineValue(sliderPos);
+  }
+
+  double determineValue(double sliderPos) {
+    double diff = widget.end - widget.start;
+    double interval = widget.sliderWidth / diff;
+    int i = (sliderPos / interval).round();
+    double value = widget.start + i;
+    return value;
+  }
+
+  void correctingPosition(double position) {
+    if (position > widget.sliderWidth) {
+      position = widget.sliderWidth;
+    }
+    if (position < 0) {
+      position = 0;
+    }
+    setState(() {
+      sliderPos = position;
+      currentValue = determineValue(sliderPos);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Text(
+          'Druck: $currentValue',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Center(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onHorizontalDragStart: (DragStartDetails details) {
+              correctingPosition(details.localPosition.dx);
+            },
+            onHorizontalDragUpdate: (DragUpdateDetails details) {
+              correctingPosition(details.localPosition.dx);
+            },
+            onTapDown: (TapDownDetails details) {
+              correctingPosition(details.localPosition.dx);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Container(
+                width: widget.sliderWidth,
+                height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.5, color: Colors.black),
+                  gradient: LinearGradient(colors: colorsGradient),
+                ),
+                child: CustomPaint(
+                  painter: SliderThumb(sliderPos),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+    /*return SliderTheme(
+        data: SliderTheme.of(context).copyWith(
+          inactiveTrackColor: Colors.white,
+          activeTrackColor: Colors.red,
+          thumbColor: Colors.black,
+          overlayColor: Colors.grey,
+          thumbShape: const RoundSliderThumbShape(
+            enabledThumbRadius: 15,
+            pressedElevation: 8,
+          ),
+          overlayShape: const RoundSliderOverlayShape(overlayRadius: 30),
+          trackShape: const RectangularSliderTrackShape(),
+          trackHeight: 10,
+        ),
+        child: Slider(
+          value: currentValue,
+          min: 870000,
+          max: 910000,
+          divisions: 1000,
+          label: '${currentValue.round()}',
+          onChanged: (double value) {
+            setState(() {
+              currentValue = value;
+            });
+          },
+        ));*/
+  }
+}
+
+class SliderThumb extends CustomPainter {
+  final double pos;
+  SliderThumb(this.pos);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawLine(
+        Offset(pos, -5),
+        Offset(pos, size.height),
+        Paint()
+          ..color = Colors.black
+          ..strokeWidth = 2.0);
+  }
+
+  @override
+  bool shouldRepaint(SliderThumb oldThumb) {
+    return true;
   }
 }
 
