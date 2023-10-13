@@ -2,6 +2,7 @@ import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:demonstrator_app/Sliderbox.dart';
+import 'package:demonstrator_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -42,9 +43,7 @@ class MainSlide extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
-                  SliderBox(
-                    text: "erster Slider.",
-                  ),
+                  PressureSlider(800, 870000, 910000),
                   SizedBox(
                     height: 10,
                   ),

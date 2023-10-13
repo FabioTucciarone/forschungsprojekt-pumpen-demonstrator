@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'Data.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const Introduction());
 }
 
 class MainApp extends StatelessWidget {
