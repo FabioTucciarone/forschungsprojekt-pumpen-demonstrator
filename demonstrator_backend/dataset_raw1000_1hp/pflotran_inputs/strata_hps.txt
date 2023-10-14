@@ -1,5 +1,0 @@
-STRATA
-  REGION heatpump_inject0
-  MATERIAL gravel_inj
-END
-

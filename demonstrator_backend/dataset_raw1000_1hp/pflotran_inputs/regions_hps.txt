@@ -1,4 +1,0 @@
-REGION heatpump_inject0
-  FILE heatpump_inject0.vs
-END
-
