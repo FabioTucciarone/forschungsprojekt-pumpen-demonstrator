@@ -64,6 +64,7 @@ class DataSet:
         
         return closest_run
 
+
 # ignoriere mal alles oben!
 
 # Achtung paths.yaml muss jetzt in diesem Ordner sein
@@ -75,7 +76,9 @@ def test():
     predicted_temperature = results[0]
     groundtruth_temperature = results[1]
     error_temperature = results[2]
-
+    predicted_temperature.savefig("predicted_temperature.png", format="png")
+    groundtruth_temperature.savefig("groundtruth_temperature.png", format="png")
+    error_temperature.savefig("error_temperature.png", format="png")
 
 test()
 

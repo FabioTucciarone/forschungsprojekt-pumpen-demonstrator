@@ -2,8 +2,8 @@ default_raw_dir:                        /mnt/d/Entwicklung/02 Studium/Forschungs
 datasets_prepared_dir:                  /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/datasets_prepared # where the prepared 1st stage data is stored
 datasets_raw_domain_dir:                /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/datasets_prepared
 datasets_prepared_domain_dir:           /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/datasets_prepared
-prepared_1hp_best_models_and_data_dir:  /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/test_nn/1HP_NN_preparation_BEST_models_and_data
-models_2hp_dir:                         /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/1HP_NN/runs
+prepared_1hp_best_models_and_data_dir:  /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/1HP_NN_preparation_BEST_models_and_data
+models_2hp_dir:                         /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/models_2hpnn/runs
 datasets_prepared_dir_2hp:              /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/datasets_prepared
 
 
