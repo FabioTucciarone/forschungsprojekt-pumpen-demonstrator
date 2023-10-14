@@ -14,7 +14,6 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 
 from main import run_from_demonstrator 
 
-
 class DataSet:
 
     permeability_values = []
@@ -80,7 +79,6 @@ def test():
     predicted_temperature.savefig("predicted_temperature.png", format="png")
     groundtruth_temperature.savefig("groundtruth_temperature.png", format="png")
     error_temperature.savefig("error_temperature.png", format="png")
-
 
 test()
 
