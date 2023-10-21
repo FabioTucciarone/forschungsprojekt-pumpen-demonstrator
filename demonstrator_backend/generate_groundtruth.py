@@ -6,11 +6,14 @@ import torch
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from torch.utils.tensorboard import SummaryWriter
+
+from scipy.spatial import Delaunay
+
 # tensorboard --logdir=runs/ --host localhost --port 8088
 
 # Sollte mit Pfadspezifikation aus Notion funktionieren
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
-import preprocessing.prepare_1ststage as prep
+import preprocessing.prepare_1ststage as prepare
 
 
 def generate_groundtruth_closest(permeability: float, pressure: float):
@@ -19,7 +22,7 @@ def generate_groundtruth_closest(permeability: float, pressure: float):
     closest_dp = index_of_closest_datapoints(permeability_values, pressure_values, permeability, pressure)
 
     dp_path = os.path.join(path_to_dataset, f"RUN_{closest_dp}", "pflotran.h5")
-    return prep.load_data(dp_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], (20, 256, 1)) # TODO: Dimensionen aus Pflortran-Einstellungen holen
+    return prepare.load_data(dp_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], (20, 256, 1)) # TODO: Dimensionen aus Pflortran-Einstellungen holen
 
 
 def index_of_closest_datapoints(permeability_values, pressure_values, permeability, pressure):
@@ -54,72 +57,58 @@ def read_input_lists(path_to_dataset):
 # ACHTUNG: Hier funktioniert gar nichts!!
 # alles nur grobe Tests
 
-def show_contours_of(run_index1):
+def distance(p1, p2):
+    return np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+
+def triangulate_data_point(permeability: float, pressure: float, show_triangulation=False):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    pflotran_settings = prep.get_pflotran_settings(path_to_dataset)
+    permeability_values, pressure_values = read_input_lists(path_to_dataset)
 
-    dp1_path = os.path.join(path_to_dataset, f"RUN_{run_index1}", "pflotran.h5")
+    x = [permeability, pressure]
 
-    dims = np.array(pflotran_settings["grid"]["ncells"])
-    print(f"dimensions = {dims}")
+    simulated_points = np.c_[permeability_values, pressure_values]
+    triangulation = Delaunay(simulated_points)
+    simplex_index = triangulation.find_simplex(x)
 
-    fig, axes = plt.subplots(1, 1, sharex=True)
+    if simplex_index == -1:
+        return generate_groundtruth_closest(permeability_values, pressure_values)
 
-    y1 = prep.load_data(dp1_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], dims)
-    y1 = y1["Temperature [C]"].detach().cpu().squeeze()
+    point_indices = triangulation.simplices[simplex_index]
 
-    c2 = plt.contour(y1)
-    segments = c2.allsegs[0]
+    p1 = simulated_points[point_indices[0]]
+    p2 = simulated_points[point_indices[1]]
+    p3 = simulated_points[point_indices[2]]
 
-    plt.show()
+    w1 = distance(x, p2) * distance(x, p3) / (distance(p1, p2) * distance(p1, p3))
+    w2 = distance(x, p1) * distance(x, p3) / (distance(p2, p1) * distance(p2, p3))
+    w3 = distance(x, p1) * distance(x, p2) / (distance(p3, p1) * distance(p3, p2))
+     
+    interpolate_experimental(point_indices, (w1, w2, w3))
 
-    return
-
-    contour = np.ndarray((1,2))
-    if len(segments) > 0:
-        contour[0] = segments[-1][0]
-
-    for seg in segments:
-        contour = np.concatenate((seg, contour))
-
-    for i, seg in enumerate(segments):
-        plt.plot(seg[:,0], seg[:,1], '-', marker='.', label=i)
-    plt.plot(contour[:,0], contour[:,1], '-', marker='.', color='r', label=0)
-
-    plt.legend(fontsize=9, loc='best')
-
-    # c2.allsegs[Level][Segment der Linie falls unterbrochen][Punkt auf der Linie]
-    # find_nearest_contour(x, y, indices=None, pixel=True) ???
-
-    # Konturenproblem: Große Fahnen haben teilweise nicht mehr rettbare Konturen, kleine Fahnen teilweise keine
+    if show_triangulation:
+        plt.plot(simulated_points[:,0], simulated_points[:,1], '+')
+        plt.plot(permeability, pressure, 'ro')
+        for k in range(0, 3):
+            plt.plot(simulated_points[point_indices[k]][0], simulated_points[point_indices[k]][1], 'ro')
+        plt.show()
 
 
-def triangulate_data_point(permeability: float, pressure: float):
-    pass
-
-
-def interpolate_experimental(run_index1: int, run_index2: int, run_index3: int, weight1: float = 1/3, weight2: float = 1/3, weight3: float = 1/3, show_result: bool = True):
+def interpolate_experimental(run_indices: tuple[int,int,int], weights: tuple[float, float, float], show_result: bool = True):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    pflotran_settings = prep.get_pflotran_settings(path_to_dataset)
+    pflotran_settings = prepare.get_pflotran_settings(path_to_dataset)
 
     # Load temperature fields
-
-    dp1_path = os.path.join(path_to_dataset, f"RUN_{run_index1}", "pflotran.h5")
-    dp2_path = os.path.join(path_to_dataset, f"RUN_{run_index2}", "pflotran.h5")
-    dp3_path = os.path.join(path_to_dataset, f"RUN_{run_index3}", "pflotran.h5")
+    dp_paths = [[], [], []]
+    dp_paths[k] = os.path.join(path_to_dataset, f"RUN_{run_indices[k]}", "pflotran.h5")
 
     dims = np.array(pflotran_settings["grid"]["ncells"])
 
     temp_fields = [[], [], []]
 
-    temp_fields[0] = prep.load_data(dp1_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], dims)
-    temp_fields[0] = temp_fields[0]["Temperature [C]"].detach().cpu().squeeze().numpy()
-
-    temp_fields[1] = prep.load_data(dp2_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], dims)
-    temp_fields[1] = temp_fields[1]["Temperature [C]"].detach().cpu().squeeze().numpy()
-
-    temp_fields[2] = prep.load_data(dp3_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], dims)
-    temp_fields[2] = temp_fields[2]["Temperature [C]"].detach().cpu().squeeze().numpy()
+    for k in range(0, 3):
+        temp_fields[k] = prepare.load_data(dp_paths[k], "   4 Time  2.75000E+01 y", ["Temperature [C]"], dims)
+        temp_fields[k] = temp_fields[k]["Temperature [C]"].detach().cpu().squeeze().numpy()
     
     hp_pos = [9, 23] # TODO: Aus Datei einlesen
     base_temperature = 10.6 # TODO: Aus Datei einlesen
@@ -129,7 +118,7 @@ def interpolate_experimental(run_index1: int, run_index2: int, run_index3: int, 
     ybounds = [[], [], []]
     xbounds = [[], [], []]
 
-    if run_index1 != 0 or run_index2 != 3 or run_index3 != 4:  # TODO: Ausrechnen
+    if run_indices[0] != 0 or run_indices[1] != 3 or run_indices[2] != 4:  # TODO: Ausrechnen
         return
     ybounds[0] = [22, 255]
     xbounds[0] = [6, 11]
@@ -147,8 +136,8 @@ def interpolate_experimental(run_index1: int, run_index2: int, run_index3: int, 
     transformed_temp_fields = [np.ndarray((dims[0], dims[1])) for i in range(3)]
     result_temp_field = np.ndarray((dims[0], dims[1]))
 
-    ybounds_res = [weight1*ybounds[0][0] + weight2*ybounds[1][0] + weight3*ybounds[2][0], weight1*ybounds[0][1] + weight2*ybounds[1][1] + weight3*ybounds[2][1]]
-    xbounds_res = [weight1*xbounds[0][0] + weight2*xbounds[1][0] + weight3*xbounds[2][0], weight1*xbounds[0][1] + weight2*xbounds[1][1] + weight3*xbounds[2][1]]
+    ybounds_res = [weights[0]*ybounds[0][0] + weights[1]*ybounds[1][0] + weights[2]*ybounds[2][0], weights[0]*ybounds[0][1] + weights[1]*ybounds[1][1] + weights[2]*ybounds[2][1]]
+    xbounds_res = [weights[0]*xbounds[0][0] + weights[1]*xbounds[1][0] + weights[2]*xbounds[2][0], weights[0]*xbounds[0][1] + weights[1]*xbounds[1][1] + weights[2]*xbounds[2][1]]
 
     for j in range(0, 256):
         for i in range(0, 20):
@@ -190,4 +179,5 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         return y
 
 if __name__ == "__main__":
-    interpolate_experimental(0, 3, 4)
+    #interpolate_experimental(0, 3, 4)
+    triangulate_data_point(3.8e-9, -0.0024)
