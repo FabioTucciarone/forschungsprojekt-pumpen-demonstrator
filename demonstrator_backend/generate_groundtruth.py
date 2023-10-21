@@ -122,7 +122,7 @@ def interpolate_experimental(run_index1: int, run_index2: int, run_index3: int, 
     temp_fields[2] = temp_fields[2]["Temperature [C]"].detach().cpu().squeeze().numpy()
     
     hp_pos = [9, 23] # TODO: Aus Datei einlesen
-    base_temperature = torch.min(temp_fields[0]) # TODO: Aus Datei einlesen
+    base_temperature = 10.6 # TODO: Aus Datei einlesen
 
     # Calculate rough bounding boxes around heat plumes
 
@@ -139,18 +139,13 @@ def interpolate_experimental(run_index1: int, run_index2: int, run_index3: int, 
     xbounds[2] = [0, 19]
 
     fig, axes = plt.subplots(7, 1, sharex=True)
-    # position y1[9][23] = 20 # berechne aus settings.yaml
-    plt.sca(axes[0])
-    plt.imshow(temp_fields[0], cmap="RdBu_r")
 
-    plt.sca(axes[1])
-    plt.imshow(temp_fields[1], cmap="RdBu_r")  
-
-    plt.sca(axes[2])
-    plt.imshow(temp_fields[2], cmap="RdBu_r")
+    for k in range(0, 3):
+        plt.sca(axes[k])
+        plt.imshow(temp_fields[k], cmap="RdBu_r")
 
     transformed_temp_fields = [np.ndarray((dims[0], dims[1])) for i in range(3)]
-    result_temp_field = np.ndarray((dims[0],dims[1]))
+    result_temp_field = np.ndarray((dims[0], dims[1]))
 
     ybounds_res = [weight1*ybounds[0][0] + weight2*ybounds[1][0] + weight3*ybounds[2][0], weight1*ybounds[0][1] + weight2*ybounds[1][1] + weight3*ybounds[2][1]]
     xbounds_res = [weight1*xbounds[0][0] + weight2*xbounds[1][0] + weight3*xbounds[2][0], weight1*xbounds[0][1] + weight2*xbounds[1][1] + weight3*xbounds[2][1]]
@@ -158,27 +153,18 @@ def interpolate_experimental(run_index1: int, run_index2: int, run_index3: int, 
     for j in range(0, 256):
         for i in range(0, 20):
             for k in range(0, 3):
-                transformed_temp_fields[k][i][j] = get_result(base_temperature, transformed_temp_fields[k], i, j, xbounds[0], ybounds[0], xbounds_res, ybounds_res)
-                transformed_temp_fields[k][i][j] = get_result(base_temperature, transformed_temp_fields[k], i, j, xbounds[1], ybounds[1], xbounds_res, ybounds_res)
-                transformed_temp_fields[k][i][j] = get_result(base_temperature, transformed_temp_fields[k], i, j, xbounds[2], ybounds[2], xbounds_res, ybounds_res)
+                transformed_temp_fields[k][i][j] = get_result(base_temperature, temp_fields[k], i, j, xbounds[k], ybounds[k], xbounds_res, ybounds_res)
 
-    plt.sca(axes[3])
-    plt.imshow(transformed_temp_fields[0], cmap="RdBu_r")
-
-    plt.sca(axes[4])
-    plt.imshow(transformed_temp_fields[1], cmap="RdBu_r")
-
-    plt.sca(axes[5])
-    plt.imshow(transformed_temp_fields[2], cmap="RdBu_r")
+    for k in range(0, 3):
+        plt.sca(axes[3 + k])
+        plt.imshow(transformed_temp_fields[k], cmap="RdBu_r")
 
     for j in range(0, 256):
         for i in range(0, 20):
-            result[i][j] = transformed_temp_fields[0][i][j]*weight1 + transformed_temp_fields[1][i][j]*weight2 + transformed_temp_fields[2][i][j]*weight3
+            result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weight1 + transformed_temp_fields[1][i][j]*weight2 + transformed_temp_fields[2][i][j]*weight3
 
     plt.sca(axes[6])
-    sigma = [1.5, 1.5]
-    result = sp.ndimage.filters.gaussian_filter(result, sigma, mode='constant', cval=base_temperature)
-    plt.imshow(result, cmap="RdBu_r")
+    plt.imshow(result_temp_field, cmap="RdBu_r")
     plt.show()
 
 
@@ -196,11 +182,12 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         jt = pos[1] + (pos[1] - ybounds[1]) / (pos[1] - ybounds_res[1]) * (j - pos[1])
 
     # y = y_pump_spline.ev([it],[jt])[0]
-    y = sp.interpolate.interpn((range(20), range(256)), values.numpy(), [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
+    y = sp.interpolate.interpn((range(20), range(256)), values, [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
 
     if y < base_temperature: # einfach Abschneiden liefert ganz schlechte Ergebnisse
         return base_temperature
     else:
         return y
 
-# show_isoline_graphs(0, 3, 4)
+if __name__ == "__main__":
+    interpolate_experimental(0, 3, 4)
