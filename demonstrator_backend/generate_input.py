@@ -13,6 +13,11 @@ from torch import load
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
 from main import demonstrator_run_1st_stage 
+#todo:
+    #test() umschreiben
+    #Eingabe(durchl, druck) von Flask aufrufen
+    #Rückgabe drei Bilder
+    #demonstartor backend verkn mit generate Input
 
 # Achtung paths.yaml muss jetzt in diesem Ordner sein
 def test():
@@ -43,7 +48,20 @@ def test():
     canvas_manager.canvas.figure = error_temperature
     predicted_temperature.set_canvas(canvas_manager.canvas)
     plt.show()
-test()
+
+def single_point_images(permeability: float, pressure: float):
+    "Aufrufen des manuell erstellten ein-Datenpunkt-Datensatzes im .h5-Format"
+    #C:\UniProgramme\data\datasets_raw\dataset_raw_demonstrator_input_1dp\inputs
+    path_to_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data")
+    path_to_1hp_model = os.path.join(path_to_data, "models_1hpnn","gksi1000","current_unet_dataset_2d_small_1000dp_gksi_v7")
+
+    results = demonstrator_run_1st_stage("dataset_raw_demonstrator_input_1dp", path_to_1hp_model, permeability, pressure)
+
+    predicted_temperature = results[0]
+    groundtruth_temperature = results[1]
+    error_temperature = results[2]
+
+    return results
 
 
 

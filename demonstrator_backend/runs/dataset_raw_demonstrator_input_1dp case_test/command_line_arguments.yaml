@@ -1,11 +1,11 @@
 case: test
 dataset_prep: dataset_raw_demonstrator_input_1dp inputs_gksi
 dataset_raw: dataset_raw_demonstrator_input_1dp
-datasets_dir: /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/data/datasets_prepared
+datasets_dir: /mnt/c/UniProgramme/data/datasets_prepared
 destination_dir: dataset_raw_demonstrator_input_1dp case_test
 device: cpu
 epochs: 10000
 inputs: gksi
-model: /mnt/d/Entwicklung/02 Studium/Forschungsprojekt/forschungsprojekt-pumpen-demonstrator/demonstrator_backend/../../data/models_1hpnn/gksi1000/current_unet_dataset_2d_small_1000dp_gksi_v7
+model: /mnt/c/UniProgramme/forschungsprojekt-pumpen-demonstrator/demonstrator_backend/../../data/models_1hpnn/gksi1000/current_unet_dataset_2d_small_1000dp_gksi_v7
 test: false
 visualize: true
