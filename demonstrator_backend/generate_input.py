@@ -19,12 +19,29 @@ from main import init_data
 def test():
     "Aufrufen des manuell erstellten ein-Datenpunkt-Datensatzes im .h5-Format"
     path_to_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data")
-    path_to_1hp_model = os.path.join(path_to_data, "models_1hpnn","pksi1000","current_unet_dataset_2d_small_1000dp_pksi_v1")
-    results = run_from_demonstrator("dataset_raw_demonstrator_input_1dp", path_to_1hp_model, inputs="pksi")
+    path_to_1hp_model = os.path.join(path_to_data, "models_1hpnn","gksi1000","current_unet_dataset_2d_small_1000dp_gksi_v7")
+    results = run_from_demonstrator("dataset_raw_demonstrator_input_1dp", path_to_1hp_model, inputs="gksi")
     predicted_temperature = results[0]
     groundtruth_temperature = results[1]
     error_temperature = results[2]
 
+    managed_fig = plt.figure()
+    canvas_manager = managed_fig.canvas.manager
+    canvas_manager.canvas.figure = predicted_temperature
+    predicted_temperature.set_canvas(canvas_manager.canvas)
+    plt.show()
+
+    managed_fig = plt.figure()
+    canvas_manager = managed_fig.canvas.manager
+    canvas_manager.canvas.figure = groundtruth_temperature
+    predicted_temperature.set_canvas(canvas_manager.canvas)
+    plt.show()
+
+    managed_fig = plt.figure()
+    canvas_manager = managed_fig.canvas.manager
+    canvas_manager.canvas.figure = error_temperature
+    predicted_temperature.set_canvas(canvas_manager.canvas)
+    plt.show()
 test()
 
 
