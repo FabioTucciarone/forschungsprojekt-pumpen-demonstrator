@@ -101,12 +101,21 @@ def initialize_test_images():
     last_error_measure_bytes = image_bytes.getvalue()
 
 def get_settings(dataset: str = "dataset_raw_demonstrator_input_1dp"):
-    paths_file = os.path.join(os.path.abspath(__file__), "..", "..", "1HP_NN")
-    with open(paths_file, "r") as f:
-        paths = yaml.safe_load(f)
+    paths = get_paths()
     default_raw_dir = paths["default_raw_dir"]
     path_to_settings = os.path.join(default_raw_dir, dataset, "inputs")
     settings = prepare.get_pflotran_settings(path_to_settings)
+    return settings
+
+def get_paths():
+    paths_file = os.path.join(os.path.abspath(__file__), "..", "..", "1HP_NN")
+    with open(paths_file, "r") as f:
+        paths = yaml.safe_load(f)
+    return paths
+
+def get_path_to_data():
+    path_to_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data")
+    return path_to_data
 
 # Debug run
 if __name__ == '__main__':

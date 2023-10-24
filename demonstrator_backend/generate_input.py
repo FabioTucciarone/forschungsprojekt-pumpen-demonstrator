@@ -5,6 +5,7 @@ import sys
 import logging 
 import torch
 import matplotlib.pyplot as plt
+import demonstrator_backend
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from torch import load
@@ -47,9 +48,11 @@ def test():
 def single_point_images(permeability: float, pressure: float):
     "Aufrufen des manuell erstellten ein-Datenpunkt-Datensatzes im .h5-Format"
     #C:\UniProgramme\data\datasets_raw\dataset_raw_demonstrator_input_1dp\inputs
-    path_to_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data")
+    path_to_data = demonstrator_backend.get_path_to_data()
     path_to_1hp_model = os.path.join(path_to_data, "models_1hpnn","gksi1000","current_unet_dataset_2d_small_1000dp_gksi_v7")
 
+    permeability = -1.0e-10
+    pressure = 2.0e-3
     results = demonstrator_run_1st_stage("dataset_raw_demonstrator_input_1dp", path_to_1hp_model, permeability, pressure)
 
     predicted_temperature = results[0]
@@ -57,6 +60,7 @@ def single_point_images(permeability: float, pressure: float):
     error_temperature = results[2]
 
     return results
+test()
 
 
 
