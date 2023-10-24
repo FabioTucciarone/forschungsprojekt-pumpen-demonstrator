@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -104,14 +103,21 @@ class _RegisterState extends State<RegisterBox> {
                   print(0);
                   BackendConnection backendConnect = new BackendConnection();
                   print(1);
-                  backendConnect.connectToSSHServer(
-                      username.toString(), password.toString());
-                  print(2);
-                  backendConnect.forwardConnection('pcsgs08', 5000);
-                  print(3);
-                  /*futureImage =
-                      fetchAlbum(backendConnect.sendInputData(5, 880000));*/
-                  FutureBuilder(
+                  //TODO: Problembehandlung
+                  // - Hier geht irgendwie was bei der Übergabe schief.
+                  //   Wenn ich direkt einen String übergebe funktioniert's, wenn nicht wird ein Fehler geworfen.
+                  // - Hängt dein Programm auch wenn du's für Windows (also nicht als Webanwendung) kompilierst?
+                  // - Falls alles nichts hilft: versuch mal dartssh2 zu installieren, vielleicht versucht es das zu verwenden
+                  //   siehe: https://pub.dev/packages/dartssh2 unter "# Install the `dartssh` command."
+                  //   Dann einfach in Notion dokumentieren, falls das das Problem löst. Daraus bauen wir dann bald die README.md Datei.
+                  backendConnect.connectToSSHServer("tucciafo", "28534791#IPVS").then((value) { 
+                    backendConnect.forwardConnection('pcsgs08', 5000);
+                  });
+
+                  // Hier darf nichts mehr kommen, das wird entweder nicht ausgeführt, oder passiert zu schnell, weil die Portweiterleitung asynchron gestartet wird.
+                  // ggf. könnt ihr in in BackendConnection einen Listener hinzufügen, der die Oberfläche aktualisiert: siehe Zu-Tun.
+                  
+                  /*FutureBuilder(
                     future: backendConnect.sendInputData(5, 880000),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -121,7 +127,7 @@ class _RegisterState extends State<RegisterBox> {
                       }
                       return const Text('loading');
                     },
-                  );
+                  );*/
                 },
                 child: const Text('Verbinden'),
               ),

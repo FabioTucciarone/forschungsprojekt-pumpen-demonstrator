@@ -65,23 +65,26 @@ class BackendConnection {
     }
 
     readyForHTTPRequests = true;
+    //TODO: Könnt ihr hier einen Zustand aktualisieren oder eine Benachrichtigung an die Oberfläche senden?
+    // Ab hier soll es erlaubt sein HTTP-Anfragen zu senden:
+
+    //notifyListeners();
 
     await for (final socket in serverSocket!) {
       if (client == null || client!.isClosed) {
-        //TODO: Notwendig?
-        serverSocket!.close();
+        serverSocket!.close(); //TODO: Notwendig? Testen!
         break;
       }
       final SSHForwardChannel forward = await client!.forwardLocal(
-          "$ipvsServerName.informatik.uni-stuttgart.de",
-          serverPort); //TODO: Fehlerbehandlung hinzufügen. Bsp: Prot nicht erlaubt?
+        "$ipvsServerName.informatik.uni-stuttgart.de",
+        serverPort); //TODO: Fehlerbehandlung hinzufügen?
       forward.stream
-          .cast<List<int>>()
-          .pipe(socket)
-          .onError((error, stackTrace) {
-        print("Warning: Transmission of data via forwarding failed.\n$error");
-        //TODO: Können Fehler Auftreten? Log-Warnung falls Fehler.
-      });
+        .cast<List<int>>()
+        .pipe(socket)
+        .onError((error, stackTrace) {
+          print("Warning: Transmission of data via forwarding failed.\n$error");
+          //TODO: Können Fehler Auftreten? Log-Warnung falls Fehler.
+        });
       socket.cast<Uint8List>().pipe(forward.sink);
     }
   }
@@ -103,8 +106,7 @@ class BackendConnection {
       throw "Error: No SSH-port forwarding established.";
     }
 
-    final ip =
-        debugEnabled ? "http://127.0.0.1:5000" : "http://127.0.0.1:$localPort";
+    final ip = debugEnabled ? "http://127.0.0.1:5000" : "http://127.0.0.1:$localPort";
 
     final response = await http.post(
       Uri.parse(ip),
@@ -115,8 +117,7 @@ class BackendConnection {
       return response.body;
     } else {
       //TODO: Besser?
-      stderr.writeln(
-          "HTTP-request failed with status code ${response.statusCode}");
+      stderr.writeln("HTTP-request failed with status code ${response.statusCode}");
       return response.body;
     }
   }
