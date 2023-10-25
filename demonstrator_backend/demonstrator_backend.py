@@ -6,9 +6,8 @@ import random
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from dataclasses import dataclass
-import yaml
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
-import preprocessing.prepare_1ststage as prepare
+
+from model_communication import ModelCommunication
 
 app = Flask(__name__)
 
@@ -19,11 +18,7 @@ last_groundtruth_bytes: bytes
 last_model_result_bytes: bytes
 last_error_measure_bytes: bytes
 
-@dataclass
-class Paths1HP:
-    raw_dir: str # boxes
-    datasets_prepared_dir: str
-    dataset_1st_prep_path: str
+model_communication: ModelCommunication
 
 @app.route('/send_input',methods = ['POST'])
 def send_input():
@@ -100,22 +95,11 @@ def initialize_test_images():
     last_model_result_bytes = image_bytes.getvalue()
     last_error_measure_bytes = image_bytes.getvalue()
 
-def get_settings(dataset: str = "dataset_raw_demonstrator_input_1dp"):
-    paths = get_paths()
-    default_raw_dir = paths["default_raw_dir"]
-    path_to_settings = os.path.join(default_raw_dir, dataset, "inputs")
-    settings = prepare.get_pflotran_settings(path_to_settings)
-    return settings
 
-def get_paths():
-    paths_file = os.path.join(os.path.abspath(__file__), "..", "..", "1HP_NN")
-    with open(paths_file, "r") as f:
-        paths = yaml.safe_load(f)
-    return paths
+def initialize_backend():
+    global model_communication
+    model_communication = ModelCommunication()
 
-def get_path_to_data():
-    path_to_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data")
-    return path_to_data
 
 # Debug run
 if __name__ == '__main__':

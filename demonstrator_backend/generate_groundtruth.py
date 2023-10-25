@@ -94,7 +94,7 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
         plt.show()
 
 
-def interpolate_experimental(run_indices: tuple[int,int,int], weights: tuple[float, float, float], show_result: bool = True):
+def interpolate_experimental(run_indices, weights, show_result: bool = True):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     pflotran_settings = prepare.get_pflotran_settings(path_to_dataset)
 
