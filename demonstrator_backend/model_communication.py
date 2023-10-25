@@ -49,16 +49,21 @@ class ModelCommunication:
 
         paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
 
-        if not os.path.exists(paths_file):
-            raise FileNotFoundError(f"{paths_file} not found")
-
-        with open(paths_file, "r") as f:
-            paths = yaml.safe_load(f)
-            default_raw_dir = paths["default_raw_dir"]
-            datasets_prepared_dir = paths["datasets_prepared_dir"]
+        if os.path.exists(paths_file):
+            with open(paths_file, "r") as f:
+                paths = yaml.safe_load(f)
+                default_raw_dir = paths["default_raw_dir"]
+                datasets_prepared_dir = paths["datasets_prepared_dir"]
+                dataset_prepared_full_path = pathlib.Path(datasets_prepared_dir) / f"{dataset_name} inputs_gksi"
+        else:
+            default_raw_dir = path_to_project_dir / "data" / "datasets_raw"
+            datasets_prepared_dir = path_to_project_dir / "data" / "datasets_prepared"
             dataset_prepared_full_path = pathlib.Path(datasets_prepared_dir) / f"{dataset_name} inputs_gksi"
 
-            self.paths1HP = Paths1HP(default_raw_dir, datasets_prepared_dir, dataset_prepared_full_path)
+        if not os.path.exists(os.path.join(default_raw_dir, dataset_name)):
+            raise FileNotFoundError(f"Dataset path {default_raw_dir / dataset_name} does not exist")
+
+        self.paths1HP = Paths1HP(default_raw_dir, datasets_prepared_dir, dataset_prepared_full_path)
 
         self.settings = SettingsTraining(
             dataset_raw = dataset_name,
