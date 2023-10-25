@@ -14,13 +14,11 @@ app = Flask(__name__)
 # Bilder kodieren und zusammen zurückschicken? Oder: Daten Senden und dann Bilder einzeln abfragen?
 # Vorerst einzeln!
 
-last_groundtruth_bytes: bytes
-last_model_result_bytes: bytes
-last_error_measure_bytes: bytes
+last_images: list = None
+image_bytes: list = None
+model_communication: ModelCommunication = None
 
-model_communication: ModelCommunication
-
-@app.route('/send_input',methods = ['POST'])
+@app.route('/send_input', methods = ['POST'])
 def send_input():
     """
     Send the input values and "await" the response in Flutter.
@@ -29,48 +27,39 @@ def send_input():
     See:  https://docs.flutter.dev/cookbook/images/network-image
     """
 
-    global last_groundtruth_bytes
-    global last_model_result_bytes
-    global last_error_measure_bytes
+    global last_images
+    global image_bytes
+    global model_communication
 
     data = request.json
-    print(data.get('permeability'))
-    print(data.get('density'))
+    permeability = float(data.get('permeability'))
+    pressure = float(data.get('pressure'))
 
-    #TODO: Berechne hier alles: Abwarten in Flutter, dann unten auf Bilder zugreifen
+    results = model_communication.get_1hp_model_results(permeability, pressure)
 
-    # Kleiner Test:
-    # d = DataSet()
-    # d.read_dataset("<Dein Pfad zu den Daten>\\datasets_raw_1000_1HP")
-    # fig = d.get_temperature_field(2)
-
-    fig = get_example_figure()
-    image_bytes = io.BytesIO()
-    FigureCanvas(fig).print_png(image_bytes)
-
-    last_groundtruth_bytes = image_bytes.getvalue()
-    last_model_result_bytes = image_bytes.getvalue()
-    last_error_measure_bytes = image_bytes.getvalue()
+    for i in range(3):
+        FigureCanvas(results[i]).print_png(image_bytes[i])
+        last_images[i] = image_bytes[i].getvalue()
 
     return "sent sucessfully"
-
-
-@app.route('/last_groundtruth.png')
-def get_last_groundtruth():
-    """Image at: https://http://127.0.0.1:5000/last_groundtruth.png"""
-    return Response(last_groundtruth_bytes, mimetype='image/png')
 
 
 @app.route('/last_model_result.png')
 def get_last_model_result():
     """Image at: https://http://127.0.0.1:5000/last_model_result.png"""
-    return Response(last_model_result_bytes, mimetype='image/png')
+    return Response(last_images[0], mimetype='image/png')
+
+
+@app.route('/last_groundtruth.png')
+def get_last_groundtruth():
+    """Image at: https://http://127.0.0.1:5000/last_groundtruth.png"""
+    return Response(last_images[1], mimetype='image/png')
 
 
 @app.route('/last_error_measure.png')
 def get_last_error_measure():
     """Image at: https://http://127.0.0.1:5000/last_error_measure.png"""
-    return Response(last_error_measure_bytes.getvalue(), mimetype='image/png')
+    return Response(last_images[2].getvalue(), mimetype='image/png')
 
 
 def get_example_figure():
@@ -84,24 +73,17 @@ def get_example_figure():
     return fig
 
 
-def initialize_test_images():
-    global last_groundtruth_bytes
-    global last_model_result_bytes
-    global last_error_measure_bytes
-    fig = get_example_figure()
-    image_bytes = io.BytesIO()
-    FigureCanvas(fig).print_png(image_bytes)
-    last_groundtruth_bytes = image_bytes.getvalue()
-    last_model_result_bytes = image_bytes.getvalue()
-    last_error_measure_bytes = image_bytes.getvalue()
-
-
 def initialize_backend():
     global model_communication
+    global last_images
+    global image_bytes
+
+    image_bytes = [io.BytesIO(), io.BytesIO(), io.BytesIO()]
     model_communication = ModelCommunication()
+    last_images = [None, None, None]
 
 
 # Debug run
 if __name__ == '__main__':
-    initialize_test_images()
+    initialize_backend()
     app.run(port=5000)
