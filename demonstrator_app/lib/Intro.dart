@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'MainScreen.dart';
+import 'MainScreen_kids.dart';
 import 'Layout.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 

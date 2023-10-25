@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:html';
-import 'dart:typed_data';
-
+import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
-import 'Data.dart';
 import 'BackendConnection.dart';
 
 class ButtonAnmelden extends StatefulWidget {
@@ -32,7 +28,19 @@ class RegisterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Demonstrator App"),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const MainSlide()));
+            }),
+        actions: const <Widget>[
+          ButtonAnmelden(),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: Center(
           child: SizedBox(
@@ -52,27 +60,12 @@ class RegisterBox extends StatefulWidget {
   State<RegisterBox> createState() => _RegisterState();
 }
 
-/*class Album {
-  final ByteData image;
-  const Album({
-    required this.image,
-  });
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(image: json['image']);
-  }
-}*/
-
 class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
 
-  /*Future<Album> fetchAlbum(responseBody) async {
-    return Album.fromJson(jsonDecode(responseBody));
-  }*/
-
   @override
   Widget build(BuildContext context) {
-    //Future<Album> futureImage;
     String message = '';
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -101,17 +94,24 @@ class _RegisterState extends State<RegisterBox> {
               ),
               TextButton(
                 onPressed: () {
-                  print(0);
                   BackendConnection backendConnect = new BackendConnection();
-                  print(1);
-                  backendConnect.connectToSSHServer(
-                      username.toString(), password.toString());
-                  print(2);
-                  backendConnect.forwardConnection('pcsgs08', 5000);
-                  print(3);
-                  /*futureImage =
-                      fetchAlbum(backendConnect.sendInputData(5, 880000));*/
-                  FutureBuilder(
+                  //TODO: Problembehandlung
+                  // - Hier geht irgendwie was bei der Übergabe schief.
+                  //   Wenn ich direkt einen String übergebe funktioniert's, wenn nicht wird ein Fehler geworfen.
+                  // - Hängt dein Programm auch wenn du's für Windows (also nicht als Webanwendung) kompilierst?
+                  // - Falls alles nichts hilft: versuch mal dartssh2 zu installieren, vielleicht versucht es das zu verwenden
+                  //   siehe: https://pub.dev/packages/dartssh2 unter "# Install the `dartssh` command."
+                  //   Dann einfach in Notion dokumentieren, falls das das Problem löst. Daraus bauen wir dann bald die README.md Datei.
+                  backendConnect
+                      .connectToSSHServer(username.text, password.text)
+                      .then((value) {
+                    backendConnect.forwardConnection('pcsgs08', 5000);
+                  });
+
+                  // Hier darf nichts mehr kommen, das wird entweder nicht ausgeführt, oder passiert zu schnell, weil die Portweiterleitung asynchron gestartet wird.
+                  // ggf. könnt ihr in in BackendConnection einen Listener hinzufügen, der die Oberfläche aktualisiert: siehe Zu-Tun.
+
+                  /*FutureBuilder(
                     future: backendConnect.sendInputData(5, 880000),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -121,7 +121,7 @@ class _RegisterState extends State<RegisterBox> {
                       }
                       return const Text('loading');
                     },
-                  );
+                  );*/
                 },
                 child: const Text('Verbinden'),
               ),

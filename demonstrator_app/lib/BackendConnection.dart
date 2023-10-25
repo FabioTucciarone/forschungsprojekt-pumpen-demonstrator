@@ -25,27 +25,21 @@ class BackendConnection {
   ///
   /// Theows exception if client cannot be authenticated.
   Future<void> connectToSSHServer(String username, String password) async {
-    print(4);
     if (debugEnabled) return;
-    print(5);
     SSHSocket socket = await SSHSocket.connect(
         "ipvslogin.informatik.uni-stuttgart.de", 22,
         timeout: const Duration(seconds: 20));
-    print(5.5);
     final client = SSHClient(
       socket,
       username: username,
       onPasswordRequest: () => password,
     );
-    print(6);
     this.client = client;
     await client.authenticated.onError((error, stackTrace) {
       throw "Client authentication failed.";
     });
-    print(7);
     serverSocket = await ServerSocket.bind('127.0.0.1', 0);
     localPort = serverSocket!.port;
-    print(8);
     print("SSH connection to ipvslogin successfully established");
   }
 
@@ -65,16 +59,19 @@ class BackendConnection {
     }
 
     readyForHTTPRequests = true;
+    //TODO: Könnt ihr hier einen Zustand aktualisieren oder eine Benachrichtigung an die Oberfläche senden?
+    // Ab hier soll es erlaubt sein HTTP-Anfragen zu senden:
+
+    //notifyListeners();
 
     await for (final socket in serverSocket!) {
       if (client == null || client!.isClosed) {
-        //TODO: Notwendig?
-        serverSocket!.close();
+        serverSocket!.close(); //TODO: Notwendig? Testen!
         break;
       }
       final SSHForwardChannel forward = await client!.forwardLocal(
           "$ipvsServerName.informatik.uni-stuttgart.de",
-          serverPort); //TODO: Fehlerbehandlung hinzufügen. Bsp: Prot nicht erlaubt?
+          serverPort); //TODO: Fehlerbehandlung hinzufügen?
       forward.stream
           .cast<List<int>>()
           .pipe(socket)
