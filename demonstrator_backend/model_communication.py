@@ -61,7 +61,7 @@ class ModelCommunication:
             dataset_prepared_full_path = pathlib.Path(datasets_prepared_dir) / f"{dataset_name} inputs_gksi"
 
         if not os.path.exists(os.path.join(default_raw_dir, dataset_name)):
-            raise FileNotFoundError(f"Dataset path {default_raw_dir / dataset_name} does not exist")
+            raise FileNotFoundError(f"Dataset path {os.path.join(default_raw_dir, dataset_name)} does not exist")
 
         self.paths1HP = Paths1HP(default_raw_dir, datasets_prepared_dir, dataset_prepared_full_path)
 
@@ -73,7 +73,7 @@ class ModelCommunication:
             case = "test",
             model = full_model_path,
             visualize = True,
-            destination_dir=""
+            destination_dir = ""
         )
         self.settings.datasets_dir = self.paths1HP.datasets_prepared_dir
         self.settings.dataset_prep = f"{dataset_name} inputs_gksi"

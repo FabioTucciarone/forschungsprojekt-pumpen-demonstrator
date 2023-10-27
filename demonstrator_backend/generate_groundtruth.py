@@ -2,12 +2,11 @@ import os
 import sys
 import numpy as np
 import scipy as sp
-import torch
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
-from torch.utils.tensorboard import SummaryWriter
-
 from scipy.spatial import Delaunay
+import model_communication as mc
+from numpy.linalg import norm
 
 # tensorboard --logdir=runs/ --host localhost --port 8088
 
@@ -80,19 +79,35 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
     p2 = simulated_points[point_indices[1]]
     p3 = simulated_points[point_indices[2]]
 
-    w1 = distance(x, p2) * distance(x, p3) / (distance(p1, p2) * distance(p1, p3))
-    w2 = distance(x, p1) * distance(x, p3) / (distance(p2, p1) * distance(p2, p3))
-    w3 = distance(x, p1) * distance(x, p2) / (distance(p3, p1) * distance(p3, p2))
+    # w1 = norm(x - p2) * norm(x - p3) / (norm(p1 - p2) * norm(p1 - p3))
+    # w2 = norm(x - p1) * norm(x - p3) / (norm(p2 - p1) * norm(p2 - p3))
+    # w3 = norm(x - p1) * norm(x - p2) / (norm(p3 - p1) * norm(p3 - p2))
+
+    # sum = w1 + w2 + w3 # Gut?
+    # w1 /= sum
+    # w2 /= sum
+    # w3 /= sum
+
+    # print(f"Lagrangeartig: {[w1, w2, w3]}, summe = {w1 + w2 + w3}")
+
+    weights = [0, 0, 0]
+    d = (p2[1] - p3[1]) * (p1[0] - p3[0]) + (p1[1] - p3[1]) * (p3[0] - p2[0])
+    weights[0] = ((p2[1] - p3[1]) * (x[0] - p3[0]) + (p3[0] - p2[0]) * (x[1] - p3[1])) / d
+    weights[1] = ((p3[1] - p1[1]) * (x[0] - p3[0]) + (p1[0] - p3[0]) * (x[1] - p3[1])) / d
+    weights[2] = 1 - weights[0] - weights[1]
+
+    print(f"Barycentric: {weights}, sum = {weights[0] + weights[1] + weights[2]}")
      
-    interpolate_experimental(point_indices, (w1, w2, w3))
 
     if show_triangulation:
         plt.plot(simulated_points[:,0], simulated_points[:,1], '+')
         plt.plot(permeability, pressure, 'ro')
         for k in range(0, 3):
-            plt.plot(simulated_points[point_indices[k]][0], simulated_points[point_indices[k]][1], 'ro')
+            plt.plot(simulated_points[point_indices[k]][0], simulated_points[point_indices[k]][1], 'r+')
+            plt.text(simulated_points[point_indices[k]][0], simulated_points[point_indices[k]][1], str(weights[k]))
         plt.show()
 
+    interpolate_experimental(point_indices, weights)
 
 def interpolate_experimental(run_indices, weights, show_result: bool = True):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
@@ -100,7 +115,8 @@ def interpolate_experimental(run_indices, weights, show_result: bool = True):
 
     # Load temperature fields
     dp_paths = [[], [], []]
-    dp_paths[k] = os.path.join(path_to_dataset, f"RUN_{run_indices[k]}", "pflotran.h5")
+    for k in range(0, 3):
+        dp_paths[k] = os.path.join(path_to_dataset, f"RUN_{run_indices[k]}", "pflotran.h5")
 
     dims = np.array(pflotran_settings["grid"]["ncells"])
 
@@ -115,17 +131,54 @@ def interpolate_experimental(run_indices, weights, show_result: bool = True):
 
     # Calculate rough bounding boxes around heat plumes
 
-    ybounds = [[], [], []]
-    xbounds = [[], [], []]
+    ybounds = [[-1, 256], [-1, 256], [-1, 256]]
+    xbounds = [[-1, 20], [-1, 20], [-1, 20]]
+    
+    threshold = 11.6 # +0.5
 
-    if run_indices[0] != 0 or run_indices[1] != 3 or run_indices[2] != 4:  # TODO: Ausrechnen
-        return
-    ybounds[0] = [22, 255]
-    xbounds[0] = [6, 11]
-    ybounds[1] = [20, 148]
-    xbounds[1] = [1, 18]
-    ybounds[2] = [0, 78]
-    xbounds[2] = [0, 19]
+    for k in range(0, 3):
+        for j in range(0, hp_pos[1]):
+            flound_edge = False
+            for i in range(0, dims[0]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+                if flound_edge:
+                    break
+            ybounds[k][0] += 1
+            if flound_edge:
+                break
+    for k in range(0, 3):
+        for j in reversed(range(hp_pos[1]+1, 256)):
+            flound_edge = False
+            for i in range(0, dims[0]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+                if flound_edge:
+                    break
+            ybounds[k][1] -= 1
+            if flound_edge:
+                break
+    for k in range(0, 3):
+        for i in range(0, hp_pos[0]):
+            flound_edge = False
+            for j in range(0, dims[1]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+                if flound_edge:
+                    break
+            xbounds[k][0] += 1
+            if flound_edge:
+                break
+    for k in range(0, 3):
+        for i in  reversed(range(hp_pos[0]+1, 20)):
+            flound_edge = False
+            for j in range(0, dims[1]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+                if flound_edge:
+                    break
+            xbounds[k][1] -= 1
+            if flound_edge:
+                break
+
+    print(f"xbounds = {xbounds}")
+    print(f"ybounds = {ybounds}")
 
     fig, axes = plt.subplots(7, 1, sharex=True)
 
@@ -150,12 +203,18 @@ def interpolate_experimental(run_indices, weights, show_result: bool = True):
 
     for j in range(0, 256):
         for i in range(0, 20):
-            result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weight1 + transformed_temp_fields[1][i][j]*weight2 + transformed_temp_fields[2][i][j]*weight3
+            result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weights[0] + transformed_temp_fields[1][i][j]*weights[1] + transformed_temp_fields[2][i][j]*weights[2]
 
     plt.sca(axes[6])
     plt.imshow(result_temp_field, cmap="RdBu_r")
-    plt.show()
 
+    model = mc.ModelCommunication()
+    res = model.get_1hp_model_results(1e-9, -0.0024)
+    managed_fig = plt.figure()
+    canvas_manager = managed_fig.canvas.manager
+    canvas_manager.canvas.figure = res[0]
+    res[0].set_canvas(canvas_manager.canvas)
+    plt.show()
 
 def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, ybounds_res):
     pos = [9, 23]
@@ -179,5 +238,4 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         return y
 
 if __name__ == "__main__":
-    #interpolate_experimental(0, 3, 4)
-    triangulate_data_point(3.8e-9, -0.0024)
+    triangulate_data_point(2.246978938535798940e-10, -2.130821194764205056e-03, True)
