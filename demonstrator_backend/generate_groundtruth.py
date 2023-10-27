@@ -5,6 +5,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from scipy.spatial import Delaunay
+from scipy.spatial import ConvexHull
 import model_communication as mc
 from numpy.linalg import norm
 
@@ -53,13 +54,6 @@ def read_input_lists(path_to_dataset):
     return permeability_values, pressure_values
 
 
-# ACHTUNG: Hier funktioniert gar nichts!!
-# alles nur grobe Tests
-
-def distance(p1, p2):
-    return np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
-
-
 def triangulate_data_point(permeability: float, pressure: float, show_triangulation=False):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     permeability_values, pressure_values = read_input_lists(path_to_dataset)
@@ -71,7 +65,7 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
     simplex_index = triangulation.find_simplex(x)
 
     if simplex_index == -1:
-        return generate_groundtruth_closest(permeability_values, pressure_values)
+        return generate_groundtruth_closest(permeability, pressure)
 
     point_indices = triangulation.simplices[simplex_index]
 
@@ -108,6 +102,7 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
         plt.show()
 
     interpolate_experimental(point_indices, weights)
+
 
 def interpolate_experimental(run_indices, weights, show_result: bool = True):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
@@ -238,4 +233,4 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         return y
 
 if __name__ == "__main__":
-    triangulate_data_point(2.246978938535798940e-10, -2.130821194764205056e-03, True)
+    triangulate_data_point(2.246978938535798940e-10, -1.130821194764205056e-03, True)
