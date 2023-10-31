@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'MainScreen_kids.dart';
@@ -104,7 +105,9 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                final player = AudioPlayer();
+                await player.play(AssetSource("test.wav"));
                 if (times == 0) {
                   setState(() {
                     _speechBubble = !_speechBubble;
