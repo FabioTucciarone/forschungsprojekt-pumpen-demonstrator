@@ -1,11 +1,9 @@
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:flutter/services.dart';
-import 'BuildConnection.dart';
 import 'Intro.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
-
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,9 +27,6 @@ class MainSlide extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => const IntroScreen()));
                   }),
-              actions: const <Widget>[
-                ButtonAnmelden(),
-              ],
             ),
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
             body: Padding(
