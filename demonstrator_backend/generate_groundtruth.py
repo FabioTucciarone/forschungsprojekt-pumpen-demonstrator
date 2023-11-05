@@ -58,6 +58,8 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     permeability_values, pressure_values = read_input_lists(path_to_dataset)
 
+    permeability_values.append(permeability)
+    pressure_values.append(pressure)
     x = [permeability, pressure]
 
     simulated_points = np.c_[permeability_values, pressure_values]
@@ -95,6 +97,7 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
 
     if show_triangulation:
         plt.plot(simulated_points[:,0], simulated_points[:,1], '+')
+        plt.triplot(simulated_points[:,0], simulated_points[:,1], simulated_points.simplices)
         plt.plot(permeability, pressure, 'ro')
         for k in range(0, 3):
             plt.plot(simulated_points[point_indices[k]][0], simulated_points[point_indices[k]][1], 'r+')
@@ -233,4 +236,4 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         return y
 
 if __name__ == "__main__":
-    triangulate_data_point(2.246978938535798940e-10, -1.130821194764205056e-03, True)
+    triangulate_data_point(3.246978938535798940e-10, -2.130821194764205056e-03, True)

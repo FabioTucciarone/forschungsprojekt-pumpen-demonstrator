@@ -13,6 +13,8 @@ import yaml
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
 import main as hp1_nn
+import utils.visualization as visualize
+from networks.unet import UNet
 import preprocessing.prepare_1ststage as prepare
 from utils.prepare_paths import Paths1HP
 from data_stuff.utils import SettingsTraining
@@ -68,7 +70,7 @@ class ModelCommunication:
         self.settings = SettingsTraining(
             dataset_raw = dataset_name,
             inputs = "gksi",
-            device = "cpu",
+            device = "cpu", # TODO: GPU?
             epochs = 10000,
             case = "test",
             model = full_model_path,
@@ -77,6 +79,18 @@ class ModelCommunication:
         )
         self.settings.datasets_dir = self.paths1HP.datasets_prepared_dir
         self.settings.dataset_prep = f"{dataset_name} inputs_gksi"
+
+        self.prepare_model()
+
+
+    def prepare_model(self):
+        dataset, dataloaders = hp1_nn.init_data(self.settings)
+        self.dataloaders = dataloaders
+        # init, load and save model
+        self.model = UNet(in_channels=dataset.input_channels).float()
+        self.model.load_state_dict(torch.load(f"{self.settings.model}/model.pt", map_location=torch.device(self.settings.device)))
+        self.model.to(self.settings.device)
+        self.model.eval()
 
 
     def get_1hp_model_results(self, permeability: float, pressure: float):
@@ -90,8 +104,8 @@ class ModelCommunication:
         pressure: float
             The pressure input parameter of the demonstrator app.
         """
-        prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
-        return hp1_nn.run(self.settings, return_to_demonstrator=True)
+        (x, y) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
+        return visualize.get_plots(self.model, x, y, self.dataloaders["test"], self.settings.device)
 
 
 # Test: Ausführen dieser Datei zeigt festes Testbild.
