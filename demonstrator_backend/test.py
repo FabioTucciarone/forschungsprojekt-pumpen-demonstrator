@@ -19,7 +19,7 @@ def show_figure(figure: Figure):
     managed_fig = plt.figure()
     canvas_manager = managed_fig.canvas.manager
     canvas_manager.canvas.figure = figure
-    results[0].set_canvas(canvas_manager.canvas)
+    figure.set_canvas(canvas_manager.canvas)
     plt.show()
 
 
@@ -27,14 +27,12 @@ def show_figure(figure: Figure):
 model_communication = ModelCommunication()
 
 st = time.time()
-results = model_communication.get_1hp_model_results(2.646978938535798940e-10, -2.830821194764205056e-03, 0)
+model_communication.get_1hp_model_results(2.646978938535798940e-10, -2.830821194764205056e-03)
 et = time.time()
 print('Gesamtzeit:', et - st, 'seconds')
 
-show_figure(results[0])
+show_figure(model_communication.figures.get_figure(0))
 
-results = model_communication.get_1hp_model_results(1e-10, -0.5e-03, 1)
+model_communication.get_1hp_model_results(1e-10, -0.5e-03)
 
-show_figure(results[0])
-show_figure(results[1])
-show_figure(results[2])
+show_figure(model_communication.figures.get_figure(0))

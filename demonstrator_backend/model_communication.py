@@ -9,6 +9,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from torch import load
 import yaml
+import io
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -18,12 +20,35 @@ from networks.unet import UNet
 import preprocessing.prepare_1ststage as prepare
 from utils.prepare_paths import Paths1HP
 from data_stuff.utils import SettingsTraining
-from data_stuff.transforms import NormalizeTransform
+
+
+class Figures:
+    figures: list
+    axes: list
+    colorbar_axis: list
+
+    def __init__(self):
+        self.figures = [Figure(figsize=(20, 2)) for i in range(3)]
+        self.axes = [self.figures[i].add_subplot(1, 1, 1) for i in range(3)]
+        self.colorbar_axis = [None, None, None]
+        for i in range(3):
+            self.axes[i].invert_yaxis()
+            self.figures[i].tight_layout()
+            self.colorbar_axis[i] = make_axes_locatable(self.figures[i].gca()).append_axes("right", size=0.3, pad=0.05)
+
+    def update_figure(self, i, pixel_data, **imshowargs):
+        axes_image = self.axes[i].imshow(pixel_data, **imshowargs)
+        self.figures[i].colorbar(axes_image, cax=self.colorbar_axis[i])
+
+    def get_figure(self, i):
+        return self.figures[i]
+
 
 class ModelCommunication:
 
     paths1HP: Paths1HP = None
     settings: SettingsTraining = None
+    figures: Figures
 
     def get_pflotran_settings(self, dataset: str = "datasets_raw_1000_1HP"):
         """
@@ -85,19 +110,19 @@ class ModelCommunication:
             destination_dir = ""
         )
         self.settings.datasets_dir = self.paths1HP.datasets_prepared_dir
+        self.prepare_model()
 
+        self.figures = Figures()
+    
 
     def prepare_model(self):
-        dataset, dataloaders = hp1_nn.init_data(self.settings)
-        self.dataloaders = dataloaders
-        # init, load and save model
-        self.model = UNet(in_channels=dataset.input_channels).float() # len(self.info["Inputs"])
+        self.model = UNet(in_channels=4).float() # 4 = len(info["Inputs"]) TODO: Aus Rohdaten einlesen?
         self.model.load_state_dict(torch.load(f"{self.settings.model}/model.pt", map_location=torch.device(self.settings.device)))
         self.model.to(self.settings.device)
         self.model.eval()
 
 
-    def get_1hp_model_results(self, permeability: float, pressure: float, id: int):
+    def get_1hp_model_results(self, permeability: float, pressure: float):
         """
         Prepare a dataset and run the model.
 
@@ -108,18 +133,5 @@ class ModelCommunication:
         pressure: float
             The pressure input parameter of the demonstrator app.
         """
-        self.settings.dataset_prep = f"{self.settings.dataset_raw} demonstrator id_{id}"
-        self.paths1HP.dataset_1st_prep_path = pathlib.Path(self.paths1HP.datasets_prepared_dir) / self.settings.dataset_prep
-
-        (x, y, info) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
-        norm = NormalizeTransform(info)
-
-        #dataset, dataloaders = hp1_nn.init_data(self.settings)
-        #self.dataloaders = dataloaders
-        # init, load and save model
-        self.model = UNet(in_channels=len(info["Inputs"])).float() # len(self.info["Inputs"])
-        self.model.load_state_dict(torch.load(f"{self.settings.model}/model.pt", map_location=torch.device(self.settings.device)))
-        self.model.to(self.settings.device)
-        self.model.eval()
-
-        return visualize.get_plots(self.model, x, y, info, norm, self.settings.device)
+        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
+        visualize.get_plots(self.model, x, y, info, norm, self.figures)
