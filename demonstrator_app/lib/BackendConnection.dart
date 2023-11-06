@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class BackendConnection {
-  SSHClient? client; 
+  SSHClient? client;
   int? localPort;
   ServerSocket? serverSocket;
   bool readyForHTTPRequests = false;
@@ -17,70 +17,75 @@ class BackendConnection {
   BackendConnection({this.debugEnabled = false});
 
   /// Connect to the ipvslogin.informatik.uni-stuttgart.de server via port 22.
-  /// 
+  ///
   /// Does nothing if debug mode is enabled.
-  /// 
+  ///
   /// [username]: IPVS-account username.
   /// [password]: IPVS-account password.
-  /// 
+  ///
   /// Theows exception if client cannot be authenticated.
   Future<void> connectToSSHServer(String username, String password) async {
-
-    if(debugEnabled) return;
-
-    SSHSocket socket = await SSHSocket.connect("ipvslogin.informatik.uni-stuttgart.de", 22, timeout: const Duration(seconds: 20));
+    if (debugEnabled) return;
+    SSHSocket socket = await SSHSocket.connect(
+        "ipvslogin.informatik.uni-stuttgart.de", 22,
+        timeout: const Duration(seconds: 20));
     final client = SSHClient(
       socket,
       username: username,
       onPasswordRequest: () => password,
     );
-    
     this.client = client;
     await client.authenticated.onError((error, stackTrace) {
       throw "Client authentication failed.";
     });
-
-    serverSocket = await ServerSocket.bind('127.0.0.1', 0); 
+    serverSocket = await ServerSocket.bind('127.0.0.1', 0);
     localPort = serverSocket!.port;
-
     print("SSH connection to ipvslogin successfully established");
   }
 
   /// Establish local port forwarding to a server of the IPVS-network.
-  /// 
+  ///
   /// This method requires a valid connection to ipvslogin. Use connectToSSHServer() first.
   /// Note that this method works asynchronously and will await requests to the server!
   /// (Does nothing if debug mode is enabled.)
-  /// 
+  ///
   /// [ipvsServerName]: Name of the server you want to access via ipvslogin. e.g.: "pcsgs08".
   /// [serverPort]: The port to which to connect. Should be equal to the port to which the internal Flask-server connects. You probably need 5000.
   void forwardConnection(String ipvsServerName, int serverPort) async {
+    if (debugEnabled) return;
 
-    if(debugEnabled) return;
-
-    if(serverSocket == null || client == null) {
+    if (serverSocket == null || client == null) {
       throw "Error: No connection to ipvslogin established. Did you wait for connectToSSHServer() to finish?";
     }
 
     readyForHTTPRequests = true;
+    //TODO: Könnt ihr hier einen Zustand aktualisieren oder eine Benachrichtigung an die Oberfläche senden?
+    // Ab hier soll es erlaubt sein HTTP-Anfragen zu senden:
 
-    await for (final socket in serverSocket!) { 
-      if (client == null || client!.isClosed) { //TODO: Notwendig?
-        serverSocket!.close();
+    //notifyListeners();
+
+    await for (final socket in serverSocket!) {
+      if (client == null || client!.isClosed) {
+        serverSocket!.close(); //TODO: Notwendig? Testen!
         break;
       }
-      final SSHForwardChannel forward = await client!.forwardLocal("$ipvsServerName.informatik.uni-stuttgart.de", serverPort); //TODO: Fehlerbehandlung hinzufügen. Bsp: Prot nicht erlaubt?
-      forward.stream.cast<List<int>>().pipe(socket).onError((error, stackTrace) {
+      final SSHForwardChannel forward = await client!.forwardLocal(
+          "$ipvsServerName.informatik.uni-stuttgart.de",
+          serverPort); //TODO: Fehlerbehandlung hinzufügen?
+      forward.stream
+          .cast<List<int>>()
+          .pipe(socket)
+          .onError((error, stackTrace) {
         print("Warning: Transmission of data via forwarding failed.\n$error");
         //TODO: Können Fehler Auftreten? Log-Warnung falls Fehler.
       });
       socket.cast<Uint8List>().pipe(forward.sink);
-    } 
+    }
   }
 
   /// Close the ssh tunnel if it is open.
   void terminateConnection() {
-    if(client != null && !client!.isClosed) {
+    if (client != null && !client!.isClosed) {
       client!.close();
       print("ssh connection terminated.");
     }
@@ -88,14 +93,15 @@ class BackendConnection {
   }
 
   /// Send a http-post request with the input data (of phase 1) via the specified ssh tunnel.
-  /// 
+  ///
   /// Returns the json body of the response. (for now) TODO: Read paper and code of model.
   Future<String> sendInputData(double permeability, double density) async {
-    if(!readyForHTTPRequests && !debugEnabled) {
+    if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
     }
 
-    final ip = debugEnabled ? "http://127.0.0.1:5000" : "http://127.0.0.1:$localPort";
+    final ip =
+        debugEnabled ? "http://127.0.0.1:5000" : "http://127.0.0.1:$localPort";
 
     final response = await http.post(
       Uri.parse(ip),
@@ -104,8 +110,10 @@ class BackendConnection {
     );
     if (response.statusCode == 200) {
       return response.body;
-    } else { //TODO: Besser?
-      stderr.writeln("HTTP-request failed with status code ${response.statusCode}");
+    } else {
+      //TODO: Besser?
+      stderr.writeln(
+          "HTTP-request failed with status code ${response.statusCode}");
       return response.body;
     }
   }

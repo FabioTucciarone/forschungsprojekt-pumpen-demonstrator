@@ -1,7 +1,7 @@
 import 'package:demonstrator_app/Checkboxes.dart';
-import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'BuildConnection.dart';
+import 'Intro.dart';
 import 'Slider.dart';
 
 import 'package:flutter/material.dart';
@@ -24,13 +24,13 @@ class MainSlide extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Introduction()));
+                            builder: (context) => const IntroScreen()));
                   }),
               actions: const <Widget>[
                 ButtonAnmelden(),
               ],
             ),
-            backgroundColor: Color.fromARGB(255, 33, 128, 231),
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
@@ -66,7 +66,7 @@ class MainSlide extends StatelessWidget {
                       "Anwenden",
                       textScaleFactor: 2,
                     ),
-                  ),
+                  )
                 ],
               ),
             ),

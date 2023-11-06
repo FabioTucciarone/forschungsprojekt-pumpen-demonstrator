@@ -201,33 +201,39 @@ class _PressureSliderState extends State<PressureSlider> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        Text(
-          'Druck: $currentValue',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Flexible(
+          flex: 2,
+          child: Text(
+            'Druck: $currentValue',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        Center(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragStart: (DragStartDetails details) {
-              correctingPosition(details.localPosition.dx);
-            },
-            onHorizontalDragUpdate: (DragUpdateDetails details) {
-              correctingPosition(details.localPosition.dx);
-            },
-            onTapDown: (TapDownDetails details) {
-              correctingPosition(details.localPosition.dx);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Container(
-                width: widget.sliderWidth,
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.black),
-                  gradient: LinearGradient(colors: colorsGradient),
-                ),
-                child: CustomPaint(
-                  painter: SliderThumb(sliderPos),
+        Flexible(
+          flex: 6,
+          child: Center(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragStart: (DragStartDetails details) {
+                correctingPosition(details.localPosition.dx);
+              },
+              onHorizontalDragUpdate: (DragUpdateDetails details) {
+                correctingPosition(details.localPosition.dx);
+              },
+              onTapDown: (TapDownDetails details) {
+                correctingPosition(details.localPosition.dx);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Container(
+                  width: widget.sliderWidth,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.5, color: Colors.black),
+                    gradient: LinearGradient(colors: colorsGradient),
+                  ),
+                  child: CustomPaint(
+                    painter: SliderThumb(sliderPos),
+                  ),
                 ),
               ),
             ),
@@ -235,32 +241,6 @@ class _PressureSliderState extends State<PressureSlider> {
         ),
       ],
     );
-    /*return SliderTheme(
-        data: SliderTheme.of(context).copyWith(
-          inactiveTrackColor: Colors.white,
-          activeTrackColor: Colors.red,
-          thumbColor: Colors.black,
-          overlayColor: Colors.grey,
-          thumbShape: const RoundSliderThumbShape(
-            enabledThumbRadius: 15,
-            pressedElevation: 8,
-          ),
-          overlayShape: const RoundSliderOverlayShape(overlayRadius: 30),
-          trackShape: const RectangularSliderTrackShape(),
-          trackHeight: 10,
-        ),
-        child: Slider(
-          value: currentValue,
-          min: 870000,
-          max: 910000,
-          divisions: 1000,
-          label: '${currentValue.round()}',
-          onChanged: (double value) {
-            setState(() {
-              currentValue = value;
-            });
-          },
-        ));*/
   }
 }
 

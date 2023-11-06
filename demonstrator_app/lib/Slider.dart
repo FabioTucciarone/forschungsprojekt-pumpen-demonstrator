@@ -1,7 +1,4 @@
-
 import 'package:flutter/material.dart';
-
-
 
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
@@ -92,32 +89,6 @@ class _PressureSliderState extends State<PressureSlider> {
         ),
       ],
     );
-    /*return SliderTheme(
-        data: SliderTheme.of(context).copyWith(
-          inactiveTrackColor: Colors.white,
-          activeTrackColor: Colors.red,
-          thumbColor: Colors.black,
-          overlayColor: Colors.grey,
-          thumbShape: const RoundSliderThumbShape(
-            enabledThumbRadius: 15,
-            pressedElevation: 8,
-          ),
-          overlayShape: const RoundSliderOverlayShape(overlayRadius: 30),
-          trackShape: const RectangularSliderTrackShape(),
-          trackHeight: 10,
-        ),
-        child: Slider(
-          value: currentValue,
-          min: 870000,
-          max: 910000,
-          divisions: 1000,
-          label: '${currentValue.round()}',
-          onChanged: (double value) {
-            setState(() {
-              currentValue = value;
-            });
-          },
-        ));*/
   }
 }
 
