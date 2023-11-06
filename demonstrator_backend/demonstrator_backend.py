@@ -35,7 +35,7 @@ def send_input():
     permeability = float(data.get('permeability'))
     pressure = float(data.get('pressure'))
 
-    model_communication.get_1hp_model_results(permeability, pressure)
+    model_communication.update_1hp_model_results(permeability, pressure)
 
     for i in range(3):
         FigureCanvas(model_communication.figures.get_figure(i)).print_png(image_bytes[i])

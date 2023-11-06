@@ -23,16 +23,21 @@ def show_figure(figure: Figure):
     plt.show()
 
 
-
+st1 = time.time()
 model_communication = ModelCommunication()
+et1 = time.time()
+print('Initialisierung:', et1 - st1, 'seconds')
 
-st = time.time()
-model_communication.get_1hp_model_results(2.646978938535798940e-10, -2.830821194764205056e-03)
-et = time.time()
-print('Gesamtzeit:', et - st, 'seconds')
+st2 = time.time()
+model_communication.update_1hp_model_results(2.646978938535798940e-10, -2.830821194764205056e-03)
+et2 = time.time()
+print('Antwortzeit:', et2 - st2, 'seconds')
+print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
 
 show_figure(model_communication.figures.get_figure(0))
+show_figure(model_communication.figures.get_figure(1))
+show_figure(model_communication.figures.get_figure(2))
 
-model_communication.get_1hp_model_results(1e-10, -0.5e-03)
+model_communication.update_1hp_model_results(1e-10, -0.5e-03)
 
 show_figure(model_communication.figures.get_figure(0))

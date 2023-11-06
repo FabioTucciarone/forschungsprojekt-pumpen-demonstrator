@@ -122,7 +122,7 @@ class ModelCommunication:
         self.model.eval()
 
 
-    def get_1hp_model_results(self, permeability: float, pressure: float):
+    def update_1hp_model_results(self, permeability: float, pressure: float):
         """
         Prepare a dataset and run the model.
 
