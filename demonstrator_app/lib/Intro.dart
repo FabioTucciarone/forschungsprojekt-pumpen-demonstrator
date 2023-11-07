@@ -26,10 +26,9 @@ class RobotIntro extends StatefulWidget {
 
 class _RobotIntroState extends State<RobotIntro> {
   bool speechBubble = false;
-  
+  double volume = 1;
   Player player = Player();
   int times = 0;
-  String textSpeechBubble = 'Hello...';
   List<String> imagePaths = [
     'assets/happy.png',
     'assets/bored.jpeg',
@@ -101,6 +100,16 @@ class _RobotIntroState extends State<RobotIntro> {
                     ),
                   ),
                 ),
+                Positioned(
+                  top:10,
+                  left:10,
+                  child: Slider(
+                    value: volume,
+                    onChanged: (value) => setState(() {
+                    volume = value;
+                    player.setVolume(volume);
+                  }),)
+                  )
               ],
             ),
           )),
@@ -142,6 +151,10 @@ class Player{
   Player() {
    player.setSource(AssetSource("animalese0.wav"));
    player.setVolume(50);
+  }
+
+  void setVolume(double volume){
+    player.setVolume(volume);
   }
 
   void play(int state)async {
