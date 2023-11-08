@@ -86,83 +86,87 @@ def load_data_points(path_to_dataset):
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
 
-
 def square_distance(a: DataPoint, b: DataPoint):
     return (b.k - a.k)**2 + (b.p - a.p)**2
 
 def distance(a: DataPoint, b: DataPoint):
     return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
 
+
 def get_closest_point(p: DataPoint, datapoints: list):
-    s = datapoints[0]
-    min_distance = square_distance(p, s)
-    for x in datapoints:
+    closest_i = 0
+    min_distance = square_distance(p, datapoints[0])
+    for i, x in enumerate(datapoints):
         d = square_distance(p, x)
         if d < min_distance:
             min_distance = d
-            s = x
-    return s
+            closest_i = i
+    return closest_i
 
-def triangulate_data_point(p: DataPoint):
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
 
+def triangulate_data_point(datapoints: list[DataPoint], p: DataPoint, show_result=False):
     p = DataPoint(p.k * 1e10, p.p * 1e3)
-    datapoints = load_data_points(path_to_dataset)
-    c = get_closest_point(p, datapoints)
-    cp = DataPoint(p.k - c.k, p.p - c.p)
-    q = DataPoint(p.k + cp.p, p.p - cp.k)
+    closest_i = get_closest_point(p, datapoints)
+    c = datapoints[closest_i]
+    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
     
-    closest_left = DataPoint(0, 0)
-    closest_right = DataPoint(0, 0)
+    closest_left_i = 0
+    closest_right_i = 0
 
     dist_left = np.inf
     dist_right = np.inf
 
-    for x in datapoints:
+    for i, x in enumerate(datapoints):
         pos_sp = get_line_determinant(c, p, x)
         pos_sq = get_line_determinant(p, q, x)
-        if pos_sp >= 0 and pos_sq >= 0: # x left of 0 --> sp
-            plt.plot(x.k, x.p, 'r+')
+        if pos_sp >= 0 and pos_sq >= 0: # left 
+            if show_result: plt.plot(x.k, x.p, 'r+')
             d = square_distance(p, x)
             if (dist_left > d):
                 dist_left = d
-                closest_left = x
-        elif pos_sp < 0 and pos_sq >= 0: # right of 0 --> sp
-            plt.plot(x.k, x.p, 'c+')
+                closest_left_i = i
+        elif pos_sp < 0 and pos_sq >= 0: # right
+            if show_result: plt.plot(x.k, x.p, 'c+')
             d = square_distance(p, x)
             if (dist_right > d):
                 dist_right = d
-                closest_left = x
+                closest_right_i = i
         else:
-            plt.plot(x.k, x.p, 'g+')
+            if show_result: plt.plot(x.k, x.p, 'g+')
 
-    plt.plot(p.k, p.p, 'bo')
-    plt.plot(c.k, c.p, 'bo')
-    plt.plot(q.k, q.p, 'c.')
-    plt.text(p.k, p.p, 'p')
-    plt.text(c.k, c.p, 'c')
-    plt.text(q.k, q.p, 'q')
-    
-    plt.arrow(c.k, c.p, p.k - c.k, p.p - c.p, color='c')
-    plt.arrow(p.k, p.p, q.k - p.k, q.p - p.p, color='c')
-    plt.show()
-    
-
-    if dist_left < np.inf and dist_right < np.inf:
-        plt.plot(closest_left.k, closest_left.p, 'go')
-        plt.plot(closest_right.k, closest_right.p, 'go')
+    if show_result: 
+        plt.plot(p.k, p.p, 'bo')
+        plt.plot(c.k, c.p, 'bo')
+        plt.plot(q.k, q.p, 'c.')
+        plt.text(p.k, p.p, 'p')
+        plt.text(c.k, c.p, 'c')
         
-        return [p, closest_left, closest_right]
+        plt.plot(datapoints[closest_left_i].k, datapoints[closest_left_i].p, 'go')
+        plt.text(datapoints[closest_left_i].k, datapoints[closest_left_i].p, 'cl')
+        plt.plot(datapoints[closest_right_i].k, datapoints[closest_right_i].p, 'go')
+        plt.text(datapoints[closest_right_i].k, datapoints[closest_right_i].p,'cr')
+        plt.show()
+    
+    if dist_left < np.inf and dist_right < np.inf:      
+        return [closest_i, closest_left_i, closest_right_i]
     else:
-        return p
+        return closest_i
     
 
+def calculate_interpolation_weights(triangle: list[DataPoint], x: DataPoint):
+    weights = [0, 0, 0]
+    d = (triangle[1].p - triangle[2].p) * (triangle[0].k - triangle[2].k) + (triangle[0].p - triangle[2].p) * (triangle[2].k - triangle[1].k)
+    weights[0] = ((triangle[1].p - triangle[2].p) * (x.k - triangle[2].k) + (triangle[2].k - triangle[1].k) * (x.p - triangle[2].p)) / d
+    weights[1] = ((triangle[2].p - triangle[0].p) * (x.k - triangle[2].k) + (triangle[0].k - triangle[2].k) * (x.p - triangle[2].p)) / d
+    weights[2] = 1 - weights.k - weights[1]
 
+    print(f"Barycentric: {weights}, sum = {weights[0] + weights[1] + weights[2]}")
+    return weights
 
 # ALT:
 
 
-def triangulate_data_point_alt(permeability: float, pressure: float, show_triangulation=False):
+def triangulate_data_point_delauny(permeability: float, pressure: float, show_triangulation=False):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     permeability_values, pressure_values = read_input_lists(path_to_dataset)
 
@@ -173,20 +177,6 @@ def triangulate_data_point_alt(permeability: float, pressure: float, show_triang
     simulated_points = np.c_[permeability_values, pressure_values]
     plt.plot(simulated_points[:,0], simulated_points[:,1], '+')
     plt.plot(permeability, pressure, 'ro')
-    tri = triangulate_data_point(DataPoint(permeability, pressure))
-    print(tri)
-    if isinstance(tri, list):
-        plt.plot(permeability, pressure, 'ro')
-        plt.text(tri[0].k, tri[0].p, "ro")
-        plt.text(tri[1].k, tri[1].p, "ro")
-        plt.text(tri[2].k, tri[2].p, "ro")
-        plt.text(tri[0].k, tri[0].p, "s")
-        plt.text(tri[1].k, tri[1].p, "l")
-        plt.text(tri[2].k, tri[2].p, "r")
-
-    
-
-    """
 
     triangulation = Delaunay(simulated_points)
     simplex_index = triangulation.find_simplex(x)
@@ -199,6 +189,8 @@ def triangulate_data_point_alt(permeability: float, pressure: float, show_triang
     p1 = simulated_points[point_indices[0]]
     p2 = simulated_points[point_indices[1]]
     p3 = simulated_points[point_indices[2]]
+
+    return [p1, p2, p3]
 
     # w1 = norm(x - p2) * norm(x - p3) / (norm(p1 - p2) * norm(p1 - p3))
     # w2 = norm(x - p1) * norm(x - p3) / (norm(p2 - p1) * norm(p2 - p3))
@@ -230,10 +222,11 @@ def triangulate_data_point_alt(permeability: float, pressure: float, show_triang
         plt.show()
 
     interpolate_experimental(point_indices, weights)
-"""
+
 
 def interpolate_experimental(run_indices, weights, show_result: bool = True):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+
     pflotran_settings = prepare.get_pflotran_settings(path_to_dataset)
 
     # Load temperature fields
