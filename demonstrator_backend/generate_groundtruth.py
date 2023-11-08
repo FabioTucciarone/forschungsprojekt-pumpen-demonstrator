@@ -8,6 +8,7 @@ from scipy.spatial import Delaunay
 from scipy.spatial import ConvexHull
 import model_communication as mc
 from numpy.linalg import norm
+from dataclasses import dataclass
 
 # tensorboard --logdir=runs/ --host localhost --port 8088
 
@@ -53,8 +54,115 @@ def read_input_lists(path_to_dataset):
 
     return permeability_values, pressure_values
 
+@dataclass
+class DataPoint:
+    k: np.float64 # permeability
+    p: np.float64 # pressure
 
-def triangulate_data_point(permeability: float, pressure: float, show_triangulation=False):
+
+def load_data_points(path_to_dataset):
+    permeability_values_path = os.path.join(path_to_dataset, "inputs", "permeability_values.txt")
+    pressure_values_path = os.path.join(path_to_dataset, "inputs", "pressure_values.txt")
+
+    permeability_values = []
+    with open(permeability_values_path) as file:
+        permeability_values = [float(line.rstrip()) for line in file]
+
+    pressure_values = []
+    with open(pressure_values_path) as file:
+        pressure_values = [float(line.rstrip()) for line in file]
+
+    datapoints = [DataPoint(k * 1e10, p * 1e3) for k, p in zip(permeability_values, pressure_values)]
+    # plt.plot(np.array(permeability_values) * 1e10, np.array(pressure_values) * 1e3, '+c')
+    return datapoints
+
+
+
+# MAGIE:
+
+
+
+# 0 --> a, b?
+def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
+    return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
+
+
+def square_distance(a: DataPoint, b: DataPoint):
+    return (b.k - a.k)**2 + (b.p - a.p)**2
+
+def distance(a: DataPoint, b: DataPoint):
+    return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
+
+def get_closest_point(p: DataPoint, datapoints: list):
+    s = datapoints[0]
+    min_distance = square_distance(p, s)
+    for x in datapoints:
+        d = square_distance(p, x)
+        if d < min_distance:
+            min_distance = d
+            s = x
+    return s
+
+def triangulate_data_point(p: DataPoint):
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+
+    p = DataPoint(p.k * 1e10, p.p * 1e3)
+    datapoints = load_data_points(path_to_dataset)
+    c = get_closest_point(p, datapoints)
+    cp = DataPoint(p.k - c.k, p.p - c.p)
+    q = DataPoint(p.k + cp.p, p.p - cp.k)
+    
+    closest_left = DataPoint(0, 0)
+    closest_right = DataPoint(0, 0)
+
+    dist_left = np.inf
+    dist_right = np.inf
+
+    for x in datapoints:
+        pos_sp = get_line_determinant(c, p, x)
+        pos_sq = get_line_determinant(p, q, x)
+        if pos_sp >= 0 and pos_sq >= 0: # x left of 0 --> sp
+            plt.plot(x.k, x.p, 'r+')
+            d = square_distance(p, x)
+            if (dist_left > d):
+                dist_left = d
+                closest_left = x
+        elif pos_sp < 0 and pos_sq >= 0: # right of 0 --> sp
+            plt.plot(x.k, x.p, 'c+')
+            d = square_distance(p, x)
+            if (dist_right > d):
+                dist_right = d
+                closest_left = x
+        else:
+            plt.plot(x.k, x.p, 'g+')
+
+    plt.plot(p.k, p.p, 'bo')
+    plt.plot(c.k, c.p, 'bo')
+    plt.plot(q.k, q.p, 'c.')
+    plt.text(p.k, p.p, 'p')
+    plt.text(c.k, c.p, 'c')
+    plt.text(q.k, q.p, 'q')
+    
+    plt.arrow(c.k, c.p, p.k - c.k, p.p - c.p, color='c')
+    plt.arrow(p.k, p.p, q.k - p.k, q.p - p.p, color='c')
+    plt.show()
+    
+
+    if dist_left < np.inf and dist_right < np.inf:
+        plt.plot(closest_left.k, closest_left.p, 'go')
+        plt.plot(closest_right.k, closest_right.p, 'go')
+        
+        return [p, closest_left, closest_right]
+    else:
+        return p
+    
+
+
+
+# ALT:
+
+
+def triangulate_data_point_alt(permeability: float, pressure: float, show_triangulation=False):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     permeability_values, pressure_values = read_input_lists(path_to_dataset)
 
@@ -63,6 +171,23 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
     x = [permeability, pressure]
 
     simulated_points = np.c_[permeability_values, pressure_values]
+    plt.plot(simulated_points[:,0], simulated_points[:,1], '+')
+    plt.plot(permeability, pressure, 'ro')
+    tri = triangulate_data_point(DataPoint(permeability, pressure))
+    print(tri)
+    if isinstance(tri, list):
+        plt.plot(permeability, pressure, 'ro')
+        plt.text(tri[0].k, tri[0].p, "ro")
+        plt.text(tri[1].k, tri[1].p, "ro")
+        plt.text(tri[2].k, tri[2].p, "ro")
+        plt.text(tri[0].k, tri[0].p, "s")
+        plt.text(tri[1].k, tri[1].p, "l")
+        plt.text(tri[2].k, tri[2].p, "r")
+
+    
+
+    """
+
     triangulation = Delaunay(simulated_points)
     simplex_index = triangulation.find_simplex(x)
 
@@ -105,7 +230,7 @@ def triangulate_data_point(permeability: float, pressure: float, show_triangulat
         plt.show()
 
     interpolate_experimental(point_indices, weights)
-
+"""
 
 def interpolate_experimental(run_indices, weights, show_result: bool = True):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
@@ -236,4 +361,4 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         return y
 
 if __name__ == "__main__":
-    triangulate_data_point(3.246978938535798940e-10, -2.130821194764205056e-03, True)
+    triangulate_data_point(DataPoint(3.1e-10, -2e-3))
