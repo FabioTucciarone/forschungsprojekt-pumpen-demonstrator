@@ -1,7 +1,6 @@
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
-import 'BuildConnection.dart';
 import 'Slider.dart';
 
 import 'package:flutter/material.dart';
@@ -26,9 +25,6 @@ class MainSlide extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => const Introduction()));
                   }),
-              actions: const <Widget>[
-                ButtonAnmelden(),
-              ],
             ),
             backgroundColor: Color.fromARGB(255, 33, 128, 231),
             body: Padding(

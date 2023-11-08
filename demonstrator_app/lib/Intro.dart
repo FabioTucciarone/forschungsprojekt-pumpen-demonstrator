@@ -1,5 +1,5 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'MainScreen_kids.dart';
 import 'Layout.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
@@ -9,7 +9,7 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: RobotIntro(),
     );
   }
@@ -25,10 +25,31 @@ class RobotIntro extends StatefulWidget {
 }
 
 class _RobotIntroState extends State<RobotIntro> {
-  bool _speechBubble = false;
-  bool _speechBubble2 = false;
+  bool speechBubble = false;
+  double volume = 1;
+  Player player = Player();
   int times = 0;
-  String textSpeechBubble = 'Hello...';
+  List<String> imagePaths = [
+    'assets/happy.png',
+    'assets/bored.jpeg',
+    'assets/confused.jpeg',
+    'assets/happy.png',
+  ];
+  List<String> speeches = [
+    "",
+    "Hallo mein Name ist Kai",
+    "Ich bin eine Künstliche Intelligenz",
+    "Leider bin ich noch jung und tollpatschig, kannst du mir helfen ein Paar meiner Fehler zu finden?"
+  ];
+
+  void nextState(){
+    setState(() {
+      speechBubble = true;
+      player.play(times);
+      times++;
+      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +57,14 @@ class _RobotIntroState extends State<RobotIntro> {
       appBar: AppBar(
         title: const Text("Demonstrator App"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const Introduction()));
           },
         ),
       ),
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: [
@@ -60,42 +81,35 @@ class _RobotIntroState extends State<RobotIntro> {
                     color: Colors.white,
                     height: 300,
                     width: 200,
-                    child: FadeInImage.memoryNetwork(
-                      placeholder: kTransparentImage,
-                      image:
-                          'https://cdn.dribbble.com/users/1787323/screenshots/11427608/media/8fda96ec0ca9b0477fbd612f709e5c37.png',
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.asset(
+                       imagePaths[times],
+                    ),                 
                   ),
                 ),
                 Positioned(
                   top: 50,
                   left: 95,
                   child: AnimatedOpacity(
-                    opacity: _speechBubble ? 1.0 : 0.0,
+                    opacity: speechBubble ? 1.0:0,
                     duration: const Duration(milliseconds: 500),
                     child: BubbleSpecialThree(
-                      text: textSpeechBubble,
+                      text: speeches[times],
                       color: const Color.fromARGB(255, 190, 190, 190),
                       tail: true,
-                      textStyle: TextStyle(color: Colors.black, fontSize: 16),
+                      textStyle: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                   ),
                 ),
                 Positioned(
-                  top: 50,
-                  left: 95,
-                  child: AnimatedOpacity(
-                    opacity: _speechBubble2 ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: BubbleSpecialThree(
-                      text: textSpeechBubble,
-                      color: const Color.fromARGB(255, 190, 190, 190),
-                      tail: true,
-                      textStyle: TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                  ),
-                ),
+                  top:10,
+                  left:10,
+                  child: Slider(
+                    value: volume,
+                    onChanged: (value) => setState(() {
+                    volume = value;
+                    player.setVolume(volume);
+                  }),)
+                  )
               ],
             ),
           )),
@@ -104,20 +118,10 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
-              onPressed: () {
-                if (times == 0) {
-                  setState(() {
-                    _speechBubble = !_speechBubble;
-                    times = times + 1;
-                  });
-                } else if (times == 1) {
-                  setState(() {
-                    _speechBubble = !_speechBubble;
-                    _speechBubble2 = !_speechBubble2;
-                    times = times + 1;
-                    textSpeechBubble = '...';
-                  });
-                } else {
+              onPressed:  () {
+                nextState();
+                
+                if(times==3){
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -130,5 +134,37 @@ class _RobotIntroState extends State<RobotIntro> {
         ],
       ),
     );
+  }
+}
+
+
+class Player{
+  
+  final player = AudioPlayer();
+  List<String> soundPaths = [
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese1.wav"
+  ];
+
+
+  Player() {
+   player.setSource(AssetSource("animalese0.wav"));
+   player.setVolume(50);
+  }
+
+  void setVolume(double volume){
+    player.setVolume(volume);
+  }
+
+  void play(int state)async {
+    if(state==2){
+      await player.release();
+    } else{
+    await player.stop();
+    await player.setSource(AssetSource(soundPaths[state]));
+    await player.resume();
+    }
+    
   }
 }

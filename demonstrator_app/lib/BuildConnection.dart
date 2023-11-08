@@ -1,4 +1,4 @@
-import 'package:demonstrator_app/MainScreen.dart';
+import 'package:demonstrator_app/Layout.dart';
 import 'package:flutter/material.dart';
 import 'BackendConnection.dart';
 
@@ -34,8 +34,10 @@ class RegisterApp extends StatelessWidget {
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MainSlide()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Introduction()));
             }),
         actions: const <Widget>[
           ButtonAnmelden(),
@@ -63,6 +65,7 @@ class RegisterBox extends StatefulWidget {
 class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
+  bool passwordVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +91,20 @@ class _RegisterState extends State<RegisterBox> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: TextFormField(
+                  obscureText: passwordVisible,
                   controller: password,
-                  decoration: const InputDecoration(hintText: 'Password'),
+                  decoration: InputDecoration(
+                      hintText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            passwordVisible = !passwordVisible;
+                          });
+                        },
+                      )),
                 ),
               ),
               TextButton(

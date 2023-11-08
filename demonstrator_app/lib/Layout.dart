@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'MainScreen.dart';
 import 'Intro.dart';
+import 'BuildConnection.dart';
 
 class Introduction extends StatelessWidget {
   const Introduction({super.key});
@@ -27,6 +28,9 @@ class IntroHomeScaffold extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: null,
         ),
+        actions: const <Widget>[
+          ButtonAnmelden(),
+        ],
       ),
       backgroundColor: const Color.fromARGB(255, 159, 151, 174),
       body: Column(
