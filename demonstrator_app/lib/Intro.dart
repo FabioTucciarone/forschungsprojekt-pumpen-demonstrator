@@ -77,17 +77,17 @@ class _RobotIntroState extends State<RobotIntro> {
         children: [
           Center(
               child: SizedBox(
-            width: 500,
-            height: 300,
+            width: 700,
+            height: 500,
             child: Stack(
               children: <Widget>[
                 Positioned(
                   top: 20,
-                  left: 150,
+                  left: 350,
                   child: Container(
                     color: Colors.white,
-                    height: 300,
-                    width: 200,
+                    height: 500,
+                    width: 400,
                     child: Image.asset(
                       imagePaths[times],
                     ),
@@ -96,6 +96,8 @@ class _RobotIntroState extends State<RobotIntro> {
                 Positioned(
                   top: 50,
                   left: 95,
+                  width: 300,
+                  height: 500,
                   child: AnimatedOpacity(
                     opacity: speechBubble ? 1.0 : 0,
                     duration: const Duration(milliseconds: 500),
@@ -104,13 +106,13 @@ class _RobotIntroState extends State<RobotIntro> {
                       color: const Color.fromARGB(255, 190, 190, 190),
                       tail: true,
                       textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 16),
+                          const TextStyle(color: Colors.black, fontSize: 25),
                     ),
                   ),
                 ),
                 Positioned(
-                    top: 10,
-                    left: 10,
+                    top: 450,
+                    left: 200,
                     child: Slider(
                       value: volume,
                       onChanged: (value) => setState(() {
@@ -127,14 +129,14 @@ class _RobotIntroState extends State<RobotIntro> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                nextState();
-
                 if (times == 3) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
                               MainSlide(backend: widget.backend)));
+                } else {
+                  nextState();
                 }
               },
               child: const Text("Weiter"),
