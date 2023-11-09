@@ -42,12 +42,11 @@ class _RobotIntroState extends State<RobotIntro> {
     "Leider bin ich noch jung und tollpatschig, kannst du mir helfen ein Paar meiner Fehler zu finden?"
   ];
 
-  void nextState(){
+  void nextState() {
     setState(() {
       speechBubble = true;
       player.play(times);
       times++;
-      
     });
   }
 
@@ -70,46 +69,49 @@ class _RobotIntroState extends State<RobotIntro> {
         children: [
           Center(
               child: SizedBox(
-            width: 500,
-            height: 300,
+            width: 700,
+            height: 500,
             child: Stack(
               children: <Widget>[
                 Positioned(
                   top: 20,
-                  left: 150,
+                  left: 350,
                   child: Container(
                     color: Colors.white,
-                    height: 300,
-                    width: 200,
+                    height: 500,
+                    width: 400,
                     child: Image.asset(
-                       imagePaths[times],
-                    ),                 
+                      imagePaths[times],
+                    ),
                   ),
                 ),
                 Positioned(
                   top: 50,
                   left: 95,
+                  width: 300,
+                  height: 500,
                   child: AnimatedOpacity(
-                    opacity: speechBubble ? 1.0:0,
+                    opacity: speechBubble ? 1.0 : 0,
                     duration: const Duration(milliseconds: 500),
                     child: BubbleSpecialThree(
                       text: speeches[times],
                       color: const Color.fromARGB(255, 190, 190, 190),
                       tail: true,
-                      textStyle: const TextStyle(color: Colors.black, fontSize: 16),
+                      textStyle:
+                          const TextStyle(color: Colors.black, fontSize: 25),
                     ),
                   ),
                 ),
                 Positioned(
-                  top:10,
-                  left:10,
-                  child: Slider(
-                    value: volume,
-                    onChanged: (value) => setState(() {
-                    volume = value;
-                    player.setVolume(volume);
-                  }),)
-                  )
+                    top: 450,
+                    left: 200,
+                    child: Slider(
+                      value: volume,
+                      onChanged: (value) => setState(() {
+                        volume = value;
+                        player.setVolume(volume);
+                      }),
+                    ))
               ],
             ),
           )),
@@ -118,14 +120,14 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
-              onPressed:  () {
-                nextState();
-                
-                if(times==3){
+              onPressed: () {
+                if (times == 3) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const MainSlide()));
+                } else {
+                  nextState();
                 }
               },
               child: const Text("Weiter"),
@@ -137,9 +139,7 @@ class _RobotIntroState extends State<RobotIntro> {
   }
 }
 
-
-class Player{
-  
+class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
     "animalese0.wav",
@@ -147,24 +147,22 @@ class Player{
     "animalese1.wav"
   ];
 
-
   Player() {
-   player.setSource(AssetSource("animalese0.wav"));
-   player.setVolume(50);
+    player.setSource(AssetSource("animalese0.wav"));
+    player.setVolume(50);
   }
 
-  void setVolume(double volume){
+  void setVolume(double volume) {
     player.setVolume(volume);
   }
 
-  void play(int state)async {
-    if(state==2){
+  void play(int state) async {
+    if (state == 2) {
       await player.release();
-    } else{
-    await player.stop();
-    await player.setSource(AssetSource(soundPaths[state]));
-    await player.resume();
+    } else {
+      await player.stop();
+      await player.setSource(AssetSource(soundPaths[state]));
+      await player.resume();
     }
-    
   }
 }
