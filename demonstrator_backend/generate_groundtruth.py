@@ -288,19 +288,19 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
             if flound_edge:
                 break
 
-    transformed_temp_fields = [np.ndarray((info.dims[0], info.dims[1])) for i in range(3)]
+    transformed_temp_fields = [np.ndarray(info.dims) for i in range(3)]
     result_temp_field = np.ndarray((info.dims[0], info.dims[1]))
 
     ybounds_res = [weights[0]*ybounds[0][0] + weights[1]*ybounds[1][0] + weights[2]*ybounds[2][0], weights[0]*ybounds[0][1] + weights[1]*ybounds[1][1] + weights[2]*ybounds[2][1]]
     xbounds_res = [weights[0]*xbounds[0][0] + weights[1]*xbounds[1][0] + weights[2]*xbounds[2][0], weights[0]*xbounds[0][1] + weights[1]*xbounds[1][1] + weights[2]*xbounds[2][1]]
 
-    for j in range(0, 256):
-        for i in range(0, 20):
-            for k in range(0, 3):
+    for j in range(info.dims[1]):
+        for i in range(info.dims[0]):
+            for k in range(3):
                 transformed_temp_fields[k][i][j] = get_result(info, temp_fields[k], i, j, xbounds[k], ybounds[k], xbounds_res, ybounds_res)
 
-    for j in range(0, 256):
-        for i in range(0, 20):
+    for j in range(info.dims[1]):
+        for i in range(info.dims[0]):
             result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weights[0] + transformed_temp_fields[1][i][j]*weights[1] + transformed_temp_fields[2][i][j]*weights[2]
 
     if info.visualize:
@@ -336,15 +336,30 @@ def get_result(info: GroundTruthInfo, values, i, j, xbounds, ybounds, xbounds_re
     else:
         return y
 
+
 if __name__ == "__main__":
-    x = DataPoint(3.1e-10, -2e-3)
 
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     groundtruth_info = GroundTruthInfo(path_to_dataset, 10.6)
     groundtruth_info.visualize = True
 
- 
+    x = DataPoint(0.3e-10, -2e-3)
     triangle_i = triangulate_data_point(groundtruth_info, x)
     if isinstance(triangle_i, list):
         weights = calculate_barycentric_weights(groundtruth_info, triangle_i, x)
         interpolate_experimental(groundtruth_info, triangle_i, weights)
+
+    x = DataPoint(0.4e-10, -1.6e-3)
+    triangle_i = triangulate_data_point(groundtruth_info, x)
+    if isinstance(triangle_i, list):
+        weights = calculate_barycentric_weights(groundtruth_info, triangle_i, x)
+        interpolate_experimental(groundtruth_info, triangle_i, weights)
+
+    x = DataPoint(11e-10, -2.5e-3)
+    triangle_i = triangulate_data_point(groundtruth_info, x)
+    if isinstance(triangle_i, list):
+        weights = calculate_barycentric_weights(groundtruth_info, triangle_i, x)
+        interpolate_experimental(groundtruth_info, triangle_i, weights)
+
+    weights = calculate_barycentric_weights(groundtruth_info, [1, 2, 3], x)
+    interpolate_experimental(groundtruth_info, [1, 2, 3], [1/3, 1/3, 1/3])
