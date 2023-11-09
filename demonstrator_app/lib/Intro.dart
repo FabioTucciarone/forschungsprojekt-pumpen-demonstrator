@@ -2,23 +2,28 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'MainScreen_kids.dart';
 import 'Layout.dart';
+import 'BackendConnection.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
 class IntroScreen extends StatelessWidget {
-  const IntroScreen({super.key});
+  const IntroScreen({super.key, required this.backend});
+
+  final BackendConnection backend;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: RobotIntro(),
+    return MaterialApp(
+      home: RobotIntro(backend: backend),
     );
   }
 }
 
 class RobotIntro extends StatefulWidget {
+  final BackendConnection backend;
   const RobotIntro({
-    super.key,
-  });
+    Key? key,
+    required this.backend,
+  }) : super(key: key);
 
   @override
   State<RobotIntro> createState() => _RobotIntroState();
@@ -58,8 +63,11 @@ class _RobotIntroState extends State<RobotIntro> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Introduction()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Introduction(backend: widget.backend)));
           },
         ),
       ),
@@ -125,7 +133,8 @@ class _RobotIntroState extends State<RobotIntro> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MainSlide()));
+                          builder: (context) =>
+                              MainSlide(backend: widget.backend)));
                 } else {
                   nextState();
                 }

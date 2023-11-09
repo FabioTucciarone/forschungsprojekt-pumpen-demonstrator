@@ -1,6 +1,10 @@
 import 'package:demonstrator_app/Layout.dart';
+import 'BackendConnection.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const Introduction());
+  final BackendConnection backend = new BackendConnection();
+  runApp(Introduction(
+    backend: backend,
+  ));
 }
