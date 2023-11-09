@@ -34,23 +34,30 @@ class MainSlide extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(8),
                 children: const [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Column(
+                        children: [
+                          PressureSlider(600, 870000, 910000),
+                          PressureSlider(600, 870000, 910000),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 100,
+                      ),
+                      RoboBox()
+                    ],
+                  ),
                   OutputBox(
-                    name: "erste Outputboxx",
+                    name: "erste Outputbox",
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   OutputBox(
-                    name: "zweite Outputboxx",
+                    name: "zweite Outputbox",
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  PressureSlider(800, 870000, 910000),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  PressureSlider(800, 870000, 910000),
                   SizedBox(
                     height: 10,
                   ),
@@ -70,5 +77,32 @@ class MainSlide extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+class RoboBox extends StatefulWidget {
+  const RoboBox({super.key});
+
+  @override
+  State<RoboBox> createState() => _RoboBoxState();
+}
+
+class _RoboBoxState extends State<RoboBox> {
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        color: Colors.blue,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Image.asset(
+            "assets/mad.jpeg",
+            height: 250,
+            width: 250,
+          ),
+        ),
+      ),
+    );
   }
 }
