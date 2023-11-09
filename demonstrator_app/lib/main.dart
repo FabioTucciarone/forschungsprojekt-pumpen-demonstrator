@@ -1,4 +1,5 @@
 import 'package:demonstrator_app/Layout.dart';
+import 'BackendConnection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -6,7 +7,10 @@ import 'package:provider/provider.dart';
 import 'Data.dart';
 
 void main() {
-  runApp(const Introduction());
+  final BackendConnection backend = new BackendConnection();
+  runApp(Introduction(
+    backend: backend,
+  ));
 }
 
 class MainApp extends StatelessWidget {

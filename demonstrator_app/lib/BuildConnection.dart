@@ -28,6 +28,7 @@ class RegisterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BackendConnection backend = new BackendConnection();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
@@ -37,7 +38,9 @@ class RegisterApp extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const Introduction()));
+                      builder: (context) => Introduction(
+                            backend: backend,
+                          )));
             }),
         actions: const <Widget>[
           ButtonAnmelden(),
@@ -66,10 +69,42 @@ class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
   bool passwordVisible = true;
+  String message = '';
+  Color colorMessage = Colors.white;
+  BackendConnection backendConnect = new BackendConnection();
+
+  Future<void> processRequest(
+      TextEditingController username, TextEditingController password) async {
+    try {
+      await backendConnect.connectToSSHServer(
+          username.text,
+          password
+              .text /*)
+          .then((value) {
+        backendConnect.forwardConnection('pcsgs08', 5000);
+      }*/
+          );
+      setState(() {
+        message = 'Log in successful';
+        colorMessage = Colors.green;
+      });
+    } catch (err) {
+      print('Error $err occured');
+      setState(() {
+        message = 'Log in failed';
+        colorMessage = Colors.red;
+      });
+    }
+    backendConnect.forwardConnection('pcsgs08', 5000);
+    await Future.delayed(Duration(seconds: 2));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Introduction(backend: backendConnect)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    String message = '';
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -109,7 +144,6 @@ class _RegisterState extends State<RegisterBox> {
               ),
               TextButton(
                 onPressed: () {
-                  BackendConnection backendConnect = new BackendConnection();
                   //TODO: Problembehandlung
                   // - Hier geht irgendwie was bei der Übergabe schief.
                   //   Wenn ich direkt einen String übergebe funktioniert's, wenn nicht wird ein Fehler geworfen.
@@ -117,33 +151,32 @@ class _RegisterState extends State<RegisterBox> {
                   // - Falls alles nichts hilft: versuch mal dartssh2 zu installieren, vielleicht versucht es das zu verwenden
                   //   siehe: https://pub.dev/packages/dartssh2 unter "# Install the `dartssh` command."
                   //   Dann einfach in Notion dokumentieren, falls das das Problem löst. Daraus bauen wir dann bald die README.md Datei.
-                  backendConnect
-                      .connectToSSHServer(username.text, password.text)
-                      .then((value) {
-                    backendConnect.forwardConnection('pcsgs08', 5000);
-                  });
+                  processRequest(username, password);
 
                   // Hier darf nichts mehr kommen, das wird entweder nicht ausgeführt, oder passiert zu schnell, weil die Portweiterleitung asynchron gestartet wird.
                   // ggf. könnt ihr in in BackendConnection einen Listener hinzufügen, der die Oberfläche aktualisiert: siehe Zu-Tun.
-
-                  /*FutureBuilder(
-                    future: backendConnect.sendInputData(5, 880000),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        message = 'works'; //Text(jsonDecode(snapshot));
-                      } else {
-                        message = 'Error';
-                      }
-                      return const Text('loading');
-                    },
-                  );*/
                 },
                 child: const Text('Verbinden'),
               ),
             ],
           ),
         ),
-        Text(message),
+        Container(
+          width: 300,
+          height: 50,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: colorMessage,
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              message,
+              style: TextStyle(color: colorMessage),
+            ),
+          ),
+        ),
       ],
     );
   }

@@ -2,23 +2,28 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'MainScreen_kids.dart';
 import 'Layout.dart';
+import 'BackendConnection.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
 class IntroScreen extends StatelessWidget {
-  const IntroScreen({super.key});
+  const IntroScreen({super.key, required this.backend});
+
+  final BackendConnection backend;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: RobotIntro(),
+    return MaterialApp(
+      home: RobotIntro(backend: backend),
     );
   }
 }
 
 class RobotIntro extends StatefulWidget {
+  final BackendConnection backend;
   const RobotIntro({
-    super.key,
-  });
+    Key? key,
+    required this.backend,
+  }) : super(key: key);
 
   @override
   State<RobotIntro> createState() => _RobotIntroState();
@@ -42,12 +47,11 @@ class _RobotIntroState extends State<RobotIntro> {
     "Leider bin ich noch jung und tollpatschig, kannst du mir helfen ein Paar meiner Fehler zu finden?"
   ];
 
-  void nextState(){
+  void nextState() {
     setState(() {
       speechBubble = true;
       player.play(times);
       times++;
-      
     });
   }
 
@@ -59,8 +63,11 @@ class _RobotIntroState extends State<RobotIntro> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Introduction()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Introduction(backend: widget.backend)));
           },
         ),
       ),
@@ -82,34 +89,35 @@ class _RobotIntroState extends State<RobotIntro> {
                     height: 300,
                     width: 200,
                     child: Image.asset(
-                       imagePaths[times],
-                    ),                 
+                      imagePaths[times],
+                    ),
                   ),
                 ),
                 Positioned(
                   top: 50,
                   left: 95,
                   child: AnimatedOpacity(
-                    opacity: speechBubble ? 1.0:0,
+                    opacity: speechBubble ? 1.0 : 0,
                     duration: const Duration(milliseconds: 500),
                     child: BubbleSpecialThree(
                       text: speeches[times],
                       color: const Color.fromARGB(255, 190, 190, 190),
                       tail: true,
-                      textStyle: const TextStyle(color: Colors.black, fontSize: 16),
+                      textStyle:
+                          const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                   ),
                 ),
                 Positioned(
-                  top:10,
-                  left:10,
-                  child: Slider(
-                    value: volume,
-                    onChanged: (value) => setState(() {
-                    volume = value;
-                    player.setVolume(volume);
-                  }),)
-                  )
+                    top: 10,
+                    left: 10,
+                    child: Slider(
+                      value: volume,
+                      onChanged: (value) => setState(() {
+                        volume = value;
+                        player.setVolume(volume);
+                      }),
+                    ))
               ],
             ),
           )),
@@ -118,14 +126,15 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
-              onPressed:  () {
+              onPressed: () {
                 nextState();
-                
-                if(times==3){
+
+                if (times == 3) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MainSlide()));
+                          builder: (context) =>
+                              MainSlide(backend: widget.backend)));
                 }
               },
               child: const Text("Weiter"),
@@ -137,9 +146,7 @@ class _RobotIntroState extends State<RobotIntro> {
   }
 }
 
-
-class Player{
-  
+class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
     "animalese0.wav",
@@ -147,24 +154,22 @@ class Player{
     "animalese1.wav"
   ];
 
-
   Player() {
-   player.setSource(AssetSource("animalese0.wav"));
-   player.setVolume(50);
+    player.setSource(AssetSource("animalese0.wav"));
+    player.setVolume(50);
   }
 
-  void setVolume(double volume){
+  void setVolume(double volume) {
     player.setVolume(volume);
   }
 
-  void play(int state)async {
-    if(state==2){
+  void play(int state) async {
+    if (state == 2) {
       await player.release();
-    } else{
-    await player.stop();
-    await player.setSource(AssetSource(soundPaths[state]));
-    await player.resume();
+    } else {
+      await player.stop();
+      await player.setSource(AssetSource(soundPaths[state]));
+      await player.resume();
     }
-    
   }
 }

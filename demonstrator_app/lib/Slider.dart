@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
+double currentValue = 870000;
+
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final double start;
   final double end;
   const PressureSlider(this.sliderWidth, this.start, this.end);
+
+  double getCurrent() {
+    return currentValue;
+  }
 
   @override
   State<PressureSlider> createState() => _PressureSliderState();
@@ -20,7 +26,6 @@ class _PressureSliderState extends State<PressureSlider> {
     const Color.fromARGB(255, 0, 115, 255),
     const Color.fromARGB(255, 2, 69, 152),
   ];
-  double currentValue = 870000;
   double sliderPos = 0;
 
   @override
