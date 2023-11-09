@@ -59,6 +59,21 @@ class DataPoint:
     k: np.float64 # permeability
     p: np.float64 # pressure
 
+@dataclass
+class GroundTruthInfo:
+    dataset_path: str
+    base_temp: float
+    datapoints: list = None
+    threshold_temp: float = 0
+    visualize: bool = False
+    dims: list = None
+    hp_pos = [9, 23]
+
+    def __post_init__(self):
+        self.datapoints = load_data_points(self.dataset_path)
+        self.threshold_temp = self.base_temp + 0.5
+        pflotran_settings = prepare.get_pflotran_settings(path_to_dataset)
+        self.dims = [pflotran_settings["grid"]["ncells"][0], pflotran_settings["grid"]["ncells"][1]]
 
 def load_data_points(path_to_dataset):
     permeability_values_path = os.path.join(path_to_dataset, "inputs", "permeability_values.txt")
@@ -77,12 +92,6 @@ def load_data_points(path_to_dataset):
     return datapoints
 
 
-
-# MAGIE:
-
-
-
-# 0 --> a, b?
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
 
@@ -91,7 +100,6 @@ def square_distance(a: DataPoint, b: DataPoint):
 
 def distance(a: DataPoint, b: DataPoint):
     return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
-
 
 def get_closest_point(p: DataPoint, datapoints: list):
     closest_i = 0
@@ -103,11 +111,10 @@ def get_closest_point(p: DataPoint, datapoints: list):
             closest_i = i
     return closest_i
 
-
-def triangulate_data_point(datapoints: list[DataPoint], p: DataPoint, show_result=False):
+def triangulate_data_point(info: GroundTruthInfo, p: DataPoint):
     p = DataPoint(p.k * 1e10, p.p * 1e3)
-    closest_i = get_closest_point(p, datapoints)
-    c = datapoints[closest_i]
+    closest_i = get_closest_point(p, info.datapoints)
+    c = info.datapoints[closest_i]
     q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
     
     closest_left_i = 0
@@ -116,55 +123,54 @@ def triangulate_data_point(datapoints: list[DataPoint], p: DataPoint, show_resul
     dist_left = np.inf
     dist_right = np.inf
 
-    for i, x in enumerate(datapoints):
+    if info.visualize: plt.gca().set_aspect('equal')
+
+    for i, x in enumerate(info.datapoints):
         pos_sp = get_line_determinant(c, p, x)
         pos_sq = get_line_determinant(p, q, x)
         if pos_sp >= 0 and pos_sq >= 0: # left 
-            if show_result: plt.plot(x.k, x.p, 'r+')
+            if info.visualize and x.k < 15: plt.plot(x.k, x.p, 'r+')
             d = square_distance(p, x)
             if (dist_left > d):
                 dist_left = d
                 closest_left_i = i
         elif pos_sp < 0 and pos_sq >= 0: # right
-            if show_result: plt.plot(x.k, x.p, 'c+')
+            if info.visualize and x.k < 15: plt.plot(x.k, x.p, 'c+')
             d = square_distance(p, x)
             if (dist_right > d):
                 dist_right = d
                 closest_right_i = i
         else:
-            if show_result: plt.plot(x.k, x.p, 'g+')
+            if info.visualize and x.k < 15: plt.plot(x.k, x.p, 'g+')
 
-    if show_result: 
-        plt.plot(p.k, p.p, 'bo')
+    if info.visualize: 
+        plt.plot(p.k, p.p, 'ro')
         plt.plot(c.k, c.p, 'bo')
-        plt.plot(q.k, q.p, 'c.')
         plt.text(p.k, p.p, 'p')
         plt.text(c.k, c.p, 'c')
         
-        plt.plot(datapoints[closest_left_i].k, datapoints[closest_left_i].p, 'go')
-        plt.text(datapoints[closest_left_i].k, datapoints[closest_left_i].p, 'cl')
-        plt.plot(datapoints[closest_right_i].k, datapoints[closest_right_i].p, 'go')
-        plt.text(datapoints[closest_right_i].k, datapoints[closest_right_i].p,'cr')
+        plt.plot(info.datapoints[closest_left_i].k, info.datapoints[closest_left_i].p, 'bo')
+        plt.text(info.datapoints[closest_left_i].k, info.datapoints[closest_left_i].p, 'cl')
+        plt.plot(info.datapoints[closest_right_i].k, info.datapoints[closest_right_i].p, 'bo')
+        plt.text(info.datapoints[closest_right_i].k, info.datapoints[closest_right_i].p,'cr')
         plt.show()
     
     if dist_left < np.inf and dist_right < np.inf:      
         return [closest_i, closest_left_i, closest_right_i]
     else:
         return closest_i
-    
 
-def calculate_interpolation_weights(triangle: list[DataPoint], x: DataPoint):
-    weights = [0, 0, 0]
-    d = (triangle[1].p - triangle[2].p) * (triangle[0].k - triangle[2].k) + (triangle[0].p - triangle[2].p) * (triangle[2].k - triangle[1].k)
-    weights[0] = ((triangle[1].p - triangle[2].p) * (x.k - triangle[2].k) + (triangle[2].k - triangle[1].k) * (x.p - triangle[2].p)) / d
-    weights[1] = ((triangle[2].p - triangle[0].p) * (x.k - triangle[2].k) + (triangle[0].k - triangle[2].k) * (x.p - triangle[2].p)) / d
-    weights[2] = 1 - weights.k - weights[1]
+def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: DataPoint):
+    x = DataPoint(x.k * 1e10, x.p * 1e3)
+    t1 = info.datapoints[triangle_i[0]]
+    t2 = info.datapoints[triangle_i[1]]
+    t3 = info.datapoints[triangle_i[2]]
+    d = (t2.p - t3.p) * (t1.k - t3.k) + (t3.k - t2.k) * (t1.p - t3.p)
+    w1 = ((t2.p - t3.p) * (x.k - t3.k) + (t3.k - t2.k) * (x.p - t3.p)) / d
+    w2 = ((t3.p - t1.p) * (x.k - t3.k) + (t1.k - t3.k) * (x.p - t3.p)) / d
+    w3 = 1 - w1 - w2
 
-    print(f"Barycentric: {weights}, sum = {weights[0] + weights[1] + weights[2]}")
-    return weights
-
-# ALT:
-
+    return [w1, w2, w3]
 
 def triangulate_data_point_delauny(permeability: float, pressure: float, show_triangulation=False):
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
@@ -223,87 +229,67 @@ def triangulate_data_point_delauny(permeability: float, pressure: float, show_tr
 
     interpolate_experimental(point_indices, weights)
 
-
-def interpolate_experimental(run_indices, weights, show_result: bool = True):
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-
-    pflotran_settings = prepare.get_pflotran_settings(path_to_dataset)
+def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
 
     # Load temperature fields
-    dp_paths = [[], [], []]
-    for k in range(0, 3):
-        dp_paths[k] = os.path.join(path_to_dataset, f"RUN_{run_indices[k]}", "pflotran.h5")
 
-    dims = np.array(pflotran_settings["grid"]["ncells"])
+    dp_paths = ["", "", ""]
+    for k in range(0, 3):
+        dp_paths[k] = os.path.join(info.dataset_path, f"RUN_{triangle_i[k]}", "pflotran.h5")
 
     temp_fields = [[], [], []]
-
     for k in range(0, 3):
-        temp_fields[k] = prepare.load_data(dp_paths[k], "   4 Time  2.75000E+01 y", ["Temperature [C]"], dims)
+        temp_fields[k] = prepare.load_data(dp_paths[k], "   4 Time  2.75000E+01 y", ["Temperature [C]"], info.dims)
         temp_fields[k] = temp_fields[k]["Temperature [C]"].detach().cpu().squeeze().numpy()
-    
-    hp_pos = [9, 23] # TODO: Aus Datei einlesen
-    base_temperature = 10.6 # TODO: Aus Datei einlesen
 
     # Calculate rough bounding boxes around heat plumes
 
     ybounds = [[-1, 256], [-1, 256], [-1, 256]]
     xbounds = [[-1, 20], [-1, 20], [-1, 20]]
-    
-    threshold = 11.6 # +0.5
 
     for k in range(0, 3):
-        for j in range(0, hp_pos[1]):
+        for j in range(0, info.hp_pos[1]):
             flound_edge = False
-            for i in range(0, dims[0]):
-                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+            for i in range(0, info.dims[0]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
             ybounds[k][0] += 1
             if flound_edge:
                 break
     for k in range(0, 3):
-        for j in reversed(range(hp_pos[1]+1, 256)):
+        for j in reversed(range(info.hp_pos[1]+1, 256)):
             flound_edge = False
-            for i in range(0, dims[0]):
-                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+            for i in range(0, info.dims[0]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
             ybounds[k][1] -= 1
             if flound_edge:
                 break
     for k in range(0, 3):
-        for i in range(0, hp_pos[0]):
+        for i in range(0, info.hp_pos[0]):
             flound_edge = False
-            for j in range(0, dims[1]):
-                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+            for j in range(0, info.dims[1]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
             xbounds[k][0] += 1
             if flound_edge:
                 break
     for k in range(0, 3):
-        for i in  reversed(range(hp_pos[0]+1, 20)):
+        for i in  reversed(range(info.hp_pos[0]+1, 20)):
             flound_edge = False
-            for j in range(0, dims[1]):
-                flound_edge = flound_edge or temp_fields[k][i][j] >= threshold
+            for j in range(0, info.dims[1]):
+                flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
             xbounds[k][1] -= 1
             if flound_edge:
                 break
 
-    print(f"xbounds = {xbounds}")
-    print(f"ybounds = {ybounds}")
-
-    fig, axes = plt.subplots(7, 1, sharex=True)
-
-    for k in range(0, 3):
-        plt.sca(axes[k])
-        plt.imshow(temp_fields[k], cmap="RdBu_r")
-
-    transformed_temp_fields = [np.ndarray((dims[0], dims[1])) for i in range(3)]
-    result_temp_field = np.ndarray((dims[0], dims[1]))
+    transformed_temp_fields = [np.ndarray((info.dims[0], info.dims[1])) for i in range(3)]
+    result_temp_field = np.ndarray((info.dims[0], info.dims[1]))
 
     ybounds_res = [weights[0]*ybounds[0][0] + weights[1]*ybounds[1][0] + weights[2]*ybounds[2][0], weights[0]*ybounds[0][1] + weights[1]*ybounds[1][1] + weights[2]*ybounds[2][1]]
     xbounds_res = [weights[0]*xbounds[0][0] + weights[1]*xbounds[1][0] + weights[2]*xbounds[2][0], weights[0]*xbounds[0][1] + weights[1]*xbounds[1][1] + weights[2]*xbounds[2][1]]
@@ -311,28 +297,25 @@ def interpolate_experimental(run_indices, weights, show_result: bool = True):
     for j in range(0, 256):
         for i in range(0, 20):
             for k in range(0, 3):
-                transformed_temp_fields[k][i][j] = get_result(base_temperature, temp_fields[k], i, j, xbounds[k], ybounds[k], xbounds_res, ybounds_res)
-
-    for k in range(0, 3):
-        plt.sca(axes[3 + k])
-        plt.imshow(transformed_temp_fields[k], cmap="RdBu_r")
+                transformed_temp_fields[k][i][j] = get_result(info, temp_fields[k], i, j, xbounds[k], ybounds[k], xbounds_res, ybounds_res)
 
     for j in range(0, 256):
         for i in range(0, 20):
             result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weights[0] + transformed_temp_fields[1][i][j]*weights[1] + transformed_temp_fields[2][i][j]*weights[2]
 
-    plt.sca(axes[6])
-    plt.imshow(result_temp_field, cmap="RdBu_r")
+    if info.visualize:
+        fig, axes = plt.subplots(7, 1, sharex=True)
+        for k in range(0, 3):
+            plt.sca(axes[k])
+            plt.imshow(temp_fields[k], cmap="RdBu_r")
+        for k in range(0, 3):
+            plt.sca(axes[3 + k])
+            plt.imshow(transformed_temp_fields[k], cmap="RdBu_r")
+        plt.sca(axes[6])
+        plt.imshow(result_temp_field, cmap="RdBu_r")
+        plt.show()
 
-    model = mc.ModelCommunication()
-    res = model.get_1hp_model_results(1e-9, -0.0024)
-    managed_fig = plt.figure()
-    canvas_manager = managed_fig.canvas.manager
-    canvas_manager.canvas.figure = res[0]
-    res[0].set_canvas(canvas_manager.canvas)
-    plt.show()
-
-def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, ybounds_res):
+def get_result(info: GroundTruthInfo, values, i, j, xbounds, ybounds, xbounds_res, ybounds_res):
     pos = [9, 23]
     it = pos[0]
     jt = pos[1]
@@ -346,12 +329,22 @@ def get_result(base_temperature, values, i, j, xbounds, ybounds, xbounds_res, yb
         jt = pos[1] + (pos[1] - ybounds[1]) / (pos[1] - ybounds_res[1]) * (j - pos[1])
 
     # y = y_pump_spline.ev([it],[jt])[0]
-    y = sp.interpolate.interpn((range(20), range(256)), values, [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
+    y = sp.interpolate.interpn((range(info.dims[0]), range(info.dims[1])), values, [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
 
-    if y < base_temperature: # einfach Abschneiden liefert ganz schlechte Ergebnisse
-        return base_temperature
+    if y < info.base_temp: # einfach Abschneiden liefert ganz schlechte Ergebnisse
+        return info.base_temp
     else:
         return y
 
 if __name__ == "__main__":
-    triangulate_data_point(DataPoint(3.1e-10, -2e-3))
+    x = DataPoint(3.1e-10, -2e-3)
+
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+    groundtruth_info = GroundTruthInfo(path_to_dataset, 10.6)
+    groundtruth_info.visualize = True
+
+ 
+    triangle_i = triangulate_data_point(groundtruth_info, x)
+    if isinstance(triangle_i, list):
+        weights = calculate_barycentric_weights(groundtruth_info, triangle_i, x)
+        interpolate_experimental(groundtruth_info, triangle_i, weights)
