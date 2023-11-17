@@ -88,16 +88,16 @@ class ModelCommunication:
         if os.path.exists(paths_file):
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
-                default_raw_dir = paths["default_raw_dir"]
-                datasets_prepared_dir = paths["datasets_prepared_dir"]
+                raw_path = pathlib.Path(paths["default_raw_dir"]) / dataset_name
+                datasets_prepared_dir = paths["datasets_prepared_dir"] # TODO: Nicht mehr benötigt
         else:
-            default_raw_dir = path_to_project_dir / "data" / "datasets_raw"
+            raw_path = path_to_project_dir / "data" / "datasets_raw"
             datasets_prepared_dir = path_to_project_dir / "data" / "datasets_prepared"
 
-        if not os.path.exists(os.path.join(default_raw_dir, dataset_name)):
-            raise FileNotFoundError(f"Dataset path {os.path.join(default_raw_dir, dataset_name)} does not exist")
+        if not os.path.exists(raw_path):
+            raise FileNotFoundError(f"Dataset path {raw_path} does not exist")
 
-        self.paths1HP = Paths1HP(default_raw_dir, datasets_prepared_dir, "")
+        self.paths1HP = Paths1HP(raw_path, datasets_prepared_dir)
 
         self.settings = SettingsTraining(
             dataset_raw = dataset_name,
@@ -106,10 +106,8 @@ class ModelCommunication:
             epochs = 10000,
             case = "test",
             model = full_model_path,
-            visualize = True,
-            destination_dir = ""
+            visualize = True
         )
-        self.settings.datasets_dir = self.paths1HP.datasets_prepared_dir
         self.prepare_model()
 
         self.figures = Figures()

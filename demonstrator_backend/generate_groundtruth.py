@@ -32,6 +32,15 @@ class GroundTruthInfo:
         self.dims = [pflotran_settings["grid"]["ncells"][0], pflotran_settings["grid"]["ncells"][1]]
 
 
+# TODO: provisorisch wieder hinzugefügt:
+def generate_groundtruth_closest(permeability: float, pressure: float):
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+    info = GroundTruthInfo(path_to_dataset, 10.6)
+    closest_i = get_closest_point(DataPoint(permeability, pressure), info.datapoints)
+    dp_path = os.path.join(path_to_dataset, f"RUN_{closest_i}", "pflotran.h5")
+    return prepare.load_data(dp_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], (20, 256, 1))
+
+
 def load_data_points(path_to_dataset):
     permeability_values_path = os.path.join(path_to_dataset, "inputs", "permeability_values.txt")
     pressure_values_path = os.path.join(path_to_dataset, "inputs", "pressure_values.txt")
@@ -119,6 +128,12 @@ def load_temperature_field(info: GroundTruthInfo, run_index: int):
     return temperature_field
 
 
+class HPBounds:
+    x0: int = -1
+    x1: int = 20
+    y0: int = -1
+    y1: int = 256
+
 def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
 
     # Load temperature fields
@@ -129,8 +144,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
 
     # Calculate rough bounding boxes around heat plumes
 
-    ybounds = [[-1, 256], [-1, 256], [-1, 256]]
-    xbounds = [[-1, 20], [-1, 20], [-1, 20]]
+    bounds = [HPBounds(), HPBounds(), HPBounds()]
 
     for k in range(0, 3):
         for j in range(0, info.hp_pos[1]):
@@ -139,17 +153,17 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
                 flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
-            ybounds[k][0] += 1
+            bounds[k].y0 += 1
             if flound_edge:
                 break
     for k in range(0, 3):
-        for j in reversed(range(info.hp_pos[1]+1, 256)):
+        for j in reversed(range(info.hp_pos[1]+1, 256)): # TODO?
             flound_edge = False
             for i in range(0, info.dims[0]):
                 flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
-            ybounds[k][1] -= 1
+            bounds[k].y1 -= 1
             if flound_edge:
                 break
     for k in range(0, 3):
@@ -159,7 +173,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
                 flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
-            xbounds[k][0] += 1
+            bounds[k].x0 += 1
             if flound_edge:
                 break
     for k in range(0, 3):
@@ -169,58 +183,50 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
                 flound_edge = flound_edge or temp_fields[k][i][j] >= info.threshold_temp
                 if flound_edge:
                     break
-            xbounds[k][1] -= 1
+            bounds[k].x1 -= 1
             if flound_edge:
                 break
 
     transformed_temp_fields = [np.ndarray(info.dims) for i in range(3)]
     result_temp_field = np.ndarray((info.dims[0], info.dims[1]))
 
-    ybounds_res = [weights[0]*ybounds[0][0] + weights[1]*ybounds[1][0] + weights[2]*ybounds[2][0], weights[0]*ybounds[0][1] + weights[1]*ybounds[1][1] + weights[2]*ybounds[2][1]]
-    xbounds_res = [weights[0]*xbounds[0][0] + weights[1]*xbounds[1][0] + weights[2]*xbounds[2][0], weights[0]*xbounds[0][1] + weights[1]*xbounds[1][1] + weights[2]*xbounds[2][1]]
+    result_bounds = HPBounds()
+    result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
+    result_bounds.x1 = weights[0] * bounds[0].x1 + weights[1] * bounds[1].x1 + weights[2] * bounds[2].x1
+    result_bounds.y0 = weights[0] * bounds[0].y0 + weights[1] * bounds[1].y0 + weights[2] * bounds[2].y0
+    result_bounds.y1 = weights[0] * bounds[0].y1 + weights[1] * bounds[1].y1 + weights[2] * bounds[2].y1
+    pos_i = info.hp_pos[0] # (result_bounds.x0 + result_bounds.x1) / 4 alles kagga?
+    pos_j = info.hp_pos[1] # (result_bounds.y0 + result_bounds.y1) / 2 alles kagga?
 
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             for k in range(3):
-                transformed_temp_fields[k][i][j] = get_result(info, temp_fields[k], i, j, xbounds[k], ybounds[k], xbounds_res, ybounds_res)
+                it, jt = get_sample_indices(pos_i, pos_j, i, j, bounds[k], result_bounds)
+
+                y = sp.interpolate.interpn((range(info.dims[0]), range(info.dims[1])), temp_fields[k], [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
+                if y < info.base_temp: y = info.base_temp
+
+                transformed_temp_fields[k][i][j] = y
 
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weights[0] + transformed_temp_fields[1][i][j]*weights[1] + transformed_temp_fields[2][i][j]*weights[2]
-
-    if info.visualize:
-        fig, axes = plt.subplots(7, 1, sharex=True)
-        for k in range(0, 3):
-            plt.sca(axes[k])
-            plt.imshow(temp_fields[k], cmap="RdBu_r")
-        for k in range(0, 3):
-            plt.sca(axes[3 + k])
-            plt.imshow(transformed_temp_fields[k], cmap="RdBu_r")
-        plt.sca(axes[6])
-        plt.imshow(result_temp_field, cmap="RdBu_r")
-        plt.show()
         
     return result_temp_field
 
-def get_result(info: GroundTruthInfo, values, i, j, xbounds, ybounds, xbounds_res, ybounds_res):
-    it = info.hp_pos[0]
-    jt = info.hp_pos[1]
-    if i < info.hp_pos[0]:
-        it = info.hp_pos[0] + (info.hp_pos[0] - xbounds[0]) / (info.hp_pos[0] - xbounds_res[0]) * (i - info.hp_pos[0])
-    elif i > info.hp_pos[0]:
-        it = info.hp_pos[0] + (info.hp_pos[0] - xbounds[1]) / (info.hp_pos[0] - xbounds_res[1]) * (i - info.hp_pos[0])
-    if j < info.hp_pos[1]:
-        jt = info.hp_pos[1] + (info.hp_pos[1] - ybounds[0]) / (info.hp_pos[1] - ybounds_res[0]) * (j - info.hp_pos[1])
-    elif j > info.hp_pos[1]:
-        jt = info.hp_pos[1] + (info.hp_pos[1] - ybounds[1]) / (info.hp_pos[1] - ybounds_res[1]) * (j - info.hp_pos[1])
 
-    # TODO: Ersetzen durch schnellere Interpolation
-    y = sp.interpolate.interpn((range(info.dims[0]), range(info.dims[1])), values, [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
-
-    if y < info.base_temp: 
-        return info.base_temp
-    else:
-        return y
+def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBounds):
+    it = pos_i
+    jt = pos_j
+    if i < pos_i:
+        it = pos_i + (pos_i - bounds.x0) / (pos_i - result_bounds.x0) * (i - pos_i)
+    elif i > pos_i:
+        it = pos_i + (pos_i - bounds.x1) / (pos_i - result_bounds.x1) * (i - pos_i)
+    if j < pos_j:
+        jt = pos_j + (pos_j - bounds.y0) / (pos_j - result_bounds.y0) * (j - pos_j)
+    elif j > pos_j:
+        jt = pos_j + (pos_j - bounds.y1) / (pos_j - result_bounds.y1) * (j - pos_j)
+    return it, jt
 
 
 def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: float):
