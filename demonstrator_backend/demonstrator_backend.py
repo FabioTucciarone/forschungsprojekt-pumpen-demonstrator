@@ -35,10 +35,10 @@ def send_input():
     permeability = float(data.get('permeability'))
     pressure = float(data.get('pressure'))
 
-    results = model_communication.get_1hp_model_results(permeability, pressure)
+    model_communication.update_1hp_model_results(permeability, pressure)
 
     for i in range(3):
-        FigureCanvas(results[i]).print_png(image_bytes[i])
+        FigureCanvas(model_communication.figures.get_figure(i)).print_png(image_bytes[i])
         last_images[i] = image_bytes[i].getvalue()
 
     return "sent sucessfully"
@@ -59,7 +59,7 @@ def get_last_groundtruth():
 @app.route('/last_error_measure.png')
 def get_last_error_measure():
     """Image at: https://http://127.0.0.1:5000/last_error_measure.png"""
-    return Response(last_images[2].getvalue(), mimetype='image/png')
+    return Response(last_images[2], mimetype='image/png')
 
 
 def get_example_figure():

@@ -9,8 +9,6 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from torch import load
 import yaml
-import io
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -21,34 +19,10 @@ import preprocessing.prepare_1ststage as prepare
 from utils.prepare_paths import Paths1HP
 from data_stuff.utils import SettingsTraining
 
-
-class Figures:
-    figures: list
-    axes: list
-    colorbar_axis: list
-
-    def __init__(self):
-        self.figures = [Figure(figsize=(20, 2)) for i in range(3)]
-        self.axes = [self.figures[i].add_subplot(1, 1, 1) for i in range(3)]
-        self.colorbar_axis = [None, None, None]
-        for i in range(3):
-            self.axes[i].invert_yaxis()
-            self.figures[i].tight_layout()
-            self.colorbar_axis[i] = make_axes_locatable(self.figures[i].gca()).append_axes("right", size=0.3, pad=0.05)
-
-    def update_figure(self, i, pixel_data, **imshowargs):
-        axes_image = self.axes[i].imshow(pixel_data, **imshowargs)
-        self.figures[i].colorbar(axes_image, cax=self.colorbar_axis[i])
-
-    def get_figure(self, i):
-        return self.figures[i]
-
-
 class ModelCommunication:
 
     paths1HP: Paths1HP = None
     settings: SettingsTraining = None
-    figures: Figures
 
     def get_pflotran_settings(self, dataset: str = "datasets_raw_1000_1HP"):
         """
@@ -88,16 +62,18 @@ class ModelCommunication:
         if os.path.exists(paths_file):
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
-                raw_path = pathlib.Path(paths["default_raw_dir"]) / dataset_name
-                datasets_prepared_dir = paths["datasets_prepared_dir"] # TODO: Nicht mehr benötigt
+                default_raw_dir = paths["default_raw_dir"]
+                datasets_prepared_dir = paths["datasets_prepared_dir"]
+                dataset_prepared_full_path = pathlib.Path(datasets_prepared_dir) / f"{dataset_name} inputs_gksi"
         else:
-            raw_path = path_to_project_dir / "data" / "datasets_raw"
+            default_raw_dir = path_to_project_dir / "data" / "datasets_raw"
             datasets_prepared_dir = path_to_project_dir / "data" / "datasets_prepared"
+            dataset_prepared_full_path = pathlib.Path(datasets_prepared_dir) / f"{dataset_name} inputs_gksi"
 
-        if not os.path.exists(raw_path):
-            raise FileNotFoundError(f"Dataset path {raw_path} does not exist")
+        if not os.path.exists(os.path.join(default_raw_dir, dataset_name)):
+            raise FileNotFoundError(f"Dataset path {os.path.join(default_raw_dir, dataset_name)} does not exist")
 
-        self.paths1HP = Paths1HP(raw_path, datasets_prepared_dir)
+        self.paths1HP = Paths1HP(default_raw_dir, datasets_prepared_dir, dataset_prepared_full_path)
 
         self.settings = SettingsTraining(
             dataset_raw = dataset_name,
@@ -106,21 +82,26 @@ class ModelCommunication:
             epochs = 10000,
             case = "test",
             model = full_model_path,
-            visualize = True
+            visualize = True,
+            destination_dir = ""
         )
+        self.settings.datasets_dir = self.paths1HP.datasets_prepared_dir
+        self.settings.dataset_prep = f"{dataset_name} inputs_gksi"
+
         self.prepare_model()
 
-        self.figures = Figures()
-    
 
     def prepare_model(self):
-        self.model = UNet(in_channels=4).float() # 4 = len(info["Inputs"]) TODO: Aus Rohdaten einlesen?
+        dataset, dataloaders = hp1_nn.init_data(self.settings)
+        self.dataloaders = dataloaders
+        # init, load and save model
+        self.model = UNet(in_channels=dataset.input_channels).float()
         self.model.load_state_dict(torch.load(f"{self.settings.model}/model.pt", map_location=torch.device(self.settings.device)))
         self.model.to(self.settings.device)
         self.model.eval()
 
 
-    def update_1hp_model_results(self, permeability: float, pressure: float):
+    def get_1hp_model_results(self, permeability: float, pressure: float):
         """
         Prepare a dataset and run the model.
 
@@ -131,5 +112,25 @@ class ModelCommunication:
         pressure: float
             The pressure input parameter of the demonstrator app.
         """
-        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
-        visualize.get_plots(self.model, x, y, info, norm, self.figures)
+        (x, y) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
+        return visualize.get_plots(self.model, x, y, self.dataloaders["test"], self.settings.device)
+
+
+# Test: Ausführen dieser Datei zeigt festes Testbild.
+
+if __name__ == "__main__":
+    mc = ModelCommunication()
+    res = mc.get_1hp_model_results(2.646978938535798940e-10, -2.830821194764205056e-03)
+
+    # Anzeigen des Bilds (Achtung, schlecht, nur zum Testen):
+    managed_fig = plt.figure()
+    canvas_manager = managed_fig.canvas.manager
+    canvas_manager.canvas.figure = res[0]
+    res[0].set_canvas(canvas_manager.canvas)
+    plt.show()
+
+
+
+
+
+
