@@ -49,22 +49,13 @@ class ModelCommunication:
     paths1HP: Paths1HP = None
     settings: SettingsTraining = None
     figures: Figures
-
-    def get_pflotran_settings(self, dataset: str = "datasets_raw_1000_1HP"):
-        """
-        Read in settings.yaml
-        """
-        # TODO: FEHLERHAFT
-        default_raw_dir = self.paths1HP.raw_dir
-        path_to_settings = os.path.join(default_raw_dir, dataset, "inputs")
-        settings = prepare.get_pflotran_settings(path_to_settings)
-        return settings
+    
     
     def get_min_max_perm(self) :
         """
         Read out min/max values
         """
-        settings = self.get_pflotran_settings("datasets_raw_1000_1HP")
+        settings = prepare.get_pflotran_settings(self.paths1HP.raw_dir / "inputs")
         print(settings["permeability"].size())
         min_max = [settings["permeability"][7], settings["permeability"][6]]
         return min_max
@@ -90,15 +81,13 @@ class ModelCommunication:
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
                 raw_path = pathlib.Path(paths["default_raw_dir"]) / dataset_name
-                datasets_prepared_dir = paths["datasets_prepared_dir"] # TODO: Nicht mehr benötigt
         else:
             raw_path = path_to_project_dir / "data" / "datasets_raw" / dataset_name
-            datasets_prepared_dir = path_to_project_dir / "data" / "datasets_prepared"
 
         if not os.path.exists(raw_path):
             raise FileNotFoundError(f"Dataset path {raw_path} does not exist")
 
-        self.paths1HP = Paths1HP(raw_path, datasets_prepared_dir)
+        self.paths1HP = Paths1HP(raw_path, "")
 
         self.settings = SettingsTraining(
             dataset_raw = dataset_name,
