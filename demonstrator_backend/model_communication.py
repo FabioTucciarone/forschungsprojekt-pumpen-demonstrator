@@ -54,6 +54,7 @@ class ModelCommunication:
         """
         Read in settings.yaml
         """
+        # TODO: FEHLERHAFT
         default_raw_dir = self.paths1HP.raw_dir
         path_to_settings = os.path.join(default_raw_dir, dataset, "inputs")
         settings = prepare.get_pflotran_settings(path_to_settings)
@@ -91,7 +92,7 @@ class ModelCommunication:
                 raw_path = pathlib.Path(paths["default_raw_dir"]) / dataset_name
                 datasets_prepared_dir = paths["datasets_prepared_dir"] # TODO: Nicht mehr benötigt
         else:
-            raw_path = path_to_project_dir / "data" / "datasets_raw"
+            raw_path = path_to_project_dir / "data" / "datasets_raw" / dataset_name
             datasets_prepared_dir = path_to_project_dir / "data" / "datasets_prepared"
 
         if not os.path.exists(raw_path):
