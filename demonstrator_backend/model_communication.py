@@ -133,3 +133,15 @@ class ModelCommunication:
         """
         (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
         visualize.get_plots(self.model, x, y, info, norm, self.figures)
+
+class ModelCommunication_2HP:
+    def prepare_1hpnn():
+        """
+        2HP-NN expects that 1HP-NN exists and trained on
+        """
+
+    def prepare_2hpnn(one_hpnn_prepared_dir):
+        """
+        for running a 2HP-NN you need the prepared 2HP-dataset in datasets_prepared_dir_2hp
+        TODO: python3 main.py --dataset "dataset_raw_demonstrator_input_1dp inputs_gksi" --case_2hp True --inputs gksi1000
+        """
