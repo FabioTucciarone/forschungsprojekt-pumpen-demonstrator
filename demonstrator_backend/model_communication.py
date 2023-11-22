@@ -9,7 +9,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from torch import load
 import yaml
-import io
+import generate_groundtruth as gt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
@@ -49,6 +49,7 @@ class ModelCommunication:
     paths1HP: Paths1HP = None
     settings: SettingsTraining = None
     figures: Figures
+    groundtruth_info: gt.GroundTruthInfo
     
     
     def get_min_max_perm(self) :
@@ -100,6 +101,7 @@ class ModelCommunication:
         )
         self.prepare_model()
 
+        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6, use_interpolation=True)
         self.figures = Figures()
     
 
@@ -121,9 +123,10 @@ class ModelCommunication:
         pressure: float
             The pressure input parameter of the demonstrator app.
         """
-        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
+        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, self.groundtruth_info, permeability, pressure)
         visualize.get_plots(self.model, x, y, info, norm, self.figures)
 
+# ?????
 class ModelCommunication_2HP:
     def prepare_1hpnn():
         """

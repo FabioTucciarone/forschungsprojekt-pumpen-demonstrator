@@ -3,10 +3,8 @@ import sys
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+import torch
 from dataclasses import dataclass
-
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
-import preprocessing.prepare_1ststage as prepare
 
 
 @dataclass
@@ -19,6 +17,7 @@ class DataPoint:
 class GroundTruthInfo:
     dataset_path: str
     base_temp: float
+    use_interpolation: bool = True
     datapoints: list = None
     threshold_temp: float = 0
     visualize: bool = False
@@ -29,16 +28,15 @@ class GroundTruthInfo:
         self.datapoints = load_data_points(self.dataset_path)
         self.threshold_temp = self.base_temp + 0.5
         pflotran_settings = prepare.get_pflotran_settings(self.dataset_path)
-        self.dims = [pflotran_settings["grid"]["ncells"][0], pflotran_settings["grid"]["ncells"][1]]
+        self.dims = pflotran_settings["grid"]["ncells"]
 
 
-# TODO: provisorisch wieder hinzugefügt:
-def generate_groundtruth_closest(permeability: float, pressure: float):
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    info = GroundTruthInfo(path_to_dataset, 10.6)
-    closest_i = get_closest_point(DataPoint(permeability, pressure), info.datapoints)
-    dp_path = os.path.join(path_to_dataset, f"RUN_{closest_i}", "pflotran.h5")
-    return prepare.load_data(dp_path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], (20, 256, 1))
+@dataclass
+class HPBounds:
+    x0: int = -1
+    x1: int = 20
+    y0: int = -1
+    y1: int = 256
 
 
 def load_data_points(path_to_dataset):
@@ -57,14 +55,27 @@ def load_data_points(path_to_dataset):
     return datapoints
 
 
+def load_temperature_field_raw(info: GroundTruthInfo, run_index: int):
+    path = os.path.join(info.dataset_path, f"RUN_{run_index}", "pflotran.h5")
+    return prepare.load_data(path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], info.dims) # TODO: DIMS
+
+
+def load_temperature_field(info: GroundTruthInfo, run_index: int):
+    temperature_field = load_temperature_field_raw(info, run_index)["Temperature [C]"].detach().cpu().squeeze().numpy()
+    return temperature_field
+
+
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
+
 
 def square_distance(a: DataPoint, b: DataPoint):
     return (b.k - a.k)**2 + (b.p - a.p)**2
 
+
 def distance(a: DataPoint, b: DataPoint):
     return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
+
 
 def get_closest_point(p: DataPoint, datapoints: list):
     closest_i = 0
@@ -76,6 +87,7 @@ def get_closest_point(p: DataPoint, datapoints: list):
                 min_distance = d
                 closest_i = i
     return closest_i
+
 
 def triangulate_data_point(info: GroundTruthInfo, p: DataPoint):
     p = DataPoint(p.k, p.p)
@@ -109,6 +121,7 @@ def triangulate_data_point(info: GroundTruthInfo, p: DataPoint):
     else:
         return closest_i
 
+
 def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: DataPoint):
     t1 = info.datapoints[triangle_i[0]]
     t2 = info.datapoints[triangle_i[1]]
@@ -121,29 +134,7 @@ def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: Da
     return [w1, w2, w3]
 
 
-def load_temperature_field(info: GroundTruthInfo, run_index: int):
-    path = os.path.join(info.dataset_path, f"RUN_{run_index}", "pflotran.h5")
-    temperature_field = prepare.load_data(path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], info.dims)
-    temperature_field = temperature_field["Temperature [C]"].detach().cpu().squeeze().numpy()
-    return temperature_field
-
-
-class HPBounds:
-    x0: int = -1
-    x1: int = 20
-    y0: int = -1
-    y1: int = 256
-
-def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
-
-    # Load temperature fields
-
-    temp_fields = [[], [], []]
-    for k in range(0, 3):
-        temp_fields[k] = load_temperature_field(info, triangle_i[k])
-
-    # Calculate rough bounding boxes around heat plumes
-
+def calculate_hp_bounds(info, temp_fields):
     bounds = [HPBounds(), HPBounds(), HPBounds()]
 
     for k in range(0, 3):
@@ -187,6 +178,33 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
             if flound_edge:
                 break
 
+    return bounds
+
+
+def get_temperature_value(temp_field: np.ndarray, info: GroundTruthInfo, i: int, j: int):
+    if i < 0 or i >= info.dims[0] or j < 0 or j >= info.dims[1]:
+        return info.base_temp
+
+
+def interpolate_linearly(temp_field, i, j):
+    i1 = int(i + 0.5) # richtig runden
+    j1 = int(j + 0.5)
+
+
+
+
+
+def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
+
+    # Load temperature fields
+
+    temp_fields = [[], [], []]
+    for k in range(0, 3):
+        temp_fields[k] = load_temperature_field(info, triangle_i[k])
+
+    # Calculate rough bounding boxes around heat plumes
+    bounds = calculate_hp_bounds(info, temp_fields)
+
     transformed_temp_fields = [np.ndarray(info.dims) for i in range(3)]
     result_temp_field = np.ndarray((info.dims[0], info.dims[1]))
 
@@ -204,6 +222,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
                 it, jt = get_sample_indices(pos_i, pos_j, i, j, bounds[k], result_bounds)
 
                 y = sp.interpolate.interpn((range(info.dims[0]), range(info.dims[1])), temp_fields[k], [it,jt], bounds_error=False, fill_value=None, method='linear')[0]
+                #y = interpolate_linearly(temp_fields[k], it, jt)
                 if y < info.base_temp: y = info.base_temp
 
                 transformed_temp_fields[k][i][j] = y
@@ -212,7 +231,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
         for i in range(info.dims[0]):
             result_temp_field[i][j] = transformed_temp_fields[0][i][j]*weights[0] + transformed_temp_fields[1][i][j]*weights[1] + transformed_temp_fields[2][i][j]*weights[2]
         
-    return result_temp_field
+    return {"Temperature [C]": torch.tensor(result_temp_field).unsqueeze(2)}
 
 
 def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBounds):
@@ -230,10 +249,19 @@ def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBo
 
 
 def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: float):
-    x = DataPoint(permeability, pressure)
-    triangle_i = triangulate_data_point(info, x)
-    if isinstance(triangle_i, list):
-        weights = calculate_barycentric_weights(info, triangle_i, x)
-        return interpolate_experimental(info, triangle_i, weights)
+    x = DataPoint(permeability * 1e10, pressure * 1e3) #TODO: skalieren?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if info.use_interpolation == True:
+        triangle_i = triangulate_data_point(info, x)
+        if isinstance(triangle_i, list):
+            weights = calculate_barycentric_weights(info, triangle_i, x)
+            return interpolate_experimental(info, triangle_i, weights)
+        else:
+            return load_temperature_field_raw(info, triangle_i)
     else:
-        return load_temperature_field(info, triangle_i)
+        return load_temperature_field_raw(info, get_closest_point(x))
+
+
+# ACHTUNG:
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
+import preprocessing.prepare_1ststage as prepare
