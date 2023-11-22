@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'MainScreen.dart';
 import 'Intro.dart';
+import 'BuildConnection.dart';
+import 'BackendConnection.dart';
 
 class Introduction extends StatelessWidget {
-  const Introduction({super.key});
+  const Introduction({super.key, required this.backend});
+
+  final BackendConnection backend;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: IntroHomeScaffold(),
+      home: IntroHomeScaffold(
+        backend: backend,
+      ),
     );
   }
 }
@@ -16,7 +22,10 @@ class Introduction extends StatelessWidget {
 class IntroHomeScaffold extends StatelessWidget {
   const IntroHomeScaffold({
     super.key,
+    required this.backend,
   });
+
+  final BackendConnection backend;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +36,9 @@ class IntroHomeScaffold extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: null,
         ),
+        actions: const <Widget>[
+          ButtonAnmelden(),
+        ],
       ),
       backgroundColor: const Color.fromARGB(255, 159, 151, 174),
       body: Column(
@@ -42,8 +54,12 @@ class IntroHomeScaffold extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MainSlide()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MainSlide(
+                            backend: backend,
+                          )));
             },
             child: const Text("Los geht's zur wissenschaftlichen Version"),
           ),
@@ -55,7 +71,7 @@ class IntroHomeScaffold extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const IntroScreen()));
+                        builder: (context) => IntroScreen(backend: backend)));
               },
               child: const Text("Los geht's zur Kinderversion"))
         ],
