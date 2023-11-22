@@ -1,68 +1,81 @@
-# Ausführung
+# Ausführung des Projekts usw.
 
 Alles funktioniert bisher nur unter Linux / WSL, das liegt primär nicht an uns sondern an ein paar Problemen mit 1HP_NN!
 
 ## Python Pakete
 
-- Um den Debug-Flask Server zu starten einfach einmal setup_backend.sh ausführen, das sollte alles was für unsere Seite Notwendig ist in einem .venv Ordner installieren
-- Für 1HP_NN auf GitHub im README nachschauen
-- Eventuell stehen nicht alle notwendigen Pakete im README, dann einfach die fehlenden auch noch installieren (ModuleNotFoundError von python).
+- Überlegen, ob man eine virtuelle Pythonumgebung möchte und diese ggf. in `<Forschungsprojekt-Ordner>` erstellen.
+- `forschungsprojekt-pumpen-demonstrator/demonstrator_backend` öffnen.
+- Alle Pakete mit `pip install -r requirements.txt` installieren.
 
 ## Ordnerstruktur des Forschungsprojekts
 
-Falls im Programm keine optionalen Parameter im Konstruktoraufruf des ModelCommunication Objekts übergeben werden:
+### Phase 1
 
-- Sucht gksi1000 am Standardpfad
-- Sucht datasets_raw_1000_1HP an Pfad in paths.yaml oder falls diese fehlt am Standardpfad
+Relevante Pfade in paths.yaml:
 
-Wenn **dataset_name** spezifiziert wird, wird dieser statt datasets_raw_1000_1HP verwendet, die Suche funktioniert analog.
+```yaml
+default_raw_dir: <Forschungsprojekt-Ordner>/data/datasets_raw # Datensatz der Rohdaten
+models_1hp_dir:  <Forschungsprojekt-Ordner>/data/models_1hpnn # Trainiertes Modell
+```
 
-Wenn **full_model_path** spezifiziert wird, wird dieses Modell statt des Standardmodells verwendet
+Programm sucht zunächst an den pfaden in der Datei und falls diese nicht existiert am Standardpfad. Gesucht wird:
 
-- Standard: “…/models_1hpnn/gksi1000/current_unet_dataset_2d_small_1000dp_gksi_v7”
-- Hier muss ein vollständiger Pfad angegeben werden, 1hp-modelle können nicht über die paths.yaml Datei festgelegt werden.
+- `models_1hp_dir/gksi/current_unet_dataset_2d_small_1000dp_gksi_v7`
+- `default_raw_dir/datasets_raw_1000_1HP` oder `default_raw_dir/dataset_2d_small_1000dp`
 
-### Angenommene Standardpfade:
+### Phase 1 Standardpfade:
 
 ```bash
 <Forschungsprojekt-Ordner>
  |
- |- forschungsprojekt-pumpen-demonstrator # (Unser Git-Repositiory)
+ |- forschungsprojekt-pumpen-demonstrator # Unser Git-Repositiory
  |   |- demonstrator_app
  |   |- demonstrator_backend
  |   ..
  |- data # Das wird als Standardpfad verwendet
  |   |- datasets_raw
- |   |   |- datasets_raw_1000_1HP # (Von Darus)
+ |   |   |- datasets_raw_1000_1HP # Von Darus
  |   |   ..
- |   |- datasets_prepared
  |   |- models_1hpnn
  |   |   |- gksi1000
  |   |   ..
  |   |- models_2hpnn # (Für erste Phase irrelevant)
- |   |- 1HP_NN_preparation_BEST_models_and_data # (Für erste Phase irrelevant)
  |   ..
- |- 1HP_NN # (Von mir abgezweigte Version: baforschungsprojekt_23 Zweig)
+ |- 1HP_NN # Von mir abgezweigte Version: baforschungsprojekt_23 Zweig
  |   |- main.py 
  |   |- paths.yaml # Pfade hier eintragen!
  ..  ..
 ```
 
-Das ModelCommunication Objekt wird hier erzeugt:
-
-- demonstrator_backend.py:  initialize_backend()
-- model_communication.py:  if __name__ == "__main__":  (falls direkt über die Konsole ausgeführt)
-
-### Die paths.yaml Datei
+### Phase 1 Lokal: paths.yaml
 
 Folgende Datei respektiert die Standardordnerstruktur (für Linux):
 
 ```yaml
-default_raw_dir:                        <Forschungsprojekt-Ordner>/data/datasets_raw # where the raw 1st stage data is stored
-datasets_prepared_dir:                  <Forschungsprojekt-Ordner>/data/datasets_prepared # where the prepared 1st stage data is stored
-datasets_raw_domain_dir:                <Forschungsprojekt-Ordner>/data/datasets_prepared
-datasets_prepared_domain_dir:           <Forschungsprojekt-Ordner>/data/datasets_prepared
-prepared_1hp_best_models_and_data_dir:  <Forschungsprojekt-Ordner>/data/1HP_NN_preparation_BEST_models_and_data
-models_2hp_dir:                         <Forschungsprojekt-Ordner>/data/models_2hpnn/runs
-datasets_prepared_dir_2hp:              <Forschungsprojekt-Ordner>/data/datasets_prepared
+default_raw_dir:                        <Forschungsprojekt-Ordner>/data/datasets_raw # egal
+datasets_prepared_dir:                  <Forschungsprojekt-Ordner>/data/ # egal
+datasets_raw_domain_dir:                <Forschungsprojekt-Ordner>/data/ # egal
+datasets_prepared_domain_dir:           <Forschungsprojekt-Ordner>/data/ # egal
+prepared_1hp_best_models_and_data_dir:  <Forschungsprojekt-Ordner>/data/ # egal
+models_2hp_dir:                         <Forschungsprojekt-Ordner>/data/models_2hpnn
+models_1hp_dir:                         <Forschungsprojekt-Ordner>/data/models_1hpnn
+datasets_prepared_dir_2hp:              <Forschungsprojekt-Ordner>/data/ # egal
+```
+
+### Phase 1 pcsgs08: paths.yaml
+
+Pfade falls das Projekt auf pcsgs08 ausgeführt werden soll.
+
+Achtung auf dem Server liegt nur `dataset_2d_small_1000dp`. Falls das nicht klappt: datasets_raw_1000dp von Darus runterladen und auf den Server in `datasets_1hpnn` hochladen.
+
+```yaml
+default_raw_dir:                        /scratch/pelzerja_demonstrator_studis/datasets_1hpnn 
+datasets_prepared_dir:                  /scratch/pelzerja_demonstrator_studis/datasets_prepared_1hpnn
+datasets_raw_domain_dir:                /scratch/pelzerja_demonstrator_studis/datasets_domain # keine Ahnung
+datasets_prepared_domain_dir:           /scratch/pelzerja_demonstrator_studis/datasets_domain # keine Ahnung
+prepared_1hp_best_models_and_data_dir:  /scratch/pelzerja_demonstrator_studis/ # keine Ahnung
+models_1hp_dir:                         /scratch/pelzerja_demonstrator_studis/models_1hpnn
+models_2hp_dir:                         /scratch/pelzerja_demonstrator_studis/models_2hpnn
+datasets_prepared_dir_2hp:              /scratch/pelzerja_demonstrator_studis/datasets_prepared_2hpnn
 ```
