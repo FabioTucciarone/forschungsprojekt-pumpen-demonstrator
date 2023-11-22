@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-class BackendConnection {
+class BackendConnection with ChangeNotifier {
   SSHClient? client;
   int? localPort;
   ServerSocket? serverSocket;
@@ -62,7 +62,7 @@ class BackendConnection {
     //TODO: Könnt ihr hier einen Zustand aktualisieren oder eine Benachrichtigung an die Oberfläche senden?
     // Ab hier soll es erlaubt sein HTTP-Anfragen zu senden:
 
-    //notifyListeners();
+    notifyListeners();
 
     await for (final socket in serverSocket!) {
       if (client == null || client!.isClosed) {
@@ -95,18 +95,19 @@ class BackendConnection {
   /// Send a http-post request with the input data (of phase 1) via the specified ssh tunnel.
   ///
   /// Returns the json body of the response. (for now) TODO: Read paper and code of model.
-  Future<String> sendInputData(double permeability, double density) async {
+  Future<String> sendInputData(double permeability, double pressure) async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
     }
 
-    final ip =
-        debugEnabled ? "http://127.0.0.1:5000" : "http://127.0.0.1:$localPort";
+    final ip = debugEnabled
+        ? "http://127.0.0.1:5000/send_input"
+        : "http://127.0.0.1:$localPort/send_input";
 
     final response = await http.post(
       Uri.parse(ip),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"permeability": permeability, "density": density}),
+      body: jsonEncode({"permeability": permeability, "pressure": pressure}),
     );
     if (response.statusCode == 200) {
       return response.body;

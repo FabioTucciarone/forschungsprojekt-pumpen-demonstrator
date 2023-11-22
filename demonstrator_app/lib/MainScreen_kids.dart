@@ -68,7 +68,6 @@ class MainSlide extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      backend.forwardConnection('pcsgs08', 5000);
                       backend.sendInputData(
                           permeability.getCurrent(), pressure.getCurrent());
                     },

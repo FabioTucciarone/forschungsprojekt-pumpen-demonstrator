@@ -21,11 +21,8 @@ class OutputBox extends StatelessWidget {
         Text("Checkbox1 is ${isChecked1 ? 'checked' : 'not checked'}"),
         Text("Checkbox2 is ${isChecked2 ? 'checked' : 'not checked'}"),
         SizedBox(
-          height: 100,
-          child: Container(
-            color: Colors.blue,
-          ),
-        )
+            height: 100,
+            child: Image.network('http://127.0.0.1:5000/last_model_result.png'))
       ],
     );
   }

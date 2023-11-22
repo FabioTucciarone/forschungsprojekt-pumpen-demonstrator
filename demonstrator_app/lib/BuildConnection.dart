@@ -229,6 +229,10 @@ class _ResultState extends State<Result> {
                   ),
                 ),
               );
+              widget.backendConnect.addListener(() {
+                print('HTTP requests can be send now.');
+              });
+              widget.backendConnect.forwardConnection('pcsgs08', 5000);
             }
           } else {
             child = const SizedBox(
