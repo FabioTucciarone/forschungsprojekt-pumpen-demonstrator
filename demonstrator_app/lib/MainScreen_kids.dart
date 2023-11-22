@@ -1,17 +1,23 @@
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Outputbox.dart';
-import 'BuildConnection.dart';
+import 'package:flutter/services.dart';
 import 'Intro.dart';
 import 'Slider.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'BackendConnection.dart';
 
 class MainSlide extends StatelessWidget {
-  const MainSlide({super.key});
+  const MainSlide({super.key, required this.backend});
+
+  final BackendConnection backend;
 
   @override
   Widget build(BuildContext context) {
+    PressureSlider pressure = PressureSlider(800, 870000, 910000);
+    PressureSlider permeability = PressureSlider(800, 870000, 910000);
     return ChangeNotifierProvider(
         create: (context) => CheckboxModel(),
         child: MaterialApp(
@@ -24,44 +30,46 @@ class MainSlide extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const IntroScreen()));
+                            builder: (context) => IntroScreen(
+                                  backend: backend,
+                                )));
                   }),
-              actions: const <Widget>[
-                ButtonAnmelden(),
-              ],
             ),
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
                 padding: const EdgeInsets.all(8),
-                children: const [
+                children: [
                   OutputBox(
                     name: "erste Outputboxx",
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   OutputBox(
                     name: "zweite Outputboxx",
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  PressureSlider(800, 870000, 910000),
-                  SizedBox(
+                  permeability,
+                  const SizedBox(
                     height: 10,
                   ),
-                  PressureSlider(800, 870000, 910000),
-                  SizedBox(
+                  pressure,
+                  const SizedBox(
                     height: 10,
                   ),
                   CheckboxBox(),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   ElevatedButton(
-                    onPressed: null,
+                    onPressed: () {
+                      backend.sendInputData(
+                          permeability.getCurrent(), pressure.getCurrent());
+                    },
                     child: Text(
                       "Anwenden",
                       textScaleFactor: 2,
