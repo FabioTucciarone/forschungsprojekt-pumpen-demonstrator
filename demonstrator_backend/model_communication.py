@@ -1,20 +1,14 @@
 import os
 import pathlib
-import numpy as np
 import sys
-import logging 
 import torch
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from torch import load
 import yaml
 import generate_groundtruth as gt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
-import main as hp1_nn
 import utils.visualization as visualize
 from networks.unet import UNet
 import preprocessing.prepare_1ststage as prepare
@@ -89,7 +83,7 @@ class ModelCommunication:
                 if not os.path.exists(raw_path):
                     raise FileNotFoundError(f"Model path '{model_path}' does not exist")
         else:
-            print(f"Could not find '1HP_NN/paths.yaml', assuming for default folder structure.")
+            print(f"Could not find '1HP_NN/paths.yaml', assuming default folder structure.")
 
             raw_path = path_to_project_dir / "data" / "datasets_raw" / dataset_name
             if not os.path.exists(raw_path):
