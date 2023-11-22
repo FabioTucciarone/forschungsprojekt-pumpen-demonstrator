@@ -6,7 +6,8 @@ class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final double start;
   final double end;
-  const PressureSlider(this.sliderWidth, this.start, this.end);
+  final String name;
+  const PressureSlider(this.sliderWidth, this.start, this.end, this.name);
 
   double getCurrent() {
     return currentValue;
@@ -57,11 +58,12 @@ class _PressureSliderState extends State<PressureSlider> {
 
   @override
   Widget build(BuildContext context) {
+    String name = widget.name;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Text(
-          'Druck: $currentValue',
+          '$name: $currentValue',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Center(

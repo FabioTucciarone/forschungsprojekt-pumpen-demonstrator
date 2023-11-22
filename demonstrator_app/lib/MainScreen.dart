@@ -14,8 +14,9 @@ class MainSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(800, 870000, 910000);
-    PressureSlider permeability = PressureSlider(800, 870000, 910000);
+    PressureSlider pressure = PressureSlider(800, 870000, 910000, 'Druck');
+    PressureSlider permeability =
+        PressureSlider(800, 870000, 910000, 'Durchlässigkeit');
 
     return ChangeNotifierProvider(
         create: (context) => CheckboxModel(),
@@ -66,6 +67,7 @@ class MainSlide extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                      backend.forwardConnection('pcsgs08', 5000);
                       backend.sendInputData(
                           permeability.getCurrent(), pressure.getCurrent());
                     },

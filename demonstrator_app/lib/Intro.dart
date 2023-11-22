@@ -20,10 +20,7 @@ class IntroScreen extends StatelessWidget {
 
 class RobotIntro extends StatefulWidget {
   final BackendConnection backend;
-  const RobotIntro({
-    Key? key,
-    required this.backend,
-  }) : super(key: key);
+  const RobotIntro({super.key, required this.backend});
 
   @override
   State<RobotIntro> createState() => _RobotIntroState();
