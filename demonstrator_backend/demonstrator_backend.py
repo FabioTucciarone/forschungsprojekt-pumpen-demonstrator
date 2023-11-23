@@ -16,8 +16,8 @@ model_communication: ModelCommunication = None
 # Backend Interface:
 
 
-@app.route('/send_input', methods = ['POST'])
-def send_input(): # TODO: Namen des "Spielers" für Fehlerdokumentation / Höchstpunktzahl mitsenden
+@app.route('/get_model_result', methods = ['POST'])
+def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / Höchstpunktzahl mitsenden
     """
     Returns a JSON object of all three resulting images.
     The images are encoded as a base64 string.
