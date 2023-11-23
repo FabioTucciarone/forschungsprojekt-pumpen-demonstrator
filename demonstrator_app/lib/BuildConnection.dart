@@ -28,19 +28,14 @@ class RegisterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BackendConnection backend = new BackendConnection();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Introduction(
-                            backend: backend,
-                          )));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Introduction()));
             }),
         actions: const <Widget>[
           ButtonAnmelden(),
@@ -69,7 +64,6 @@ class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
   bool passwordVisible = true;
-  BackendConnection backendConnect = new BackendConnection();
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +110,6 @@ class _RegisterState extends State<RegisterBox> {
                       builder: (context) => ResultApp(
                             username: username.text,
                             password: password.text,
-                            backendConnect: backendConnect,
                           )),
                 );
               },
@@ -130,15 +123,10 @@ class _RegisterState extends State<RegisterBox> {
 }
 
 class ResultApp extends StatelessWidget {
-  const ResultApp(
-      {super.key,
-      required this.username,
-      required this.password,
-      required this.backendConnect});
+  const ResultApp({super.key, required this.username, required this.password});
 
   final String username;
   final String password;
-  final BackendConnection backendConnect;
 
   @override
   Widget build(BuildContext context) {
@@ -148,12 +136,8 @@ class ResultApp extends StatelessWidget {
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Introduction(
-                            backend: backendConnect,
-                          )));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Introduction()));
             }),
         actions: const <Widget>[
           ButtonAnmelden(),
@@ -161,24 +145,19 @@ class ResultApp extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: Center(
-          child: Result(
-        backendConnect: backendConnect,
-        username: username,
-        password: password,
-      )),
+        child: Result(
+          username: username,
+          password: password,
+        ),
+      ),
     );
   }
 }
 
 class Result extends StatefulWidget {
-  final BackendConnection backendConnect;
   final String username;
   final String password;
-  const Result(
-      {super.key,
-      required this.backendConnect,
-      required this.username,
-      required this.password});
+  const Result({super.key, required this.username, required this.password});
 
   @override
   State<Result> createState() => _ResultState();
@@ -189,7 +168,7 @@ class _ResultState extends State<Result> {
   Widget build(BuildContext context) {
     return Center(
       child: FutureBuilder<void>(
-        future: widget.backendConnect
+        future: useOfBackend.backend
             .connectToSSHServer(widget.username, widget.password),
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           Widget child;
@@ -229,10 +208,10 @@ class _ResultState extends State<Result> {
                   ),
                 ),
               );
-              widget.backendConnect.addListener(() {
+              useOfBackend.backend.addListener(() {
                 print('HTTP requests can be send now.');
               });
-              widget.backendConnect.forwardConnection('pcsgs08', 5000);
+              useOfBackend.backend.forwardConnection('pcsgs08', 5000);
             }
           } else {
             child = const SizedBox(

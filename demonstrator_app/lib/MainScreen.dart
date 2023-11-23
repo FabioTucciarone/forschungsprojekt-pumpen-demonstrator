@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MainSlide extends StatelessWidget {
-  MainSlide({super.key, required this.backend});
+  MainSlide({super.key});
 
-  final BackendConnection backend;
   final FutureNotifier futureNotifier = FutureNotifier();
 
   @override
@@ -38,9 +37,7 @@ class MainSlide extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Introduction(
-                                  backend: backend,
-                                )));
+                            builder: (context) => Introduction()));
                   }),
             ),
             backgroundColor: Color.fromARGB(255, 33, 128, 231),
@@ -75,9 +72,9 @@ class MainSlide extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      backend.setDebugMode(true);
-                      futureNotifier.setFuture(backend.sendInputData(
-                          permeability.getCurrent(), pressure.getCurrent()));
+                      futureNotifier.setFuture(useOfBackend.backend
+                          .sendInputData(permeability.getCurrent(),
+                              pressure.getCurrent()));
                     },
                     child: const Text(
                       "Anwenden",
