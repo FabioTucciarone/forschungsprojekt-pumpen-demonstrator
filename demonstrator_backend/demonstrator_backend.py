@@ -29,7 +29,6 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     {"model_result": "iVB...YII=", "groundtruth": "iVB...IYI=" , "error_measure": "iVB...mCC"}
     """
 
-    global last_images
     global image_bytes
     global model_communication
 
@@ -40,7 +39,6 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
 
     for i in range(3):
         model_communication.figures.get_figure(i).savefig(image_bytes[i], format="png")
-        last_images[i] = image_bytes[i].getvalue()
 
     return {"model_result": encode_image(image_bytes[0]), "groundtruth":  encode_image(image_bytes[1]), "error_measure": encode_image(image_bytes[2])}
 
@@ -72,12 +70,10 @@ def encode_image(buffer):
 
 def initialize_backend():
     global model_communication
-    global last_images
     global image_bytes
 
     image_bytes = [io.BytesIO(), io.BytesIO(), io.BytesIO()]
     model_communication = ModelCommunication()
-    last_images = [None, None, None]
 
 
 # Start Debug Server:
