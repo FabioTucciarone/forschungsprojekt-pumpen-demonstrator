@@ -250,7 +250,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     spline = [None, None, None]
     for k in range(0, 3):
         temp_fields[k].field = sp.ndimage.gaussian_filter(temp_fields[k].field, 1, mode='constant', cval=10.6)
-        spline[k] = sp.interpolate.RectBivariateSpline(range(info.dims[0]), range(info.dims[1]), temp_fields[k].field, kx=2, ky=2, bc_type)
+        spline[k] = sp.interpolate.RectBivariateSpline(range(info.dims[0]), range(info.dims[1]), temp_fields[k].field, kx=2, ky=2)
         # spline[k] = sp.interpolate.NdPPoly([2,10,2,10], values, (range(info.dims[0]), range(info.dims[1])), method='cubic')
 
     for j in range(info.dims[1]):
