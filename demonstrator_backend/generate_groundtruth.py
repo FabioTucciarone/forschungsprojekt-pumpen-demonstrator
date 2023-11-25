@@ -3,7 +3,9 @@ import sys
 import numpy as np
 import torch
 from dataclasses import dataclass
-
+import matplotlib.pyplot as plt
+import scipy as sp
+import itertools
 
 @dataclass
 class DataPoint:
@@ -40,13 +42,14 @@ class HPBounds:
 class TemperatureField:
     info: GroundTruthInfo
     field: np.ndarray
-
+    
     def __init__(self, info: GroundTruthInfo, run_index: int=None):
         if run_index == None:
             self.field = np.ndarray((info.dims[0], info.dims[1]))
         else:
             self.field = load_temperature_field(info, run_index)
         self.info = info
+        self.gradient = np.gradient(self.field)
 
     def at(self, i: int, j: int):
         if i < 0 or i >= self.info.dims[0] or j < 0 or j >= self.info.dims[1]:
@@ -225,7 +228,7 @@ def interpolate_pixel(field: TemperatureField, x: float, y: float):
     return w11 * field.at(x1, y1) + w12 * field.at(x1, y2) + w21 * field.at(x2, y1) + w22 * field.at(x2, y2)
 
 
-def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
+def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: list):
 
     temp_fields = [[], [], []]
     for k in range(0, 3):
@@ -233,8 +236,8 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
 
     bounds = calculate_hp_bounds(info, temp_fields)
 
-    transformed_temp_fields = [TemperatureField(info) for i in range(3)]
-    result_temp_field = TemperatureField(info)
+    transformed = [TemperatureField(info) for i in range(3)]
+    result = TemperatureField(info)
 
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
@@ -244,21 +247,38 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i, weights):
     pos_i = info.hp_pos[0] 
     pos_j = info.hp_pos[1] 
 
+    spline = [None, None, None]
+    for k in range(0, 3):
+        temp_fields[k].field = sp.ndimage.gaussian_filter(temp_fields[k].field, 1, mode='constant', cval=10.6)
+        spline[k] = sp.interpolate.RectBivariateSpline(range(info.dims[0]), range(info.dims[1]), temp_fields[k].field, kx=2, ky=2, bc_type)
+        # spline[k] = sp.interpolate.NdPPoly([2,10,2,10], values, (range(info.dims[0]), range(info.dims[1])), method='cubic')
+
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             for k in range(3):
                 it, jt = get_sample_indices(pos_i, pos_j, i, j, bounds[k], result_bounds)
 
-                y = interpolate_pixel(temp_fields[k], it, jt)
+                y = spline[k].ev(it, jt)# interpolate_pixel(temp_fields[k], it, jt)
                 if y < info.base_temp: y = info.base_temp
 
-                transformed_temp_fields[k].set(i, j, y)
+                transformed[k].set(i, j, y)
 
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
-            result_temp_field.set(i, j, transformed_temp_fields[0].at(i, j)*weights[0] + transformed_temp_fields[1].at(i, j)*weights[1] + transformed_temp_fields[2].at(i, j)*weights[2])
-        
-    return {"Temperature [C]": torch.tensor(result_temp_field.field).unsqueeze(2)}
+            result.set(i, j, transformed[0].at(i, j)*weights[0] + transformed[1].at(i, j)*weights[1] + transformed[2].at(i, j)*weights[2])
+
+    fig, axes = plt.subplots(4, 1, sharex=True)
+    fig.set_figheight(7)
+    fig.set_figwidth(10)
+
+    for i in range(3):
+        plt.sca(axes[i])
+        plt.imshow(transformed[i].field)
+    plt.sca(axes[3])
+    plt.imshow(result.field)
+    plt.show()
+
+    return {"Temperature [C]": torch.tensor(result.field).unsqueeze(2)}
 
 
 def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBounds):
@@ -292,3 +312,13 @@ def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: f
 # ACHTUNG:
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 import preprocessing.prepare_1ststage as prepare
+
+
+def main():
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+    info = GroundTruthInfo(path_to_dataset, 10.6)
+    interpolate_experimental(info, [1, 2, 3], [1/3, 1/3, 1/3])
+
+
+if __name__ == "__main__":
+    main()
