@@ -49,16 +49,47 @@ class TemperatureField:
         else:
             self.field = load_temperature_field(info, run_index)
         self.info = info
-        self.gradient = np.gradient(self.field)
+        X = list(range(info.dims[0]))
+        Y = list(range(info.dims[1]))
+        self.interp = sp.interpolate.RegularGridInterpolator((X, Y), self.field, method='linear', bounds_error=False, fill_value=None)
+        self.max = np.max(self.field)
 
-    def at(self, i: int, j: int):
-        if i < 0 or i >= self.info.dims[0] or j < 0 or j >= self.info.dims[1]:
-            return self.info.base_temp
+    def at(self, i: float, j: float):
+        if i >= 0 and np.ceil(i) < self.info.dims[0] and j >= 0 and np.ceil(j) < self.info.dims[1]:
+            return self.interpolate_inner_pixel(i, j)
         else:
-            return self.field[i][j]
-        
+            edge_i = int(max(min(i, self.info.dims[0]-1), 0))
+            edge_j = int(max(min(j, self.info.dims[1]-1), 0))
+            if not self.field[edge_i, edge_j] == 10.6:
+                return min(max(self.interp((i, j)), 10.6), self.max)
+            else:
+                return 10.6
+            
     def set(self, i: int, j: int, value: float):
         self.field[i][j] = value
+
+    def interpolate_inner_pixel(self, x: float, y: float):
+        x1 = int(np.floor(x)) 
+        y1 = int(np.floor(y))
+        x2 = int(np.ceil(x)) 
+        y2 = int(np.ceil(y))
+
+        if y1 == y2 and x1 == x2:
+            return self.field[x1, y1]
+
+        if x1 == x2:
+            return self.field[x1, y1] * (y2 - y) / (y2 - y1) + self.field[x1, y2] * (y - y1) / (y2 - y1)
+
+        if y1 == y2:
+            return self.field[x1, y1] * (x2 - x) / (x2 - x1) + self.field[x2, y1] * (x - x1) / (x2 - x1)
+
+        d = (x2 - x1) * (y2 - y1)
+        w11 = (x2 - x) * (y2 - y) / d
+        w12 = (x2 - x) * (y - y1) / d
+        w21 = (x - x1) * (y2 - y) / d
+        w22 = (x - x1) * (y - y1) / d
+
+        return w11 * self.field[x1, y1] + w12 * self.field[x1, y2] + w21 * self.field[x2, y1] + w22 * self.field[x2, y2]
 
 
 # TODO: ACHTUNG skaliertes laden!
@@ -204,30 +235,6 @@ def calculate_hp_bounds(info, temp_fields):
     return bounds
 
 
-def interpolate_pixel(field: TemperatureField, x: float, y: float):
-    x1 = int(np.floor(x)) 
-    y1 = int(np.floor(y))
-    x2 = int(np.ceil(x)) 
-    y2 = int(np.ceil(y))
-
-    if y1 == y2 and x1 == x2:
-        return field.at(x1, y1)
-
-    if x1 == x2:
-        return field.at(x1, y1) * (y2 - y) / (y2 - y1) + field.at(x1, y2) * (y - y1) / (y2 - y1)
-
-    if y1 == y2:
-        return field.at(x1, y1) * (x2 - x) / (x2 - x1) + field.at(x2, y1) * (x - x1) / (x2 - x1)
-
-    d = (x2 - x1) * (y2 - y1)
-    w11 = (x2 - x) * (y2 - y) / d
-    w12 = (x2 - x) * (y - y1) / d
-    w21 = (x - x1) * (y2 - y) / d
-    w22 = (x - x1) * (y - y1) / d
-
-    return w11 * field.at(x1, y1) + w12 * field.at(x1, y2) + w21 * field.at(x2, y1) + w22 * field.at(x2, y2)
-
-
 def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: list):
 
     temp_fields = [[], [], []]
@@ -247,18 +254,12 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     pos_i = info.hp_pos[0] 
     pos_j = info.hp_pos[1] 
 
-    spline = [None, None, None]
-    for k in range(0, 3):
-        temp_fields[k].field = sp.ndimage.gaussian_filter(temp_fields[k].field, 1, mode='constant', cval=10.6)
-        spline[k] = sp.interpolate.RectBivariateSpline(range(info.dims[0]), range(info.dims[1]), temp_fields[k].field, kx=2, ky=2)
-        # spline[k] = sp.interpolate.NdPPoly([2,10,2,10], values, (range(info.dims[0]), range(info.dims[1])), method='cubic')
-
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             for k in range(3):
                 it, jt = get_sample_indices(pos_i, pos_j, i, j, bounds[k], result_bounds)
 
-                y = spline[k].ev(it, jt)# interpolate_pixel(temp_fields[k], it, jt)
+                y = temp_fields[k].at(it, jt)
                 if y < info.base_temp: y = info.base_temp
 
                 transformed[k].set(i, j, y)
@@ -266,17 +267,6 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             result.set(i, j, transformed[0].at(i, j)*weights[0] + transformed[1].at(i, j)*weights[1] + transformed[2].at(i, j)*weights[2])
-
-    fig, axes = plt.subplots(4, 1, sharex=True)
-    fig.set_figheight(7)
-    fig.set_figwidth(10)
-
-    for i in range(3):
-        plt.sca(axes[i])
-        plt.imshow(transformed[i].field)
-    plt.sca(axes[3])
-    plt.imshow(result.field)
-    plt.show()
 
     return {"Temperature [C]": torch.tensor(result.field).unsqueeze(2)}
 
