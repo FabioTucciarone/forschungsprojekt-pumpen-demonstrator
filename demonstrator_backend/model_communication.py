@@ -9,7 +9,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from torch import load
 import yaml
-import io
+import generate_groundtruth as gt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
@@ -49,6 +49,7 @@ class ModelCommunication:
     paths1HP: Paths1HP = None
     settings: SettingsTraining = None
     figures: Figures
+    groundtruth_info: gt.GroundTruthInfo
     
     
     def get_min_max_perm(self) :
@@ -60,32 +61,46 @@ class ModelCommunication:
         min_max = [settings["permeability"][7], settings["permeability"][6]]
         return min_max
 
-    def __init__(self, dataset_name: str = "datasets_raw_1000_1HP", full_model_path: str = None):
+
+    def __init__(self, dataset_name: str = "datasets_raw_1000_1HP"):
         """ 
         Initialize paths and model settings.
+        Model is searched according to the paths.yaml file.
+        If no such file exists default folder structure is assumed (see README.md).
 
         Parameters
         ----------
         dataset_name: str
             Name of "dataset" containing the settings.yaml file from which the pflortran settings are extracted.
-        full_model_path: str
-            Full path to a gksi1000 model. Default path: see README.md (or Notion)
         """
         path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".." / ".."
-        if full_model_path is None:
-            full_model_path = path_to_project_dir / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
-
         paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
 
         if os.path.exists(paths_file):
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
+
                 raw_path = pathlib.Path(paths["default_raw_dir"]) / dataset_name
+                if not os.path.exists(raw_path):
+                    print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
+                    raw_path = pathlib.Path(paths["default_raw_dir"]) / "dataset_2d_small_1000dp"
+                
+                model_path = pathlib.Path(paths["models_1hp_dir"]) / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
+                if not os.path.exists(raw_path):
+                    raise FileNotFoundError(f"Model path '{model_path}' does not exist")
         else:
+            print(f"Could not find '1HP_NN/paths.yaml', assuming for default folder structure.")
+
             raw_path = path_to_project_dir / "data" / "datasets_raw" / dataset_name
+            if not os.path.exists(raw_path):
+                print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
+                raw_path = path_to_project_dir / "data" / "datasets_raw" / "dataset_2d_small_1000dp"  
+            
+            model_path = path_to_project_dir / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
 
         if not os.path.exists(raw_path):
-            raise FileNotFoundError(f"Dataset path {raw_path} does not exist")
+            raise FileNotFoundError(f"Dataset path '{raw_path}' does not exist")
+
 
         self.paths1HP = Paths1HP(raw_path, "")
 
@@ -95,11 +110,12 @@ class ModelCommunication:
             device = "cpu", # TODO: GPU?
             epochs = 10000,
             case = "test",
-            model = full_model_path,
+            model = model_path,
             visualize = True
         )
         self.prepare_model()
 
+        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6, use_interpolation=True)
         self.figures = Figures()
     
 
@@ -121,5 +137,18 @@ class ModelCommunication:
         pressure: float
             The pressure input parameter of the demonstrator app.
         """
-        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, permeability, pressure)
+        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, self.groundtruth_info, permeability, pressure)
         visualize.get_plots(self.model, x, y, info, norm, self.figures)
+
+# ?????
+class ModelCommunication_2HP:
+    def prepare_1hpnn():
+        """
+        2HP-NN expects that 1HP-NN exists and trained on
+        """
+
+    def prepare_2hpnn(one_hpnn_prepared_dir):
+        """
+        for running a 2HP-NN you need the prepared 2HP-dataset in datasets_prepared_dir_2hp
+        TODO: python3 main.py --dataset "dataset_raw_demonstrator_input_1dp inputs_gksi" --case_2hp True --inputs gksi1000
+        """
