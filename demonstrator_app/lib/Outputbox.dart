@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 class OutputBox extends StatelessWidget {
-  const OutputBox({super.key, required this.name});
+  OutputBox({super.key, required this.name});
   final String name;
+  final ResponseDecoder responseDecoder = ResponseDecoder();
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +57,13 @@ class OutputBox extends StatelessWidget {
                   if (snapshot.data == "keinWert") {
                     child = const Text("Kein Wert bis jetzt");
                   } else {
-                    child = Image.network(
-                        'http://127.0.0.1:5000/last_model_result.png');
+                    responseDecoder.setResponse(snapshot.data);
+                    child =
+                        Image.memory(responseDecoder.getBytes("error_measure"));
+
+                    stderr.writeln(snapshot.data);
+                    // child = Image.network(
+                    //   'http://127.0.0.1:5000/last_model_result.png');
                   }
                 }
               } else {
@@ -69,5 +79,37 @@ class OutputBox extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class ResponseDecoder {
+  late String response;
+  late Map<String, dynamic> jsonDecoded;
+
+  ResponseDecoder();
+
+  void setResponse(String? response) {
+    this.response = response!;
+    jsonDecoded = decodeData();
+  }
+
+  Map<String, dynamic> decodeData() {
+    Map<String, dynamic> decodedData = json.decode(response);
+    return decodedData;
+  }
+
+  Uint8List getBytes(String? type) {
+    if (type == null) {
+      throw ArgumentError('Type cannot be null');
+    } else if (jsonDecoded.containsKey(type)) {
+      dynamic value = jsonDecoded[type];
+      if (value is String) {
+        return base64.decode(jsonDecoded[type]!);
+      } else {
+        throw ArgumentError("Invalid Data type");
+      }
+    } else {
+      throw ArgumentError('Type not found');
+    }
   }
 }

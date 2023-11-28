@@ -101,8 +101,8 @@ class BackendConnection with ChangeNotifier {
     }
 
     final ip = debugEnabled
-        ? "http://127.0.0.1:5000/send_input"
-        : "http://127.0.0.1:$localPort/send_input";
+        ? "http://127.0.0.1:5000/"
+        : "http://127.0.0.1:$localPort/";
 
     final response = await http.post(
       Uri.parse(ip),
