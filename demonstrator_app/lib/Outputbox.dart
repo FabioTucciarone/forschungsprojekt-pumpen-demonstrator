@@ -61,7 +61,6 @@ class OutputBox extends StatelessWidget {
                     child =
                         Image.memory(responseDecoder.getBytes("error_measure"));
 
-                    stderr.writeln(snapshot.data);
                     // child = Image.network(
                     //   'http://127.0.0.1:5000/last_model_result.png');
                   }
