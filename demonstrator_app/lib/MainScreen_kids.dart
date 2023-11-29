@@ -1,4 +1,5 @@
 import 'package:demonstrator_app/Checkboxes.dart';
+import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:flutter/services.dart';
 import 'Intro.dart';
@@ -9,17 +10,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'BackendConnection.dart';
 
-class MainSlide extends StatelessWidget {
-  const MainSlide({super.key, required this.backend});
+class MainSlideKids extends StatelessWidget {
+  MainSlideKids({super.key});
 
-  final BackendConnection backend;
+  final FutureNotifier futureNotifier = FutureNotifier();
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(800, 870000, 910000);
-    PressureSlider permeability = PressureSlider(800, 870000, 910000);
-    return ChangeNotifierProvider(
-        create: (context) => CheckboxModel(),
+    PressureSlider pressure = PressureSlider(800, 870000, 910000, 'Druck');
+    PressureSlider permeability =
+        PressureSlider(800, 870000, 910000, 'Durchlässigkeit');
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => CheckboxModel(),
+          ),
+          ChangeNotifierProvider<FutureNotifier>(
+              create: ((context) => futureNotifier)),
+        ],
         child: MaterialApp(
           home: Scaffold(
             appBar: AppBar(
@@ -27,12 +35,8 @@ class MainSlide extends StatelessWidget {
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => IntroScreen(
-                                  backend: backend,
-                                )));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => IntroScreen()));
                   }),
             ),
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -53,11 +57,11 @@ class MainSlide extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  permeability,
+                  pressure,
                   const SizedBox(
                     height: 10,
                   ),
-                  pressure,
+                  permeability,
                   const SizedBox(
                     height: 10,
                   ),
@@ -67,10 +71,11 @@ class MainSlide extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      backend.sendInputData(
-                          permeability.getCurrent(), pressure.getCurrent());
+                      futureNotifier.setFuture(useOfBackend.backend
+                          .sendInputData(permeability.getCurrent(),
+                              pressure.getCurrent()));
                     },
-                    child: Text(
+                    child: const Text(
                       "Anwenden",
                       textScaleFactor: 2,
                     ),
@@ -80,5 +85,16 @@ class MainSlide extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+class FutureNotifier extends ChangeNotifier {
+  Future<String> future = Future.value("keinWert");
+
+  Future<String> get getFuture => future;
+
+  void setFuture(Future<String> newFuture) {
+    future = newFuture;
+    notifyListeners();
   }
 }

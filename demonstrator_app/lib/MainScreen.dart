@@ -8,17 +8,25 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MainSlide extends StatelessWidget {
-  const MainSlide({super.key, required this.backend});
+  MainSlide({super.key});
 
-  final BackendConnection backend;
+  final FutureNotifier futureNotifier = FutureNotifier();
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(800, 870000, 910000);
-    PressureSlider permeability = PressureSlider(800, 870000, 910000);
+    PressureSlider pressure = PressureSlider(800, 870000, 910000, 'Druck');
+    PressureSlider permeability =
+        PressureSlider(800, 870000, 910000, 'Durchlässigkeit');
 
-    return ChangeNotifierProvider(
-        create: (context) => CheckboxModel(),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => CheckboxModel(),
+          ),
+          ChangeNotifierProvider<FutureNotifier>(
+            create: ((context) => futureNotifier),
+          ),
+        ],
         child: MaterialApp(
           home: Scaffold(
             appBar: AppBar(
@@ -29,9 +37,7 @@ class MainSlide extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Introduction(
-                                  backend: backend,
-                                )));
+                            builder: (context) => Introduction()));
                   }),
             ),
             backgroundColor: Color.fromARGB(255, 33, 128, 231),
@@ -66,10 +72,11 @@ class MainSlide extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      backend.sendInputData(
-                          permeability.getCurrent(), pressure.getCurrent());
+                      futureNotifier.setFuture(useOfBackend.backend
+                          .sendInputData(permeability.getCurrent(),
+                              pressure.getCurrent()));
                     },
-                    child: Text(
+                    child: const Text(
                       "Anwenden",
                       textScaleFactor: 2,
                     ),
@@ -79,5 +86,16 @@ class MainSlide extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+class FutureNotifier extends ChangeNotifier {
+  Future<String> future = Future.value("keinWert");
+
+  Future<String> get getFuture => future;
+
+  void setFuture(Future<String> newFuture) {
+    future = newFuture;
+    notifyListeners();
   }
 }
