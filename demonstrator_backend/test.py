@@ -63,7 +63,7 @@ def test_interpolation_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i:
     triangle_i = gt.triangulate_data_point(info, x)
     if isinstance(triangle_i, list):
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
-        interp_result = gt.interpolate_experimental(info, triangle_i, weights)
+        interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"].detach().cpu().squeeze().numpy()
         closest_result = gt.load_temperature_field(info, triangle_i[0])
 
         true_result = gt.load_temperature_field(info, i)
@@ -162,8 +162,8 @@ def test_model_communication():
     show_figure(model_communication.figures.get_figure(0))
 
 test_model_communication()
-# test_groundtruth(range(35, 40), type="closest", visualize=False)
-# test_groundtruth(range(0, 100), type="interpolation", visualize=True)
+# test_groundtruth(range(35, 40), type="closest", visualize=True)
+# test_groundtruth(range(0, 100), type="interpolation", visualize=False)
 
 # path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
 # info = gt.GroundTruthInfo(path_to_dataset, 10.6)
