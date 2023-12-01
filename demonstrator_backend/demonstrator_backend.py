@@ -43,6 +43,11 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     return {"model_result": encode_image(image_bytes[0]), "groundtruth":  encode_image(image_bytes[1]), "error_measure": encode_image(image_bytes[2])}
 
 
+@app.route('/test_response', methods = ['GET'])
+def test_response():
+    return "success"
+
+  
 @app.route('/get_value_ranges', methods = ['GET'])
 def get_value_ranges():
     """
@@ -63,10 +68,8 @@ def get_highscore_and_name(): # TODO: Implementieren
 
 # Internal Methods:
 
-
 def encode_image(buffer):
     return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
-
 
 def initialize_backend():
     global model_communication
@@ -78,7 +81,6 @@ def initialize_backend():
 
 # Start Debug Server:
 
-
 if __name__ == '__main__':
     initialize_backend()
-    app.run(port=5000)
+    app.run(port=5000, host='0.0.0.0')

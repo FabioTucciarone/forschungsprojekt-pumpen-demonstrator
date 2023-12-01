@@ -1,20 +1,16 @@
+import 'package:demonstrator_app/BackendConnection.dart';
 import 'package:flutter/material.dart';
 import 'MainScreen.dart';
 import 'Intro.dart';
-import 'BuildConnection.dart';
-import 'BackendConnection.dart';
+import 'package:demonstrator_app/BuildConnection.dart';
 
 class Introduction extends StatelessWidget {
-  const Introduction({super.key, required this.backend});
-
-  final BackendConnection backend;
+  const Introduction({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: IntroHomeScaffold(
-        backend: backend,
-      ),
+      home: IntroHomeScaffold(),
     );
   }
 }
@@ -22,10 +18,7 @@ class Introduction extends StatelessWidget {
 class IntroHomeScaffold extends StatelessWidget {
   const IntroHomeScaffold({
     super.key,
-    required this.backend,
   });
-
-  final BackendConnection backend;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +30,7 @@ class IntroHomeScaffold extends StatelessWidget {
           onPressed: null,
         ),
         actions: const <Widget>[
+          DebugSwitch(),
           ButtonAnmelden(),
         ],
       ),
@@ -54,12 +48,8 @@ class IntroHomeScaffold extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MainSlide(
-                            backend: backend,
-                          )));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MainSlide()));
             },
             child: const Text("Los geht's zur wissenschaftlichen Version"),
           ),
@@ -68,10 +58,8 @@ class IntroHomeScaffold extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => IntroScreen(backend: backend)));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => IntroScreen()));
               },
               child: const Text("Los geht's zur Kinderversion"))
         ],
@@ -79,3 +67,40 @@ class IntroHomeScaffold extends StatelessWidget {
     );
   }
 }
+
+class DebugSwitch extends StatefulWidget {
+  const DebugSwitch({super.key});
+
+  @override
+  State<DebugSwitch> createState() => _DebugSwitchState();
+}
+
+class _DebugSwitchState extends State<DebugSwitch> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      const Text('Debug Mode'),
+      Switch(
+        value: useOfBackend.backend.debugEnabled,
+        activeColor: Colors.green,
+        onChanged: (bool value) {
+          setState(() {
+            useOfBackend.backend.debugEnabled = value;
+          });
+        },
+      )
+    ]);
+  }
+}
+
+class UseOfBackendConnection {
+  static final UseOfBackendConnection _useOfBackendConnection =
+      new UseOfBackendConnection._internal();
+  BackendConnection backend = new BackendConnection();
+  factory UseOfBackendConnection() {
+    return _useOfBackendConnection;
+  }
+  UseOfBackendConnection._internal();
+}
+
+final useOfBackend = UseOfBackendConnection();
