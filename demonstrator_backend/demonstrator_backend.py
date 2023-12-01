@@ -41,6 +41,10 @@ def send_input():
     return {"model_result": encode_image(image_bytes[0]), "groundtruth":  encode_image(image_bytes[1]), "error_measure": encode_image(image_bytes[2])}
 
 
+@app.route('/test_response', methods = ['GET'])
+def test_response():
+    return "success"
+
 def initialize_backend():
     global model_communication
     global last_images
