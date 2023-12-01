@@ -161,11 +161,9 @@ def test_model_communication():
 
     show_figure(model_communication.figures.get_figure(0))
 
-test_model_communication()
-# test_groundtruth(range(35, 40), type="closest", visualize=True)
-# test_groundtruth(range(0, 100), type="interpolation", visualize=False)
 
-# path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-# info = gt.GroundTruthInfo(path_to_dataset, 10.6)
+if __name__ == "__main__":
+    # test_groundtruth(range(0, 100), type="interpolation", visualize=False)
 
-# gt.generate_groundtruth(info, 1e-3, 1e-10)
+    test_model_communication()
+    # test_groundtruth(range(35, 40), type="closest", visualize=True)
