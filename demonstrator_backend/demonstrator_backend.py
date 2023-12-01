@@ -58,4 +58,4 @@ def initialize_backend():
 # Debug run
 if __name__ == '__main__':
     initialize_backend()
-    app.run(port=5000)
+    app.run(port=5000, host='0.0.0.0')
