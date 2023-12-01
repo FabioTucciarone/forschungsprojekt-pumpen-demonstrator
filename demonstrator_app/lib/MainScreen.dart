@@ -1,4 +1,3 @@
-import 'package:demonstrator_app/BackendConnection.dart';
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
@@ -17,7 +16,6 @@ class MainSlide extends StatelessWidget {
     PressureSlider pressure = PressureSlider(800, 870000, 910000, 'Druck');
     PressureSlider permeability =
         PressureSlider(800, 870000, 910000, 'Durchlässigkeit');
-
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
@@ -31,8 +29,12 @@ class MainSlide extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text("Demonstrator App"),
+              backgroundColor: Color.fromARGB(255, 184, 44, 44),
+              titleTextStyle:
+                  const TextStyle(color: Colors.black, fontSize: 25),
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
+                  color: Colors.black,
                   onPressed: () {
                     Navigator.push(
                         context,
@@ -40,24 +42,12 @@ class MainSlide extends StatelessWidget {
                             builder: (context) => Introduction()));
                   }),
             ),
-            backgroundColor: Color.fromARGB(255, 33, 128, 231),
+            backgroundColor: Color.fromARGB(255, 221, 115, 115),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 children: [
-                  OutputBox(
-                    name: "erste Outputboxx",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  OutputBox(
-                    name: "zweite Outputboxx",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
                   pressure,
                   const SizedBox(
                     height: 10,
@@ -70,16 +60,50 @@ class MainSlide extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      futureNotifier.setFuture(useOfBackend.backend
-                          .sendInputData(permeability.getCurrent(),
-                              pressure.getCurrent()));
-                    },
-                    child: const Text(
-                      "Anwenden",
-                      textScaleFactor: 2,
-                    ),
+                  const Text(
+                    "Output:",
+                    textScaleFactor: 2,
+                  ),
+                  OutputBox(
+                    name: "AI Generated",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  OutputBox(
+                    name: "Groundtruth",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  OutputBox(
+                    name: "Difference Field",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 184, 44, 44),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          futureNotifier.setFuture(useOfBackend.backend
+                              .sendInputData(permeability.getCurrent(),
+                                  pressure.getCurrent()));
+                        },
+                        child: const Text(
+                          "Anwenden",
+                          textScaleFactor: 1.8,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
