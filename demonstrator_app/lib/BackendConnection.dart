@@ -59,9 +59,6 @@ class BackendConnection with ChangeNotifier {
     }
 
     readyForHTTPRequests = true;
-    //TODO: Könnt ihr hier einen Zustand aktualisieren oder eine Benachrichtigung an die Oberfläche senden?
-    // Ab hier soll es erlaubt sein HTTP-Anfragen zu senden:
-
     notifyListeners();
 
     await for (final socket in serverSocket!) {
@@ -92,10 +89,18 @@ class BackendConnection with ChangeNotifier {
     readyForHTTPRequests = false;
   }
 
+  Uri getUri(String destination) {
+    return Uri.parse(debugEnabled
+        ? "http://127.0.0.1:5000/$destination"
+        : "http://127.0.0.1:$localPort/$destination");
+  }
+
   /// Send a http-post request with the input data (of phase 1) via the specified ssh tunnel.
   ///
-  /// Returns the json body of the response. (for now) TODO: Read paper and code of model.
-  Future<String> sendInputData(double permeability, double pressure) async {
+  /// [name]: Name for tracking the highest error score.
+  /// 
+  /// Returns the json body of the response.
+  Future<String> sendInputData(double permeability, double pressure, String name) async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
     }
@@ -105,17 +110,40 @@ class BackendConnection with ChangeNotifier {
         : "http://127.0.0.1:$localPort/";
 
     final response = await http.post(
-      Uri.parse(ip),
+      getUri("get_model_result"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"permeability": permeability, "pressure": pressure}),
+      body: jsonEncode({"permeability": permeability, "pressure": pressure, "name" : name}),
     );
     if (response.statusCode == 200) {
       return response.body;
     } else {
-      //TODO: Besser?
-      stderr.writeln(
-          "HTTP-request failed with status code ${response.statusCode}");
-      return response.body;
+      throw "HTTP-request failed with status code ${response.statusCode}"; // Ich hoff das geht
+    }
+  }
+
+  Future<Map<String, dynamic>> getValueRanges() async {
+    if (!readyForHTTPRequests && !debugEnabled) {
+      throw "Error: No SSH-port forwarding established.";
+    }
+    final response = await http.get(getUri("get_value_ranges"));
+    if (response.statusCode == 200) {
+      final valueRanges = jsonDecode(response.body) as Map<String, dynamic>;
+      return valueRanges;
+    } else {
+      throw "HTTP-request failed with status code ${response.statusCode}";
+    }
+  }
+
+  Future<Map<String, dynamic>> getHighscoreAndName() async {
+    if (!readyForHTTPRequests && !debugEnabled) {
+      throw "Error: No SSH-port forwarding established.";
+    }
+    final response = await http.get(getUri("get_model_result"));
+    if (response.statusCode == 200) {
+      final highscoreAndName = jsonDecode(response.body) as Map<String, dynamic>;
+      return highscoreAndName;
+    } else {
+      throw "HTTP-request failed with status code ${response.statusCode}";
     }
   }
 
