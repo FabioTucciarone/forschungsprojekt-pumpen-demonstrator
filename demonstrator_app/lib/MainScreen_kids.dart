@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'Intro.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'MainScreen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -96,7 +97,7 @@ class MainSlideKids extends StatelessWidget {
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
                               .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent(),""));
+                                  pressure.getCurrent(), ""));
                         },
                         child: const Text(
                           "Anwenden",
@@ -106,22 +107,10 @@ class MainSlideKids extends StatelessWidget {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
           ),
         ));
-  }
-}
-
-class FutureNotifier extends ChangeNotifier {
-  Future<String> future = Future.value("keinWert");
-
-  Future<String> get getFuture => future;
-
-  void setFuture(Future<String> newFuture) {
-    future = newFuture;
-    notifyListeners();
   }
 }

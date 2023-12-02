@@ -1,4 +1,5 @@
 import 'package:demonstrator_app/Checkboxes.dart';
+import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'Slider.dart';
@@ -29,7 +30,7 @@ class MainSlide extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text("Demonstrator App"),
-              backgroundColor: Color.fromARGB(255, 184, 44, 44),
+              backgroundColor: const Color.fromARGB(255, 184, 44, 44),
               titleTextStyle:
                   const TextStyle(color: Colors.black, fontSize: 25),
               leading: IconButton(
@@ -39,10 +40,10 @@ class MainSlide extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Introduction()));
+                            builder: (context) => IntroScience()));
                   }),
             ),
-            backgroundColor: Color.fromARGB(255, 221, 115, 115),
+            backgroundColor: const Color.fromARGB(255, 221, 115, 115),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
@@ -95,7 +96,7 @@ class MainSlide extends StatelessWidget {
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
                               .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent(),""));
+                                  pressure.getCurrent(), ""));
                         },
                         child: const Text(
                           "Anwenden",
@@ -104,7 +105,6 @@ class MainSlide extends StatelessWidget {
                         ),
                       ),
                     ],
-
                   ),
                 ],
               ),
