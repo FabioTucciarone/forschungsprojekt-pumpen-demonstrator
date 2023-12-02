@@ -96,7 +96,7 @@ class MainSlideKids extends StatelessWidget {
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
                               .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent()));
+                                  pressure.getCurrent(),""));
                         },
                         child: const Text(
                           "Anwenden",
@@ -106,6 +106,7 @@ class MainSlideKids extends StatelessWidget {
                       ),
                     ],
                   ),
+
                 ],
               ),
             ),
