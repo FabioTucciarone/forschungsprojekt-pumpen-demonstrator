@@ -13,13 +13,19 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+        ),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => RegisterApp()),
           );
         },
-        child: const Text('Anmelden'));
+        child: const Text(
+          'Anmelden',
+          style: TextStyle(color: Colors.black),
+        ));
   }
 }
 
@@ -31,8 +37,11 @@ class RegisterApp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
+        backgroundColor: Color.fromARGB(255, 184, 44, 44),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 25),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
+            color: Colors.black,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
@@ -41,7 +50,7 @@ class RegisterApp extends StatelessWidget {
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 221, 115, 115),
       body: Center(
           child: SizedBox(
         width: 400,
@@ -103,6 +112,11 @@ class _RegisterState extends State<RegisterBox> {
               ),
             ),
             TextButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -113,7 +127,10 @@ class _RegisterState extends State<RegisterBox> {
                           )),
                 );
               },
-              child: const Text('Verbinden'),
+              child: const Text(
+                'Verbinden',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),

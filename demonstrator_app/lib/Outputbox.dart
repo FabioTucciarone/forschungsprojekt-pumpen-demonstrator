@@ -18,15 +18,11 @@ class OutputBox extends StatelessWidget {
     final isChecked1 = checkBoxModel.isChecked1;
     final isChecked2 = checkBoxModel.isChecked2;
     final Future<String> future = context.watch<FutureNotifier>().future;
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "$name",
-          textScaleFactor: 2,
-        ),
-        Text("Checkbox1 is ${isChecked1 ? 'checked' : 'not checked'}"),
-        Text("Checkbox2 is ${isChecked2 ? 'checked' : 'not checked'}"),
+        //Text("Checkbox1 is ${isChecked1 ? 'checked' : 'not checked'}"),
+        //Text("Checkbox2 is ${isChecked2 ? 'checked' : 'not checked'}"),
         SizedBox(
           height: 100,
           //child: Image.network('http://127.0.0.1:5000/last_model_result.png'))
@@ -75,6 +71,13 @@ class OutputBox extends StatelessWidget {
               return child;
             },
           ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Text(
+          "$name",
+          textScaleFactor: 1.2,
         ),
       ],
     );

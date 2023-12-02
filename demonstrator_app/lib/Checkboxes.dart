@@ -34,7 +34,7 @@ class _CheckboxBoxState extends State<CheckboxBox> {
     final checkBoxModel = Provider.of<CheckboxModel>(context);
 
     return ColoredBox(
-      color: Colors.green,
+      color: Color.fromARGB(176, 215, 80, 80),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
