@@ -73,7 +73,7 @@ class MainSlideKids extends StatelessWidget {
                     onPressed: () {
                       futureNotifier.setFuture(useOfBackend.backend
                           .sendInputData(permeability.getCurrent(),
-                              pressure.getCurrent()));
+                              pressure.getCurrent(), "player"));
                     },
                     child: const Text(
                       "Anwenden",
