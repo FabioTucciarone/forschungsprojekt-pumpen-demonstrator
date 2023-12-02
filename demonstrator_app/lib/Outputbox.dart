@@ -25,7 +25,6 @@ class OutputBox extends StatelessWidget {
         //Text("Checkbox2 is ${isChecked2 ? 'checked' : 'not checked'}"),
         SizedBox(
           height: 100,
-          //child: Image.network('http://127.0.0.1:5000/last_model_result.png'))
           child: FutureBuilder<String>(
             future: future,
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -54,11 +53,16 @@ class OutputBox extends StatelessWidget {
                     child = const Text("Kein Wert bis jetzt");
                   } else {
                     responseDecoder.setResponse(snapshot.data);
-                    child =
-                        Image.memory(responseDecoder.getBytes("error_measure"));
-
-                    // child = Image.network(
-                    //   'http://127.0.0.1:5000/last_model_result.png');
+                    if (name == "AI Generated") {
+                      child = Image.memory(
+                          responseDecoder.getBytes("model_result"));
+                    } else if (name == "Groundtruth") {
+                      child =
+                          Image.memory(responseDecoder.getBytes("groundtruth"));
+                    } else {
+                      child = Image.memory(
+                          responseDecoder.getBytes("error_measure"));
+                    }
                   }
                 }
               } else {
