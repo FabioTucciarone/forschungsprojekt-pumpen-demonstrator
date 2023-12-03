@@ -144,9 +144,9 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
     return average_error, min_error, max_error   
 
 
-def test_model_communication():
+def test_1hp_model_communication():
     st1 = time.time()
-    model_communication = mc.ModelCommunication()
+    model_configuration = mc.ModelConfiguration()
     et1 = time.time()
     print('Initialisierung:', et1 - st1, 'seconds')
 
@@ -154,16 +154,13 @@ def test_model_communication():
     p = -2.142171334025262316e-03
 
     st2 = time.time()
-    model_communication.update_1hp_model_results(k, p)
+    display_data = mc.get_1hp_model_results(model_configuration, k, p, "test")
     et2 = time.time()
     print('Antwortzeit:', et2 - st2, 'seconds')
     print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
 
-    show_figure(model_communication.figures.get_figure(0))
+    show_figure(display_data.get_figure(0))
 
 
 if __name__ == "__main__":
-    # test_groundtruth(range(0, 100), type="interpolation", visualize=False)
-
-    test_model_communication()
-    # test_groundtruth(range(35, 40), type="closest", visualize=True)
+    test_1hp_model_communication()

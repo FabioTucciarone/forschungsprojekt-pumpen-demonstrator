@@ -1,4 +1,5 @@
 import os
+import io
 import pathlib
 import sys
 import torch
@@ -6,6 +7,9 @@ from matplotlib.figure import Figure
 import yaml
 import generate_groundtruth as gt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from dataclasses import dataclass
+import base64
+
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -16,7 +20,7 @@ from utils.prepare_paths import Paths1HP
 from data_stuff.utils import SettingsTraining
 
 
-class Figures:
+class DisplayData:
     figures: list
     axes: list
     colorbar_axis: list
@@ -30,33 +34,31 @@ class Figures:
             self.figures[i].tight_layout()
             self.colorbar_axis[i] = make_axes_locatable(self.figures[i].gca()).append_axes("right", size=0.3, pad=0.05)
 
-    def update_figure(self, i, pixel_data, **imshowargs):
+    def encode_image(self, buffer):
+        return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
+
+    def set_figure(self, i, pixel_data, **imshowargs):
         axes_image = self.axes[i].imshow(pixel_data, **imshowargs)
         self.figures[i].colorbar(axes_image, cax=self.colorbar_axis[i])
 
     def get_figure(self, i):
         return self.figures[i]
 
+    def get_encoded_figure(self, i):
+        image_bytes = io.BytesIO()
+        self.figures[i].savefig(image_bytes, format="png")
+        return self.encode_image(image_bytes)
 
-class ModelCommunication:
+
+@dataclass
+class ModelConfiguration:
 
     paths1HP: Paths1HP = None
     settings: SettingsTraining = None
-    figures: Figures
-    groundtruth_info: gt.GroundTruthInfo
-    
-    
-    def get_min_max_perm(self) :
-        """
-        Read out min/max values
-        """
-        settings = prepare.get_pflotran_settings(self.paths1HP.raw_dir / "inputs")
-        print(settings["permeability"].size())
-        min_max = [settings["permeability"][7], settings["permeability"][6]]
-        return min_max
+    groundtruth_info: gt.GroundTruthInfo = None
+    model_info: dict = None
 
-
-    def __init__(self, dataset_name: str = "datasets_raw_1000_1HP"):
+    def __post_init__(self):
         """ 
         Initialize paths and model settings.
         Model is searched according to the paths.yaml file.
@@ -74,10 +76,12 @@ class ModelCommunication:
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
 
-                raw_path = pathlib.Path(paths["default_raw_dir"]) / dataset_name
+                raw_path = pathlib.Path(paths["default_raw_dir"]) / "datasets_raw_1000_1HP"
+                dataset_name = "datasets_raw_1000_1HP"
                 if not os.path.exists(raw_path):
                     print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
                     raw_path = pathlib.Path(paths["default_raw_dir"]) / "dataset_2d_small_1000dp"
+                    dataset_name = "dataset_2d_small_1000dp"
                 
                 model_path = pathlib.Path(paths["models_1hp_dir"]) / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
                 if not os.path.exists(raw_path):
@@ -85,10 +89,11 @@ class ModelCommunication:
         else:
             print(f"Could not find '1HP_NN/paths.yaml', assuming default folder structure.")
 
-            raw_path = path_to_project_dir / "data" / "datasets_raw" / dataset_name
+            raw_path = path_to_project_dir / "data" / "datasets_raw" / "datasets_raw_1000_1HP"
             if not os.path.exists(raw_path):
                 print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
-                raw_path = path_to_project_dir / "data" / "datasets_raw" / "dataset_2d_small_1000dp"  
+                raw_path = path_to_project_dir / "data" / "datasets_raw" / "dataset_2d_small_1000dp"
+                dataset_name = "dataset_2d_small_1000dp"
             
             model_path = path_to_project_dir / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
 
@@ -96,53 +101,39 @@ class ModelCommunication:
             raise FileNotFoundError(f"Dataset path '{raw_path}' does not exist")
 
 
-        self.paths1HP = Paths1HP(raw_path, "")
-
         self.settings = SettingsTraining(
             dataset_raw = dataset_name,
             inputs = "gksi",
-            device = "cpu", # TODO: GPU?
+            device = "cpu", 
             epochs = 10000,
             case = "test",
             model = model_path,
             visualize = True
         )
-        self.prepare_model()
-
+        self.paths1HP = Paths1HP(raw_path, "")
         self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6, use_interpolation=True)
-        self.figures = Figures()
-    
 
-    def prepare_model(self):
-        self.model = UNet(in_channels=4).float() # 4 = len(info["Inputs"]) TODO: Aus Rohdaten einlesen?
-        self.model.load_state_dict(torch.load(f"{self.settings.model}/model.pt", map_location=torch.device(self.settings.device)))
-        self.model.to(self.settings.device)
-        self.model.eval()
+        with open(os.path.join(os.getcwd(), self.settings.model, "info.yaml"), "r") as file:
+            self.model_info = yaml.safe_load(file)
 
 
-    def update_1hp_model_results(self, permeability: float, pressure: float):
-        """
-        Prepare a dataset and run the model.
 
-        Parameters
-        ----------
-        permeability: float
-            The permeability input parameter of the demonstrator app.
-        pressure: float
-            The pressure input parameter of the demonstrator app.
-        """
-        (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, self.groundtruth_info, permeability, pressure)
-        visualize.get_plots(self.model, x, y, info, norm, self.figures)
+def get_1hp_model_results(model_configuration, permeability: float, pressure: float, name: str):
+    """
+    Prepare a dataset and run the model.
 
-# ?????
-class ModelCommunication_2HP:
-    def prepare_1hpnn():
-        """
-        2HP-NN expects that 1HP-NN exists and trained on
-        """
+    Parameters
+    ----------
+    permeability: float
+        The permeability input parameter of the demonstrator app.
+    pressure: float
+        The pressure input parameter of the demonstrator app.
+    """
 
-    def prepare_2hpnn(one_hpnn_prepared_dir):
-        """
-        for running a 2HP-NN you need the prepared 2HP-dataset in datasets_prepared_dir_2hp
-        TODO: python3 main.py --dataset "dataset_raw_demonstrator_input_1dp inputs_gksi" --case_2hp True --inputs gksi1000
-        """
+    model = UNet(in_channels=4).float() # 4 = len(info["Inputs"]) TODO: Aus Rohdaten einlesen?
+    model.load_state_dict(torch.load(f"{model_configuration.settings.model}/model.pt", map_location=torch.device(model_configuration.settings.device)))
+    model.to(model_configuration.settings.device)
+    model.eval()
+
+    (x, y, info, norm) = prepare.prepare_demonstrator_input(model_configuration.paths1HP, model_configuration.groundtruth_info, permeability, pressure, info=model_configuration.model_info)
+    return visualize.get_plots(model, x, y, info, norm)
