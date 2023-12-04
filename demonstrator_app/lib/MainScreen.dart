@@ -16,12 +16,9 @@ class MainSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PressureSlider pressure = PressureSlider(
-        900, pow(10, -11).toDouble(), 5 * pow(10, -9).toDouble(), 'Druck');
+        900, -4 * pow(10, -3).toDouble(), -1 * pow(10, -3).toDouble(), 'Druck');
     PressureSlider permeability = PressureSlider(
-        900,
-        -4 * pow(10, -3).toDouble(),
-        -1 * pow(10, -3).toDouble(),
-        'Durchlässigkeit');
+        900, pow(10, -11).toDouble(), 5 * pow(10, -9).toDouble(), 'Durchlässigkeit');
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
@@ -101,7 +98,7 @@ class MainSlide extends StatelessWidget {
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
                               .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent(), ""));
+                                  pressure.getCurrent(), "")); //TODO: Problem, Werte gleich
                         },
                         child: const Text(
                           "Anwenden",
