@@ -97,10 +97,8 @@ class MainSlide extends StatelessWidget {
                         ),
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
-                              .sendInputData(
-                                  permeability.getCurrent(),
-                                  pressure.getCurrent(),
-                                  "")); //TODO: Problem, Werte gleich
+                              .sendInputData(permeability.getCurrent(),
+                                  pressure.getCurrent(), ""));
                         },
                         child: const Text(
                           "Anwenden",
