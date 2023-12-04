@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 double currentValue = 870000;
 
@@ -38,8 +39,10 @@ class _PressureSliderState extends State<PressureSlider> {
   double determineValue(double sliderPos) {
     double diff = widget.end - widget.start;
     double interval = widget.sliderWidth / diff;
-    int i = (sliderPos / interval).round();
+    double i = sliderPos / interval;
     double value = widget.start + i;
+    int exp = (log(value.abs()) / ln10).abs().round();
+    value = (value * pow(10, 7 + exp)).round().toDouble() / pow(10, 7 + exp);
     return value;
   }
 

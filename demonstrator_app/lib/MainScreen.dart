@@ -1,10 +1,12 @@
 import 'package:demonstrator_app/Checkboxes.dart';
+import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'Slider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class MainSlide extends StatelessWidget {
   MainSlide({super.key});
@@ -13,9 +15,13 @@ class MainSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(800, 870000, 910000, 'Druck');
-    PressureSlider permeability =
-        PressureSlider(800, 870000, 910000, 'Durchlässigkeit');
+    PressureSlider pressure = PressureSlider(
+        900, pow(10, -11).toDouble(), 5 * pow(10, -9).toDouble(), 'Druck');
+    PressureSlider permeability = PressureSlider(
+        900,
+        -4 * pow(10, -3).toDouble(),
+        -1 * pow(10, -3).toDouble(),
+        'Durchlässigkeit');
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
@@ -29,7 +35,7 @@ class MainSlide extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text("Demonstrator App"),
-              backgroundColor: Color.fromARGB(255, 184, 44, 44),
+              backgroundColor: const Color.fromARGB(255, 184, 44, 44),
               titleTextStyle:
                   const TextStyle(color: Colors.black, fontSize: 25),
               leading: IconButton(
@@ -39,10 +45,10 @@ class MainSlide extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Introduction()));
+                            builder: (context) => IntroScience()));
                   }),
             ),
-            backgroundColor: Color.fromARGB(255, 221, 115, 115),
+            backgroundColor: const Color.fromARGB(255, 221, 115, 115),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
@@ -95,7 +101,7 @@ class MainSlide extends StatelessWidget {
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
                               .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent(),""));
+                                  pressure.getCurrent(), ""));
                         },
                         child: const Text(
                           "Anwenden",
@@ -104,7 +110,6 @@ class MainSlide extends StatelessWidget {
                         ),
                       ),
                     ],
-
                   ),
                 ],
               ),

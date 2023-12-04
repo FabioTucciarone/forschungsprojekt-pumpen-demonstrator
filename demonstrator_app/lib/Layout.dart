@@ -25,6 +25,7 @@ class IntroHomeScaffold extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
+        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
         leading: const IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: null,
@@ -34,22 +35,33 @@ class IntroHomeScaffold extends StatelessWidget {
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 159, 151, 174),
+      backgroundColor: const Color.fromARGB(255, 221, 115, 115),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            "Hier kommt der Einführungstext hin",
-            textScaleFactor: 4,
-          ),
+          RichText(
+              textAlign: TextAlign.center,
+              text: const TextSpan(children: <TextSpan>[
+                TextSpan(
+                    text: "Erklärung für Admins: \n",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text:
+                        "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
+              ], style: TextStyle(fontSize: 30, color: Colors.black))),
           const SizedBox(
             height: 100,
           ),
           ElevatedButton(
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 184, 44, 44),
+                )),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MainSlide()));
+                  MaterialPageRoute(builder: (context) => IntroScience()));
             },
             child: const Text("Los geht's zur wissenschaftlichen Version"),
           ),
@@ -57,11 +69,19 @@ class IntroHomeScaffold extends StatelessWidget {
             height: 20,
           ),
           ElevatedButton(
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromARGB(255, 184, 44, 44),
+                  )),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => IntroScreen()));
               },
-              child: const Text("Los geht's zur Kinderversion"))
+              child: const Text(
+                "Los geht's zur Kinderversion",
+              ))
         ],
       ),
     );
