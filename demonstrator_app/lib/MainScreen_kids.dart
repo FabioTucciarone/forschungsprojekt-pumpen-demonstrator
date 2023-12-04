@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'Intro.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'MainScreen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class MainSlideKids extends StatelessWidget {
   MainSlideKids({super.key});
@@ -16,9 +18,13 @@ class MainSlideKids extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(800, 870000, 910000, 'Druck');
-    PressureSlider permeability =
-        PressureSlider(800, 870000, 910000, 'Durchlässigkeit');
+    PressureSlider pressure = PressureSlider(
+        900, pow(10, -11).toDouble(), 5 * pow(10, -9).toDouble(), 'Druck');
+    PressureSlider permeability = PressureSlider(
+        900,
+        -4 * pow(10, -3).toDouble(),
+        -1 * pow(10, -3).toDouble(),
+        'Durchlässigkeit');
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
@@ -96,7 +102,7 @@ class MainSlideKids extends StatelessWidget {
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
                               .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent(),""));
+                                  pressure.getCurrent(), ""));
                         },
                         child: const Text(
                           "Anwenden",
@@ -106,22 +112,10 @@ class MainSlideKids extends StatelessWidget {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
           ),
         ));
-  }
-}
-
-class FutureNotifier extends ChangeNotifier {
-  Future<String> future = Future.value("keinWert");
-
-  Future<String> get getFuture => future;
-
-  void setFuture(Future<String> newFuture) {
-    future = newFuture;
-    notifyListeners();
   }
 }

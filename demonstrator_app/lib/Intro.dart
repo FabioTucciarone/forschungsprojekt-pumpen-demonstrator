@@ -1,8 +1,52 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'MainScreen_kids.dart';
 import 'Layout.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
+
+class IntroScience extends StatelessWidget {
+  const IntroScience({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+        title: const Text("Demonstrator App"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: null,
+          color: Colors.grey,
+        ),
+      ),
+      backgroundColor: const Color.fromARGB(255, 221, 115, 115),
+      body: Column(
+        children: [
+          const Text("TODO Wissenschaft Einführungstext"),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromARGB(255, 184, 44, 44),
+                  )),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainSlide()));
+              },
+              child: const Text(
+                "Understood",
+              ))
+        ],
+      ),
+    ));
+  }
+}
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
