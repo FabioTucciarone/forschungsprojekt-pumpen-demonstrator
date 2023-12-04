@@ -60,11 +60,11 @@ class _PressureSliderState extends State<PressureSlider> {
   Widget build(BuildContext context) {
     String name = widget.name;
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
           '$name: $currentValue',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          textScaleFactor: 1.2,
         ),
         Center(
           child: GestureDetector(
