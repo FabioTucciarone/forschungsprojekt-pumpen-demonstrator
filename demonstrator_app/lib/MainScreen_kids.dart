@@ -18,13 +18,10 @@ class MainSlideKids extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(
-        900, pow(10, -11).toDouble(), 5 * pow(10, -9).toDouble(), 'Druck');
-    PressureSlider permeability = PressureSlider(
-        900,
-        -4 * pow(10, -3).toDouble(),
-        -1 * pow(10, -3).toDouble(),
-        'Durchlässigkeit');
+    PressureSlider pressure = PressureSlider(900, -4 * pow(10, -3).toDouble(),
+        -1 * pow(10, -3).toDouble(), 'Druck', -4 * pow(10, -3).toDouble());
+    PressureSlider permeability = PressureSlider(900, pow(10, -11).toDouble(),
+        5 * pow(10, -9).toDouble(), 'Durchlässigkeit', pow(10, -11).toDouble());
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
