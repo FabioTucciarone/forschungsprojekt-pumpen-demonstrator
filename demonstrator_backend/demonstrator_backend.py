@@ -14,7 +14,7 @@ app = Flask(__name__)
 # Session(app)
 
 app.config['CACHE_TYPE'] = 'FileSystemCache' 
-app.config['CACHE_DIR'] = 'cache' # path to your server cache folder
+app.config['CACHE_DIR'] = '../../data/cache' # path to your server cache folder
 app.config['CACHE_THRESHOLD'] = 100000 # number of 'files' before start auto-delete
 
 cache = Cache(app)
@@ -50,33 +50,40 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
 
     return { "model_result":  display_data.get_encoded_figure(0), 
              "groundtruth":   display_data.get_encoded_figure(1), 
-             "error_measure": display_data.get_encoded_figure(2) }
+             "error_measure": display_data.get_encoded_figure(2),
+             "groundtruth_method": "interpolated" }
 
 
 @app.route('/', methods=['GET', 'POST'])
 def browser_input():
 
-    model_configuration = cache.get("model_configuration")
-    print(model_configuration)
-    input_form = """<form method="post">
-                        <label>Durchlässigkeit und Druck eingeben: &nbsp</label>
-                        <input type="text" id="permeability" name="permeability" required />
-                        <input type="text" id="pressure" name="pressure" required />
-                        <button type="submit">Submit</button
-                    </form> <br>"""
+    model_configuration = cache.get("model_configuration")  
 
     if request.method == 'POST':
         permeability = float(request.form['permeability'])
         pressure = float(request.form['pressure'])
+
         display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, "Browser")
+        
         return f"""
-            {input_form}
+            <form method="post">
+                <label>Durchlässigkeit und Druck eingeben: &nbsp</label>
+                <input type="text" id="permeability" name="permeability" value="{permeability}" required />
+                <input type="text" id="pressure" name="pressure" value="{pressure}" required />
+                <button type="submit">Submit</button
+            </form> <br>
             <img src="data:image/png;base64, {display_data.get_encoded_figure(0)}" alt="Fehler: model_result" width="60%" /> <br>
             <img src="data:image/png;base64, {display_data.get_encoded_figure(1)}" alt="Fehler: groundtruth" width="60%" /> <br>
             <img src="data:image/png;base64, {display_data.get_encoded_figure(2)}" alt="Fehler: error_measure" width="60%" /> <br>
             """
 
-    return input_form
+    return f"""
+        <form method="post">
+            <label>Durchlässigkeit und Druck eingeben: &nbsp</label>
+            <input type="text" id="permeability" name="permeability" value="{7.350e-10}" required />
+            <input type="text" id="pressure" name="pressure" value="{-2.142e-03}" required />
+            <button type="submit">Submit</button
+        </form> <br>"""
 
 
 @app.route('/test_response', methods = ['GET'])
@@ -105,7 +112,7 @@ def get_highscore_and_name(): # TODO: Implementieren
 # Internal Methods:
 
 def initialize_backend():
-    cache.set("model_configuration", mc.ModelConfiguration())
+    cache.set("model_configuration", mc.ModelConfiguration(), timeout=0)
 
 
 # Start Debug Server:
