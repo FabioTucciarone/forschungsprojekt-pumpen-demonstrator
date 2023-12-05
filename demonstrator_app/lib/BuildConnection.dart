@@ -24,7 +24,7 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
         },
         child: const Text(
           'Anmelden',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ));
   }
 }
@@ -38,26 +38,25 @@ class RegisterApp extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Demonstrator App"),
         backgroundColor: Color.fromARGB(255, 184, 44, 44),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 25),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            color: Colors.black,
+            color: Colors.white,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
             }),
-        actions: const <Widget>[
-          ButtonAnmelden(),
-        ],
       ),
-      backgroundColor: Color.fromARGB(255, 221, 115, 115),
+      backgroundColor: Colors.white,
       body: Center(
-          child: SizedBox(
-        width: 400,
-        child: Card(
-          child: RegisterBox(),
+        child: Container(
+          width: 400,
+          color: Color.fromARGB(176, 215, 80, 80),
+          child: Card(
+            child: RegisterBox(),
+          ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -89,7 +88,22 @@ class _RegisterState extends State<RegisterBox> {
               padding: const EdgeInsets.all(8),
               child: TextFormField(
                 controller: username,
-                decoration: const InputDecoration(hintText: 'Username'),
+                decoration: InputDecoration(
+                  hintText: 'Benutzername',
+                  prefixIcon: Icon(Icons.person),
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return const Color.fromARGB(255, 184, 44, 44);
+                    }
+                    return Colors.grey;
+                  }),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color.fromARGB(176, 215, 80, 80), width: 2),
+                  ),
+                ),
+                cursorColor: const Color.fromARGB(176, 215, 80, 80),
               ),
             ),
             Padding(
@@ -98,17 +112,38 @@ class _RegisterState extends State<RegisterBox> {
                 obscureText: passwordVisible,
                 controller: password,
                 decoration: InputDecoration(
-                    hintText: 'Password',
-                    suffixIcon: IconButton(
-                      icon: Icon(passwordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          passwordVisible = !passwordVisible;
-                        });
-                      },
-                    )),
+                  hintText: 'Passwort',
+                  suffixIcon: IconButton(
+                    icon: Icon(passwordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        passwordVisible = !passwordVisible;
+                      });
+                    },
+                  ),
+                  suffixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return const Color.fromARGB(255, 184, 44, 44);
+                    }
+                    return Colors.grey;
+                  }),
+                  prefixIcon: Icon(Icons.key),
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return const Color.fromARGB(255, 184, 44, 44);
+                    }
+                    return Colors.grey;
+                  }),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color.fromARGB(176, 215, 80, 80), width: 2),
+                  ),
+                ),
+                cursorColor: const Color.fromARGB(176, 215, 80, 80),
               ),
             ),
             TextButton(
@@ -129,7 +164,7 @@ class _RegisterState extends State<RegisterBox> {
               },
               child: const Text(
                 'Verbinden',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -150,8 +185,11 @@ class ResultApp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
+        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
+            color: Colors.white,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
@@ -202,7 +240,7 @@ class _ResultState extends State<Result> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Log in failed',
+                    'Anmeldung fehlgeschlagen',
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
@@ -220,7 +258,7 @@ class _ResultState extends State<Result> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Log in successful',
+                    'Anmeldung erfolgreich',
                     style: TextStyle(color: Colors.green),
                   ),
                 ),

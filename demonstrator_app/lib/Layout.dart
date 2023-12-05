@@ -26,36 +26,36 @@ class IntroHomeScaffold extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Demonstrator App"),
         backgroundColor: const Color.fromARGB(255, 184, 44, 44),
-        leading: const IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: null,
-        ),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
         actions: const <Widget>[
           DebugSwitch(),
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 221, 115, 115),
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(children: <TextSpan>[
-                TextSpan(
-                    text: "Erklärung für Admins: \n",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(
-                    text:
-                        "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
-              ], style: TextStyle(fontSize: 30, color: Colors.black))),
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: RichText(
+                textAlign: TextAlign.center,
+                text: const TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "Erklärung für Admins: \n",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
+                ], style: TextStyle(fontSize: 30, color: Colors.black))),
+          ),
           const SizedBox(
             height: 100,
           ),
           ElevatedButton(
             style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 backgroundColor: MaterialStateProperty.all<Color>(
                   const Color.fromARGB(255, 184, 44, 44),
                 )),
@@ -71,7 +71,7 @@ class IntroHomeScaffold extends StatelessWidget {
           ElevatedButton(
               style: ButtonStyle(
                   foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
+                      MaterialStateProperty.all<Color>(Colors.white),
                   backgroundColor: MaterialStateProperty.all<Color>(
                     Color.fromARGB(255, 184, 44, 44),
                   )),
@@ -99,7 +99,10 @@ class _DebugSwitchState extends State<DebugSwitch> {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      const Text('Debug Mode'),
+      const Text(
+        'Debug Modus',
+        style: TextStyle(color: Colors.white, fontSize: 15),
+      ),
       Switch(
         value: useOfBackend.backend.debugEnabled,
         activeColor: Colors.green,

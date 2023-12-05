@@ -37,16 +37,16 @@ class MainSlideKids extends StatelessWidget {
               title: const Text("Demonstrator App"),
               backgroundColor: Color.fromARGB(255, 184, 44, 44),
               titleTextStyle:
-                  const TextStyle(color: Colors.black, fontSize: 25),
+                  const TextStyle(color: Colors.white, fontSize: 25),
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
-                  color: Colors.black,
+                  color: Colors.white,
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => IntroScreen()));
                   }),
             ),
-            backgroundColor: Color.fromARGB(255, 221, 115, 115),
+            backgroundColor: Colors.white,
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
@@ -65,23 +65,23 @@ class MainSlideKids extends StatelessWidget {
                     height: 10,
                   ),
                   const Text(
-                    "Output:",
+                    "Ausgabe:",
                     textScaleFactor: 2,
                   ),
                   OutputBox(
-                    name: "AI Generated",
+                    name: "KI generiert",
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   OutputBox(
-                    name: "Groundtruth",
+                    name: "Grundwahrheit",
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   OutputBox(
-                    name: "Difference Field",
+                    name: "Differenzfeld",
                   ),
                   const SizedBox(
                     height: 10,
@@ -95,6 +95,7 @@ class MainSlideKids extends StatelessWidget {
                               const Color.fromARGB(255, 184, 44, 44),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
+                          minimumSize: Size(150, 50),
                         ),
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
@@ -103,8 +104,8 @@ class MainSlideKids extends StatelessWidget {
                         },
                         child: const Text(
                           "Anwenden",
-                          textScaleFactor: 1.8,
-                          style: TextStyle(color: Colors.black),
+                          textScaleFactor: 1.5,
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
