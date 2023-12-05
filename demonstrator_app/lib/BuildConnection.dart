@@ -1,3 +1,4 @@
+import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:flutter/material.dart';
 import 'BackendConnection.dart';
@@ -14,7 +15,7 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+          backgroundColor: OurColors.appBarColor,
         ),
         onPressed: () {
           Navigator.push(
@@ -36,8 +37,10 @@ class RegisterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Demonstrator App"),
-        backgroundColor: Color.fromARGB(255, 184, 44, 44),
+        title: const Text(
+          "Demonstrator App",
+        ),
+        backgroundColor: OurColors.appBarColor,
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 25),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -50,7 +53,7 @@ class RegisterApp extends StatelessWidget {
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: Color.fromARGB(255, 221, 115, 115),
+      backgroundColor: OurColors.backgroundColor,
       body: Center(
           child: SizedBox(
         width: 400,
@@ -113,7 +116,7 @@ class _RegisterState extends State<RegisterBox> {
             ),
             TextButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+                backgroundColor: OurColors.appBarColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -129,7 +132,7 @@ class _RegisterState extends State<RegisterBox> {
               },
               child: const Text(
                 'Verbinden',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: OurColors.appBarTextColor),
               ),
             ),
           ],
@@ -150,7 +153,11 @@ class ResultApp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+        backgroundColor: OurColors.appBarColor,
         leading: IconButton(
+            color: Colors.black,
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(context,
@@ -160,7 +167,7 @@ class ResultApp extends StatelessWidget {
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: OurColors.backgroundColor,
       body: Center(
         child: Result(
           username: username,
