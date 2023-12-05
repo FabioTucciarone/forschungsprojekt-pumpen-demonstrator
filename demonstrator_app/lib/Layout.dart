@@ -1,6 +1,5 @@
 import 'package:demonstrator_app/BackendConnection.dart';
 import 'package:flutter/material.dart';
-import 'MainScreen.dart';
 import 'Intro.dart';
 import 'package:demonstrator_app/BuildConnection.dart';
 
@@ -9,7 +8,7 @@ class Introduction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: IntroHomeScaffold(),
     );
   }
@@ -25,14 +24,15 @@ class IntroHomeScaffold extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
-        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+        backgroundColor: OurColors.appBarColor,
         actions: const <Widget>[
           DebugSwitch(),
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: OurColors.backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -48,20 +48,23 @@ class IntroHomeScaffold extends StatelessWidget {
                   TextSpan(
                       text:
                           "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
-                ], style: TextStyle(fontSize: 30, color: Colors.black))),
+                ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
           ),
           const SizedBox(
             height: 100,
           ),
           ElevatedButton(
             style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.textColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 184, 44, 44),
+                  OurColors.appBarColor,
                 )),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => IntroScience()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const IntroScience()));
             },
             child: const Text("Los geht's zur wissenschaftlichen Version"),
           ),
@@ -71,13 +74,15 @@ class IntroHomeScaffold extends StatelessWidget {
           ElevatedButton(
               style: ButtonStyle(
                   foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
+                      MaterialStateProperty.all<Color>(OurColors.textColor),
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromARGB(255, 184, 44, 44),
+                    OurColors.appBarColor,
                   )),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => IntroScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const IntroScreen()));
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
@@ -100,8 +105,8 @@ class _DebugSwitchState extends State<DebugSwitch> {
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       const Text(
-        'Debug Modus',
-        style: TextStyle(color: Colors.white, fontSize: 15),
+        'Debug Mode',
+        style: TextStyle(color: OurColors.appBarTextColor, fontSize: 15),
       ),
       Switch(
         value: useOfBackend.backend.debugEnabled,
@@ -118,8 +123,8 @@ class _DebugSwitchState extends State<DebugSwitch> {
 
 class UseOfBackendConnection {
   static final UseOfBackendConnection _useOfBackendConnection =
-      new UseOfBackendConnection._internal();
-  BackendConnection backend = new BackendConnection();
+      UseOfBackendConnection._internal();
+  BackendConnection backend = BackendConnection();
   factory UseOfBackendConnection() {
     return _useOfBackendConnection;
   }

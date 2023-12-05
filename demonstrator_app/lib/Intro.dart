@@ -13,12 +13,12 @@ class IntroScience extends StatelessWidget {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+              backgroundColor: OurColors.appBarColor,
               title: const Text("Demonstrator App"),
-              titleTextStyle:
-                  const TextStyle(color: Colors.white, fontSize: 25),
+              titleTextStyle: const TextStyle(
+                  color: OurColors.appBarTextColor, fontSize: 25),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: OurColors.backgroundColor,
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -27,8 +27,7 @@ class IntroScience extends StatelessWidget {
                   Container(
                     width: 700,
                     height: 300,
-                    decoration:
-                        BoxDecoration(color: Color.fromARGB(176, 215, 80, 80)),
+                    decoration: BoxDecoration(color: OurColors.accentColor),
                     child: const Center(
                       child: Text(
                         "TODO Wissenschaft Einführungstext",
@@ -44,7 +43,7 @@ class IntroScience extends StatelessWidget {
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.black),
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromARGB(255, 184, 44, 44),
+                            OurColors.appBarColor,
                           )),
                       onPressed: () {
                         Navigator.push(
@@ -54,7 +53,7 @@ class IntroScience extends StatelessWidget {
                       },
                       child: const Text(
                         "Verstanden",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: OurColors.textColor),
                       ))
                 ],
               ),
@@ -67,7 +66,7 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: RobotIntro(),
     );
   }
@@ -111,8 +110,9 @@ class _RobotIntroState extends State<RobotIntro> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
-        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
+        backgroundColor: OurColors.appBarColor,
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -121,7 +121,7 @@ class _RobotIntroState extends State<RobotIntro> {
           },
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: OurColors.backgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: [
@@ -182,7 +182,7 @@ class _RobotIntroState extends State<RobotIntro> {
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+                backgroundColor: OurColors.appBarColor,
               ),
               onPressed: () {
                 if (times == 3) {
@@ -230,4 +230,15 @@ class Player {
       await player.resume();
     }
   }
+}
+
+//Class to acces all of our Colors throughout the App
+class OurColors {
+  static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
+  static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
+  static const Color textColor = Color.fromARGB(255, 0, 0, 0);
+  static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
+  static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
+
+  //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }

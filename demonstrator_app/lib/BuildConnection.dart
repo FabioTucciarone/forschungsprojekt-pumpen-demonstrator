@@ -1,3 +1,4 @@
+import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:flutter/material.dart';
 import 'BackendConnection.dart';
@@ -24,7 +25,7 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
         },
         child: const Text(
           'Anmelden',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: OurColors.textColor),
         ));
   }
 }

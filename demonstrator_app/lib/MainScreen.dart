@@ -32,12 +32,12 @@ class MainSlide extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text("Demonstrator App"),
-              backgroundColor: const Color.fromARGB(255, 184, 44, 44),
-              titleTextStyle:
-                  const TextStyle(color: Colors.white, fontSize: 25),
+              backgroundColor: OurColors.appBarColor,
+              titleTextStyle: const TextStyle(
+                  color: OurColors.appBarTextColor, fontSize: 25),
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
+                  color: OurColors.appBarTextColor,
                   onPressed: () {
                     Navigator.push(
                         context,
@@ -90,8 +90,7 @@ class MainSlide extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 184, 44, 44),
+                          backgroundColor: OurColors.appBarColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           minimumSize: Size(150, 50),
@@ -104,7 +103,7 @@ class MainSlide extends StatelessWidget {
                         child: const Text(
                           "Anwenden",
                           textScaleFactor: 1.5,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: OurColors.appBarTextColor),
                         ),
                       ),
                     ],
