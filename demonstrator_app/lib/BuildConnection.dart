@@ -15,7 +15,7 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+          backgroundColor: OurColors.appBarColor,
         ),
         onPressed: () {
           Navigator.push(
@@ -37,22 +37,25 @@ class RegisterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Demonstrator App"),
-        backgroundColor: Color.fromARGB(255, 184, 44, 44),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
+        title: const Text(
+          "Demonstrator App",
+        ),
+        backgroundColor: OurColors.appBarColor,
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            color: Colors.white,
+            color: OurColors.appBarTextColor,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
             }),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: OurColors.backgroundColor,
       body: Center(
         child: Container(
           width: 400,
-          color: Color.fromARGB(176, 215, 80, 80),
+          color: OurColors.accentColor,
           child: Card(
             child: RegisterBox(),
           ),
@@ -95,16 +98,16 @@ class _RegisterState extends State<RegisterBox> {
                   prefixIconColor: MaterialStateColor.resolveWith(
                       (Set<MaterialState> states) {
                     if (states.contains(MaterialState.focused)) {
-                      return const Color.fromARGB(255, 184, 44, 44);
+                      return OurColors.appBarColor;
                     }
                     return Colors.grey;
                   }),
                   focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color.fromARGB(176, 215, 80, 80), width: 2),
+                    borderSide:
+                        BorderSide(color: OurColors.accentColor, width: 2),
                   ),
                 ),
-                cursorColor: const Color.fromARGB(176, 215, 80, 80),
+                cursorColor: OurColors.accentColor,
               ),
             ),
             Padding(
@@ -127,7 +130,7 @@ class _RegisterState extends State<RegisterBox> {
                   suffixIconColor: MaterialStateColor.resolveWith(
                       (Set<MaterialState> states) {
                     if (states.contains(MaterialState.focused)) {
-                      return const Color.fromARGB(255, 184, 44, 44);
+                      return OurColors.appBarColor;
                     }
                     return Colors.grey;
                   }),
@@ -135,21 +138,21 @@ class _RegisterState extends State<RegisterBox> {
                   prefixIconColor: MaterialStateColor.resolveWith(
                       (Set<MaterialState> states) {
                     if (states.contains(MaterialState.focused)) {
-                      return const Color.fromARGB(255, 184, 44, 44);
+                      return OurColors.appBarColor;
                     }
                     return Colors.grey;
                   }),
                   focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color.fromARGB(176, 215, 80, 80), width: 2),
+                    borderSide:
+                        BorderSide(color: OurColors.accentColor, width: 2),
                   ),
                 ),
-                cursorColor: const Color.fromARGB(176, 215, 80, 80),
+                cursorColor: OurColors.accentColor,
               ),
             ),
             TextButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+                backgroundColor: OurColors.appBarColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -165,7 +168,7 @@ class _RegisterState extends State<RegisterBox> {
               },
               child: const Text(
                 'Verbinden',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: OurColors.appBarTextColor),
               ),
             ),
           ],
@@ -186,11 +189,12 @@ class ResultApp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
-        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+        backgroundColor: OurColors.appBarColor,
         leading: IconButton(
+            color: OurColors.appBarTextColor,
             icon: Icon(Icons.arrow_back),
-            color: Colors.white,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
@@ -199,7 +203,7 @@ class ResultApp extends StatelessWidget {
           ButtonAnmelden(),
         ],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: OurColors.backgroundColor,
       body: Center(
         child: Result(
           username: username,
@@ -273,7 +277,9 @@ class _ResultState extends State<Result> {
             child = const SizedBox(
               width: 60,
               height: 60,
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
             );
           }
           return child;

@@ -115,6 +115,7 @@ class _RobotIntroState extends State<RobotIntro> {
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          color: OurColors.appBarTextColor,
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Introduction()));
@@ -165,8 +166,8 @@ class _RobotIntroState extends State<RobotIntro> {
                     left: 200,
                     child: Slider(
                       value: volume,
-                      thumbColor: Color.fromARGB(255, 184, 44, 44),
-                      activeColor: Color.fromARGB(176, 215, 80, 80),
+                      thumbColor: OurColors.appBarColor,
+                      activeColor: OurColors.accentColor,
                       inactiveColor: Color.fromARGB(174, 206, 135, 135),
                       onChanged: (value) => setState(() {
                         volume = value;
@@ -194,7 +195,7 @@ class _RobotIntroState extends State<RobotIntro> {
               },
               child: const Text(
                 "Weiter",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: OurColors.textColor),
               ),
             ),
           ),
