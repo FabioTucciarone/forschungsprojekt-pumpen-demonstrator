@@ -12,41 +12,52 @@ class IntroScience extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      appBar: AppBar(
-        backgroundColor: OurColors.appBarColor,
-        title: const Text("Demonstrator App"),
-        titleTextStyle:
-            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
-        leading: const IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: null,
-          color: Colors.grey,
-        ),
-      ),
-      backgroundColor: OurColors.backgroundColor,
-      body: Column(
-        children: [
-          const Text("TODO Wissenschaft Einführungstext"),
-          const SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    OurColors.appBarColor,
-                  )),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MainSlide()));
-              },
-              child: const Text(
-                "Understood",
-              ))
-        ],
-      ),
-    ));
+            appBar: AppBar(
+              backgroundColor: OurColors.appBarColor,
+              title: const Text("Demonstrator App"),
+              titleTextStyle: const TextStyle(
+                  color: OurColors.appBarTextColor, fontSize: 25),
+            ),
+            backgroundColor: OurColors.backgroundColor,
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 700,
+                    height: 300,
+                    decoration: BoxDecoration(color: OurColors.accentColor),
+                    child: const Center(
+                      child: Text(
+                        "TODO Wissenschaft Einführungstext",
+                        textScaleFactor: 1.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          foregroundColor:
+                              MaterialStateProperty.all<Color>(Colors.black),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            OurColors.appBarColor,
+                          )),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MainSlide()));
+                      },
+                      child: const Text(
+                        "Verstanden",
+                        style: TextStyle(color: OurColors.textColor),
+                      ))
+                ],
+              ),
+            )));
   }
 }
 
@@ -104,6 +115,7 @@ class _RobotIntroState extends State<RobotIntro> {
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          color: OurColors.appBarTextColor,
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Introduction()));
@@ -154,6 +166,9 @@ class _RobotIntroState extends State<RobotIntro> {
                     left: 200,
                     child: Slider(
                       value: volume,
+                      thumbColor: OurColors.appBarColor,
+                      activeColor: OurColors.accentColor,
+                      inactiveColor: Color.fromARGB(174, 206, 135, 135),
                       onChanged: (value) => setState(() {
                         volume = value;
                         player.setVolume(volume);
@@ -167,6 +182,9 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: OurColors.appBarColor,
+              ),
               onPressed: () {
                 if (times == 3) {
                   Navigator.push(context,
@@ -175,7 +193,10 @@ class _RobotIntroState extends State<RobotIntro> {
                   nextState();
                 }
               },
-              child: const Text("Weiter"),
+              child: const Text(
+                "Weiter",
+                style: TextStyle(color: OurColors.textColor),
+              ),
             ),
           ),
         ],
@@ -218,6 +239,7 @@ class OurColors {
   static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
   static const Color textColor = Color.fromARGB(255, 0, 0, 0);
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
+  static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
 
   //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }

@@ -37,7 +37,7 @@ class MainSlideKids extends StatelessWidget {
               title: const Text("Demonstrator App"),
               backgroundColor: OurColors.appBarColor,
               titleTextStyle:
-                  const TextStyle(color: Colors.black, fontSize: 25),
+                  const TextStyle(color: Colors.white, fontSize: 25),
               leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   color: Colors.black,
@@ -65,23 +65,23 @@ class MainSlideKids extends StatelessWidget {
                     height: 10,
                   ),
                   const Text(
-                    "Output:",
+                    "Ausgabe:",
                     textScaleFactor: 2,
                   ),
                   OutputBox(
-                    name: "AI Generated",
+                    name: "KI generiert",
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   OutputBox(
-                    name: "Groundtruth",
+                    name: "Grundwahrheit",
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   OutputBox(
-                    name: "Difference Field",
+                    name: "Differenzfeld",
                   ),
                   const SizedBox(
                     height: 10,
@@ -94,6 +94,7 @@ class MainSlideKids extends StatelessWidget {
                           backgroundColor: OurColors.appBarColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
+                          minimumSize: Size(150, 50),
                         ),
                         onPressed: () {
                           futureNotifier.setFuture(useOfBackend.backend
@@ -102,7 +103,7 @@ class MainSlideKids extends StatelessWidget {
                         },
                         child: const Text(
                           "Anwenden",
-                          textScaleFactor: 1.8,
+                          textScaleFactor: 1.5,
                           style: TextStyle(color: OurColors.textColor),
                         ),
                       ),
