@@ -98,9 +98,10 @@ class BackendConnection with ChangeNotifier {
   /// Send a http-post request with the input data (of phase 1) via the specified ssh tunnel.
   ///
   /// [name]: Name for tracking the highest error score.
-  /// 
+  ///
   /// Returns the json body of the response.
-  Future<String> sendInputData(double permeability, double pressure, String name) async {
+  Future<String> sendInputData(
+      double permeability, double pressure, String name) async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
     }
@@ -112,7 +113,8 @@ class BackendConnection with ChangeNotifier {
     final response = await http.post(
       getUri("get_model_result"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"permeability": permeability, "pressure": pressure, "name" : name}),
+      body: jsonEncode(
+          {"permeability": permeability, "pressure": pressure, "name": name}),
     );
     if (response.statusCode == 200) {
       return response.body;
@@ -140,7 +142,8 @@ class BackendConnection with ChangeNotifier {
     }
     final response = await http.get(getUri("get_model_result"));
     if (response.statusCode == 200) {
-      final highscoreAndName = jsonDecode(response.body) as Map<String, dynamic>;
+      final highscoreAndName =
+          jsonDecode(response.body) as Map<String, dynamic>;
       return highscoreAndName;
     } else {
       throw "HTTP-request failed with status code ${response.statusCode}";
