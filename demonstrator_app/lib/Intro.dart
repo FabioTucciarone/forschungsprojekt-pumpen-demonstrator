@@ -35,7 +35,7 @@ class IntroScience extends StatelessWidget {
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.black),
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromARGB(255, 184, 44, 44),
+                    OurColors.appBarColor,
                   )),
               onPressed: () {
                 Navigator.push(context,
