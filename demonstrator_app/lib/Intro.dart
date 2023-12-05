@@ -13,15 +13,17 @@ class IntroScience extends StatelessWidget {
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 184, 44, 44),
+        backgroundColor: OurColors.appBarColor,
         title: const Text("Demonstrator App"),
-        leading: IconButton(
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+        leading: const IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: null,
           color: Colors.grey,
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 221, 115, 115),
+      backgroundColor: OurColors.backgroundColor,
       body: Column(
         children: [
           const Text("TODO Wissenschaft Einführungstext"),
@@ -33,7 +35,7 @@ class IntroScience extends StatelessWidget {
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.black),
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromARGB(255, 184, 44, 44),
+                    OurColors.appBarColor,
                   )),
               onPressed: () {
                 Navigator.push(context,
@@ -53,7 +55,7 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: RobotIntro(),
     );
   }
@@ -97,6 +99,9 @@ class _RobotIntroState extends State<RobotIntro> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Demonstrator App"),
+        backgroundColor: OurColors.appBarColor,
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -105,7 +110,7 @@ class _RobotIntroState extends State<RobotIntro> {
           },
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: OurColors.backgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: [
@@ -205,4 +210,14 @@ class Player {
       await player.resume();
     }
   }
+}
+
+//Class to acces all of our Colors throughout the App
+class OurColors {
+  static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
+  static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
+  static const Color textColor = Color.fromARGB(255, 0, 0, 0);
+  static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
+
+  //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }
