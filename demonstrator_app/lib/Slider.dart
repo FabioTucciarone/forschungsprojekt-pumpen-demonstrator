@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-double currentValue = 870000;
-
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final double start;
   final double end;
   final String name;
-  const PressureSlider(this.sliderWidth, this.start, this.end, this.name);
+  double currentValue;
+  PressureSlider(
+    this.sliderWidth,
+    this.start,
+    this.end,
+    this.name,
+    this.currentValue,
+  );
 
   double getCurrent() {
     return currentValue;
@@ -33,7 +38,7 @@ class _PressureSliderState extends State<PressureSlider> {
   @override
   void initState() {
     super.initState();
-    currentValue = determineValue(sliderPos);
+    widget.currentValue = determineValue(sliderPos);
   }
 
   double determineValue(double sliderPos) {
@@ -55,13 +60,14 @@ class _PressureSliderState extends State<PressureSlider> {
     }
     setState(() {
       sliderPos = position;
-      currentValue = determineValue(sliderPos);
+      widget.currentValue = determineValue(sliderPos);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     String name = widget.name;
+    double currentValue = widget.currentValue;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -113,7 +119,7 @@ class SliderThumb extends CustomPainter {
         Offset(pos, size.height),
         Paint()
           ..color = Colors.black
-          ..strokeWidth = 2.0);
+          ..strokeWidth = 3.0);
   }
 
   @override
