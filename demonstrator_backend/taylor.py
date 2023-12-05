@@ -91,38 +91,43 @@ def get_value(i: float, j: float, T: np.ndarray):
     # Berechne Ergebnis mit Taylorsumme des zweiten Grades (also bis zur zweiten Ableitung)
     y = T[i0, j0] + (id*(i - i0) + jd*(j - j0)) + (1/2) * (idd*(i - i0) + jdd*(j - j0)) # Taylor Ergebnis
 
-    return max(y, 10.6)
-    # TODO Ecken stimmen nicht
-    #return id
+    return max(y, 10.6), id, jd, idd, jdd
 
 def main():
 
-    fig, axes = plt.subplots(2, 1)
+    fig, axes = plt.subplots(6, 1)
     plt.sca(axes[0])
 
-    zahl = 2
-
+    run_idx = 2
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     info = gt.GroundTruthInfo(path_to_dataset, 10.6)
-    T = gt.load_temperature_field(info, zahl)
-    y = np.ndarray((T.shape[0] + 30, T.shape[1] + 30))
-    for i in range(-15, T.shape[0] + 15):
-        for j in range(-15, T.shape[1] + 15):
-            y[i+15, j+15] = get_value(i, j, T)
-    image = plt.imshow(T, cmap="RdBu_r", vmin=10.6, vmax=15)
+    T0 = gt.load_temperature_field(info, run_idx)
 
-    axis = plt.gca()
-    plt.colorbar(image, cax = make_axes_locatable(axis).append_axes("right", size="5%", pad=0.05))
-    axis.xaxis.set_label_position('top')
-    axis.set_xlabel("taylor", fontsize='small')
+    T1 = [np.ndarray((T0.shape[0] + 30, T0.shape[1] + 30)),
+          np.ndarray(T0.shape),
+          np.ndarray(T0.shape),
+          np.ndarray(T0.shape),
+          np.ndarray(T0.shape)]
+    
+    for i in range(-15, T0.shape[0] + 15):
+        for j in range(-15, T0.shape[1] + 15):
+            y, id, jd, idd, jdd = get_value(i, j, T0)
+            T1[0][i + 15, j + 15] = y
+            if i >= 0 and i < T0.shape[0] and j >= 0 and j < T0.shape[1]: 
+                T1[1][i, j] = id
+                T1[2][i, j] = jd
+                T1[3][i, j] = idd
+                T1[4][i, j] = jdd
 
-    plt.sca(axes[1])
-    image = plt.imshow(y, cmap="RdBu_r")#, vmin=10.6, vmax=15)
 
-    axis = plt.gca()
-    plt.colorbar(image, cax = make_axes_locatable(axis).append_axes("right", size="5%", pad=0.05))
-    axis.xaxis.set_label_position('top')
-    axis.set_xlabel("taylor", fontsize='small')
+    plt.sca(axes[0])
+    image = plt.imshow(T0, cmap="RdBu_r", vmin=10.6, vmax=15)
+    plt.colorbar(image, cax = make_axes_locatable(axes[0]).append_axes("right", size="5%", pad=0.05))
+
+    for i in range(0, 5):
+        plt.sca(axes[i+1])
+        image = plt.imshow(T1[i], cmap="RdBu_r")
+        plt.colorbar(image, cax = make_axes_locatable(axes[i+1]).append_axes("right", size="5%", pad=0.05))
 
 
     plt.show()
