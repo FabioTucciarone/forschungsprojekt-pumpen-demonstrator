@@ -119,14 +119,18 @@ def main():
                 T1[3][i, j] = idd
                 T1[4][i, j] = jdd
 
-
     plt.sca(axes[0])
     image = plt.imshow(T0, cmap="RdBu_r", vmin=10.6, vmax=15)
     plt.colorbar(image, cax = make_axes_locatable(axes[0]).append_axes("right", size="5%", pad=0.05))
 
-    for i in range(0, 5):
+    plt.sca(axes[1])
+    image = plt.imshow(T1[0], cmap="RdBu_r", vmin=10.6, vmax=15)
+    plt.colorbar(image, cax = make_axes_locatable(axes[1]).append_axes("right", size="5%", pad=0.05))
+
+    for i in range(1, 5):
         plt.sca(axes[i+1])
-        image = plt.imshow(T1[i], cmap="RdBu_r")
+        r = np.max(np.abs(T1[i]))
+        image = plt.imshow(T1[i], cmap="RdBu_r", vmin=-r, vmax=r)
         plt.colorbar(image, cax = make_axes_locatable(axes[i+1]).append_axes("right", size="5%", pad=0.05))
 
 
