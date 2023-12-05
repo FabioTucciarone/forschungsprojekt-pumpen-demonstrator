@@ -60,29 +60,31 @@ def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
 
 def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
     h = 1
-    delta_i = h + it
-    delta_j = h + jt
+    #delta_i = h + it
+    #delta_j = h + jt
+    delta_i = 1 + it
+    delta_j = 1 + jt
     # derivative it
     # at it-edge back (left)    --> forward derivative
     if it == 0:
-        id = (2*T[it, jt]-5*T[it+delta_i,jt])
+        id = (2*T[it, jt]-5*T[it+delta_i,jt]+4*T[it+2*delta_i,jt]-T[it+3*delta_i,jt])/pow(h+it,3)
     # at it-edge front (right)  --> backward derivative
     elif it == T.shape[0]-1:
-        id = (T[it, jt] - 2 * T[it - 1, jt] + T[it - 2, jt]) / pow(h, 2)
+        id = (2*T[it, jt]-5*T[it-delta_i,jt]+4*T[it-2*delta_i,jt]-T[it-3*delta_i,jt])/pow(h+it,3)
     # in the center             --> central derivative
     else:
-        id = (T[it + 1, jt] - 2*T[it, jt] + T[it - 1, jt]) / pow(h, 2)
+        id = (T[it+delta_i,jt]-2*T[it,jt]+T[it-delta_i,jt])/pow(h+it,2)
 
     # derivative jt
     # at jt-edge back (top)     --> forward derivative
     if jt == 0:
-        jd = (T[it, jt + 2] - 2*T[it, jt + 1] + T[it, jt]) / pow(h, 2)
+        jd = (2*T[it, jt]-5*T[it,jt+delta_j]+4*T[it,jt+2*delta_j]-T[it,jt+3*delta_j])/pow(h+jt,3)
     # at jt-edge front (bottom) --> backward derivative
     elif jt == T.shape[1]-1:
-        jd = (T[it, jt] - 2 * T[it, jt - 1] + T[it, jt - 2]) / pow(h, 2)
+        jd = (2*T[it, jt]-5*T[it,jt-delta_j]+4*T[it,jt-2*delta_j]-T[it,jt-3*delta_j])/pow(h+jt,3)
     # in the center             --> central derivative
     else:
-        jd = (T[it, jt + 1] - 2*T[it, jt] + T[it, jt - 1]) / pow(h, 2)
+        jd = (T[it,jt+delta_j]-2*T[it,jt]+T[it,jt-delta_j])/pow(h+jt,2)
     return id, jd
 
 
