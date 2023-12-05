@@ -35,18 +35,18 @@ class MainSlideKids extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text("Demonstrator App"),
-              backgroundColor: Color.fromARGB(255, 184, 44, 44),
+              backgroundColor: OurColors.appBarColor,
               titleTextStyle:
                   const TextStyle(color: Colors.black, fontSize: 25),
               leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   color: Colors.black,
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => IntroScreen()));
                   }),
             ),
-            backgroundColor: Color.fromARGB(255, 221, 115, 115),
+            backgroundColor: OurColors.backgroundColor,
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
@@ -60,7 +60,7 @@ class MainSlideKids extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  CheckboxBox(),
+                  const CheckboxBox(),
                   const SizedBox(
                     height: 10,
                   ),
@@ -91,8 +91,7 @@ class MainSlideKids extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 184, 44, 44),
+                          backgroundColor: OurColors.appBarColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
@@ -104,7 +103,7 @@ class MainSlideKids extends StatelessWidget {
                         child: const Text(
                           "Anwenden",
                           textScaleFactor: 1.8,
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: OurColors.textColor),
                         ),
                       ),
                     ],

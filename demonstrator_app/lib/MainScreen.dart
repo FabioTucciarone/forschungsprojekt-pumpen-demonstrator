@@ -32,9 +32,9 @@ class MainSlide extends StatelessWidget {
           home: Scaffold(
             appBar: AppBar(
               title: const Text("Demonstrator App"),
-              backgroundColor: const Color.fromARGB(255, 184, 44, 44),
-              titleTextStyle:
-                  const TextStyle(color: Colors.black, fontSize: 25),
+              backgroundColor: OurColors.appBarColor,
+              titleTextStyle: const TextStyle(
+                  color: OurColors.appBarTextColor, fontSize: 25),
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
                   color: Colors.black,
