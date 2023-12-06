@@ -1,16 +1,28 @@
 import 'dart:io';
 
 import 'package:demonstrator_app/Checkboxes.dart';
+import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
+enum ImageType { aIGenerated, groundtruth, differenceField }
+
 class OutputBox extends StatelessWidget {
   OutputBox({super.key, required this.name});
-  final String name;
+  final ImageType name;
   final ResponseDecoder responseDecoder = ResponseDecoder();
+
+  String getName(ImageType name) {
+    if (name == ImageType.aIGenerated) {
+      return 'KI generiert';
+    } else if (name == ImageType.groundtruth) {
+      return 'Grundwahrheit';
+    }
+    return 'Differenzfeld';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +65,10 @@ class OutputBox extends StatelessWidget {
                     child = const Text("Kein Wert bis jetzt");
                   } else {
                     responseDecoder.setResponse(snapshot.data);
-                    if (name == "AI Generated") {
+                    if (name == ImageType.aIGenerated) {
                       child = Image.memory(
                           responseDecoder.getBytes("model_result"));
-                    } else if (name == "Groundtruth") {
+                    } else if (name == ImageType.groundtruth) {
                       child =
                           Image.memory(responseDecoder.getBytes("groundtruth"));
                     } else {
@@ -69,7 +81,9 @@ class OutputBox extends StatelessWidget {
                 child = const SizedBox(
                   width: 60,
                   height: 60,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: OurColors.accentColor,
+                  ),
                 );
               }
               return child;
@@ -80,7 +94,7 @@ class OutputBox extends StatelessWidget {
           width: 20,
         ),
         Text(
-          "$name",
+          "${getName(name)}",
           textScaleFactor: 1.2,
         ),
       ],
