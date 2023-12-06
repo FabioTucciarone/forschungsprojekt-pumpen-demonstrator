@@ -54,6 +54,7 @@ class TemperatureField:
         self.interp = sp.interpolate.RegularGridInterpolator((X, Y), self.field, method='linear', bounds_error=False, fill_value=None)
         self.max = np.max(self.field)
 
+    # TODO at austauschen
     def at(self, i: float, j: float):
         if i >= 0 and np.ceil(i) < self.info.dims[0] and j >= 0 and np.ceil(j) < self.info.dims[1]:
             return self.interpolate_inner_pixel(i, j)
