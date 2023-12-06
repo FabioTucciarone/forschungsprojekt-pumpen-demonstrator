@@ -125,20 +125,16 @@ def get_value(i: float, j: float, T: np.ndarray):
     j0: int # nächstgelegener j-Wert 
 
     if -0.5 >= i:
-        #i0 = 0
-        i0 = m-1
-    elif i >= m - 0.5:
-        #i0 = m-1
         i0 = 0
+    elif i >= m - 0.5:
+        i0 = m-1
     else:
         i0 = int(round(i))
 
     if -0.5 >= j:
-        #j0 = 0
-        j0 = n-1
-    elif j >= n - 0.5:
-        #j0 = n-1
         j0 = 0
+    elif j >= n - 0.5:
+        j0 = n-1
     else:
         j0 = int(round(j))
 
@@ -156,7 +152,7 @@ def get_value(i: float, j: float, T: np.ndarray):
 
     #return max(y, 10.6)
     # TODO Ecken stimmen nicht
-    return jdd
+    return id
 
 def main():
 
