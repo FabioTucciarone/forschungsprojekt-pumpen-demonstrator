@@ -25,7 +25,7 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
         },
         child: const Text(
           'Anmelden',
-          style: TextStyle(color: OurColors.textColor),
+          style: TextStyle(color: OurColors.appBarTextColor),
         ));
   }
 }

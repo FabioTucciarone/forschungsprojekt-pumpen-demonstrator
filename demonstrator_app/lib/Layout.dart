@@ -66,7 +66,10 @@ class IntroHomeScaffold extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => const IntroScience()));
             },
-            child: const Text("Los geht's zur wissenschaftlichen Version"),
+            child: const Text(
+              "Los geht's zur wissenschaftlichen Version",
+              style: TextStyle(color: OurColors.appBarTextColor),
+            ),
           ),
           const SizedBox(
             height: 20,
@@ -86,6 +89,7 @@ class IntroHomeScaffold extends StatelessWidget {
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
+                style: TextStyle(color: OurColors.appBarTextColor),
               ))
         ],
       ),

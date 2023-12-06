@@ -53,7 +53,7 @@ class IntroScience extends StatelessWidget {
                       },
                       child: const Text(
                         "Verstanden",
-                        style: TextStyle(color: OurColors.textColor),
+                        style: TextStyle(color: OurColors.appBarTextColor),
                       ))
                 ],
               ),
@@ -195,7 +195,7 @@ class _RobotIntroState extends State<RobotIntro> {
               },
               child: const Text(
                 "Weiter",
-                style: TextStyle(color: OurColors.textColor),
+                style: TextStyle(color: OurColors.appBarTextColor),
               ),
             ),
           ),
