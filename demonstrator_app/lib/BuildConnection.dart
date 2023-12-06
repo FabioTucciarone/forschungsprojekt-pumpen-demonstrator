@@ -25,7 +25,7 @@ class _ButtonAnmelden extends State<ButtonAnmelden> {
         },
         child: const Text(
           'Anmelden',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: OurColors.appBarTextColor),
         ));
   }
 }
@@ -41,26 +41,26 @@ class RegisterApp extends StatelessWidget {
           "Demonstrator App",
         ),
         backgroundColor: OurColors.appBarColor,
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 25),
+        titleTextStyle:
+            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            color: Colors.black,
+            color: OurColors.appBarTextColor,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
             }),
-        actions: const <Widget>[
-          ButtonAnmelden(),
-        ],
       ),
       backgroundColor: OurColors.backgroundColor,
       body: Center(
-          child: SizedBox(
-        width: 400,
-        child: Card(
-          child: RegisterBox(),
+        child: Container(
+          width: 400,
+          color: OurColors.accentColor,
+          child: Card(
+            child: RegisterBox(),
+          ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -92,7 +92,22 @@ class _RegisterState extends State<RegisterBox> {
               padding: const EdgeInsets.all(8),
               child: TextFormField(
                 controller: username,
-                decoration: const InputDecoration(hintText: 'Username'),
+                decoration: InputDecoration(
+                  hintText: 'Benutzername',
+                  prefixIcon: Icon(Icons.person),
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return OurColors.appBarColor;
+                    }
+                    return Colors.grey;
+                  }),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: OurColors.accentColor, width: 2),
+                  ),
+                ),
+                cursorColor: OurColors.accentColor,
               ),
             ),
             Padding(
@@ -101,17 +116,38 @@ class _RegisterState extends State<RegisterBox> {
                 obscureText: passwordVisible,
                 controller: password,
                 decoration: InputDecoration(
-                    hintText: 'Password',
-                    suffixIcon: IconButton(
-                      icon: Icon(passwordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          passwordVisible = !passwordVisible;
-                        });
-                      },
-                    )),
+                  hintText: 'Passwort',
+                  suffixIcon: IconButton(
+                    icon: Icon(passwordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        passwordVisible = !passwordVisible;
+                      });
+                    },
+                  ),
+                  suffixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return OurColors.appBarColor;
+                    }
+                    return Colors.grey;
+                  }),
+                  prefixIcon: Icon(Icons.key),
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return OurColors.appBarColor;
+                    }
+                    return Colors.grey;
+                  }),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: OurColors.accentColor, width: 2),
+                  ),
+                ),
+                cursorColor: OurColors.accentColor,
               ),
             ),
             TextButton(
@@ -157,7 +193,7 @@ class ResultApp extends StatelessWidget {
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         backgroundColor: OurColors.appBarColor,
         leading: IconButton(
-            color: Colors.black,
+            color: OurColors.appBarTextColor,
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(context,
@@ -209,7 +245,7 @@ class _ResultState extends State<Result> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Log in failed',
+                    'Anmeldung fehlgeschlagen',
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
@@ -227,7 +263,7 @@ class _ResultState extends State<Result> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Log in successful',
+                    'Anmeldung erfolgreich',
                     style: TextStyle(color: Colors.green),
                   ),
                 ),
@@ -241,7 +277,9 @@ class _ResultState extends State<Result> {
             child = const SizedBox(
               width: 60,
               height: 60,
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
             );
           }
           return child;

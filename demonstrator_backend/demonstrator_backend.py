@@ -1,25 +1,18 @@
-from flask import Flask, request, session
-from flask_session import Session
+from flask import Flask, request
 from flask_caching import Cache
-import io
 
 import model_communication as mc
-from flask import current_app
 
 # Global Variables:
 
 app = Flask(__name__)
-# SESSION_TYPE = 'filesystem'
-# app.config.from_object(__name__)
-# Session(app)
 
 app.config['CACHE_TYPE'] = 'FileSystemCache' 
-app.config['CACHE_DIR'] = '../../data/cache' # path to your server cache folder
-app.config['CACHE_THRESHOLD'] = 100000 # number of 'files' before start auto-delete
+app.config['CACHE_DIR'] = '../../data/cache' # Server Cache Pfad: TODO: Systemunabhängig machen
+app.config['CACHE_THRESHOLD'] = 100          # Datei Maximum
 
 cache = Cache(app)
 cache.init_app(app)
-
 
 
 # Backend Interface:
@@ -112,7 +105,18 @@ def get_highscore_and_name(): # TODO: Implementieren
 # Internal Methods:
 
 def initialize_backend():
-    cache.set("model_configuration", mc.ModelConfiguration(), timeout=0)
+
+    # TODO: Hier einfach das einstellen, was hübsch aussieht!
+    # Farbtupel: (R, G, B) mit 0 <= R, G, B <= 1
+    color_palette = mc.ColorPalette(
+        cmap_list        = [(0.3,0.4,0.8), (1,1,1), (1,0.4,0.4)],
+        background_color = (0.28,0.28,0.43),
+        text_color       = (1,1,1) 
+    )
+
+    model_configuration = mc.ModelConfiguration()
+    model_configuration.set_color_palette(color_palette)
+    cache.set("model_configuration", model_configuration, timeout=0)
 
 
 # Start Debug Server:

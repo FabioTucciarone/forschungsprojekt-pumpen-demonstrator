@@ -27,10 +27,6 @@ class IntroHomeScaffold extends StatelessWidget {
         titleTextStyle:
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         backgroundColor: OurColors.appBarColor,
-        leading: const IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: null,
-        ),
         actions: const <Widget>[
           DebugSwitch(),
           ButtonAnmelden(),
@@ -41,16 +37,19 @@ class IntroHomeScaffold extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(children: <TextSpan>[
-                TextSpan(
-                    text: "Erklärung für Admins: \n",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(
-                    text:
-                        "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
-              ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: RichText(
+                textAlign: TextAlign.center,
+                text: const TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "Erklärung für Admins: \n",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
+                ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
+          ),
           const SizedBox(
             height: 100,
           ),
@@ -59,7 +58,7 @@ class IntroHomeScaffold extends StatelessWidget {
                 foregroundColor:
                     MaterialStateProperty.all<Color>(OurColors.textColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 184, 44, 44),
+                  OurColors.appBarColor,
                 )),
             onPressed: () {
               Navigator.push(
@@ -67,7 +66,10 @@ class IntroHomeScaffold extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => const IntroScience()));
             },
-            child: const Text("Los geht's zur wissenschaftlichen Version"),
+            child: const Text(
+              "Los geht's zur wissenschaftlichen Version",
+              style: TextStyle(color: OurColors.appBarTextColor),
+            ),
           ),
           const SizedBox(
             height: 20,
@@ -87,6 +89,7 @@ class IntroHomeScaffold extends StatelessWidget {
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
+                style: TextStyle(color: OurColors.appBarTextColor),
               ))
         ],
       ),
@@ -107,7 +110,7 @@ class _DebugSwitchState extends State<DebugSwitch> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       const Text(
         'Debug Mode',
-        style: TextStyle(color: OurColors.appBarTextColor),
+        style: TextStyle(color: OurColors.appBarTextColor, fontSize: 15),
       ),
       Switch(
         value: useOfBackend.backend.debugEnabled,
