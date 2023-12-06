@@ -56,14 +56,14 @@ def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
     else:
         jd = (T[it, jt + 1] - 2*T[it, jt] + T[it, jt - 1]) / pow(h, 2)
     return id, jd
-"""
+
 
 def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
     h = 1
     #delta_i = h + it
     #delta_j = h + jt
-    delta_i = 1 + it
-    delta_j = 1 + jt
+    delta_i = 1
+    delta_j = 1
     # derivative it
     # at it-edge back (left)    --> forward derivative
     if it == 0:
@@ -85,6 +85,35 @@ def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
     # in the center             --> central derivative
     else:
         jd = (T[it,jt+delta_j]-2*T[it,jt]+T[it,jt-delta_j])/pow(h+jt,2)
+    return id, jd
+"""
+    
+
+def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
+    h = 1
+    #delta_i = h + it
+    #delta_j = h + jt
+    # derivative it
+    # at it-edge back (left)    --> forward derivative
+    if it == 0:
+        id = (2*T[it, jt]-5*T[it+h,jt]+4*T[it+h,jt]-T[it+h,jt])/pow(h,3)
+    # at it-edge front (right)  --> backward derivative
+    elif it == T.shape[0]-1:
+        id = (2*T[it, jt]-5*T[it-h,jt]+4*T[it-h,jt]-T[it-h,jt])/pow(h,3)
+    # in the center             --> central derivative
+    else:
+        id = (T[it+h,jt]-2*T[it,jt]+T[it-h,jt])/pow(h,2)
+
+    # derivative jt
+    # at jt-edge back (top)     --> forward derivative
+    if jt == 0:
+        jd = (2*T[it, jt]-5*T[it,jt+h]+4*T[it,jt+h]-T[it,jt+h])/pow(h,3)
+    # at jt-edge front (bottom) --> backward derivative
+    elif jt == T.shape[1]-1:
+        jd = (2*T[it, jt]-5*T[it,jt-h]+4*T[it,jt-h]-T[it,jt-h])/pow(h,3)
+    # in the center             --> central derivative
+    else:
+        jd = (T[it,jt+h]-2*T[it,jt]+T[it,jt-h])/pow(h,2)
     return id, jd
 
 
@@ -127,7 +156,7 @@ def get_value(i: float, j: float, T: np.ndarray):
 
     #return max(y, 10.6)
     # TODO Ecken stimmen nicht
-    return jd
+    return jdd
 
 def main():
 
