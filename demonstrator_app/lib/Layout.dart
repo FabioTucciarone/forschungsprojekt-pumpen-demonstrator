@@ -15,6 +15,30 @@ class Introduction extends StatelessWidget {
 }
 
 class IntroHomeScaffold extends StatelessWidget {
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Fehler!"),
+            content: const Text(
+                "Melde dich erst an oder benutze den Debug Modus für lokale Benutzung!"),
+            actions: <Widget>[
+              TextButton(
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarTextColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarColor)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Verstanden"))
+            ],
+          );
+        });
+  }
+
   const IntroHomeScaffold({
     super.key,
   });
@@ -61,10 +85,15 @@ class IntroHomeScaffold extends StatelessWidget {
                   OurColors.appBarColor,
                 )),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const IntroScience()));
+              if (useOfBackend.backend.debugEnabled ||
+                  useOfBackend.backend.readyForHTTPRequests) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const IntroScience()));
+              } else {
+                showErrorDialog(context);
+              }
             },
             child: const Text(
               "Los geht's zur wissenschaftlichen Version",
@@ -82,10 +111,15 @@ class IntroHomeScaffold extends StatelessWidget {
                     OurColors.appBarColor,
                   )),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const IntroScreen()));
+                if (useOfBackend.backend.debugEnabled ||
+                    useOfBackend.backend.readyForHTTPRequests) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const IntroScreen()));
+                } else {
+                  showErrorDialog(context);
+                }
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
