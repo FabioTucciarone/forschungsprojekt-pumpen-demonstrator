@@ -31,7 +31,7 @@ def get_1st_derivative(it: int, jt: int , T: np.ndarray):
 
     return id, jd
 
-
+"""
 def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
     h = 1
     # derivative it
@@ -58,6 +58,65 @@ def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
     return id, jd
 
 
+def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
+    h = 1
+    #delta_i = h + it
+    #delta_j = h + jt
+    delta_i = 1
+    delta_j = 1
+    # derivative it
+    # at it-edge back (left)    --> forward derivative
+    if it == 0:
+        id = (2*T[it, jt]-5*T[it+delta_i,jt]+4*T[it+2*delta_i,jt]-T[it+3*delta_i,jt])/pow(h+it,3)
+    # at it-edge front (right)  --> backward derivative
+    elif it == T.shape[0]-1:
+        id = (2*T[it, jt]-5*T[it-delta_i,jt]+4*T[it-2*delta_i,jt]-T[it-3*delta_i,jt])/pow(h+it,3)
+    # in the center             --> central derivative
+    else:
+        id = (T[it+delta_i,jt]-2*T[it,jt]+T[it-delta_i,jt])/pow(h+it,2)
+
+    # derivative jt
+    # at jt-edge back (top)     --> forward derivative
+    if jt == 0:
+        jd = (2*T[it, jt]-5*T[it,jt+delta_j]+4*T[it,jt+2*delta_j]-T[it,jt+3*delta_j])/pow(h+jt,3)
+    # at jt-edge front (bottom) --> backward derivative
+    elif jt == T.shape[1]-1:
+        jd = (2*T[it, jt]-5*T[it,jt-delta_j]+4*T[it,jt-2*delta_j]-T[it,jt-3*delta_j])/pow(h+jt,3)
+    # in the center             --> central derivative
+    else:
+        jd = (T[it,jt+delta_j]-2*T[it,jt]+T[it,jt-delta_j])/pow(h+jt,2)
+    return id, jd
+"""
+    
+
+def get_2nd_derivative(it: int, jt: int , T: np.ndarray):
+    h = 1
+    #delta_i = h + it
+    #delta_j = h + jt
+    # derivative it
+    # at it-edge back (left)    --> forward derivative
+    if it == 0:
+        id = (2*T[it, jt]-5*T[it+h,jt]+4*T[it+h,jt]-T[it+h,jt])/pow(h,3)
+    # at it-edge front (right)  --> backward derivative
+    elif it == T.shape[0]-1:
+        id = (2*T[it, jt]-5*T[it-h,jt]+4*T[it-h,jt]-T[it-h,jt])/pow(h,3)
+    # in the center             --> central derivative
+    else:
+        id = (T[it+h,jt]-2*T[it,jt]+T[it-h,jt])/pow(h,2)
+
+    # derivative jt
+    # at jt-edge back (top)     --> forward derivative
+    if jt == 0:
+        jd = (2*T[it, jt]-5*T[it,jt+h]+4*T[it,jt+h]-T[it,jt+h])/pow(h,3)
+    # at jt-edge front (bottom) --> backward derivative
+    elif jt == T.shape[1]-1:
+        jd = (2*T[it, jt]-5*T[it,jt-h]+4*T[it,jt-h]-T[it,jt-h])/pow(h,3)
+    # in the center             --> central derivative
+    else:
+        jd = (T[it,jt+h]-2*T[it,jt]+T[it,jt-h])/pow(h,2)
+    return id, jd
+
+
 def get_value(i: float, j: float, T: np.ndarray):
     m = T.shape[0]
     n = T.shape[1]
@@ -66,16 +125,20 @@ def get_value(i: float, j: float, T: np.ndarray):
     j0: int # nächstgelegener j-Wert 
 
     if -0.5 >= i:
-        i0 = 0
-    elif i >= m - 0.5:
+        #i0 = 0
         i0 = m-1
+    elif i >= m - 0.5:
+        #i0 = m-1
+        i0 = 0
     else:
         i0 = int(round(i))
 
     if -0.5 >= j:
-        j0 = 0
-    elif j >= n - 0.5:
+        #j0 = 0
         j0 = n-1
+    elif j >= n - 0.5:
+        #j0 = n-1
+        j0 = 0
     else:
         j0 = int(round(j))
 
@@ -91,6 +154,8 @@ def get_value(i: float, j: float, T: np.ndarray):
     # Berechne Ergebnis mit Taylorsumme des zweiten Grades (also bis zur zweiten Ableitung)
     y = T[i0, j0] + (id*(i - i0) + jd*(j - j0)) + (1/2) * (idd*(i - i0) + jdd*(j - j0)) # Taylor Ergebnis
 
+    #return max(y, 10.6)
+    # TODO Ecken stimmen nicht
     return max(y, 10.6), id, jd, idd, jdd
 
 def main():
@@ -98,26 +163,24 @@ def main():
     fig, axes = plt.subplots(6, 1)
     plt.sca(axes[0])
 
-    run_idx = 2
+    run_index = 2
+
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     info = gt.GroundTruthInfo(path_to_dataset, 10.6)
-    T0 = gt.load_temperature_field(info, run_idx)
+    T0 = gt.load_temperature_field(info, run_index)
+    size = (T0.shape[0] + 30, T0.shape[1] + 30)
 
-    T1 = [np.ndarray((T0.shape[0] + 30, T0.shape[1] + 30)),
-          np.ndarray(T0.shape),
-          np.ndarray(T0.shape),
-          np.ndarray(T0.shape),
-          np.ndarray(T0.shape)]
-    
+    T1 = [np.ndarray(size) for i in range(5)]
+
     for i in range(-15, T0.shape[0] + 15):
         for j in range(-15, T0.shape[1] + 15):
             y, id, jd, idd, jdd = get_value(i, j, T0)
-            T1[0][i + 15, j + 15] = y
-            if i >= 0 and i < T0.shape[0] and j >= 0 and j < T0.shape[1]: 
-                T1[1][i, j] = id
-                T1[2][i, j] = jd
-                T1[3][i, j] = idd
-                T1[4][i, j] = jdd
+            T1[0][i+15, j+15] = y 
+            T1[1][i+15, j+15] = id 
+            T1[2][i+15, j+15] = jd 
+            T1[3][i+15, j+15] = idd 
+            T1[4][i+15, j+15] = jdd
+    
 
     plt.sca(axes[0])
     image = plt.imshow(T0, cmap="RdBu_r", vmin=10.6, vmax=15)
@@ -127,12 +190,11 @@ def main():
     image = plt.imshow(T1[0], cmap="RdBu_r", vmin=10.6, vmax=15)
     plt.colorbar(image, cax = make_axes_locatable(axes[1]).append_axes("right", size="5%", pad=0.05))
 
-    for i in range(1, 5):
-        plt.sca(axes[i+1])
+    for i in range(1,5):
+        plt.sca(axes[i + 1])
         r = np.max(np.abs(T1[i]))
         image = plt.imshow(T1[i], cmap="RdBu_r", vmin=-r, vmax=r)
-        plt.colorbar(image, cax = make_axes_locatable(axes[i+1]).append_axes("right", size="5%", pad=0.05))
-
+        plt.colorbar(image, cax = make_axes_locatable(axes[i + 1]).append_axes("right", size="5%", pad=0.05))
 
     plt.show()
 

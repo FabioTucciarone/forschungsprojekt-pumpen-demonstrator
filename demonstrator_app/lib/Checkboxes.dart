@@ -1,3 +1,4 @@
+import 'package:demonstrator_app/Intro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +35,7 @@ class _CheckboxBoxState extends State<CheckboxBox> {
     final checkBoxModel = Provider.of<CheckboxModel>(context);
 
     return ColoredBox(
-      color: Color.fromARGB(176, 215, 80, 80),
+      color: OurColors.backgroundColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
