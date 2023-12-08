@@ -155,7 +155,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
         for i in range(info.dims[0]):
             result.set(i, j, transformed[0].at(i, j)*weights[0] + transformed[1].at(i, j)*weights[1] + transformed[2].at(i, j)*weights[2])
 
-    return {"Temperature [C]": torch.tensor(result.field).unsqueeze(2)}
+    return {"Temperature [C]": torch.tensor(result.T).unsqueeze(2)}
 
 
 def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBounds):

@@ -77,9 +77,8 @@ class TaylorInterpolatedField(TemperatureField):
     
     def __init__(self, info: GroundTruthInfo, run_index: int=None):
         TemperatureField.__init__(self, info, run_index)
-        self.Ti = np.diff(self.T)
-        self.Tj = np.diff(self.T)
-        self.h = 1 #1/(self.T.shape[1] + 1)
+        self.h = 1/(self.T.shape[1] + 1)
+
 
     def filter(self, i: float, j: float):
         T = self.T
@@ -102,8 +101,8 @@ class TaylorInterpolatedField(TemperatureField):
         return result
 
     def get_1st_derivative(self, it: int, jt: int):
-        h = 1
         T = self.T
+        h = self.h
         m = T.shape[0]
         n = T.shape[1]
 
@@ -117,9 +116,25 @@ class TaylorInterpolatedField(TemperatureField):
 
         return id, jd
 
+    def get_1st_derivative_filter(self, it: int, jt: int):
+        T = self.T
+        h = self.h
+        m = T.shape[0]
+        n = T.shape[1]
+
+        if it == 0:     id = (self.filter(it+1, jt) - self.filter(it, jt))   / h
+        elif it == m-1: id = (self.filter(it, jt)   - self.filter(it-1, jt)) / h
+        else:           id = (self.filter(it+1, jt) - self.filter(it-1, jt)) / (2*h)
+
+        if jt == 0:     jd = (self.filter(it, jt+1) - self.filter(it, jt))   / h
+        elif jt == n-1: jd = (self.filter(it, jt)   - self.filter(it, jt-1)) / h
+        else:           jd = (self.filter(it, jt+1) - self.filter(it, jt-1)) / (2*h)
+
+        return id, jd
+
     def get_2nd_derivative(self, it: int, jt: int):
         T = self.T
-        h = 1
+        h = self.h
         m = T.shape[0]
         n = T.shape[1]
 
@@ -135,23 +150,23 @@ class TaylorInterpolatedField(TemperatureField):
 
     def get_2nd_derivative_filter(self, it: int, jt: int):
         T = self.T
-        h = 1
+        h = self.h
         m = T.shape[0]
         n = T.shape[1]
 
-        if it == 0:     id = (self.filter(it+2, jt, T) - 2*self.filter(it+1, jt, T) + self.filter(it, jt, T)) / h**2
-        elif it == m-1: id = (self.filter(it, jt, T)   - 2*self.filter(it-1, jt, T) + self.filter(it-2, jt, T)) / h**2
-        else:           id = (self.filter(it+1, jt, T) - 2*self.filter(it, jt, T)   + self.filter(it-1, jt, T)) / h**2
+        if it == 0:     id = (self.filter(it+2, jt) - 2*self.filter(it+1, jt) + self.filter(it, jt)) / h**2
+        elif it == m-1: id = (self.filter(it, jt)   - 2*self.filter(it-1, jt) + self.filter(it-2, jt)) / h**2
+        else:           id = (self.filter(it+1, jt) - 2*self.filter(it, jt)   + self.filter(it-1, jt)) / h**2
 
-        if jt == 0:     jd = (self.filter(it, jt+2, T) - 2*self.filter(it, jt+1, T) + self.filter(it, jt, T)) / h**2
-        elif jt == n-1: jd = (self.filter(it, jt, T)   - 2*self.filter(it, jt-1, T) + self.filter(it, jt-2, T)) / h**2
-        else:           jd = (self.filter(it, jt+1, T) - 2*self.filter(it, jt, T)   + self.filter(it, jt-1, T)) / h**2
+        if jt == 0:     jd = (self.filter(it, jt+2) - 2*self.filter(it, jt+1) + self.filter(it, jt)) / h**2
+        elif jt == n-1: jd = (self.filter(it, jt)   - 2*self.filter(it, jt-1) + self.filter(it, jt-2)) / h**2
+        else:           jd = (self.filter(it, jt+1) - 2*self.filter(it, jt)   + self.filter(it, jt-1)) / h**2
 
         return id, jd
 
     def get_2nd_derivative_higher_order(self, it: int, jt: int):
         T = self.T
-        h = 1
+        h = self.h
         m = T.shape[0]
         n = T.shape[1]
 
@@ -182,23 +197,25 @@ class TaylorInterpolatedField(TemperatureField):
         elif j >= n - 0.5: j0 = n-1
         else: j0 = int(round(j))
 
-        id, jd = self.get_1st_derivative(i0, j0)
+        # Tij = np.diff(np.diff(T,0),1) / h**2
+        # ijdd = Tij[min(i0, Tij.shape[0]-2), min(j0, Tij.shape[1]-2)]
 
-        Tij = np.diff(np.diff(T,0),1) / h**2
 
-
-        if method == 1:
+        if method == 0:
+            id, jd = self.get_1st_derivative(i0, j0)
             idd, jdd = self.get_2nd_derivative(i0, j0)
         elif method == 1:
+            id, jd = self.get_1st_derivative_filter(i0, j0)
             idd, jdd = self.get_2nd_derivative_filter(i0, j0)
         else:
+            id, jd = self.get_1st_derivative(i0, j0)
             idd, jdd = self.get_2nd_derivative_higher_order(i0, j0)
 
-        ijdd = Tij[min(i0,254), min(j0,254)]
+        #ijdd = Tij[min(i0,254), min(j0,254)]
         
         y = T[i0, j0] 
         y += (id * (i - i0)*h + jd * (j - j0)*h)
-        y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 # Taylor Ergebnis
+        # y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 
 
         return max(y, 10.6), id, jd, idd, jdd
 
@@ -251,4 +268,5 @@ def main():
 
         plt.show()
 
-main()
+if __name__ == "__main__":
+    main()
