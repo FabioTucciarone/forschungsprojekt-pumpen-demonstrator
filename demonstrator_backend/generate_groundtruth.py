@@ -88,7 +88,6 @@ def calculate_hp_bounds(info, temp_fields):
             bounds[k].y0 += 1
             if flound_edge:
                 break
-    for k in range(0, 3):
         for j in reversed(range(info.hp_pos[1]+1, 256)): # TODO?
             flound_edge = False
             for i in range(0, info.dims[0]):
@@ -98,7 +97,6 @@ def calculate_hp_bounds(info, temp_fields):
             bounds[k].y1 -= 1
             if flound_edge:
                 break
-    for k in range(0, 3):
         for i in range(0, info.hp_pos[0]):
             flound_edge = False
             for j in range(0, info.dims[1]):
@@ -108,7 +106,6 @@ def calculate_hp_bounds(info, temp_fields):
             bounds[k].x0 += 1
             if flound_edge:
                 break
-    for k in range(0, 3):
         for i in  reversed(range(info.hp_pos[0]+1, 20)):
             flound_edge = False
             for j in range(0, info.dims[1]):
@@ -190,7 +187,6 @@ def main():
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     info = GroundTruthInfo(path_to_dataset, 10.6)
     interpolate_experimental(info, [1, 2, 3], [1/3, 1/3, 1/3])
-
 
 if __name__ == "__main__":
     main()

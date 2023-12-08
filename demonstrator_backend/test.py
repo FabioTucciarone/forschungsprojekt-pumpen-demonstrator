@@ -36,7 +36,7 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
     average_error_ges = 0
     successful_runs = 0
 
-    for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from):
+    for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
         x = info.datapoints[i]
         info.datapoints[i] = None
 
@@ -169,6 +169,9 @@ def test_1hp_model_communication(visualize=True):
         show_figure(display_data.get_figure(0))
 
 
+def main():
+    test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
+    test_groundtruth(0, 19, visualize=False, type="interpolation", print_all=False)
+
 if __name__ == "__main__":
-    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
-    test_groundtruth(0, 999, visualize=False, type="interpolation", print_all=False)
+    main()
