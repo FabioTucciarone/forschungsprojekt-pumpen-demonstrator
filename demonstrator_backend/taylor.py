@@ -196,7 +196,7 @@ def main():
         fig, axes = plt.subplots(6, 1)
         plt.sca(axes[0])
 
-        run_index = 1 # Superzahl 2
+        run_index = 2 # Superzahl 2
 
         path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
         info = gt.GroundTruthInfo(path_to_dataset, 10.6)

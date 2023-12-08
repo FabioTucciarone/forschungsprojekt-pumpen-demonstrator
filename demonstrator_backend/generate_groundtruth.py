@@ -1,123 +1,9 @@
 import os
-import sys
 import numpy as np
 import torch
-from dataclasses import dataclass
-import matplotlib.pyplot as plt
-import scipy as sp
-import itertools
 
-@dataclass
-class DataPoint:
-    k: np.float64 # permeability
-    p: np.float64 # pressure
-
-
-@dataclass
-class GroundTruthInfo:
-    dataset_path: str
-    base_temp: float
-    use_interpolation: bool = True
-    datapoints: list = None
-    threshold_temp: float = 0
-    visualize: bool = False
-    dims: list = None
-    hp_pos = [9, 23]
-
-    def __post_init__(self):
-        self.datapoints = load_data_points(self.dataset_path)
-        self.threshold_temp = self.base_temp + 0.5
-        pflotran_settings = prepare.get_pflotran_settings(self.dataset_path)
-        self.dims = pflotran_settings["grid"]["ncells"]
-
-
-@dataclass
-class HPBounds:
-    x0: int = -1
-    x1: int = 20
-    y0: int = -1
-    y1: int = 256
-
-
-class TemperatureField:
-    info: GroundTruthInfo
-    field: np.ndarray
-    
-    def __init__(self, info: GroundTruthInfo, run_index: int=None):
-        if run_index == None:
-            self.field = np.ndarray((info.dims[0], info.dims[1]))
-        else:
-            self.field = load_temperature_field(info, run_index)
-        self.info = info
-        X = list(range(info.dims[0]))
-        Y = list(range(info.dims[1]))
-        self.interp = sp.interpolate.RegularGridInterpolator((X, Y), self.field, method='linear', bounds_error=False, fill_value=None)
-        self.max = np.max(self.field)
-
-    # TODO at austauschen
-    def at(self, i: float, j: float):
-        if i >= 0 and np.ceil(i) < self.info.dims[0] and j >= 0 and np.ceil(j) < self.info.dims[1]:
-            return self.interpolate_inner_pixel(i, j)
-        else:
-            edge_i = int(max(min(i, self.info.dims[0]-1), 0))
-            edge_j = int(max(min(j, self.info.dims[1]-1), 0))
-            if not self.field[edge_i, edge_j] == 10.6:
-                return min(max(self.interp((i, j)), 10.6), self.max)
-            else:
-                return 10.6
-            
-    def set(self, i: int, j: int, value: float):
-        self.field[i][j] = value
-
-    def interpolate_inner_pixel(self, x: float, y: float):
-        x1 = int(np.floor(x)) 
-        y1 = int(np.floor(y))
-        x2 = int(np.ceil(x)) 
-        y2 = int(np.ceil(y))
-
-        if y1 == y2 and x1 == x2:
-            return self.field[x1, y1]
-
-        if x1 == x2:
-            return self.field[x1, y1] * (y2 - y) / (y2 - y1) + self.field[x1, y2] * (y - y1) / (y2 - y1)
-
-        if y1 == y2:
-            return self.field[x1, y1] * (x2 - x) / (x2 - x1) + self.field[x2, y1] * (x - x1) / (x2 - x1)
-
-        d = (x2 - x1) * (y2 - y1)
-        w11 = (x2 - x) * (y2 - y) / d
-        w12 = (x2 - x) * (y - y1) / d
-        w21 = (x - x1) * (y2 - y) / d
-        w22 = (x - x1) * (y - y1) / d
-
-        return w11 * self.field[x1, y1] + w12 * self.field[x1, y2] + w21 * self.field[x2, y1] + w22 * self.field[x2, y2]
-
-
-# TODO: ACHTUNG skaliertes laden!
-def load_data_points(path_to_dataset):
-    permeability_values_path = os.path.join(path_to_dataset, "inputs", "permeability_values.txt")
-    pressure_values_path = os.path.join(path_to_dataset, "inputs", "pressure_values.txt")
-
-    permeability_values = []
-    with open(permeability_values_path) as file:
-        permeability_values = [float(line.rstrip()) for line in file]
-
-    pressure_values = []
-    with open(pressure_values_path) as file:
-        pressure_values = [float(line.rstrip()) for line in file]
-
-    datapoints = [DataPoint(k * 1e10, p * 1e3) for k, p in zip(permeability_values, pressure_values)]
-    return datapoints
-
-
-def load_temperature_field_raw(info: GroundTruthInfo, run_index: int):
-    path = os.path.join(info.dataset_path, f"RUN_{run_index}", "pflotran.h5")
-    return prepare.load_data(path, "   4 Time  2.75000E+01 y", ["Temperature [C]"], info.dims)
-
-
-def load_temperature_field(info: GroundTruthInfo, run_index: int):
-    temperature_field = load_temperature_field_raw(info, run_index)["Temperature [C]"].detach().cpu().squeeze().numpy()
-    return temperature_field
+from groundtruth_data import DataPoint, GroundTruthInfo, HPBounds, load_temperature_field_raw
+from extrapolation import TaylorInterpolatedField
 
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
@@ -240,12 +126,12 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
 
     temp_fields = [[], [], []]
     for k in range(0, 3):
-        temp_fields[k] = TemperatureField(info, run_index=triangle_i[k]) 
+        temp_fields[k] = TaylorInterpolatedField(info, run_index=triangle_i[k]) 
 
     bounds = calculate_hp_bounds(info, temp_fields)
 
-    transformed = [TemperatureField(info) for i in range(3)]
-    result = TemperatureField(info)
+    transformed = [TaylorInterpolatedField(info) for i in range(3)]
+    result = TaylorInterpolatedField(info)
 
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
@@ -298,11 +184,6 @@ def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: f
             return load_temperature_field_raw(info, triangle_i)
     else:
         return load_temperature_field_raw(info, get_closest_point(x))
-
-
-# ACHTUNG:
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
-import preprocessing.prepare_1ststage as prepare
 
 
 def main():
