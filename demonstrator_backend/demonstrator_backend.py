@@ -43,8 +43,7 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
 
     return { "model_result":  display_data.get_encoded_figure(0), 
              "groundtruth":   display_data.get_encoded_figure(1), 
-             "error_measure": display_data.get_encoded_figure(2),
-             "groundtruth_method": "interpolated" }
+             "error_measure": display_data.get_encoded_figure(2) }
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -77,6 +76,20 @@ def browser_input():
             <input type="text" id="pressure" name="pressure" value="{-2.142e-03}" required />
             <button type="submit">Submit</button
         </form> <br>"""
+
+
+@app.route('/set_groundtruth_method', methods = ['POST'])
+def set_groundtruth_method():
+    groundtruth_method = request.json.get('groundtruth_method')
+    model_configuration = cache.get("model_configuration")
+
+    if groundtruth_method == "interpolation":
+        model_configuration.groundtruth_info.use_interpolation = True
+    elif groundtruth_method == "closest":
+        model_configuration.groundtruth_info.use_interpolation = False
+    else:
+        print(f'Warning: Groundtruth method "{groundtruth_method}" does not exist')
+        
 
 
 @app.route('/test_response', methods = ['GET'])
