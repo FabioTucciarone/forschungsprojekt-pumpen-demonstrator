@@ -117,7 +117,7 @@ class IntroHomeScaffold extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const IntroScreen()));
+                          builder: (context) => const IntroKids()));
                 } else {
                   showErrorDialog(context);
                 }

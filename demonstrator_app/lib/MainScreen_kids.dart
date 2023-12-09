@@ -35,7 +35,7 @@ class MainSlideKids extends StatelessWidget with MainScreenElements {
                   color: OurColors.appBarTextColor,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => IntroScreen()));
+                        MaterialPageRoute(builder: (context) => IntroKids()));
                   }),
             ),
             backgroundColor: OurColors.backgroundColor,

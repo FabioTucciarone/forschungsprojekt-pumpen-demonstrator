@@ -50,8 +50,8 @@ class IntroductionScience extends StatelessWidget {
   }
 }
 
-class IntroScreen extends StatelessWidget {
-  const IntroScreen({super.key});
+class IntroKids extends StatelessWidget {
+  const IntroKids({super.key});
 
   @override
   Widget build(BuildContext context) {
