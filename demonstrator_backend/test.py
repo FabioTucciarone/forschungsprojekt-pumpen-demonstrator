@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import numpy as np
 import os
-import argparse
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 
@@ -170,8 +169,9 @@ def test_1hp_model_communication(visualize=True):
 
 
 def main():
-    test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
-    test_groundtruth(0, 19, visualize=False, type="interpolation", print_all=False)
+    # test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
+    # test_groundtruth(0, 19, visualize=False, type="interpolation", print_all=False)
+    test_1hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
     main()
