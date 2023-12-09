@@ -6,8 +6,8 @@ import 'Layout.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
 class IntroductionScience extends StatelessWidget {
-  TabController tabController;
-  IntroductionScience(this.tabController, {super.key});
+  final TabController tabController;
+  const IntroductionScience(this.tabController, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +51,20 @@ class IntroductionScience extends StatelessWidget {
 }
 
 class IntroKids extends StatelessWidget {
-  const IntroKids({super.key});
+  final TabController tabController;
+  const IntroKids(this.tabController, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: RobotIntro(),
+    return MaterialApp(
+      home: RobotIntro(tabController),
     );
   }
 }
 
 class RobotIntro extends StatefulWidget {
-  const RobotIntro({super.key});
+  final TabController tabController;
+  const RobotIntro(this.tabController, {super.key});
 
   @override
   State<RobotIntro> createState() => _RobotIntroState();
@@ -96,100 +98,82 @@ class _RobotIntroState extends State<RobotIntro> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Demonstrator App"),
-        backgroundColor: OurColors.appBarColor,
-        titleTextStyle:
-            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: OurColors.appBarTextColor,
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Introduction()));
-          },
-        ),
-      ),
-      backgroundColor: OurColors.backgroundColor,
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          Center(
-              child: SizedBox(
-            width: 700,
-            height: 500,
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                  top: 20,
-                  left: 350,
-                  child: Container(
-                    color: Colors.white,
-                    height: 500,
-                    width: 400,
-                    child: Image.asset(
-                      imagePaths[times],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 50,
-                  left: 95,
-                  width: 300,
+    return ListView(
+      padding: const EdgeInsets.all(8),
+      children: [
+        Center(
+            child: SizedBox(
+          width: 700,
+          height: 500,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 20,
+                left: 350,
+                child: Container(
+                  color: Colors.white,
                   height: 500,
-                  child: AnimatedOpacity(
-                    opacity: speechBubble ? 1.0 : 0,
-                    duration: const Duration(milliseconds: 500),
-                    child: BubbleSpecialThree(
-                      text: speeches[times],
-                      color: const Color.fromARGB(255, 190, 190, 190),
-                      tail: true,
-                      textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 25),
-                    ),
+                  width: 400,
+                  child: Image.asset(
+                    imagePaths[times],
                   ),
                 ),
-                Positioned(
-                    top: 450,
-                    left: 200,
-                    child: Slider(
-                      value: volume,
-                      thumbColor: OurColors.appBarColor,
-                      activeColor: OurColors.accentColor,
-                      inactiveColor: Color.fromARGB(174, 206, 135, 135),
-                      onChanged: (value) => setState(() {
-                        volume = value;
-                        player.setVolume(volume);
-                      }),
-                    ))
-              ],
-            ),
-          )),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
               ),
-              onPressed: () {
-                if (times == 3) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MainSlideKids()));
-                } else {
-                  nextState();
-                }
-              },
-              child: const Text(
-                "Weiter",
-                style: TextStyle(color: OurColors.appBarTextColor),
+              Positioned(
+                top: 50,
+                left: 95,
+                width: 300,
+                height: 500,
+                child: AnimatedOpacity(
+                  opacity: speechBubble ? 1.0 : 0,
+                  duration: const Duration(milliseconds: 500),
+                  child: BubbleSpecialThree(
+                    text: speeches[times],
+                    color: const Color.fromARGB(255, 190, 190, 190),
+                    tail: true,
+                    textStyle:
+                        const TextStyle(color: Colors.black, fontSize: 25),
+                  ),
+                ),
               ),
+              Positioned(
+                  top: 450,
+                  left: 200,
+                  child: Slider(
+                    value: volume,
+                    thumbColor: OurColors.appBarColor,
+                    activeColor: OurColors.accentColor,
+                    inactiveColor: Color.fromARGB(174, 206, 135, 135),
+                    onChanged: (value) => setState(() {
+                      volume = value;
+                      player.setVolume(volume);
+                    }),
+                  ))
+            ],
+          ),
+        )),
+        const SizedBox(
+          height: 20,
+        ),
+        Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: OurColors.appBarColor,
+            ),
+            onPressed: () {
+              if (times == 3) {
+                widget.tabController.animateTo(1);
+              } else {
+                nextState();
+              }
+            },
+            child: const Text(
+              "Weiter",
+              style: TextStyle(color: OurColors.appBarTextColor),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -29,8 +29,6 @@ class OutputBox extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Text("Checkbox1 is ${isChecked1 ? 'checked' : 'not checked'}"),
-        //Text("Checkbox2 is ${isChecked2 ? 'checked' : 'not checked'}"),
         SizedBox(
           height: 100,
           child: FutureBuilder<String>(

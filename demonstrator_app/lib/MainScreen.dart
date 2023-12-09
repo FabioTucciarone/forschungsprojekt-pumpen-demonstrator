@@ -1,5 +1,6 @@
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
+import 'package:demonstrator_app/MainScreen_kids.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'Slider.dart';
 
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'dart:math';
 
 class MainSlide extends StatefulWidget with MainScreenElements {
-  bool children;
+  final bool children;
   MainSlide({super.key, required this.children});
 
   @override
@@ -45,16 +46,16 @@ class _MainSlideState extends State<MainSlide>
                     color: OurColors.appBarTextColor, fontSize: 25),
                 bottom: TabBar(
                     controller: _tabController,
-                    unselectedLabelStyle: TextStyle(
+                    unselectedLabelStyle: const TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 20,
                     ),
                     unselectedLabelColor: OurColors.appBarTextColor,
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                     labelColor: OurColors.appBarTextColor,
-                    tabs: <Widget>[
+                    tabs: const <Widget>[
                       Row(
                         children: [
                           Icon(Icons.info),
@@ -70,8 +71,12 @@ class _MainSlideState extends State<MainSlide>
               ),
               backgroundColor: OurColors.backgroundColor,
               body: TabBarView(controller: _tabController, children: <Widget>[
-                IntroductionScience(_tabController),
-                MainScreenContent(futureNotifier),
+                widget.children
+                    ? IntroKids(_tabController)
+                    : IntroductionScience(_tabController),
+                widget.children
+                    ? Phase1Kids(futureNotifier)
+                    : MainScreenContent(futureNotifier),
                 const SciencePhase2(),
               ]),
             ),
