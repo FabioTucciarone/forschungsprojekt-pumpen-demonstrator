@@ -1,4 +1,3 @@
-import 'package:demonstrator_app/BuildConnection.dart';
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
@@ -9,56 +8,120 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-class MainSlide extends StatelessWidget with MainScreenElements {
+class MainSlide extends StatefulWidget with MainScreenElements {
   MainSlide({super.key});
 
+  @override
+  State<MainSlide> createState() => _MainSlideState();
+}
+
+class _MainSlideState extends State<MainSlide>
+    with SingleTickerProviderStateMixin {
   final FutureNotifier futureNotifier = FutureNotifier();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => CheckboxModel(),
-          ),
-          ChangeNotifierProvider<FutureNotifier>(
-            create: ((context) => futureNotifier),
-          ),
-        ],
-        child: MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(
-              title: const Text("Demonstrator App"),
-              backgroundColor: OurColors.appBarColor,
-              titleTextStyle: const TextStyle(
-                  color: OurColors.appBarTextColor, fontSize: 25),
-              leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  color: OurColors.appBarTextColor,
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => IntroScience()));
-                  }),
+    return DefaultTabController(
+      length: 3,
+      child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => CheckboxModel(),
             ),
-            backgroundColor: OurColors.backgroundColor,
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                padding: const EdgeInsets.all(10),
-                children: [
-                  ...input(),
-                  ...output(),
-                  AnwendenButton(
-                      futureNotifier: futureNotifier,
-                      permeability: getPermeability(),
-                      pressure: getPressure()),
-                ],
+            ChangeNotifierProvider<FutureNotifier>(
+              create: ((context) => futureNotifier),
+            ),
+          ],
+          child: MaterialApp(
+            home: Scaffold(
+              appBar: AppBar(
+                title: const Text("Demonstrator App"),
+                backgroundColor: OurColors.appBarColor,
+                titleTextStyle: const TextStyle(
+                    color: OurColors.appBarTextColor, fontSize: 25),
+                bottom: TabBar(
+                    controller: _tabController,
+                    unselectedLabelStyle: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 20,
+                    ),
+                    unselectedLabelColor: OurColors.appBarTextColor,
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    labelColor: OurColors.appBarTextColor,
+                    tabs: <Widget>[
+                      Row(
+                        children: [
+                          Icon(Icons.info),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text("Infotext"),
+                        ],
+                      ),
+                      Text("Eine Wärmepumpe"),
+                      Text("Zwei Wärmepumpen"),
+                    ]),
               ),
+              backgroundColor: OurColors.backgroundColor,
+              body: TabBarView(controller: _tabController, children: <Widget>[
+                IntroductionScience(_tabController),
+                MainScreenContent(futureNotifier),
+                const SciencePhase2(),
+              ]),
             ),
-          ),
-        ));
+          )),
+    );
+  }
+}
+
+class MainScreenContent extends StatelessWidget with MainScreenElements {
+  final FutureNotifier futureNotifier;
+  MainScreenContent(this.futureNotifier, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView(
+        padding: const EdgeInsets.all(10),
+        children: [
+          ...input(),
+          ...output(),
+          AnwendenButton(
+              futureNotifier: futureNotifier,
+              permeability: getPermeability(),
+              pressure: getPressure()),
+        ],
+      ),
+    );
+  }
+}
+
+class SciencePhase2 extends StatelessWidget {
+  const SciencePhase2({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 700,
+      height: 300,
+      decoration: const BoxDecoration(color: OurColors.accentColor),
+      child: const Center(
+        child: Text(
+          "TODO Phase 2",
+          textScaleFactor: 1.5,
+        ),
+      ),
+    );
   }
 }
 
@@ -94,7 +157,7 @@ mixin MainScreenElements {
       const SizedBox(
         height: 10,
       ),
-      CheckboxBox(),
+      const CheckboxBox(),
     ];
   }
 
@@ -130,7 +193,7 @@ mixin MainScreenElements {
 }
 
 class AnwendenButton extends StatelessWidget {
-  AnwendenButton(
+  const AnwendenButton(
       {super.key,
       required this.futureNotifier,
       required this.permeability,
@@ -149,7 +212,7 @@ class AnwendenButton extends StatelessWidget {
             backgroundColor: OurColors.appBarColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            minimumSize: Size(150, 50),
+            minimumSize: const Size(150, 50),
           ),
           onPressed: () {
             futureNotifier.setFuture(useOfBackend.backend.sendInputData(

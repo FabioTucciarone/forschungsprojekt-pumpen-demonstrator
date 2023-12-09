@@ -61,6 +61,51 @@ class IntroScience extends StatelessWidget {
   }
 }
 
+class IntroductionScience extends StatelessWidget {
+  TabController tabController;
+  IntroductionScience(this.tabController, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 700,
+            height: 300,
+            decoration: BoxDecoration(color: OurColors.accentColor),
+            child: const Center(
+              child: Text(
+                "TODO Wissenschaft Einführungstext",
+                textScaleFactor: 1.5,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  )),
+              onPressed: () {
+                tabController.animateTo(1);
+              },
+              child: const Text(
+                "Verstanden",
+                style: TextStyle(color: OurColors.appBarTextColor),
+              ))
+        ],
+      ),
+    );
+  }
+}
+
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
 

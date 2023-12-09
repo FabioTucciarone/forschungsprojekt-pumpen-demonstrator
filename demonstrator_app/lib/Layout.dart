@@ -1,4 +1,5 @@
 import 'package:demonstrator_app/BackendConnection.dart';
+import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'Intro.dart';
 import 'package:demonstrator_app/BuildConnection.dart';
@@ -87,10 +88,8 @@ class IntroHomeScaffold extends StatelessWidget {
             onPressed: () {
               if (useOfBackend.backend.debugEnabled ||
                   useOfBackend.backend.readyForHTTPRequests) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const IntroScience()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainSlide()));
               } else {
                 showErrorDialog(context);
               }
