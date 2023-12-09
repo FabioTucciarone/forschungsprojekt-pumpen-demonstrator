@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +25,6 @@ class OutputBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final checkBoxModel = Provider.of<CheckboxModel>(context);
-    final isChecked1 = checkBoxModel.isChecked1;
-    final isChecked2 = checkBoxModel.isChecked2;
     final Future<String> future = context.watch<FutureNotifier>().future;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

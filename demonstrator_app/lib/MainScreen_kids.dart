@@ -1,4 +1,3 @@
-import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:flutter/services.dart';
@@ -20,9 +19,6 @@ class MainSlideKids extends StatelessWidget with MainScreenElements {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-            create: (context) => CheckboxModel(),
-          ),
           ChangeNotifierProvider<FutureNotifier>(
             create: ((context) => futureNotifier),
           ),

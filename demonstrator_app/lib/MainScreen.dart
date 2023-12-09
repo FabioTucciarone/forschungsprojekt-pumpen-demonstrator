@@ -1,4 +1,3 @@
-import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
@@ -9,7 +8,8 @@ import 'package:provider/provider.dart';
 import 'dart:math';
 
 class MainSlide extends StatefulWidget with MainScreenElements {
-  MainSlide({super.key});
+  bool children;
+  MainSlide({super.key, required this.children});
 
   @override
   State<MainSlide> createState() => _MainSlideState();
@@ -32,9 +32,6 @@ class _MainSlideState extends State<MainSlide>
       length: 3,
       child: MultiProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (context) => CheckboxModel(),
-            ),
             ChangeNotifierProvider<FutureNotifier>(
               create: ((context) => futureNotifier),
             ),
@@ -154,10 +151,6 @@ mixin MainScreenElements {
         height: 10,
       ),
       permeability,
-      const SizedBox(
-        height: 10,
-      ),
-      const CheckboxBox(),
     ];
   }
 

@@ -5,62 +5,6 @@ import 'MainScreen_kids.dart';
 import 'Layout.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
-class IntroScience extends StatelessWidget {
-  const IntroScience({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: OurColors.appBarColor,
-              title: const Text("Demonstrator App"),
-              titleTextStyle: const TextStyle(
-                  color: OurColors.appBarTextColor, fontSize: 25),
-            ),
-            backgroundColor: OurColors.backgroundColor,
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 700,
-                    height: 300,
-                    decoration: BoxDecoration(color: OurColors.accentColor),
-                    child: const Center(
-                      child: Text(
-                        "TODO Wissenschaft Einführungstext",
-                        textScaleFactor: 1.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            OurColors.appBarColor,
-                          )),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MainSlide()));
-                      },
-                      child: const Text(
-                        "Verstanden",
-                        style: TextStyle(color: OurColors.appBarTextColor),
-                      ))
-                ],
-              ),
-            )));
-  }
-}
-
 class IntroductionScience extends StatelessWidget {
   TabController tabController;
   IntroductionScience(this.tabController, {super.key});

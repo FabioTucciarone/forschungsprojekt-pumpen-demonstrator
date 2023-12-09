@@ -88,8 +88,10 @@ class IntroHomeScaffold extends StatelessWidget {
             onPressed: () {
               if (useOfBackend.backend.debugEnabled ||
                   useOfBackend.backend.readyForHTTPRequests) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MainSlide()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MainSlide(children: false)));
               } else {
                 showErrorDialog(context);
               }
