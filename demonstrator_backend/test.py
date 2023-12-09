@@ -1,11 +1,15 @@
 import time
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-import model_communication as mc
-import generate_groundtruth as gt
 import numpy as np
 import os
+import argparse
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from tqdm.auto import tqdm
+
+from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
+import generate_groundtruth as gt
+import model_communication as mc
 
 
 def show_figure(figure: Figure):
@@ -23,16 +27,16 @@ def add_plot_info(image, title):
     axis.set_xlabel(title, fontsize='small')
 
 
-def test_groundtruth(range, type = "interpolation", visualize=True):
+def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print_all=True):
 
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    info = gt.GroundTruthInfo(path_to_dataset, 10.6)
+    info = GroundTruthInfo(path_to_dataset, 10.6)
     info.visualize = visualize
 
     average_error_ges = 0
     successful_runs = 0
 
-    for i in range:
+    for i in tqdm(range(n_from, n_to+1), desc="Testing", total=n_to-n_from):
         x = info.datapoints[i]
         info.datapoints[i] = None
 
@@ -49,12 +53,13 @@ def test_groundtruth(range, type = "interpolation", visualize=True):
             successful_runs += 1
         info.datapoints[i] = x
 
-        print(f"Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
+        if print_all: 
+            print(f"Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
     
     print(f"Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
-def test_interpolation_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
+def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
 
     min_error = None
     max_error = None
@@ -64,9 +69,9 @@ def test_interpolation_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i:
     if isinstance(triangle_i, list):
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
         interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"].detach().cpu().squeeze().numpy()
-        closest_result = gt.load_temperature_field(info, triangle_i[0])
+        closest_result = load_temperature_field(info, triangle_i[0])
 
-        true_result = gt.load_temperature_field(info, i)
+        true_result = load_temperature_field(info, i)
         error = np.abs(np.array(true_result) - np.array(interp_result))
         error_closest = np.abs(np.array(true_result) - np.array(closest_result))
             
@@ -84,7 +89,7 @@ def test_interpolation_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i:
                        
             for j in range(3):
                 plt.sca(axes[j])
-                interpolant = gt.load_temperature_field(info, triangle_i[j])
+                interpolant = load_temperature_field(info, triangle_i[j])
                 image = plt.imshow(interpolant, cmap="RdBu_r", vmin=10.6, vmax=max_temp)
                 add_plot_info(image, f"Interpolant: {j},  Gewicht: {weights[j]},  Nummer: {triangle_i[j]}")
 
@@ -113,8 +118,8 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
     j = gt.get_closest_point(x, info.datapoints)
 
-    closest_result = gt.load_temperature_field(info, j)
-    true_result = gt.load_temperature_field(info, i)
+    closest_result = load_temperature_field(info, j)
+    true_result = load_temperature_field(info, i)
     error = np.abs(np.array(true_result) - np.array(closest_result))
             
     max_temp = np.max(true_result)
@@ -144,11 +149,10 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
     return average_error, min_error, max_error   
 
 
-def test_1hp_model_communication():
+def test_1hp_model_communication(visualize=True):
     st1 = time.time()
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
-    print('Initialisierung:', et1 - st1, 'seconds')
 
     k = 7.350276541753949086e-10
     p = -2.142171334025262316e-03
@@ -156,11 +160,15 @@ def test_1hp_model_communication():
     st2 = time.time()
     display_data = mc.get_1hp_model_results(model_configuration, k, p, "test")
     et2 = time.time()
+    
+    print('Initialisierung:', et1 - st1, 'seconds')
     print('Antwortzeit:', et2 - st2, 'seconds')
     print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
 
-    show_figure(display_data.get_figure(0))
+    if visualize:
+        show_figure(display_data.get_figure(0))
 
 
 if __name__ == "__main__":
-    test_1hp_model_communication()
+    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interpolation", print_all=False)
