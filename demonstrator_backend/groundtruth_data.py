@@ -25,7 +25,6 @@ class HPBounds:
 class GroundTruthInfo:
     dataset_path: str
     base_temp: float
-    use_interpolation: bool = True
     datapoints: list = None
     threshold_temp: float = 0
     visualize: bool = False

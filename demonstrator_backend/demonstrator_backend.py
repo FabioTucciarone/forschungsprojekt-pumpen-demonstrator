@@ -78,21 +78,7 @@ def browser_input():
             <input type="text" id="permeability" name="permeability" value="{7.350e-10}" required />
             <input type="text" id="pressure" name="pressure" value="{-2.142e-03}" required />
             <button type="submit">Submit</button
-        </form> <br>"""
-
-
-@app.route('/set_groundtruth_method', methods = ['POST'])
-def set_groundtruth_method():
-    groundtruth_method = request.json.get('groundtruth_method')
-    model_configuration = cache.get("model_configuration")
-
-    if groundtruth_method == "interpolation":
-        model_configuration.groundtruth_info.use_interpolation = True
-    elif groundtruth_method == "closest":
-        model_configuration.groundtruth_info.use_interpolation = False
-    else:
-        print(f'Warning: Groundtruth method "{groundtruth_method}" does not exist')
-        
+        </form> <br>"""   
 
 
 @app.route('/test_response', methods = ['GET'])

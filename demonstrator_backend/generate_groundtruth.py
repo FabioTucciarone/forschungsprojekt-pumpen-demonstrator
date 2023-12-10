@@ -169,10 +169,10 @@ def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBo
     return it, jt
 
 
-def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: float):
-    x = DataPoint(permeability * 1e10, pressure * 1e3) #TODO: skalieren?
+def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: float, use_interpolation: bool = True):
+    x = DataPoint(permeability * 1e10, pressure * 1e3)  # TODO: skalieren?
 
-    if info.use_interpolation == True:
+    if use_interpolation:
         triangle_i = triangulate_data_point(info, x)
         if isinstance(triangle_i, list):
             weights = calculate_barycentric_weights(info, triangle_i, x)
