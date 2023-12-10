@@ -15,6 +15,30 @@ class Introduction extends StatelessWidget {
 }
 
 class IntroHomeScaffold extends StatelessWidget {
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Fehler!"),
+            content: const Text(
+                "Melde dich erst an oder benutze den Debug Modus für lokale Benutzung!"),
+            actions: <Widget>[
+              TextButton(
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarTextColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarColor)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Verstanden"))
+            ],
+          );
+        });
+  }
+
   const IntroHomeScaffold({
     super.key,
   });
@@ -27,10 +51,6 @@ class IntroHomeScaffold extends StatelessWidget {
         titleTextStyle:
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         backgroundColor: OurColors.appBarColor,
-        leading: const IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: null,
-        ),
         actions: const <Widget>[
           DebugSwitch(),
           ButtonAnmelden(),
@@ -41,16 +61,19 @@ class IntroHomeScaffold extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(children: <TextSpan>[
-                TextSpan(
-                    text: "Erklärung für Admins: \n",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(
-                    text:
-                        "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
-              ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: RichText(
+                textAlign: TextAlign.center,
+                text: const TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "Erklärung für Admins: \n",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
+                ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
+          ),
           const SizedBox(
             height: 100,
           ),
@@ -59,15 +82,23 @@ class IntroHomeScaffold extends StatelessWidget {
                 foregroundColor:
                     MaterialStateProperty.all<Color>(OurColors.textColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 184, 44, 44),
+                  OurColors.appBarColor,
                 )),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const IntroScience()));
+              if (useOfBackend.backend.debugEnabled ||
+                  useOfBackend.backend.readyForHTTPRequests) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const IntroScience()));
+              } else {
+                showErrorDialog(context);
+              }
             },
-            child: const Text("Los geht's zur wissenschaftlichen Version"),
+            child: const Text(
+              "Los geht's zur wissenschaftlichen Version",
+              style: TextStyle(color: OurColors.appBarTextColor),
+            ),
           ),
           const SizedBox(
             height: 20,
@@ -80,13 +111,19 @@ class IntroHomeScaffold extends StatelessWidget {
                     OurColors.appBarColor,
                   )),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const IntroScreen()));
+                if (useOfBackend.backend.debugEnabled ||
+                    useOfBackend.backend.readyForHTTPRequests) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const IntroScreen()));
+                } else {
+                  showErrorDialog(context);
+                }
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
+                style: TextStyle(color: OurColors.appBarTextColor),
               ))
         ],
       ),
@@ -107,7 +144,7 @@ class _DebugSwitchState extends State<DebugSwitch> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       const Text(
         'Debug Mode',
-        style: TextStyle(color: OurColors.appBarTextColor),
+        style: TextStyle(color: OurColors.appBarTextColor, fontSize: 15),
       ),
       Switch(
         value: useOfBackend.backend.debugEnabled,

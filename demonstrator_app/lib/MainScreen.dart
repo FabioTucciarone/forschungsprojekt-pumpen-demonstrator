@@ -1,3 +1,4 @@
+import 'package:demonstrator_app/BuildConnection.dart';
 import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
@@ -8,17 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-class MainSlide extends StatelessWidget {
+class MainSlide extends StatelessWidget with MainScreenElements {
   MainSlide({super.key});
 
   final FutureNotifier futureNotifier = FutureNotifier();
 
   @override
   Widget build(BuildContext context) {
-    PressureSlider pressure = PressureSlider(900, -4 * pow(10, -3).toDouble(),
-        -1 * pow(10, -3).toDouble(), 'Druck', -4 * pow(10, -3).toDouble());
-    PressureSlider permeability = PressureSlider(900, pow(10, -11).toDouble(),
-        5 * pow(10, -9).toDouble(), 'Durchlässigkeit', pow(10, -11).toDouble());
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
@@ -36,8 +33,8 @@ class MainSlide extends StatelessWidget {
               titleTextStyle: const TextStyle(
                   color: OurColors.appBarTextColor, fontSize: 25),
               leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.black,
+                  icon: const Icon(Icons.arrow_back),
+                  color: OurColors.appBarTextColor,
                   onPressed: () {
                     Navigator.push(
                         context,
@@ -45,74 +42,127 @@ class MainSlide extends StatelessWidget {
                             builder: (context) => IntroScience()));
                   }),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: OurColors.backgroundColor,
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView(
                 padding: const EdgeInsets.all(10),
                 children: [
-                  pressure,
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  permeability,
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  CheckboxBox(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "Output:",
-                    textScaleFactor: 2,
-                  ),
-                  OutputBox(
-                    name: "AI Generated",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  OutputBox(
-                    name: "Groundtruth",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  OutputBox(
-                    name: "Difference Field",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 184, 44, 44),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        onPressed: () {
-                          futureNotifier.setFuture(useOfBackend.backend
-                              .sendInputData(permeability.getCurrent(),
-                                  pressure.getCurrent(), ""));
-                        },
-                        child: const Text(
-                          "Anwenden",
-                          textScaleFactor: 1.8,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ...input(),
+                  ...output(),
+                  AnwendenButton(
+                      futureNotifier: futureNotifier,
+                      permeability: getPermeability(),
+                      pressure: getPressure()),
                 ],
               ),
             ),
           ),
         ));
+  }
+}
+
+mixin MainScreenElements {
+  final PressureSlider pressure = PressureSlider(
+      900,
+      -4 * pow(10, -3).toDouble(),
+      -1 * pow(10, -3).toDouble(),
+      'Druck',
+      -4 * pow(10, -3).toDouble());
+  final PressureSlider permeability = PressureSlider(
+      900,
+      pow(10, -11).toDouble(),
+      5 * pow(10, -9).toDouble(),
+      'Durchlässigkeit',
+      pow(10, -11).toDouble());
+
+  PressureSlider getPressure() {
+    return pressure;
+  }
+
+  PressureSlider getPermeability() {
+    return permeability;
+  }
+
+  List<Widget> input() {
+    return <Widget>[
+      pressure,
+      const SizedBox(
+        height: 10,
+      ),
+      permeability,
+      const SizedBox(
+        height: 10,
+      ),
+      CheckboxBox(),
+    ];
+  }
+
+  List<Widget> output() {
+    return <Widget>[
+      const SizedBox(
+        height: 10,
+      ),
+      const Text(
+        "Ausgabe:",
+        textScaleFactor: 2,
+      ),
+      OutputBox(
+        name: ImageType.aIGenerated,
+      ),
+      const SizedBox(
+        height: 10,
+      ),
+      OutputBox(
+        name: ImageType.groundtruth,
+      ),
+      const SizedBox(
+        height: 10,
+      ),
+      OutputBox(
+        name: ImageType.differenceField,
+      ),
+      const SizedBox(
+        height: 10,
+      ),
+    ];
+  }
+}
+
+class AnwendenButton extends StatelessWidget {
+  AnwendenButton(
+      {super.key,
+      required this.futureNotifier,
+      required this.permeability,
+      required this.pressure});
+  final FutureNotifier futureNotifier;
+  final PressureSlider pressure;
+  final PressureSlider permeability;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: OurColors.appBarColor,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            minimumSize: Size(150, 50),
+          ),
+          onPressed: () {
+            futureNotifier.setFuture(useOfBackend.backend.sendInputData(
+                permeability.getCurrent(), pressure.getCurrent(), ""));
+          },
+          child: const Text(
+            "Anwenden",
+            textScaleFactor: 1.5,
+            style: TextStyle(color: OurColors.appBarTextColor),
+          ),
+        ),
+      ],
+    );
   }
 }
 
