@@ -1,8 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
-import 'MainScreen_kids.dart';
-import 'Layout.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
 class IntroductionScience extends StatelessWidget {
@@ -19,7 +16,7 @@ class IntroductionScience extends StatelessWidget {
           Container(
             width: 700,
             height: 300,
-            decoration: BoxDecoration(color: OurColors.accentColor),
+            decoration: const BoxDecoration(color: OurColors.accentColor),
             child: const Center(
               child: Text(
                 "TODO Wissenschaft Einführungstext",

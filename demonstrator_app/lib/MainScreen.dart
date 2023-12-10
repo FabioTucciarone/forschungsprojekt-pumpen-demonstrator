@@ -55,18 +55,30 @@ class _MainSlideState extends State<MainSlide>
                       fontWeight: FontWeight.bold,
                     ),
                     labelColor: OurColors.appBarTextColor,
+                    indicatorColor: OurColors.appBarTextColor,
                     tabs: const <Widget>[
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.info),
-                          SizedBox(
-                            width: 20,
-                          ),
                           Text("Infotext"),
                         ],
                       ),
-                      Text("Eine Wärmepumpe"),
-                      Text("Zwei Wärmepumpen"),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.device_thermostat),
+                          Text("Eine Wärmepumpe"),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.device_thermostat),
+                          Icon(Icons.device_thermostat),
+                          Text("Zwei Wärmepumpen"),
+                        ],
+                      ),
                     ]),
               ),
               backgroundColor: OurColors.backgroundColor,
