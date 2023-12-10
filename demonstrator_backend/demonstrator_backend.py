@@ -23,12 +23,14 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     """
     Returns a JSON object of all three resulting images.
     The images are encoded as a base64 string.
+
     Parameters:
     ----------
     {"permeability": <float>, "pressure": <float>, "name": <string>}
+
     Return:
     ----------
-    {"model_result": "iVB...YII=", "groundtruth": "iVB...IYI=" , "error_measure": "iVB...mCC"}
+    Example: {"model_result": "iVB...YII=", "groundtruth": "iVB...IYI=" , "error_measure": "iVB...mCC", "average_error" : 0.005788 }
     """
 
     
@@ -43,7 +45,8 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
 
     return { "model_result":  display_data.get_encoded_figure(0), 
              "groundtruth":   display_data.get_encoded_figure(1), 
-             "error_measure": display_data.get_encoded_figure(2) }
+             "error_measure": display_data.get_encoded_figure(2),
+             "average_error" : display_data.average_error }
 
 
 @app.route('/', methods=['GET', 'POST'])

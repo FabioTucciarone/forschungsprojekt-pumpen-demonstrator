@@ -164,6 +164,8 @@ def test_1hp_model_communication(visualize=True):
     print('Antwortzeit:', et2 - st2, 'seconds')
     print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
 
+    print(f"Error: {display_data.average_error}")
+
     if visualize:
         show_figure(display_data.get_figure(0))
 

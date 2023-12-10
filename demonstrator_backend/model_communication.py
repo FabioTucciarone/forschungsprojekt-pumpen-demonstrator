@@ -34,6 +34,7 @@ class DisplayData:
     colorbar_axis: list
     color_palette: ColorPalette
     color_map: LinearSegmentedColormap = None
+    average_error = -1
 
     # fig.patch.set_facecolor('xkcd:mint green')
 
