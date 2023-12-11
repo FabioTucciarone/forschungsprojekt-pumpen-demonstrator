@@ -60,8 +60,6 @@ class DisplayData:
             self.colorbar_axis[i] = make_axes_locatable(self.figures[i].gca()).append_axes("right", size=0.3, pad=0.05)
             self.colorbar_axis[i].yaxis.set_tick_params(colors=self.color_palette.text_color)
 
-        
-
     def encode_image(self, buffer):
         return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
 
@@ -113,7 +111,7 @@ class ModelConfiguration:
             visualize = True
         )
         
-        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6, use_interpolation=True)
+        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6)
 
         self.color_palette = ColorPalette()
 

@@ -70,9 +70,9 @@ def test_2hp_model_communication():
     settings.make_model_path(destination_dir)
 
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    groundtruth_info = gt.GroundTruthInfo(path_to_dataset, 10.6, use_interpolation=False)
+    groundtruth_info = gt.GroundTruthInfo(path_to_dataset, 10.6)
 
-    domain, single_hps = prep_2hp.prepare_demonstrator_input_2nd_stage(paths, "gksi", groundtruth_info, device=settings.device)
+    hp_inputs = prep_2hp.prepare_demonstrator_input_2nd_stage(paths, "gksi", groundtruth_info, device=settings.device)
 
     ## Modellanwendung
 
@@ -85,7 +85,7 @@ def test_2hp_model_communication():
 
     ## Visualisierung
     if settings.visualize:
-        visualizations_demonstrator(model, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
+        visualizations_demonstrator(model, hp_inputs, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
         #visualizations(model, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
         _, summed_error_pic = infer_all_and_summed_pic(model, dataloaders["test"], settings.device)
         plot_avg_error_cellwise(dataloaders["test"], summed_error_pic, {"folder" : settings.destination, "format": "png"})
