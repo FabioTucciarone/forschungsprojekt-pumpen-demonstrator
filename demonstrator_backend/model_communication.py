@@ -127,25 +127,29 @@ class ModelConfiguration:
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
 
-                raw_path = pathlib.Path(paths["default_raw_dir"]) / "datasets_raw_1000_1HP"
                 dataset_name = "datasets_raw_1000_1HP"
-                if not os.path.exists(raw_path):
-                    print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
-                    raw_path = pathlib.Path(paths["default_raw_dir"]) / "dataset_2d_small_1000dp"
+                default_raw_dir = pathlib.Path(paths["default_raw_dir"]) / "datasets_raw_1000_1HP"
+
+                if not os.path.exists(default_raw_dir / dataset_name):
+                    print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
                     dataset_name = "dataset_2d_small_1000dp"
-                
+
+                raw_path = default_raw_dir / dataset_name
                 model_path = pathlib.Path(paths["models_1hp_dir"]) / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
-                if not os.path.exists(raw_path):
+
+                if not os.path.exists(model_path):
                     raise FileNotFoundError(f"Model path '{model_path}' does not exist")
         else:
-            print(f"Could not find '1HP_NN/paths.yaml', assuming default folder structure.")
+            print(f"Could not find '1HP_NN/paths.yaml' Paths, assuming default folder structure.")
 
-            raw_path = path_to_project_dir / "data" / "datasets_raw" / "datasets_raw_1000_1HP"
-            if not os.path.exists(raw_path):
-                print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
-                raw_path = path_to_project_dir / "data" / "datasets_raw" / "dataset_2d_small_1000dp"
+            dataset_name = "datasets_raw_1000_1HP"
+            default_raw_dir = path_to_project_dir / "data" / "datasets_raw"
+
+            if not os.path.exists(default_raw_dir / dataset_name):
+                print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
                 dataset_name = "dataset_2d_small_1000dp"
-            
+
+            raw_path = default_raw_dir / dataset_name
             model_path = path_to_project_dir / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
 
         if not os.path.exists(raw_path):
