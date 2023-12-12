@@ -167,7 +167,7 @@ def test_1hp_model_communication(visualize=True):
     print(f"Error: {display_data.average_error}")
 
     if visualize:
-        show_figure(display_data.get_figure(0))
+        show_figure(display_data.get_figure("model_result"))
 
 
 def main():

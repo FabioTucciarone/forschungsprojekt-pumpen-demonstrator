@@ -19,8 +19,6 @@ class HPBounds:
     y1: int = 256
 
 
-
-
 @dataclass
 class GroundTruthInfo:
     dataset_path: str
