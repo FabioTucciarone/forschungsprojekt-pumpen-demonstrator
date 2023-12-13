@@ -1,5 +1,4 @@
 import 'package:demonstrator_app/BackendConnection.dart';
-import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'Intro.dart';
 import 'package:demonstrator_app/BuildConnection.dart';
@@ -15,9 +14,7 @@ class Introduction extends StatelessWidget {
   }
 }
 
-//this is the Homescreen for admins
 class IntroHomeScaffold extends StatelessWidget {
-  //method for showing the Errordialog, when neither the debug mode is enabled nor a valid connection is established
   void showErrorDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -65,7 +62,7 @@ class IntroHomeScaffold extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(15),
             child: RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(children: <TextSpan>[
@@ -93,7 +90,7 @@ class IntroHomeScaffold extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MainSlide(children: false)));
+                        builder: (context) => const IntroScience()));
               } else {
                 showErrorDialog(context);
               }
@@ -119,7 +116,7 @@ class IntroHomeScaffold extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MainSlide(children: true)));
+                          builder: (context) => const IntroScreen()));
                 } else {
                   showErrorDialog(context);
                 }
