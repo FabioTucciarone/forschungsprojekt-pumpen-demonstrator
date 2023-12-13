@@ -29,53 +29,43 @@ class ColorPalette:
 
 
 class DisplayData:
-    figures: list
-    axes: list
-    colorbar_axis: list
+    figures: dict
     color_palette: ColorPalette
     color_map: LinearSegmentedColormap = None
-
-    # fig.patch.set_facecolor('xkcd:mint green')
-
-    # cmap = LinearSegmentedColormap.from_list("demonstrator", cmap_list, N=20)
-    
-    # ax.spines['bottom'].set_color('red')
-    # ax.spines['top'].set_color('red')
-    # ax.xaxis.label.set_color('red')
-    # ax.tick_params(axis='x', colors='red')
+    average_error = None
 
     def __init__(self, color_palette: ColorPalette):
-        self.figures = [Figure(figsize=(21, 2)) for i in range(3)]
-        self.axes = [self.figures[i].add_subplot(1, 1, 1) for i in range(3)]
-        self.colorbar_axis = [None, None, None]
+        self.figures = dict()
+        self.colorbar_axis = dict()
         self.color_palette = color_palette
         if self.color_palette.cmap_list is not None:
             self.color_map = LinearSegmentedColormap.from_list("demonstrator", color_palette.cmap_list, N=100)
-        for i in range(3):
-            self.axes[i].invert_yaxis()
-            self.axes[i].tick_params(colors=self.color_palette.text_color)
-            self.figures[i].patch.set_facecolor(self.color_palette.background_color)
-            self.figures[i].tight_layout()
-            self.colorbar_axis[i] = make_axes_locatable(self.figures[i].gca()).append_axes("right", size=0.3, pad=0.05)
-            self.colorbar_axis[i].yaxis.set_tick_params(colors=self.color_palette.text_color)
-
-        
 
     def encode_image(self, buffer):
         return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
 
-    def set_figure(self, i, pixel_data, **imshowargs):
+
+    def set_figure(self, figure_name, pixel_data, **imshowargs):
+        self.figures[figure_name] = Figure(figsize=(21, 2))
+        axis = self.figures[figure_name].add_subplot(1, 1, 1)
+        axis.invert_yaxis()
+        axis.tick_params(colors=self.color_palette.text_color)
+        self.figures[figure_name].patch.set_facecolor(self.color_palette.background_color)
+        self.figures[figure_name].tight_layout()
+        colorbar_axis = make_axes_locatable(self.figures[figure_name].gca()).append_axes("right", size=0.3, pad=0.05)
+        colorbar_axis.yaxis.set_tick_params(colors=self.color_palette.text_color)
+
         if self.color_map is not None:
             imshowargs['cmap'] = self.color_map
-        axes_image = self.axes[i].imshow(pixel_data, **imshowargs)
-        self.figures[i].colorbar(axes_image, cax=self.colorbar_axis[i])
+        axes_image = axis.imshow(pixel_data, **imshowargs)
+        self.figures[figure_name].colorbar(axes_image, cax=colorbar_axis)
 
-    def get_figure(self, i):
-        return self.figures[i]
+    def get_figure(self, figure_name):
+        return self.figures[figure_name]
 
-    def get_encoded_figure(self, i):
+    def get_encoded_figure(self, figure_name):
         image_bytes = io.BytesIO()
-        self.figures[i].savefig(image_bytes, format="png")
+        self.figures[figure_name].savefig(image_bytes, format="png")
         return self.encode_image(image_bytes)
 
 
@@ -112,7 +102,7 @@ class ModelConfiguration:
             visualize = True
         )
         
-        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6, use_interpolation=True)
+        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6)
 
         self.color_palette = ColorPalette()
 
@@ -128,25 +118,29 @@ class ModelConfiguration:
             with open(paths_file, "r") as f:
                 paths = yaml.safe_load(f)
 
-                raw_path = pathlib.Path(paths["default_raw_dir"]) / "datasets_raw_1000_1HP"
                 dataset_name = "datasets_raw_1000_1HP"
-                if not os.path.exists(raw_path):
-                    print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
-                    raw_path = pathlib.Path(paths["default_raw_dir"]) / "dataset_2d_small_1000dp"
+                default_raw_dir = pathlib.Path(paths["default_raw_dir"])
+
+                if not os.path.exists(default_raw_dir / dataset_name):
+                    print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
                     dataset_name = "dataset_2d_small_1000dp"
-                
+
+                raw_path = default_raw_dir / dataset_name
                 model_path = pathlib.Path(paths["models_1hp_dir"]) / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
-                if not os.path.exists(raw_path):
+
+                if not os.path.exists(model_path):
                     raise FileNotFoundError(f"Model path '{model_path}' does not exist")
         else:
-            print(f"Could not find '1HP_NN/paths.yaml', assuming default folder structure.")
+            print(f"Could not find '1HP_NN/paths.yaml' Paths, assuming default folder structure.")
 
-            raw_path = path_to_project_dir / "data" / "datasets_raw" / "datasets_raw_1000_1HP"
-            if not os.path.exists(raw_path):
-                print(f"Could not find '{raw_path}', searching for 'dataset_2d_small_1000dp'")
-                raw_path = path_to_project_dir / "data" / "datasets_raw" / "dataset_2d_small_1000dp"
+            dataset_name = "datasets_raw_1000_1HP"
+            default_raw_dir = path_to_project_dir / "data" / "datasets_raw"
+
+            if not os.path.exists(default_raw_dir / dataset_name):
+                print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
                 dataset_name = "dataset_2d_small_1000dp"
-            
+
+            raw_path = default_raw_dir / dataset_name
             model_path = path_to_project_dir / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
 
         if not os.path.exists(raw_path):
