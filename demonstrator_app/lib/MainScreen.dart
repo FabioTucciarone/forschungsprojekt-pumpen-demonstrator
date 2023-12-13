@@ -8,11 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-
 class MainSlide extends StatefulWidget with MainScreenElements {
   final bool children;
   MainSlide({super.key, required this.children});
-
 
   @override
   State<MainSlide> createState() => _MainSlideState();
@@ -31,7 +29,6 @@ class _MainSlideState extends State<MainSlide>
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 3,
       child: MultiProvider(
@@ -83,7 +80,6 @@ class _MainSlideState extends State<MainSlide>
                         ],
                       ),
                     ]),
-
               ),
               backgroundColor: OurColors.backgroundColor,
               body: TabBarView(controller: _tabController, children: <Widget>[
@@ -227,110 +223,6 @@ class AnwendenButton extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             minimumSize: const Size(150, 50),
-          ),
-          onPressed: () {
-            futureNotifier.setFuture(useOfBackend.backend.sendInputData(
-                permeability.getCurrent(), pressure.getCurrent(), ""));
-          },
-          child: const Text(
-            "Anwenden",
-            textScaleFactor: 1.5,
-            style: TextStyle(color: OurColors.appBarTextColor),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-mixin MainScreenElements {
-  final PressureSlider pressure = PressureSlider(
-      900,
-      -4 * pow(10, -3).toDouble(),
-      -1 * pow(10, -3).toDouble(),
-      'Druck',
-      -4 * pow(10, -3).toDouble());
-  final PressureSlider permeability = PressureSlider(
-      900,
-      pow(10, -11).toDouble(),
-      5 * pow(10, -9).toDouble(),
-      'Durchlässigkeit',
-      pow(10, -11).toDouble());
-
-  PressureSlider getPressure() {
-    return pressure;
-  }
-
-  PressureSlider getPermeability() {
-    return permeability;
-  }
-
-  List<Widget> input() {
-    return <Widget>[
-      pressure,
-      const SizedBox(
-        height: 10,
-      ),
-      permeability,
-      const SizedBox(
-        height: 10,
-      ),
-      CheckboxBox(),
-    ];
-  }
-
-  List<Widget> output() {
-    return <Widget>[
-      const SizedBox(
-        height: 10,
-      ),
-      const Text(
-        "Ausgabe:",
-        textScaleFactor: 2,
-      ),
-      OutputBox(
-        name: ImageType.aIGenerated,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      OutputBox(
-        name: ImageType.groundtruth,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      OutputBox(
-        name: ImageType.differenceField,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-    ];
-  }
-}
-
-class AnwendenButton extends StatelessWidget {
-  AnwendenButton(
-      {super.key,
-      required this.futureNotifier,
-      required this.permeability,
-      required this.pressure});
-  final FutureNotifier futureNotifier;
-  final PressureSlider pressure;
-  final PressureSlider permeability;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: OurColors.appBarColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            minimumSize: Size(150, 50),
           ),
           onPressed: () {
             futureNotifier.setFuture(useOfBackend.backend.sendInputData(

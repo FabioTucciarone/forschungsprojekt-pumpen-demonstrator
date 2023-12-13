@@ -11,7 +11,7 @@ import generate_groundtruth as gt
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
 import main as hp_nn
-from utils.visualization import plot_avg_error_cellwise, visualizations_demonstrator, infer_all_and_summed_pic, visualizations
+from utils.visualization import plot_avg_error_cellwise, visualizations, infer_all_and_summed_pic
 from utils.measurements import measure_loss, save_all_measurements
 import utils.visualization as visualize
 from networks.unet import UNet
@@ -22,8 +22,6 @@ from data_stuff.utils import SettingsTraining
 
 
 def test_2hp_model_communication():
-
-    ## Einstellungen
 
     settings = SettingsTraining(
         dataset_raw = "dataset_2hps_demonstrator_1dp",
@@ -70,26 +68,24 @@ def test_2hp_model_communication():
     settings.make_model_path(destination_dir)
 
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    groundtruth_info = gt.GroundTruthInfo(path_to_dataset, 10.6)
+    groundtruth_info = gt.GroundTruthInfo(path_to_dataset, 10.6, use_interpolation=False)
 
-    hp_inputs = prep_2hp.prepare_demonstrator_input_2nd_stage(paths, "gksi", groundtruth_info, device=settings.device)
+    prep_2hp.prepare_demonstrator_input_2nd_stage(paths, "gksi", groundtruth_info, device=settings.device)
 
-    ## Modellanwendung
+    multiprocessing.set_start_method("spawn", force=True)
 
-    #multiprocessing.set_start_method("spawn", force=True)
     dataset, dataloaders = hp_nn.init_data(settings)
 
+    # model
     model = UNet(in_channels=dataset.input_channels).float()
     model.load(settings.model, settings.device)
     model.to(settings.device)
 
-    ## Visualisierung
+    # visualization
     if settings.visualize:
-        visualizations_demonstrator(model, hp_inputs, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
-        #visualizations(model, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
+        visualizations(model, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
         _, summed_error_pic = infer_all_and_summed_pic(model, dataloaders["test"], settings.device)
         plot_avg_error_cellwise(dataloaders["test"], summed_error_pic, {"folder" : settings.destination, "format": "png"})
-
 
     # (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, self.groundtruth_info, permeability, pressure)
     # visualize.get_plots(self.model, x, y, info, norm, self.figures)

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
-
 //The different parts of the response, can be extended for longer responses
 enum ImageType { aIGenerated, groundtruth, differenceField }
 

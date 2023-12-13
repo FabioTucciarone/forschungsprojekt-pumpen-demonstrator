@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-
 class Phase1Kids extends StatelessWidget with MainScreenElements {
   final FutureNotifier futureNotifier;
   Phase1Kids(this.futureNotifier, {super.key});
@@ -31,6 +30,5 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
         ],
       ),
     );
-
   }
 }
