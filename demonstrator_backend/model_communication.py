@@ -123,7 +123,7 @@ class ModelConfiguration:
 
                 if not os.path.exists(default_raw_dir / dataset_name):
                     print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
-                    dataset_name = "dataset_2d_small_1000dp"
+                    dataset_name = "dataset_2d_small_1000dp" ## Fehler
 
                 raw_path = default_raw_dir / dataset_name
                 model_path = pathlib.Path(paths["models_1hp_dir"]) / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
