@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:demonstrator_app/Checkboxes.dart';
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +5,12 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
+
+//The different parts of the response, can be extended for longer responses
 enum ImageType { aIGenerated, groundtruth, differenceField }
 
+//Outputbox, one Box corresponds to one Image
+//TO-DO (for performance) rearrange it so the response is decoded on a parent level (so the response doesn't get decoded 3 times)
 class OutputBox extends StatelessWidget {
   OutputBox({super.key, required this.name});
   final ImageType name;
@@ -26,15 +27,10 @@ class OutputBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final checkBoxModel = Provider.of<CheckboxModel>(context);
-    final isChecked1 = checkBoxModel.isChecked1;
-    final isChecked2 = checkBoxModel.isChecked2;
     final Future<String> future = context.watch<FutureNotifier>().future;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Text("Checkbox1 is ${isChecked1 ? 'checked' : 'not checked'}"),
-        //Text("Checkbox2 is ${isChecked2 ? 'checked' : 'not checked'}"),
         SizedBox(
           height: 100,
           child: FutureBuilder<String>(
@@ -102,22 +98,28 @@ class OutputBox extends StatelessWidget {
   }
 }
 
+//Helper Class for decoding the HTTP Request to Uint8Lists so we can use them for Images
 class ResponseDecoder {
   late String response;
   late Map<String, dynamic> jsonDecoded;
 
   ResponseDecoder();
 
+  //initially setting the response
+  //[response] The HTTP response in JSON
   void setResponse(String? response) {
     this.response = response!;
     jsonDecoded = decodeData();
   }
 
+  //internal Method
   Map<String, dynamic> decodeData() {
     Map<String, dynamic> decodedData = json.decode(response);
     return decodedData;
   }
 
+  //Use this method to get the bytes
+  //[type] the identifier of the JSON value
   Uint8List getBytes(String? type) {
     if (type == null) {
       throw ArgumentError('Type cannot be null');
