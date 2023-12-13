@@ -119,7 +119,7 @@ class ModelConfiguration:
                 paths = yaml.safe_load(f)
 
                 dataset_name = "datasets_raw_1000_1HP"
-                default_raw_dir = pathlib.Path(paths["default_raw_dir"]) / "datasets_raw_1000_1HP"
+                default_raw_dir = pathlib.Path(paths["default_raw_dir"])
 
                 if not os.path.exists(default_raw_dir / dataset_name):
                     print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
