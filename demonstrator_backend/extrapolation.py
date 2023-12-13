@@ -180,7 +180,7 @@ class TaylorInterpolatedField(TemperatureField):
 
         return id, jd
     
-    def get_values(self, i: float, j: float, method: int = 0):
+    def get_values(self, i: float, j: float, method: int = 0, use_second_order: bool = False):
         T = self.T
         m = T.shape[0]
         n = T.shape[1]
@@ -203,19 +203,29 @@ class TaylorInterpolatedField(TemperatureField):
 
         if method == 0:
             id, jd = self.get_1st_derivative(i0, j0)
-            idd, jdd = self.get_2nd_derivative(i0, j0)
         elif method == 1:
             id, jd = self.get_1st_derivative_filter(i0, j0)
-            idd, jdd = self.get_2nd_derivative_filter(i0, j0)
         else:
             id, jd = self.get_1st_derivative(i0, j0)
-            idd, jdd = self.get_2nd_derivative_higher_order(i0, j0)
 
-        #ijdd = Tij[min(i0,254), min(j0,254)]
+        if use_second_order:
+            Tij = np.diff(np.diff(T,0),1) / h**2 # TODO: provisorisch und unschön
+            ijdd = Tij[min(i0,254), min(j0,254)]
+            if method == 0:
+                idd, jdd = self.get_2nd_derivative(i0, j0)
+            elif method == 1:
+                idd, jdd = self.get_2nd_derivative_filter(i0, j0)
+            else:
+                idd, jdd = self.get_2nd_derivative_higher_order(i0, j0)
+        else:
+            ijdd = 0
+            idd = 0
+            jdd = 0
+
         
         y = T[i0, j0] 
         y += (id * (i - i0)*h + jd * (j - j0)*h)
-        # y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 
+        y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 
 
         return max(y, 10.6), id, jd, idd, jdd
 
@@ -226,47 +236,48 @@ class TaylorInterpolatedField(TemperatureField):
 
 def main():
 
-    names = { 0 : "normal", 1 : "filter", 2 : "higher"}
+    method = 0
+    run_index = 2 # Superzahl 2
+    use_second_order_derivatives = False
 
-    for method in range(1,2):
-        fig, axes = plt.subplots(6, 1)
-        plt.sca(axes[0])
+    names = { 0 : "Normal", 1 : "Filter", 2 : "Höhere Ordnung"}
 
-        run_index = 2 # Superzahl 2
+    fig, axes = plt.subplots(6, 1)
+    plt.sca(axes[0])
 
-        path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-        info = GroundTruthInfo(path_to_dataset, 10.6)
-        T0 = TaylorInterpolatedField(info, run_index)
-        size = (T0.T.shape[0] + 30, T0.T.shape[1] + 30)
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+    info = GroundTruthInfo(path_to_dataset, 10.6)
+    T0 = TaylorInterpolatedField(info, run_index)
+    size = (T0.T.shape[0] + 30, T0.T.shape[1] + 30)
 
-        T1 = [np.ndarray(size) for i in range(5)]
+    T1 = [np.ndarray(size) for i in range(5)]
 
-        for i in range(-15, T0.T.shape[0] + 15):
-            for j in range(-15, T0.T.shape[1] + 15):
-                y, id, jd, idd, jdd = T0.get_values(i, j, method = method)
-                T1[0][i+15, j+15] = y 
-                T1[1][i+15, j+15] = id 
-                T1[2][i+15, j+15] = jd 
-                T1[3][i+15, j+15] = idd 
-                T1[4][i+15, j+15] = jdd
+    for i in range(-15, T0.T.shape[0] + 15):
+        for j in range(-15, T0.T.shape[1] + 15):
+            y, id, jd, idd, jdd = T0.get_values(i, j, method=method, use_second_order=use_second_order_derivatives)
+            T1[0][i+15, j+15] = y 
+            T1[1][i+15, j+15] = id 
+            T1[2][i+15, j+15] = jd 
+            T1[3][i+15, j+15] = idd 
+            T1[4][i+15, j+15] = jdd
         
 
-        plt.sca(axes[0])
-        plt.title(names[method])
-        image = plt.imshow(T0.T, cmap="RdBu_r", vmin=10.6, vmax=15)
-        plt.colorbar(image, cax = make_axes_locatable(axes[0]).append_axes("right", size="5%", pad=0.05))
+    plt.sca(axes[0])
+    plt.title(names[method] + (" (2. Abl)" if use_second_order_derivatives else " (1. Abl)"))
+    image = plt.imshow(T0.T, cmap="RdBu_r", vmin=10.6, vmax=15)
+    plt.colorbar(image, cax = make_axes_locatable(axes[0]).append_axes("right", size="5%", pad=0.05))
 
-        plt.sca(axes[1])
-        image = plt.imshow(T1[0], cmap="RdBu_r", vmin=10.6, vmax=15)
-        plt.colorbar(image, cax = make_axes_locatable(axes[1]).append_axes("right", size="5%", pad=0.05))
+    plt.sca(axes[1])
+    image = plt.imshow(T1[0], cmap="RdBu_r", vmin=10.6, vmax=15)
+    plt.colorbar(image, cax = make_axes_locatable(axes[1]).append_axes("right", size="5%", pad=0.05))
 
-        for i in range(1,5):
-            plt.sca(axes[i + 1])
-            r = np.max(np.abs(T1[i]))
-            image = plt.imshow(T1[i], cmap="RdBu_r", vmin=-r, vmax=r)
-            plt.colorbar(image, cax = make_axes_locatable(axes[i + 1]).append_axes("right", size="5%", pad=0.05))
+    for i in range(1,5):
+        plt.sca(axes[i + 1])
+        r = np.max(np.abs(T1[i]))
+        image = plt.imshow(T1[i], cmap="RdBu_r", vmin=-r, vmax=r)
+        plt.colorbar(image, cax = make_axes_locatable(axes[i + 1]).append_axes("right", size="5%", pad=0.05))
 
-        plt.show()
+    plt.show()
 
 if __name__ == "__main__":
     main()
