@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
 import os
-import sys
 import yaml
 import h5py
 import torch
@@ -20,23 +19,10 @@ class HPBounds:
     y1: int = 256
 
 
-
-# ACHTUNG:
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
-
-
-# Imports in Python machen mich wahnsinnig
-# Kopiert von Julia
-def get_pflotran_settings(dataset_path_raw: str):
-    with open(os.path.join(dataset_path_raw, "inputs", "settings.yaml"), "r") as f:
-        pflotran_settings = yaml.safe_load(f)
-    return pflotran_settings
-
 @dataclass
 class GroundTruthInfo:
     dataset_path: str
     base_temp: float
-    use_interpolation: bool = True
     datapoints: list = None
     threshold_temp: float = 0
     visualize: bool = False
@@ -48,7 +34,6 @@ class GroundTruthInfo:
         self.threshold_temp = self.base_temp + 0.5
         pflotran_settings = get_pflotran_settings(self.dataset_path)
         self.dims = pflotran_settings["grid"]["ncells"]
-
 
 
 # TODO: ACHTUNG skaliertes laden!
@@ -68,6 +53,18 @@ def load_data_points(path_to_dataset):
     return datapoints
 
 
+def load_temperature_field(info: GroundTruthInfo, run_index: int):
+    temperature_field = load_temperature_field_raw(info, run_index)["Temperature [C]"].detach().cpu().squeeze().numpy()
+    return temperature_field
+
+
+# Kopiert von Julia (Imports in Python machen mich wahnsinnig)
+
+def get_pflotran_settings(dataset_path_raw: str):
+    with open(os.path.join(dataset_path_raw, "inputs", "settings.yaml"), "r") as f:
+        pflotran_settings = yaml.safe_load(f)
+    return pflotran_settings
+
 
 def load_temperature_field_raw(info: GroundTruthInfo, run_index: int):
     path = os.path.join(info.dataset_path, f"RUN_{run_index}", "pflotran.h5")
@@ -75,8 +72,3 @@ def load_temperature_field_raw(info: GroundTruthInfo, run_index: int):
     with h5py.File(path, "r") as file:
         data["Temperature [C]"] = torch.tensor(np.array(file["   4 Time  2.75000E+01 y"]["Temperature [C]"]).reshape(info.dims, order='F')).float()
     return data
-
-def load_temperature_field(info: GroundTruthInfo, run_index: int):
-    temperature_field = load_temperature_field_raw(info, run_index)["Temperature [C]"].detach().cpu().squeeze().numpy()
-    return temperature_field
-

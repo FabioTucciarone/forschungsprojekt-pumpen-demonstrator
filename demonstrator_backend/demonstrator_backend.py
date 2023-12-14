@@ -23,12 +23,14 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     """
     Returns a JSON object of all three resulting images.
     The images are encoded as a base64 string.
+
     Parameters:
     ----------
     {"permeability": <float>, "pressure": <float>, "name": <string>}
+
     Return:
     ----------
-    {"model_result": "iVB...YII=", "groundtruth": "iVB...IYI=" , "error_measure": "iVB...mCC"}
+    Example: {"model_result": "iVB...YII=", "groundtruth": "iVB...IYI=" , "error_measure": "iVB...mCC", "average_error" : 0.005788 }
     """
 
     
@@ -41,10 +43,10 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
 
     display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, name)
 
-    return { "model_result":  display_data.get_encoded_figure(0), 
-             "groundtruth":   display_data.get_encoded_figure(1), 
-             "error_measure": display_data.get_encoded_figure(2),
-             "groundtruth_method": "interpolated" }
+    return { "model_result":  display_data.get_encoded_figure("model_result"), 
+             "groundtruth":   display_data.get_encoded_figure("groundtruth"), 
+             "error_measure": display_data.get_encoded_figure("error_measure"),
+             "average_error" : display_data.average_error }
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -65,9 +67,9 @@ def browser_input():
                 <input type="text" id="pressure" name="pressure" value="{pressure}" required />
                 <button type="submit">Submit</button
             </form> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure(0)}" alt="Fehler: model_result" width="60%" /> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure(1)}" alt="Fehler: groundtruth" width="60%" /> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure(2)}" alt="Fehler: error_measure" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data.get_encoded_figure("model_result")}" alt="Fehler: model_result" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data.get_encoded_figure("groundtruth")}" alt="Fehler: groundtruth" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data.get_encoded_figure("error_measure")}" alt="Fehler: error_measure" width="60%" /> <br>
             """
 
     return f"""
@@ -76,7 +78,7 @@ def browser_input():
             <input type="text" id="permeability" name="permeability" value="{7.350e-10}" required />
             <input type="text" id="pressure" name="pressure" value="{-2.142e-03}" required />
             <button type="submit">Submit</button
-        </form> <br>"""
+        </form> <br>"""   
 
 
 @app.route('/test_response', methods = ['GET'])
