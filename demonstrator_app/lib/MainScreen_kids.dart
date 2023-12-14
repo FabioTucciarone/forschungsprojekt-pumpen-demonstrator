@@ -135,10 +135,10 @@ class _RobotBoxState extends State<RobotBox> {
             responseDecoder.setResponse(snapshot.data);
             double averageError = responseDecoder.jsonDecoded["average_error"];
             print(averageError);
-            if (averageError > 0.02) {
+            if (averageError > 0.01) {
               imageValue = 2;
             }
-            if (averageError > 0.1) {
+            if (averageError > 0.08) {
               imageValue = 3;
             }
           }
@@ -149,7 +149,9 @@ class _RobotBoxState extends State<RobotBox> {
             width: 300,
             height: 300,
             decoration: BoxDecoration(
-                color: Colors.blue, borderRadius: BorderRadius.circular(50)),
+                border: Border.all(width: 5),
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(200)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(1000),
               child: Image.asset(imagePaths[imageValue], fit: BoxFit.cover),

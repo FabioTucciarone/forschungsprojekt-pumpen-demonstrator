@@ -108,11 +108,18 @@ class _RobotIntroState extends State<RobotIntro> {
                 top: 20,
                 left: 350,
                 child: Container(
-                  color: Colors.white,
-                  height: 500,
-                  width: 400,
-                  child: Image.asset(
-                    imagePaths[times],
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 5),
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(200)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(200),
+                    child: Image.asset(
+                      imagePaths[times],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -128,8 +135,10 @@ class _RobotIntroState extends State<RobotIntro> {
                     text: speeches[times],
                     color: const Color.fromARGB(255, 190, 190, 190),
                     tail: true,
-                    textStyle:
-                        const TextStyle(color: Colors.black, fontSize: 25),
+                    textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        decoration: TextDecoration.none),
                   ),
                 ),
               ),
