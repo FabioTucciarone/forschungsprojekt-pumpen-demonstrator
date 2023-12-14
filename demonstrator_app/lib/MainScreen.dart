@@ -144,13 +144,13 @@ mixin MainScreenElements {
       900,
       -4 * pow(10, -3).toDouble(),
       -1 * pow(10, -3).toDouble(),
-      'Druck',
+      SliderType.pressure,
       -4 * pow(10, -3).toDouble());
   final PressureSlider permeability = PressureSlider(
       900,
       pow(10, -11).toDouble(),
       5 * pow(10, -9).toDouble(),
-      'Durchlässigkeit',
+      SliderType.permeability,
       pow(10, -11).toDouble());
 
   PressureSlider getPressure() {
@@ -179,6 +179,9 @@ mixin MainScreenElements {
       const Text(
         "Ausgabe:",
         textScaleFactor: 2,
+      ),
+      const SizedBox(
+        height: 5,
       ),
       OutputBox(
         name: ImageType.aIGenerated,

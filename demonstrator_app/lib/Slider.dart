@@ -1,11 +1,15 @@
+import 'Layout.dart';
+import 'Intro.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+
+enum SliderType { pressure, permeability }
 
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final double start;
   final double end;
-  final String name;
+  final SliderType name;
   double currentValue;
   PressureSlider(
     this.sliderWidth,
@@ -64,17 +68,54 @@ class _PressureSliderState extends State<PressureSlider> {
     });
   }
 
+  Widget getDisplayOfValues(SliderType name, double currentValue) {
+    if (name == SliderType.pressure) {
+      return Text(
+        'Druck: $currentValue',
+        textScaleFactor: 1.2,
+      );
+    } else {
+      return Text(
+        'Durchlässigkeit: $currentValue',
+        textScaleFactor: 1.2,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String name = widget.name;
-    double currentValue = widget.currentValue;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          '$name: $currentValue',
-          textScaleFactor: 1.2,
-        ),
+        /*FutureBuilder(
+            future: useOfBackend.backend.getValueRanges(),
+            builder: (BuildContext context,
+                AsyncSnapshot<Map<String, dynamic>> snapshot) {
+              Widget child;
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (name == SliderType.pressure) {
+                  child = Text(
+                    '$name: $currentValue',
+                    textScaleFactor: 1.2,
+                  );
+                } else {
+                  child = Text(
+                    '$name: $currentValue',
+                    textScaleFactor: 1.2,
+                  );
+                }
+              } else {
+                child = const SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(
+                    color: OurColors.accentColor,
+                  ),
+                );
+              }
+              return child;
+            }),*/
+        getDisplayOfValues(widget.name, widget.currentValue),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,

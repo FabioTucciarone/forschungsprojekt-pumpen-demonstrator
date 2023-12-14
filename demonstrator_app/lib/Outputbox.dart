@@ -28,7 +28,7 @@ class OutputBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifier>().future;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
           height: 100,
