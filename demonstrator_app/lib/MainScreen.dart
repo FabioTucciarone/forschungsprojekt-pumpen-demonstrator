@@ -11,6 +11,7 @@ import 'dart:math';
 class MainSlide extends StatefulWidget with MainScreenElements {
   final bool children;
   MainSlide({super.key, required this.children});
+  static FutureNotifier futureNotifier = FutureNotifier();
 
   @override
   State<MainSlide> createState() => _MainSlideState();
@@ -18,7 +19,6 @@ class MainSlide extends StatefulWidget with MainScreenElements {
 
 class _MainSlideState extends State<MainSlide>
     with SingleTickerProviderStateMixin {
-  final FutureNotifier futureNotifier = FutureNotifier();
   late TabController _tabController;
 
   @override
@@ -34,7 +34,7 @@ class _MainSlideState extends State<MainSlide>
       child: MultiProvider(
           providers: [
             ChangeNotifierProvider<FutureNotifier>(
-              create: ((context) => futureNotifier),
+              create: ((context) => MainSlide.futureNotifier),
             ),
           ],
           child: MaterialApp(
@@ -86,9 +86,7 @@ class _MainSlideState extends State<MainSlide>
                 widget.children
                     ? IntroKids(_tabController)
                     : IntroductionScience(_tabController),
-                widget.children
-                    ? Phase1Kids(futureNotifier)
-                    : MainScreenContent(futureNotifier),
+                widget.children ? Phase1Kids() : MainScreenContent(),
                 const SciencePhase2(),
               ]),
             ),
@@ -98,8 +96,7 @@ class _MainSlideState extends State<MainSlide>
 }
 
 class MainScreenContent extends StatelessWidget with MainScreenElements {
-  final FutureNotifier futureNotifier;
-  MainScreenContent(this.futureNotifier, {super.key});
+  MainScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +107,6 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
         children: [
           ...input(),
           ...output(),
-          AnwendenButton(
-              futureNotifier: futureNotifier,
-              permeability: getPermeability(),
-              pressure: getPressure()),
         ],
       ),
     );
@@ -140,34 +133,71 @@ class SciencePhase2 extends StatelessWidget {
 }
 
 mixin MainScreenElements {
-  final PressureSlider pressure = PressureSlider(
+  static PressureSlider pressureSlider = PressureSlider(
       900,
-      -4 * pow(10, -3).toDouble(),
-      -1 * pow(10, -3).toDouble(),
-      'Druck',
-      -4 * pow(10, -3).toDouble());
-  final PressureSlider permeability = PressureSlider(
+      const {
+        "pressure_range": [0, 1],
+        "permeability_range": [0, 1]
+      },
+      SliderType.pressure,
+      0);
+  final Widget pressureWidget = FutureBuilder(
+      future: useOfBackend.backend.getValueRanges(),
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        Widget child;
+        if (snapshot.connectionState == ConnectionState.done) {
+          pressureSlider =
+              PressureSlider(900, snapshot.data, SliderType.pressure, 0);
+          child = pressureSlider;
+        } else {
+          child = const SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              color: OurColors.accentColor,
+            ),
+          );
+        }
+        return child;
+      });
+
+  static PressureSlider permeabilitySlider = PressureSlider(
       900,
-      pow(10, -11).toDouble(),
-      5 * pow(10, -9).toDouble(),
-      'Durchlässigkeit',
-      pow(10, -11).toDouble());
-
-  PressureSlider getPressure() {
-    return pressure;
-  }
-
-  PressureSlider getPermeability() {
-    return permeability;
-  }
+      const {
+        "pressure_range": [0, 1],
+        "permeability_range": [0, 1]
+      },
+      SliderType.pressure,
+      0);
+  final Widget permeabilityWidget = FutureBuilder(
+      future: useOfBackend.backend.getValueRanges(),
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        Widget child;
+        if (snapshot.connectionState == ConnectionState.done) {
+          permeabilitySlider =
+              PressureSlider(900, snapshot.data, SliderType.permeability, 0);
+          child = permeabilitySlider;
+        } else {
+          child = const SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              color: OurColors.accentColor,
+            ),
+          );
+        }
+        return child;
+      });
 
   List<Widget> input() {
     return <Widget>[
-      pressure,
+      pressureWidget,
       const SizedBox(
         height: 10,
       ),
-      permeability,
+      permeabilityWidget,
     ];
   }
 
@@ -179,6 +209,9 @@ mixin MainScreenElements {
       const Text(
         "Ausgabe:",
         textScaleFactor: 2,
+      ),
+      const SizedBox(
+        height: 5,
       ),
       OutputBox(
         name: ImageType.aIGenerated,
@@ -199,43 +232,6 @@ mixin MainScreenElements {
         height: 10,
       ),
     ];
-  }
-}
-
-class AnwendenButton extends StatelessWidget {
-  const AnwendenButton(
-      {super.key,
-      required this.futureNotifier,
-      required this.permeability,
-      required this.pressure});
-  final FutureNotifier futureNotifier;
-  final PressureSlider pressure;
-  final PressureSlider permeability;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: OurColors.appBarColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            minimumSize: const Size(150, 50),
-          ),
-          onPressed: () {
-            futureNotifier.setFuture(useOfBackend.backend.sendInputData(
-                permeability.getCurrent(), pressure.getCurrent(), ""));
-          },
-          child: const Text(
-            "Anwenden",
-            textScaleFactor: 1.5,
-            style: TextStyle(color: OurColors.appBarTextColor),
-          ),
-        ),
-      ],
-    );
   }
 }
 
