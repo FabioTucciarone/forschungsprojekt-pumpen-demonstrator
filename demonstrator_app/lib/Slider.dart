@@ -1,3 +1,5 @@
+import 'package:demonstrator_app/MainScreen.dart';
+
 import 'Layout.dart';
 import 'Intro.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +9,12 @@ enum SliderType { pressure, permeability }
 
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
-  final double start;
-  final double end;
+  final Map<String, dynamic>? valueRange;
   final SliderType name;
   double currentValue;
   PressureSlider(
     this.sliderWidth,
-    this.start,
-    this.end,
+    this.valueRange,
     this.name,
     this.currentValue,
   );
@@ -27,7 +27,8 @@ class PressureSlider extends StatefulWidget {
   State<PressureSlider> createState() => _PressureSliderState();
 }
 
-class _PressureSliderState extends State<PressureSlider> {
+class _PressureSliderState extends State<PressureSlider>
+    with MainScreenElements {
   final List<Color> colorsGradient = [
     const Color.fromARGB(255, 182, 2, 2),
     const Color.fromARGB(255, 255, 0, 0),
@@ -45,11 +46,31 @@ class _PressureSliderState extends State<PressureSlider> {
     widget.currentValue = determineValue(sliderPos);
   }
 
+  double getStart() {
+    double start = 0;
+    if (widget.name == SliderType.pressure) {
+      start = widget.valueRange?["pressure_range"][0];
+    } else {
+      start = widget.valueRange?["permeability_range"][0];
+    }
+    return start;
+  }
+
+  double getEnd() {
+    double end = 0;
+    if (widget.name == SliderType.pressure) {
+      end = widget.valueRange?["pressure_range"][1];
+    } else {
+      end = widget.valueRange?["permeability_range"][1];
+    }
+    return end;
+  }
+
   double determineValue(double sliderPos) {
-    double diff = widget.end - widget.start;
+    double diff = getEnd() - getStart();
     double interval = widget.sliderWidth / diff;
     double i = sliderPos / interval;
-    double value = widget.start + i;
+    double value = getStart() + i;
     int exp = (log(value.abs()) / ln10).abs().round();
     value = (value * pow(10, 7 + exp)).round().toDouble() / pow(10, 7 + exp);
     return value;
@@ -87,34 +108,6 @@ class _PressureSliderState extends State<PressureSlider> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        /*FutureBuilder(
-            future: useOfBackend.backend.getValueRanges(),
-            builder: (BuildContext context,
-                AsyncSnapshot<Map<String, dynamic>> snapshot) {
-              Widget child;
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (name == SliderType.pressure) {
-                  child = Text(
-                    '$name: $currentValue',
-                    textScaleFactor: 1.2,
-                  );
-                } else {
-                  child = Text(
-                    '$name: $currentValue',
-                    textScaleFactor: 1.2,
-                  );
-                }
-              } else {
-                child = const SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircularProgressIndicator(
-                    color: OurColors.accentColor,
-                  ),
-                );
-              }
-              return child;
-            }),*/
         getDisplayOfValues(widget.name, widget.currentValue),
         Center(
           child: GestureDetector(
@@ -127,6 +120,32 @@ class _PressureSliderState extends State<PressureSlider> {
             },
             onTapDown: (TapDownDetails details) {
               correctingPosition(details.localPosition.dx);
+            },
+            onHorizontalDragEnd: (DragEndDetails details) {
+              if (widget.name == SliderType.pressure) {
+                MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                    .sendInputData(
+                        MainScreenElements.permeabilitySlider.getCurrent(),
+                        widget.currentValue,
+                        ""));
+              } else {
+                MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                    .sendInputData(widget.currentValue,
+                        MainScreenElements.pressureSlider.getCurrent(), ""));
+              }
+            },
+            onTapUp: (TapUpDetails details) {
+              if (widget.name == SliderType.pressure) {
+                MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                    .sendInputData(
+                        MainScreenElements.permeabilitySlider.getCurrent(),
+                        widget.currentValue,
+                        ""));
+              } else {
+                MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                    .sendInputData(widget.currentValue,
+                        MainScreenElements.pressureSlider.getCurrent(), ""));
+              }
             },
             child: Padding(
               padding: const EdgeInsets.all(15),
@@ -155,12 +174,10 @@ class SliderThumb extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawLine(
-        Offset(pos, -5),
-        Offset(pos, size.height),
-        Paint()
-          ..color = Colors.black
-          ..strokeWidth = 3.0);
+    canvas.drawRRect(
+        RRect.fromLTRBR(
+            pos - 4, -5, pos + 4, size.height + 5, const Radius.circular(2)),
+        Paint()..color = Colors.black);
   }
 
   @override
