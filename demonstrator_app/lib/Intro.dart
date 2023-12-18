@@ -73,10 +73,10 @@ class _RobotIntroState extends State<RobotIntro> {
   Player player = Player();
   int times = 0;
   List<String> imagePaths = [
-    'assets/happy.png',
+    'assets/happy.jpeg',
     'assets/bored.jpeg',
     'assets/confused.jpeg',
-    'assets/happy.png',
+    'assets/happy.jpeg',
   ];
   List<String> speeches = [
     "",
@@ -125,8 +125,8 @@ class _RobotIntroState extends State<RobotIntro> {
               ),
               Positioned(
                 top: 50,
-                left: 95,
-                width: 500,
+                left: 0,
+                width: 400,
                 height: 700,
                 child: AnimatedOpacity(
                   opacity: speechBubble ? 1.0 : 0,

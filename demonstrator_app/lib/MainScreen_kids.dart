@@ -26,10 +26,6 @@ class Phase1Kids extends StatelessWidget with MainScreenKidsElements {
               Column(
                 children: [...input()],
               ),
-              Container(
-                width: 100,
-                height: 100,
-              ),
               RobotBox()
             ],
           ),
@@ -42,7 +38,7 @@ class Phase1Kids extends StatelessWidget with MainScreenKidsElements {
 
 mixin MainScreenKidsElements {
   static PressureSlider pressureSlider = PressureSlider(
-      900,
+      500,
       const {
         "pressure_range": [0, 1],
         "permeability_range": [0, 1]
@@ -56,7 +52,7 @@ mixin MainScreenKidsElements {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           pressureSlider =
-              PressureSlider(400, snapshot.data, SliderType.pressure, 0);
+              PressureSlider(500, snapshot.data, SliderType.pressure, 0);
           child = pressureSlider;
         } else {
           child = const SizedBox(
@@ -71,7 +67,7 @@ mixin MainScreenKidsElements {
       });
 
   static PressureSlider permeabilitySlider = PressureSlider(
-      900,
+      500,
       const {
         "pressure_range": [0, 1],
         "permeability_range": [0, 1]
@@ -85,7 +81,7 @@ mixin MainScreenKidsElements {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           permeabilitySlider =
-              PressureSlider(400, snapshot.data, SliderType.permeability, 0);
+              PressureSlider(500, snapshot.data, SliderType.permeability, 0);
           child = permeabilitySlider;
         } else {
           child = const SizedBox(
@@ -146,7 +142,7 @@ class RobotBox extends StatefulWidget {
 
 class _RobotBoxState extends State<RobotBox> {
   List<String> imagePaths = [
-    'assets/happy.png',
+    'assets/happy.jpeg',
     'assets/bored.jpeg',
     'assets/confused.jpeg',
     'assets/mad.jpeg',
@@ -189,26 +185,27 @@ class _RobotBoxState extends State<RobotBox> {
         if (snapshot.connectionState == ConnectionState.done) {
           int randomScore = random.nextInt(lowScore.length);
           text = lowScore[randomScore];
-          imageValue = 1;
+          imageValue = 3;
           if (snapshot.data != "keinWert") {
             responseDecoder.setResponse(snapshot.data);
             double averageError = responseDecoder.jsonDecoded["average_error"];
             print(averageError);
-            if (averageError > 0.015) {
+            if (averageError > 0.15) {
               text = midScore[randomScore];
-              imageValue = 2;
+              imageValue = 1;
             }
-            if (averageError > 0.06) {
-              imageValue = 3;
+            if (averageError > 0.4) {
+              imageValue = 0;
               text = highScore[randomScore];
             }
           } else {
             text =
                 "Hey los geht's! Bewege die Schieberegler und drücke auf den Knopf unten um loszulegen!";
+            imageValue = 0;
           }
         } else {
           int randomLoading = random.nextInt(loading.length);
-          imageValue = 0;
+          imageValue = 2;
           text = loading[randomLoading];
         }
         child = Container(
@@ -296,11 +293,25 @@ class ScoreBoard extends StatelessWidget {
                   );
                 }
               } else {
-                child = const SizedBox(
-                  width: 10,
-                  height: 10,
-                  child: CircularProgressIndicator(
-                    color: OurColors.accentColor,
+                child = Container(
+                  width: 200,
+                  decoration: BoxDecoration(
+                      color: OurColors.accentColor,
+                      border:
+                          Border.all(color: OurColors.appBarColor, width: 4.0),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Row(
+                    children: [
+                      const Text(
+                        "Score:",
+                        textScaleFactor: 2,
+                      ),
+                      const SizedBox(
+                        child: CircularProgressIndicator(
+                          color: OurColors.accentColor,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
