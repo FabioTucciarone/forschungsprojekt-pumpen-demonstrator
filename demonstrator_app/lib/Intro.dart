@@ -126,14 +126,14 @@ class _RobotIntroState extends State<RobotIntro> {
               Positioned(
                 top: 50,
                 left: 95,
-                width: 300,
-                height: 500,
+                width: 500,
+                height: 700,
                 child: AnimatedOpacity(
                   opacity: speechBubble ? 1.0 : 0,
                   duration: const Duration(milliseconds: 500),
                   child: BubbleSpecialThree(
                     text: speeches[times],
-                    color: const Color.fromARGB(255, 190, 190, 190),
+                    color: OurColors.accentColor,
                     tail: true,
                     textStyle: const TextStyle(
                         color: Colors.black,
