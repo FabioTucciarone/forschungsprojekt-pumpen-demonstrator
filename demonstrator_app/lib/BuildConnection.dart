@@ -224,55 +224,82 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
+  bool errorSSHConnect = false;
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: FutureBuilder<void>(
         future: useOfBackend.backend
-            .connectToSSHServer(widget.username, widget.password),
+            .connectToSSHServer(widget.username, widget.password)
+            .catchError((error) => {errorSSHConnect = true}),
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           Widget child;
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              child = Container(
-                width: 300,
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.red,
-                    width: 2,
+          if (errorSSHConnect) {
+            child = Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.red,
+                      width: 2,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Anmeldung fehlgeschlagen',
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Anmeldung fehlgeschlagen',
-                    style: TextStyle(color: Colors.red),
+                TextButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: OurColors.appBarColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterApp()),
+                    );
+                  },
+                  child: const Text(
+                    'Erneut versuchen',
+                    style: TextStyle(color: OurColors.appBarTextColor),
                   ),
                 ),
-              );
-              print('Error ${snapshot.error} occured');
-            } else {
-              child = Container(
-                width: 300,
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.green,
-                    width: 2,
-                  ),
+              ],
+            );
+            print('Client authentication failed.');
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            child = Container(
+              width: 300,
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.green,
+                  width: 2,
                 ),
-                child: const Center(
-                  child: Text(
-                    'Anmeldung erfolgreich',
-                    style: TextStyle(color: Colors.green),
-                  ),
+              ),
+              child: const Center(
+                child: Text(
+                  'Anmeldung erfolgreich',
+                  style: TextStyle(color: Colors.green),
                 ),
-              );
-              useOfBackend.backend.addListener(() {
-                print('HTTP requests can be send now.');
-              });
-              useOfBackend.backend.forwardConnection('pcsgs08', 5000);
-            }
+              ),
+            );
+            useOfBackend.backend.addListener(() {
+              print('HTTP requests can be send now.');
+            });
+            useOfBackend.backend.forwardConnection('pcsgs08', 5000);
+            Future.delayed(Duration(seconds: 1), () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => IntroHomeScaffold()));
+            });
           } else {
             child = const SizedBox(
               width: 60,
