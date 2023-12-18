@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import numpy as np
 import os
+import argparse
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 
@@ -35,7 +36,7 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
     average_error_ges = 0
     successful_runs = 0
 
-    for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
+    for i in tqdm(range(n_from, n_to+1), desc="Testing", total=n_to-n_from):
         x = info.datapoints[i]
         info.datapoints[i] = None
 
@@ -94,11 +95,11 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
 
             plt.sca(axes[3])
             image = plt.imshow(interp_result, cmap="RdBu_r", vmin=10.6, vmax=max_temp)
-            add_plot_info(image, f"Interpolation von Nummer: {i}")
+            add_plot_info(image, f"Interpolation,  Nummer: {i}")
 
             plt.sca(axes[4])
             image = plt.imshow(true_result, cmap="RdBu_r", vmin=10.6, vmax=max_temp)
-            add_plot_info(image, f"Echtes Ergebnis")
+            add_plot_info(image, f"Echtes Ergebnis,  Nummer: {i}")
 
             plt.sca(axes[5])
             image = plt.imshow(error, cmap="RdBu_r", vmin=0, vmax=vmax)
@@ -164,16 +165,10 @@ def test_1hp_model_communication(visualize=True):
     print('Antwortzeit:', et2 - st2, 'seconds')
     print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
 
-    print(f"Error: {display_data.average_error}")
-
     if visualize:
-        show_figure(display_data.get_figure("model_result"))
+        show_figure(display_data.get_figure(0))
 
-
-def main():
-    # test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
-    # test_groundtruth(0, 19, visualize=False, type="interpolation", print_all=False)
-    test_1hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
-    main()
+    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interpolation", print_all=False)
