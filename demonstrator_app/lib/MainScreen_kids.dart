@@ -11,11 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-
 class Phase1Kids extends StatelessWidget with MainScreenKidsElements {
-  final FutureNotifier futureNotifier;
-  Phase1Kids(this.futureNotifier, {super.key});
-
+  Phase1Kids({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,34 +41,71 @@ class Phase1Kids extends StatelessWidget with MainScreenKidsElements {
 }
 
 mixin MainScreenKidsElements {
-  final PressureSlider pressure = PressureSlider(
-      500,
-      -4 * pow(10, -3).toDouble(),
-      -1 * pow(10, -3).toDouble(),
-      'Druck',
-      -4 * pow(10, -3).toDouble());
-  final PressureSlider permeability = PressureSlider(
-      500,
-      pow(10, -11).toDouble(),
-      5 * pow(10, -9).toDouble(),
-      'Durchlässigkeit',
-      pow(10, -11).toDouble());
+  static PressureSlider pressureSlider = PressureSlider(
+      900,
+      const {
+        "pressure_range": [0, 1],
+        "permeability_range": [0, 1]
+      },
+      SliderType.pressure,
+      0);
+  final Widget pressureWidget = FutureBuilder(
+      future: useOfBackend.backend.getValueRanges(),
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        Widget child;
+        if (snapshot.connectionState == ConnectionState.done) {
+          pressureSlider =
+              PressureSlider(400, snapshot.data, SliderType.pressure, 0);
+          child = pressureSlider;
+        } else {
+          child = const SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              color: OurColors.accentColor,
+            ),
+          );
+        }
+        return child;
+      });
 
-  PressureSlider getPressure() {
-    return pressure;
-  }
-
-  PressureSlider getPermeability() {
-    return permeability;
-  }
+  static PressureSlider permeabilitySlider = PressureSlider(
+      900,
+      const {
+        "pressure_range": [0, 1],
+        "permeability_range": [0, 1]
+      },
+      SliderType.pressure,
+      0);
+  final Widget permeabilityWidget = FutureBuilder(
+      future: useOfBackend.backend.getValueRanges(),
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        Widget child;
+        if (snapshot.connectionState == ConnectionState.done) {
+          permeabilitySlider =
+              PressureSlider(400, snapshot.data, SliderType.permeability, 0);
+          child = permeabilitySlider;
+        } else {
+          child = const SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              color: OurColors.accentColor,
+            ),
+          );
+        }
+        return child;
+      });
 
   List<Widget> input() {
     return <Widget>[
-      pressure,
+      pressureWidget,
       const SizedBox(
         height: 10,
       ),
-      permeability,
+      permeabilityWidget,
     ];
   }
 
