@@ -256,51 +256,34 @@ class ScoreBoard extends StatelessWidget {
     final Future<String> future = context.watch<FutureNotifier>().future;
     return Row(
       children: [
-        FutureBuilder(
-            future: future,
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              Widget child;
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.data != "keinWert") {
-                  responseDecoder.setResponse(snapshot.data);
-                  double averageError =
-                      responseDecoder.jsonDecoded["average_error"];
-                  int roundedError = (averageError * 10000).round();
-                  child = Container(
-                    width: 200,
-                    decoration: BoxDecoration(
-                        color: OurColors.accentColor,
-                        border: Border.all(
-                            color: OurColors.appBarColor, width: 4.0),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text(
+        Container(
+          width: 200,
+          decoration: BoxDecoration(
+              color: OurColors.accentColor,
+              border: Border.all(color: OurColors.appBarColor, width: 4.0),
+              borderRadius: BorderRadius.circular(20)),
+          child: FutureBuilder(
+              future: future,
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                Widget child;
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.data != "keinWert") {
+                    responseDecoder.setResponse(snapshot.data);
+                    double averageError =
+                        responseDecoder.jsonDecoded["average_error"];
+                    int roundedError = (averageError * 1000).round();
+                    child = Text(
                       "Score: $roundedError",
                       textScaleFactor: 2,
-                    ),
-                  );
-                } else {
-                  child = Container(
-                    width: 200,
-                    decoration: BoxDecoration(
-                        color: OurColors.accentColor,
-                        border: Border.all(
-                            color: OurColors.appBarColor, width: 4.0),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: const Text(
+                    );
+                  } else {
+                    child = const Text(
                       "Score: -",
                       textScaleFactor: 2,
-                    ),
-                  );
-                }
-              } else {
-                child = Container(
-                  width: 200,
-                  decoration: BoxDecoration(
-                      color: OurColors.accentColor,
-                      border:
-                          Border.all(color: OurColors.appBarColor, width: 4.0),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Row(
+                    );
+                  }
+                } else {
+                  child = Row(
                     children: [
                       const Text(
                         "Score:",
@@ -312,12 +295,25 @@ class ScoreBoard extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                );
-              }
+                  );
+                }
 
-              return child;
-            })
+                return child;
+              }),
+        ),
+        Container(
+          width: 200,
+          decoration: BoxDecoration(
+              color: OurColors.accentColor,
+              border: Border.all(color: OurColors.appBarColor, width: 4.0),
+              borderRadius: BorderRadius.circular(20)),
+          child: TextButton(
+              onPressed: () => {print("a")},
+              child: Text("Highscore:-",
+                  textScaleFactor: 2,
+                  style: TextStyle(
+                      decoration: TextDecoration.none, color: Colors.black))),
+        )
       ],
     );
   }
