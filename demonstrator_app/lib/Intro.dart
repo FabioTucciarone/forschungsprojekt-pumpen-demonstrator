@@ -73,10 +73,10 @@ class _RobotIntroState extends State<RobotIntro> {
   Player player = Player();
   int times = 0;
   List<String> imagePaths = [
-    'assets/happy.png',
+    'assets/happy.jpeg',
     'assets/bored.jpeg',
     'assets/confused.jpeg',
-    'assets/happy.png',
+    'assets/happy.jpeg',
   ];
   List<String> speeches = [
     "",
@@ -108,28 +108,37 @@ class _RobotIntroState extends State<RobotIntro> {
                 top: 20,
                 left: 350,
                 child: Container(
-                  color: Colors.white,
-                  height: 500,
-                  width: 400,
-                  child: Image.asset(
-                    imagePaths[times],
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 5),
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(200)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(200),
+                    child: Image.asset(
+                      imagePaths[times],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
               Positioned(
                 top: 50,
-                left: 95,
-                width: 300,
-                height: 500,
+                left: 0,
+                width: 400,
+                height: 700,
                 child: AnimatedOpacity(
                   opacity: speechBubble ? 1.0 : 0,
                   duration: const Duration(milliseconds: 500),
                   child: BubbleSpecialThree(
                     text: speeches[times],
-                    color: const Color.fromARGB(255, 190, 190, 190),
+                    color: OurColors.accentColor,
                     tail: true,
-                    textStyle:
-                        const TextStyle(color: Colors.black, fontSize: 25),
+                    textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        decoration: TextDecoration.none),
                   ),
                 ),
               ),
