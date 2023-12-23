@@ -152,10 +152,12 @@ mixin MainScreenElements {
           child = pressureSlider;
         } else {
           child = const SizedBox(
-            width: 60,
-            height: 60,
-            child: CircularProgressIndicator(
-              color: OurColors.accentColor,
+            width: 80,
+            height: 80,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
             ),
           );
         }
@@ -181,10 +183,12 @@ mixin MainScreenElements {
           child = permeabilitySlider;
         } else {
           child = const SizedBox(
-            width: 60,
-            height: 60,
-            child: CircularProgressIndicator(
-              color: OurColors.accentColor,
+            width: 80,
+            height: 80,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
             ),
           );
         }
