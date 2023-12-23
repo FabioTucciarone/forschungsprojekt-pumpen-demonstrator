@@ -91,14 +91,20 @@ class _PressureSliderState extends State<PressureSlider>
 
   Widget getDisplayOfValues(SliderType name, double currentValue) {
     if (name == SliderType.pressure) {
-      return Text(
-        'Druck: $currentValue',
-        textScaleFactor: 1.2,
+      return Container(
+        constraints: const BoxConstraints(minWidth: 250),
+        child: Text(
+          'Druck: $currentValue',
+          textScaleFactor: 1.2,
+        ),
       );
     } else {
-      return Text(
-        'Durchlässigkeit: $currentValue',
-        textScaleFactor: 1.2,
+      return Container(
+        constraints: const BoxConstraints(minWidth: 250),
+        child: Text(
+          'Durchlässigkeit: $currentValue',
+          textScaleFactor: 1.2,
+        ),
       );
     }
   }
