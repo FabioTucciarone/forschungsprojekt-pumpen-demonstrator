@@ -25,22 +25,14 @@ def test_2hp_model_communication():
 
     ## Einstellungen
 
-    settings = SettingsTraining(
-        dataset_raw = "dataset_2hps_demonstrator_1dp",
-        inputs = "gksi1000",
-        device = "cpu",
-        epochs = 10000,
-        case = "test",
-        model = "1000dp_1000gksi_separate/current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1",
-        visualize = True
-    )
-
     path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".." / ".."
     paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
 
     if os.path.exists(paths_file):
         with open(paths_file, "r") as f:
             paths_file = yaml.safe_load(f)
+    else:
+        print(f"WO: {paths_file}")
 
     # prepare_data_and_paths(settings):
 
@@ -49,6 +41,16 @@ def test_2hp_model_communication():
     prepared_1hp_dir             = pathlib.Path(paths_file["prepared_1hp_best_models_and_data_dir"])
     destination_dir              = pathlib.Path(paths_file["models_2hp_dir"])
     datasets_prepared_2hp_dir    = pathlib.Path(paths_file["datasets_prepared_dir_2hp"])
+
+    settings = SettingsTraining(
+        dataset_raw = "dataset_2hps_demonstrator_1dp",
+        inputs = "gksi1000",
+        device = "cpu",
+        epochs = 10000,
+        case = "test",
+        model = destination_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1",
+        visualize = True
+    )
 
     # TODO gksi durch split-Funktion
     dataset_model_trained_with_prep_path = prepared_1hp_dir / settings.inputs / "dataset_raw_demonstrator_input_1dp inputs_gksi"
@@ -66,8 +68,8 @@ def test_2hp_model_communication():
     )
 
     settings.dataset_prep = paths.datasets_boxes_prep_path
-    settings.make_destination_path(destination_dir)
-    settings.make_model_path(destination_dir)
+    #settings.make_destination_path(destination_dir)
+    # settings.make_model_path(destination_dir)
 
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
     groundtruth_info = gt.GroundTruthInfo(path_to_dataset, 10.6)
@@ -79,17 +81,15 @@ def test_2hp_model_communication():
     #multiprocessing.set_start_method("spawn", force=True)
     dataset, dataloaders = hp_nn.init_data(settings)
 
+    print(settings.model)
+
     model = UNet(in_channels=dataset.input_channels).float()
-    model.load(settings.model, settings.device)
+    model.load(pathlib.Path(settings.model), settings.device)
     model.to(settings.device)
 
     ## Visualisierung
     if settings.visualize:
-        visualizations_demonstrator(model, hp_inputs, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
-        #visualizations(model, dataloaders["test"], settings.device, plot_path=settings.destination / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
-        _, summed_error_pic = infer_all_and_summed_pic(model, dataloaders["test"], settings.device)
-        plot_avg_error_cellwise(dataloaders["test"], summed_error_pic, {"folder" : settings.destination, "format": "png"})
-
+        visualizations_demonstrator(model, hp_inputs, dataloaders["test"], settings.device, plot_path=pathlib.Path(settings.destination) / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
 
     # (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, self.groundtruth_info, permeability, pressure)
     # visualize.get_plots(self.model, x, y, info, norm, self.figures)

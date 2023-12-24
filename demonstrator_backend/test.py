@@ -172,8 +172,8 @@ def test_1hp_model_communication(visualize=True):
 
 def main():
     # test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
-    # test_groundtruth(0, 19, visualize=False, type="interpolation", print_all=False)
-    test_1hp_model_communication(visualize=True)
+    test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
+    # test_1hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
     main()
