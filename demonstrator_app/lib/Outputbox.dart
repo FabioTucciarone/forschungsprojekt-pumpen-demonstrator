@@ -108,7 +108,7 @@ class OutputBox extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          width: 20,
+          width: 30,
         ),
         Text(
           "${getName(name)}",

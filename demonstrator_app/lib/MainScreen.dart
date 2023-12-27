@@ -100,14 +100,24 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView(
-        padding: const EdgeInsets.all(10),
-        children: [
-          ...input(),
-          ...output(),
-        ],
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: SizedBox(
+          width: 1350,
+          height: 600,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...input(),
+                ...output(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

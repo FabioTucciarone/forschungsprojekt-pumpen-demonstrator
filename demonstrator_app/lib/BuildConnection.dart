@@ -1,6 +1,7 @@
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'BackendConnection.dart';
 
 class ButtonAnmelden extends StatefulWidget {
@@ -108,6 +109,23 @@ class _RegisterState extends State<RegisterBox> {
                   ),
                 ),
                 cursorColor: OurColors.accentColor,
+                focusNode: FocusNode(
+                  onKeyEvent: (node, event) {
+                    if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ResultApp(
+                                  username: username.text,
+                                  password: password.text,
+                                )),
+                      );
+                      return KeyEventResult.handled;
+                    } else {
+                      return KeyEventResult.ignored;
+                    }
+                  },
+                ),
               ),
             ),
             Padding(
@@ -148,6 +166,23 @@ class _RegisterState extends State<RegisterBox> {
                   ),
                 ),
                 cursorColor: OurColors.accentColor,
+                focusNode: FocusNode(
+                  onKeyEvent: (node, event) {
+                    if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ResultApp(
+                                  username: username.text,
+                                  password: password.text,
+                                )),
+                      );
+                      return KeyEventResult.handled;
+                    } else {
+                      return KeyEventResult.ignored;
+                    }
+                  },
+                ),
               ),
             ),
             TextButton(
@@ -237,7 +272,7 @@ class _ResultState extends State<Result> {
           Widget child;
           if (errorSSHConnect) {
             child = Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
                   width: 300,
