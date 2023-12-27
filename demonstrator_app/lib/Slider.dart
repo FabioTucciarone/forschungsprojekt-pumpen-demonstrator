@@ -148,7 +148,7 @@ class _PressureSliderState extends State<PressureSlider>
               }
             },
             child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(10),
               child: Container(
                 width: widget.sliderWidth,
                 height: 50,
