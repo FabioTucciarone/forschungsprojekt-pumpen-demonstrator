@@ -6,12 +6,14 @@ import multiprocessing
 import numpy as np
 import time
 
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import generate_groundtruth as gt
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
 import main as hp_nn
-from utils.visualization import plot_avg_error_cellwise, visualizations_demonstrator, infer_all_and_summed_pic, visualizations
+from utils.visualization import plot_avg_error_cellwise, infer_all_and_summed_pic, get_2hp_plots
 from utils.measurements import measure_loss, save_all_measurements
 import utils.visualization as visualize
 from networks.unet import UNet
@@ -19,6 +21,7 @@ import preprocessing.prepare_1ststage as prep_1hp
 import preprocessing.prepare_2ndstage as prep_2hp
 from utils.prepare_paths import Paths2HP
 from data_stuff.utils import SettingsTraining
+import model_communication as mc
 
 
 def test_2hp_model_communication():
@@ -66,33 +69,51 @@ def test_2hp_model_communication():
         model_1hp_path,
         datasets_boxes_prep_path,
     )
-
     settings.dataset_prep = paths.datasets_boxes_prep_path
-    #settings.make_destination_path(destination_dir)
-    # settings.make_model_path(destination_dir)
 
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    groundtruth_info = gt.GroundTruthInfo(path_to_dataset, 10.6)
+    with open(paths.dataset_1st_prep_path / "info.yaml", "r") as f:
+        info = yaml.safe_load(f)
 
-    hp_inputs = prep_2hp.prepare_demonstrator_input_2nd_stage(paths, "gksi", groundtruth_info, device=settings.device)
+
+    corner_dist = info["PositionHPPrior"]
+    pos_2nd_hp = [10, 10]
+
+    pressure = -2.142171334025262316e-04
+    permeability = 7.350276541753949086e-10
+    positions = [[corner_dist[1] + 50, corner_dist[0] + 50], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
+
+    model_1HP = UNet(in_channels=len("gksi")).float()
+    model_1HP.load(paths.model_1hp_path, settings.device)
+
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(info, model_1HP, pressure, permeability, positions)
 
     ## Modellanwendung
 
     #multiprocessing.set_start_method("spawn", force=True)
     dataset, dataloaders = hp_nn.init_data(settings)
 
-    print(settings.model)
-
     model = UNet(in_channels=dataset.input_channels).float()
     model.load(pathlib.Path(settings.model), settings.device)
     model.to(settings.device)
 
+    color_palette = mc.ColorPalette(
+        cmap_list        = [(0.1,0.27,0.8), (1,1,1), (1,0.1,0.1)],
+        background_color = (1,1,1),
+        text_color       = (0,0,0) 
+    )
+
     ## Visualisierung
     if settings.visualize:
-        visualizations_demonstrator(model, hp_inputs, dataloaders["test"], settings.device, plot_path=pathlib.Path(settings.destination) / f"plot_test", amount_datapoints_to_visu=1, pic_format="png")
+        dat = get_2hp_plots(model, hp_inputs, corners_ll, corner_dist, dataloaders["test"], color_palette, device=settings.device)
+        show_figure(dat.get_figure("result"))
 
-    # (x, y, info, norm) = prepare.prepare_demonstrator_input_1st_stage(self.paths1HP, self.settings, self.groundtruth_info, permeability, pressure)
-    # visualize.get_plots(self.model, x, y, info, norm, self.figures)
+
+def show_figure(figure: Figure):
+    managed_fig = plt.figure()
+    canvas_manager = managed_fig.canvas.manager
+    canvas_manager.canvas.figure = figure
+    figure.set_canvas(canvas_manager.canvas)
+    plt.show()
 
 if __name__ == "__main__":
     test_2hp_model_communication()
