@@ -3,21 +3,15 @@ import pathlib
 import sys
 import yaml
 import multiprocessing
-import numpy as np
-import time
 
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-import generate_groundtruth as gt
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
 import main as hp_nn
-from utils.visualization import plot_avg_error_cellwise, infer_all_and_summed_pic, get_2hp_plots
-from utils.measurements import measure_loss, save_all_measurements
 import utils.visualization as visualize
 from networks.unet import UNet
-import preprocessing.prepare_1ststage as prep_1hp
 import preprocessing.prepare_2ndstage as prep_2hp
 from utils.prepare_paths import Paths2HP
 from data_stuff.utils import SettingsTraining
@@ -34,67 +28,94 @@ def test_2hp_model_communication():
     if os.path.exists(paths_file):
         with open(paths_file, "r") as f:
             paths_file = yaml.safe_load(f)
+        try:
+            default_raw_1hp_dir = pathlib.Path(paths_file["default_raw_dir"])
+            prepared_domain_dir = pathlib.Path(paths_file["datasets_prepared_domain_dir"])
+            prepared_boxes_dir  = pathlib.Path(paths_file["datasets_prepared_dir_2hp"])
+            models_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
+            models_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
+        except:
+            print(f'Error loading "{paths_file}"')
     else:
-        print(f"WO: {paths_file}")
+        print(f'1HP_NN/info.yaml not found, trying default path')
+        default_raw_1hp_dir = path_to_project_dir / "datasets_raw"
+        prepared_domain_dir = path_to_project_dir / "datasets_prepared_domain"
+        prepared_boxes_dir  = path_to_project_dir / "datasets_prepared"
+        models_1hp_dir      = path_to_project_dir / "models_1hpnn"
+        models_2hp_dir      = path_to_project_dir / "models_2hpnn"
 
+
+    model_2hp_dir = models_2hp_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
+    model_1hp_dir = models_1hp_dir / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
+
+    dataset_2hpnn_names = ["dataset_2hps_demonstrator_1dp"]
+    dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
+    dataset_domain_prepared_name = None
+    dataset_boxes_prepared_name = None
+    raw_dataset_1hpnn_name = None
+
+    for name in dataset_1hpnn_names:
+        if os.path.exists(default_raw_1hp_dir / name):
+            raw_dataset_1hpnn_name = name
+
+    for name in dataset_2hpnn_names:
+        if os.path.exists(prepared_domain_dir / (name + " inputs_gksi")):
+            dataset_domain_prepared_name = name + " inputs_gksi"
+        if os.path.exists(prepared_boxes_dir / (name + " inputs_gksi1000 boxes")):
+            dataset_boxes_prepared_name = name + " inputs_gksi1000 boxes"
+
+    if raw_dataset_1hpnn_name is None:
+        raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
+    
+    if dataset_domain_prepared_name is None:
+        raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
+
+    if dataset_boxes_prepared_name is None:
+        raise FileNotFoundError(f'2HP prepared boxes dataset not found at "{prepared_boxes_dir}"')
+    
     # prepare_data_and_paths(settings):
 
-    datasets_raw_domain_dir      = pathlib.Path(paths_file["datasets_raw_domain_dir"])
-    datasets_prepared_domain_dir = pathlib.Path(paths_file["datasets_prepared_domain_dir"])
-    prepared_1hp_dir             = pathlib.Path(paths_file["prepared_1hp_best_models_and_data_dir"])
-    destination_dir              = pathlib.Path(paths_file["models_2hp_dir"])
-    datasets_prepared_2hp_dir    = pathlib.Path(paths_file["datasets_prepared_dir_2hp"])
+    paths = Paths2HP(
+        default_raw_1hp_dir / raw_dataset_1hpnn_name, # nötig 1hp wegen Grundwahrheit
+        "",
+        prepared_domain_dir / dataset_domain_prepared_name, # nötig 2hp wegen info.yaml
+        model_1hp_dir,
+        prepared_boxes_dir / dataset_boxes_prepared_name, # nötig 2hp wegen /Inputs
+    )
 
     settings = SettingsTraining(
-        dataset_raw = "dataset_2hps_demonstrator_1dp",
+        dataset_raw = raw_dataset_1hpnn_name,
         inputs = "gksi1000",
         device = "cpu",
-        epochs = 10000,
+        epochs = 1,
         case = "test",
-        model = destination_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1",
-        visualize = True
+        model = model_2hp_dir,
+        visualize = True,
+        dataset_prep = paths.datasets_boxes_prep_path
     )
-
-    # TODO gksi durch split-Funktion
-    dataset_model_trained_with_prep_path = prepared_1hp_dir / settings.inputs / "dataset_raw_demonstrator_input_1dp inputs_gksi"
-    model_1hp_path           = prepared_1hp_dir / settings.inputs / "current_unet_dataset_2d_small_1000dp_gksi_v7"
-    dataset_raw_path         = datasets_raw_domain_dir / "dataset_2hps_demonstrator_1dp"
-    dataset_1st_prep_path    = datasets_prepared_domain_dir / "dataset_2hps_demonstrator_1dp inputs_gksi"
-    datasets_boxes_prep_path = datasets_prepared_2hp_dir / "dataset_2hps_demonstrator_1dp inputs_gksi1000 boxes"
-
-    paths = Paths2HP(
-        dataset_raw_path,
-        dataset_model_trained_with_prep_path,
-        dataset_1st_prep_path,
-        model_1hp_path,
-        datasets_boxes_prep_path,
-    )
-    settings.dataset_prep = paths.datasets_boxes_prep_path
 
     with open(paths.dataset_1st_prep_path / "info.yaml", "r") as f:
         info = yaml.safe_load(f)
 
 
-    corner_dist = info["PositionHPPrior"]
-    pos_2nd_hp = [10, 10]
+    print(paths.dataset_1st_prep_path)
 
-    pressure = -2.142171334025262316e-04
-    permeability = 7.350276541753949086e-10
+
+    corner_dist = info["PositionHPPrior"]
+    pos_2nd_hp = [40, 45]
+
+    pressure = -2.142171334025262316e-03
+    permeability = 7.350276541753949086e-11
     positions = [[corner_dist[1] + 50, corner_dist[0] + 50], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
+
+    multiprocessing.set_start_method("spawn", force=True) #TODO ???
 
     model_1HP = UNet(in_channels=len("gksi")).float()
     model_1HP.load(paths.model_1hp_path, settings.device)
 
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(info, model_1HP, pressure, permeability, positions)
-
-    ## Modellanwendung
-
-    #multiprocessing.set_start_method("spawn", force=True)
-    dataset, dataloaders = hp_nn.init_data(settings)
-
-    model = UNet(in_channels=dataset.input_channels).float()
-    model.load(pathlib.Path(settings.model), settings.device)
-    model.to(settings.device)
+    model_2HP = UNet(in_channels=2).float()
+    model_2HP.load(settings.model, settings.device)
+    model_2HP.to(settings.device)
 
     color_palette = mc.ColorPalette(
         cmap_list        = [(0.1,0.27,0.8), (1,1,1), (1,0.1,0.1)],
@@ -102,10 +123,9 @@ def test_2hp_model_communication():
         text_color       = (0,0,0) 
     )
 
-    ## Visualisierung
-    if settings.visualize:
-        dat = get_2hp_plots(model, hp_inputs, corners_ll, corner_dist, dataloaders["test"], color_palette, device=settings.device)
-        show_figure(dat.get_figure("result"))
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(info, model_1HP, pressure, permeability, positions)
+    dat = visualize.get_2hp_plots(model_2HP, info, hp_inputs, corners_ll, corner_dist, color_palette, device=settings.device)
+    show_figure(dat.get_figure("result"))
 
 
 def show_figure(figure: Figure):

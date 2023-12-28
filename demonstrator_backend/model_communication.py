@@ -6,7 +6,6 @@ import torch
 from matplotlib.figure import Figure
 import yaml
 import generate_groundtruth as gt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from dataclasses import dataclass
 import base64
 from matplotlib.colors import LinearSegmentedColormap
@@ -16,9 +15,11 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 
 import utils.visualization as visualize
 from networks.unet import UNet
-import preprocessing.prepare_1ststage as prepare
-from utils.prepare_paths import Paths1HP
+import preprocessing.prepare_1ststage as prep_1hp
+import preprocessing.prepare_2ndstage as prep_2hp
+from utils.prepare_paths import Paths2HP
 from data_stuff.utils import SettingsTraining
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 @dataclass
@@ -72,10 +73,11 @@ class DisplayData:
 @dataclass
 class ModelConfiguration:
 
-    paths1HP: Paths1HP = None
+    stage: int
+    paths2HP: Paths2HP = None
     settings: SettingsTraining = None
     groundtruth_info: gt.GroundTruthInfo = None
-    model_info: dict = None
+    info: dict = None
     color_palette: ColorPalette = None
 
     def __post_init__(self):
@@ -89,64 +91,91 @@ class ModelConfiguration:
         dataset_name: str
             Name of "dataset" containing the settings.yaml file from which the pflortran settings are extracted.
         """
-        raw_path, model_path, dataset_name = self.load_paths()
-        self.paths1HP = Paths1HP(raw_path, "")
-
-        self.settings = SettingsTraining(
-            dataset_raw = dataset_name,
-            inputs = "gksi",
-            device = "cpu", 
-            epochs = 10000,
-            case = "test",
-            model = model_path,
-            visualize = True
-        )
-        
-        self.groundtruth_info = gt.GroundTruthInfo(raw_path, 10.6)
+        self.set_paths_and_settings(self.stage)
+        if self.stage == 1:
+            with open(os.path.join(os.getcwd(), self.settings.model, "info.yaml"), "r") as file:
+                self.info = yaml.safe_load(file)
+            self.groundtruth_info = gt.GroundTruthInfo(self.paths2HP.raw_path, 10.6)
+        elif self.stage == 2:
+            with open(self.paths2HP.dataset_1st_prep_path / "info.yaml", "r") as f:
+                self.info = yaml.safe_load(f)
+        else:
+            raise f"stage {self.stage} does not exist"
 
         self.color_palette = ColorPalette()
 
-        with open(os.path.join(os.getcwd(), self.settings.model, "info.yaml"), "r") as file:
-            self.model_info = yaml.safe_load(file)
-
-
-    def load_paths(self):
+    def set_paths_and_settings(self, stage):
         path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".." / ".."
         paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
 
         if os.path.exists(paths_file):
             with open(paths_file, "r") as f:
-                paths = yaml.safe_load(f)
-
-                dataset_name = "datasets_raw_1000_1HP"
-                default_raw_dir = pathlib.Path(paths["default_raw_dir"])
-
-                if not os.path.exists(default_raw_dir / dataset_name):
-                    print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
-                    dataset_name = "dataset_2d_small_1000dp"
-
-                raw_path = default_raw_dir / dataset_name
-                model_path = pathlib.Path(paths["models_1hp_dir"]) / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
-
-                if not os.path.exists(model_path):
-                    raise FileNotFoundError(f"Model path '{model_path}' does not exist")
+                paths_file = yaml.safe_load(f)
+            try:
+                default_raw_1hp_dir = pathlib.Path(paths_file["default_raw_dir"])
+                prepared_domain_dir = pathlib.Path(paths_file["datasets_prepared_domain_dir"])
+                prepared_boxes_dir  = pathlib.Path(paths_file["datasets_prepared_dir_2hp"])
+                models_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
+                models_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
+            except:
+                print(f'Error loading "{paths_file}"')
         else:
-            print(f"Could not find '1HP_NN/paths.yaml' Paths, assuming default folder structure.")
+            print(f'1HP_NN/info.yaml not found, trying default path')
+            default_raw_1hp_dir = path_to_project_dir / "datasets_raw"
+            prepared_domain_dir = path_to_project_dir / "datasets_prepared_domain"
+            prepared_boxes_dir  = path_to_project_dir / "datasets_prepared"
+            models_1hp_dir      = path_to_project_dir / "models_1hpnn"
+            models_2hp_dir      = path_to_project_dir / "models_2hpnn"
 
-            dataset_name = "datasets_raw_1000_1HP"
-            default_raw_dir = path_to_project_dir / "data" / "datasets_raw"
 
-            if not os.path.exists(default_raw_dir / dataset_name):
-                print(f"Could not find '{default_raw_dir / dataset_name}', searching for 'dataset_2d_small_1000dp'")
-                dataset_name = "dataset_2d_small_1000dp"
+        model_2hp_dir = models_2hp_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
+        model_1hp_dir = models_1hp_dir / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
 
-            raw_path = default_raw_dir / dataset_name
-            model_path = path_to_project_dir / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
+        dataset_2hpnn_names = ["dataset_2hps_demonstrator_1dp"]
+        dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
+        dataset_domain_prepared_name = None
+        dataset_boxes_prepared_name = None
+        raw_dataset_1hpnn_name = None
 
-        if not os.path.exists(raw_path):
-            raise FileNotFoundError(f"Dataset path '{raw_path}' does not exist")
-            
-        return raw_path, model_path, dataset_name
+        for name in dataset_1hpnn_names:
+            if os.path.exists(default_raw_1hp_dir / name):
+                raw_dataset_1hpnn_name = name
+
+        for name in dataset_2hpnn_names:
+            if os.path.exists(prepared_domain_dir / (name + " inputs_gksi")):
+                dataset_domain_prepared_name = name + " inputs_gksi"
+            if os.path.exists(prepared_boxes_dir / (name + " inputs_gksi1000 boxes")):
+                dataset_boxes_prepared_name = name + " inputs_gksi1000 boxes"
+
+        if raw_dataset_1hpnn_name is None:
+            raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
+        
+        if dataset_domain_prepared_name is None:
+            raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
+
+        if dataset_boxes_prepared_name is None:
+            raise FileNotFoundError(f'2HP prepared boxes dataset not found at "{prepared_boxes_dir}"')
+        
+        # prepare_data_and_paths(settings):
+
+        self.paths2HP = Paths2HP(
+            default_raw_1hp_dir / raw_dataset_1hpnn_name,       # 1HP: wegen Grundwahrheit
+            "",
+            prepared_domain_dir / dataset_domain_prepared_name, # 2HP: wegen info.yaml
+            model_1hp_dir,
+            prepared_boxes_dir / dataset_boxes_prepared_name,   # 2HP: wegen /Inputs TODO: loswerden!!!!
+        )
+
+        self.settings = SettingsTraining(
+            dataset_raw = raw_dataset_1hpnn_name,
+            inputs = "gksi1000",
+            device = "cpu",
+            epochs = 1,
+            case = "test",
+            model = model_1hp_dir if stage == 1 else model_2hp_dir,
+            visualize = True,
+            dataset_prep = self.paths2HP.datasets_boxes_prep_path
+        )
 
 
     def set_color_palette(self, color_palette):
@@ -165,10 +194,26 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
         The pressure input parameter of the demonstrator app.
     """
 
-    model = UNet(in_channels=4).float() # 4 = len(info["Inputs"]) TODO: Aus Rohdaten einlesen?
+    model = UNet(in_channels=len("gksi")).float()
     model.load_state_dict(torch.load(f"{config.settings.model}/model.pt", map_location=torch.device(config.settings.device)))
     model.to(config.settings.device)
     model.eval()
 
-    (x, y, info, norm) = prepare.prepare_demonstrator_input(config.paths1HP, config.groundtruth_info, permeability, pressure, info=config.model_info)
+    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, info=config.info)
     return visualize.get_plots(model, x, y, info, norm, config.color_palette)
+
+
+def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
+
+    corner_dist = config.info["PositionHPPrior"]
+    positions = [[corner_dist[1] + 50, corner_dist[0] + 50], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
+
+    model_1HP = UNet(in_channels=len("gksi")).float()
+    model_1HP.load(config.paths2HP.model_1hp_path, config.settings.device)
+
+    model_2HP = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
+    model_2HP.load(config.settings.model, config.settings.device)
+    model_2HP.to(config.settings.device)
+
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, model_1HP, pressure, permeability, positions)
+    return visualize.get_2hp_plots(model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, device=config.settings.device)
