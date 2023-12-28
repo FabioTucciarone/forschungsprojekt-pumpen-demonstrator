@@ -100,14 +100,24 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView(
-        padding: const EdgeInsets.all(10),
-        children: [
-          ...input(),
-          ...output(),
-        ],
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: SizedBox(
+          width: 1350,
+          height: 600,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...input(),
+                ...output(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -152,10 +162,12 @@ mixin MainScreenElements {
           child = pressureSlider;
         } else {
           child = const SizedBox(
-            width: 60,
-            height: 60,
-            child: CircularProgressIndicator(
-              color: OurColors.accentColor,
+            width: 80,
+            height: 80,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
             ),
           );
         }
@@ -181,10 +193,12 @@ mixin MainScreenElements {
           child = permeabilitySlider;
         } else {
           child = const SizedBox(
-            width: 60,
-            height: 60,
-            child: CircularProgressIndicator(
-              color: OurColors.accentColor,
+            width: 80,
+            height: 80,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
             ),
           );
         }

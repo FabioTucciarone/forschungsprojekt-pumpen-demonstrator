@@ -1,7 +1,8 @@
 from flask import Flask, request
 from flask_caching import Cache
-
+import csv
 import model_communication as mc
+import os
 
 # Global Variables:
 
@@ -42,6 +43,8 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     name = request.json.get('name')
 
     display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, name)
+
+    insert_highscore(name, display_data.average_error)
 
     return { "model_result":  display_data.get_encoded_figure("model_result"), 
              "groundtruth":   display_data.get_encoded_figure("groundtruth"), 
@@ -92,19 +95,43 @@ def get_value_ranges():
     Returns a JSON object containing the maximum and minimum permeability and pressure values that can be selected on the frontend.
     """
     print("WARNUNG: Provisorisch implementiert")
-    return {"permeability_range": [1e-11, 5e-9], "pressure_range": [-4e-03, -1e-03]} # TODO: Aus Datei einlesen
+    return {"permeability_range": [1e-11, 1e-10], "pressure_range": [-4e-03, -1e-03]} # TODO: Aus Datei einlesen
 
 
 @app.route('/get_highscore_and_name', methods = ['GET'])
-def get_highscore_and_name(): # TODO: Implementieren
+def get_highscore_and_name():
     """
     Returns the current hiscore (maximum average error) and the name of the person who achieved it.
     """
-    print("WARNUNG: Noch nicht implementiert")
-    return {"name": "<Name Placeholder>", "score": -1}
+    name, average_error = cache.get("current_highscore")
+    return {"name": name, "score": average_error}
+
+
+@app.route('/save_highscore', methods = ['GET'])
+def save_highscore(): 
+    """
+    Save the highscores in a csv file.
+    """
+    highscores = cache.get("highscores")
+    with open('../../data/saved_files/highscores.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
+        for score in highscores:
+            writer.writerow(score)
+    return 0
 
 
 # Internal Methods:
+
+def insert_highscore(name: str, average_error: float):
+    current_highscore = cache.get("current_highscore")
+    print(current_highscore)
+    if average_error > current_highscore[1]:
+        cache.set("current_highscore", current_highscore, timeout=0)
+    if cache.get("save_to_file"):
+        highscores = cache.get("highscores")
+        highscores.append([name, average_error])
+        cache.set("highscores", highscores, timeout=0)
+
 
 def initialize_backend():
 
@@ -120,9 +147,31 @@ def initialize_backend():
     model_configuration.set_color_palette(color_palette)
     cache.set("model_configuration", model_configuration, timeout=0)
 
+    if os.path.exists('../../data/saved_files/highscores.csv'):
+        with open('../../data/saved_files/highscores.csv', newline='') as csvfile:
+            highscores = list(csv.reader(csvfile, delimiter=','))
+            max_error = 0.0
+            max_name = "init"
+            for name, average_error in reversed(highscores):  # neuste haben Priorität
+                average_error = float(average_error)
+                if float(average_error) > max_error:
+                    max_error = average_error
+                    max_name = name
+            cache.set("current_highscore", [max_name, average_error], timeout=0)
+
+    else:
+        highscores = []
+        cache.set("current_highscore", ["init", 0.0], timeout=0)
+
+    cache.set("highscores", highscores, timeout=0)
+    cache.set("save_to_file", True, timeout=0)  # TODO: Einstellbar machen
+
+    # TODO: Doppelte Namen?
+    # TODO: Pfade Variabel machen
 
 # Start Debug Server:
 
 if __name__ == '__main__':
+
     initialize_backend()
     app.run(port=5000, host='0.0.0.0') # threaded=True, processes=10

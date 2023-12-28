@@ -39,8 +39,8 @@ class OutputBox extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   child = Container(
-                    width: 300,
-                    height: 50,
+                    width: 1050,
+                    height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.red,
@@ -57,7 +57,19 @@ class OutputBox extends StatelessWidget {
                   print('Error ${snapshot.error} occured');
                 } else {
                   if (snapshot.data == "keinWert") {
-                    child = const Text("Kein Wert bis jetzt");
+                    child = Container(
+                      width: 1050,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Kein Wert bis jetzt",
+                        ),
+                      ),
+                    );
                   } else {
                     responseDecoder.setResponse(snapshot.data);
                     if (name == ImageType.aIGenerated) {
@@ -73,11 +85,21 @@ class OutputBox extends StatelessWidget {
                   }
                 }
               } else {
-                child = const SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircularProgressIndicator(
-                    color: OurColors.accentColor,
+                child = Container(
+                  width: 1050,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: const SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: OurColors.accentColor,
+                      ),
+                    ),
                   ),
                 );
               }
@@ -86,7 +108,7 @@ class OutputBox extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          width: 20,
+          width: 30,
         ),
         Text(
           "${getName(name)}",
