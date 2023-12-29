@@ -220,10 +220,7 @@ mixin MainScreenElements {
       const SizedBox(
         height: 10,
       ),
-      const Text(
-        "Ausgabe:",
-        textScaleFactor: 2,
-      ),
+      const OutputHeader(),
       const SizedBox(
         height: 5,
       ),
@@ -246,6 +243,84 @@ mixin MainScreenElements {
         height: 10,
       ),
     ];
+  }
+}
+
+class OutputHeader extends StatelessWidget {
+  const OutputHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Output:",
+          textScaleFactor: 2,
+        ),
+        AverageError(false)
+      ],
+    );
+  }
+}
+
+class AverageError extends StatelessWidget {
+  final bool children;
+  AverageError(this.children, {super.key});
+  ResponseDecoder responseDecoder = ResponseDecoder();
+
+  @override
+  Widget build(BuildContext context) {
+    final Future<String> future = context.watch<FutureNotifier>().future;
+    final String text = children ? "Score:" : "Average Error:";
+    return Container(
+      constraints: const BoxConstraints(minWidth: 500),
+      child: FutureBuilder(
+          future: future,
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            Widget child;
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data != "keinWert") {
+                responseDecoder.setResponse(snapshot.data);
+                double averageError =
+                    responseDecoder.jsonDecoded["average_error"];
+                if (children) {
+                  int roundedError = (averageError * 1000).round();
+                  child = Text(
+                    "$text $roundedError",
+                    textScaleFactor: 2,
+                  );
+                } else {
+                  child = Text(
+                    "$text $averageError",
+                    textScaleFactor: 2,
+                  );
+                }
+              } else {
+                child = Text(
+                  "$text -",
+                  textScaleFactor: 2,
+                );
+              }
+            } else {
+              child = Row(
+                children: [
+                  Text(
+                    text,
+                    textScaleFactor: 2,
+                  ),
+                  const SizedBox(
+                    child: CircularProgressIndicator(
+                      color: OurColors.accentColor,
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return child;
+          }),
+    );
   }
 }
 
