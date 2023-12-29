@@ -12,11 +12,13 @@ class PressureSlider extends StatefulWidget {
   final Map<String, dynamic>? valueRange;
   final SliderType name;
   double currentValue;
+  bool children;
   PressureSlider(
     this.sliderWidth,
     this.valueRange,
     this.name,
     this.currentValue,
+    this.children,
   );
 
   double getCurrent() {
@@ -89,18 +91,26 @@ class _PressureSliderState extends State<PressureSlider>
     });
   }
 
-  Widget getDisplayOfValues(SliderType name, double currentValue) {
+  Widget getDisplayOfValues(
+      SliderType name, double currentValue, bool children) {
+    String identifier = '';
     if (name == SliderType.pressure) {
-      return Text(
-        'Druck: $currentValue',
-        textScaleFactor: 1.2,
-      );
+      if (children) {
+        identifier = 'Druck';
+      } else {
+        identifier = 'Pressure';
+      }
     } else {
-      return Text(
-        'Durchlässigkeit: $currentValue',
-        textScaleFactor: 1.2,
-      );
+      if (children) {
+        identifier = 'Durchlässigkeit';
+      } else {
+        identifier = 'Permeability';
+      }
     }
+    return Text(
+      '$identifier: $currentValue',
+      textScaleFactor: 1.2,
+    );
   }
 
   @override
@@ -108,7 +118,7 @@ class _PressureSliderState extends State<PressureSlider>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        getDisplayOfValues(widget.name, widget.currentValue),
+        getDisplayOfValues(widget.name, widget.currentValue, widget.children),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,

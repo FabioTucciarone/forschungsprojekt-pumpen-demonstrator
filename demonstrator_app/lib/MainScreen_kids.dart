@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-class Phase1Kids extends StatelessWidget with MainScreenKidsElements {
+class Phase1Kids extends StatelessWidget with MainScreenElements {
   Phase1Kids({super.key});
 
   @override
@@ -24,116 +24,19 @@ class Phase1Kids extends StatelessWidget with MainScreenKidsElements {
           Row(
             children: [
               Column(
-                children: [...input()],
+                children: [...input(500, true)],
               ),
               RobotBox()
             ],
           ),
-          ...output(),
+          const SizedBox(
+            height: 10,
+          ),
+          ScoreBoard(),
+          ...output(true),
         ],
       ),
     );
-  }
-}
-
-mixin MainScreenKidsElements {
-  static PressureSlider pressureSlider = PressureSlider(
-      500,
-      const {
-        "pressure_range": [0, 1],
-        "permeability_range": [0, 1]
-      },
-      SliderType.pressure,
-      0);
-  final Widget pressureWidget = FutureBuilder(
-      future: useOfBackend.backend.getValueRanges(),
-      builder:
-          (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-        Widget child;
-        if (snapshot.connectionState == ConnectionState.done) {
-          pressureSlider =
-              PressureSlider(500, snapshot.data, SliderType.pressure, 0);
-          child = pressureSlider;
-        } else {
-          child = const SizedBox(
-            width: 80,
-            height: 80,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: OurColors.accentColor,
-              ),
-            ),
-          );
-        }
-        return child;
-      });
-
-  static PressureSlider permeabilitySlider = PressureSlider(
-      500,
-      const {
-        "pressure_range": [0, 1],
-        "permeability_range": [0, 1]
-      },
-      SliderType.pressure,
-      0);
-  final Widget permeabilityWidget = FutureBuilder(
-      future: useOfBackend.backend.getValueRanges(),
-      builder:
-          (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-        Widget child;
-        if (snapshot.connectionState == ConnectionState.done) {
-          permeabilitySlider =
-              PressureSlider(500, snapshot.data, SliderType.permeability, 0);
-          child = permeabilitySlider;
-        } else {
-          child = const SizedBox(
-            width: 80,
-            height: 80,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: OurColors.accentColor,
-              ),
-            ),
-          );
-        }
-        return child;
-      });
-
-  List<Widget> input() {
-    return <Widget>[
-      pressureWidget,
-      const SizedBox(
-        height: 10,
-      ),
-      permeabilityWidget,
-    ];
-  }
-
-  List<Widget> output() {
-    return <Widget>[
-      const SizedBox(
-        height: 10,
-      ),
-      ScoreBoard(),
-      OutputBox(
-        name: ImageType.aIGenerated,
-      ),
-      Container(
-        height: 10,
-      ),
-      OutputBox(
-        name: ImageType.groundtruth,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      OutputBox(
-        name: ImageType.differenceField,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-    ];
   }
 }
 

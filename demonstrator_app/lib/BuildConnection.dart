@@ -90,7 +90,7 @@ class _RegisterState extends State<RegisterBox> {
               textScaleFactor: 2,
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(15),
               child: TextFormField(
                 controller: username,
                 decoration: InputDecoration(
@@ -129,7 +129,7 @@ class _RegisterState extends State<RegisterBox> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(15),
               child: TextFormField(
                 obscureText: passwordVisible,
                 controller: password,
