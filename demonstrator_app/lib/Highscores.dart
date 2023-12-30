@@ -119,8 +119,82 @@ class _HighscoreState extends State<Highscore> {
 class HighscoreDialog extends StatelessWidget {
   const HighscoreDialog({super.key});
 
-  void showHighscores() {
-    print("hallo");
+  Widget getToptenList() {
+    Future<List<dynamic>> topTen = useOfBackend.backend.getTopTenList();
+
+    return FutureBuilder(
+        future: topTen,
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          Widget child;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data != null) {
+              List<dynamic> highscores = snapshot.data!;
+              List<TableRow> tableRows = [];
+              tableRows.add(const TableRow(children: [
+                TableCell(
+                    child: Text(
+                  "#",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )),
+                TableCell(
+                    child: Text(
+                  "Name",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )),
+                TableCell(
+                    child: Text(
+                  "Score",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ))
+              ]));
+              for (int i = 0; i < highscores.length; i++) {
+                String name = highscores[i][0];
+                int score = (highscores[i][1] * 1000).round();
+                tableRows.add(TableRow(children: [
+                  TableCell(
+                    child: Text((i + 1).toString()),
+                  ),
+                  TableCell(child: Text(name)),
+                  TableCell(child: Text(score.toString()))
+                ]));
+              }
+              child = Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                children: tableRows,
+              );
+            } else {
+              child = const Text("Keine Highscores bis jetzt");
+            }
+          } else {
+            child = const Text("FEHLER");
+          }
+          return child;
+        });
+  }
+
+  void showHighscores(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Highscores"),
+            content: getToptenList(),
+            actions: <Widget>[
+              TextButton(
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarTextColor),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarColor)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Schließen"))
+            ],
+          );
+        });
   }
 
   @override
@@ -131,7 +205,9 @@ class HighscoreDialog extends StatelessWidget {
                 MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
             backgroundColor:
                 MaterialStateProperty.all<Color>(OurColors.appBarColor)),
-        onPressed: showHighscores,
+        onPressed: () {
+          showHighscores(context);
+        },
         child: const Text(
           "Highscores",
           textScaleFactor: 2,
@@ -152,7 +228,10 @@ class ScoreBoard extends StatelessWidget {
                 color: OurColors.accentColor,
                 border: Border.all(color: OurColors.accentColor, width: 4.0),
                 borderRadius: BorderRadius.circular(20)),
-            child: AverageError(true)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 0, 4.0, 0),
+              child: AverageError(true),
+            )),
         const HighscoreDialog(),
         Container(
             constraints: const BoxConstraints(minWidth: 300),
@@ -160,7 +239,10 @@ class ScoreBoard extends StatelessWidget {
                 color: OurColors.accentColor,
                 border: Border.all(color: OurColors.accentColor, width: 4.0),
                 borderRadius: BorderRadius.circular(20)),
-            child: const Highscore()),
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(4.0, 0, 4.0, 0),
+              child: Highscore(),
+            )),
       ],
     );
   }
