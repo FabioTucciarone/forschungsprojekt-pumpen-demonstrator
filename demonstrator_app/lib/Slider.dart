@@ -129,7 +129,10 @@ class _PressureSliderState extends State<PressureSlider>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        getDisplayOfValues(widget.name, widget.currentValue, widget.children),
+        Container(
+            constraints: const BoxConstraints(minWidth: 200),
+            child: getDisplayOfValues(
+                widget.name, widget.currentValue, widget.children)),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
