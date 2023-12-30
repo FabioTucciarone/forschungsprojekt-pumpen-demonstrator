@@ -211,9 +211,8 @@ class _HighscoreState extends State<Highscore> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data!["highscore"] != null &&
-                  snapshot.data!["name"] != null) {
-                highscore = snapshot.data!["highscore"];
+              if (snapshot.data != null) {
+                highscore = (snapshot.data!["score"] * 1000).round();
                 name = snapshot.data!["name"];
               }
               child = Text(

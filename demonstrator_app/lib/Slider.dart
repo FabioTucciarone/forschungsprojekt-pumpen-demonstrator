@@ -98,7 +98,6 @@ class _PressureSliderState extends State<PressureSlider>
       SliderType name, double currentValue, bool children) {
     String identifier = '';
     if (name == SliderType.pressure) {
-
       if (children) {
         identifier = 'Druck';
       } else {
@@ -110,7 +109,6 @@ class _PressureSliderState extends State<PressureSlider>
       } else {
         identifier = 'Permeability';
       }
-
     }
     int exp = 0;
     double value = currentValue.abs();
@@ -150,12 +148,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        ""));
+                        "test"));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(widget.currentValue,
-                        MainScreenElements.pressureSlider.getCurrent(), ""));
+                    .sendInputData(
+                        widget.currentValue,
+                        MainScreenElements.pressureSlider.getCurrent(),
+                        "test"));
                 MainSlide.restartTimer.restartTimer();
               }
             },
@@ -165,12 +165,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        ""));
+                        "test"));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(widget.currentValue,
-                        MainScreenElements.pressureSlider.getCurrent(), ""));
+                    .sendInputData(
+                        widget.currentValue,
+                        MainScreenElements.pressureSlider.getCurrent(),
+                        "test"));
                 MainSlide.restartTimer.restartTimer();
               }
             },

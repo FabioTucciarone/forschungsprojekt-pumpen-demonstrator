@@ -152,10 +152,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text(
-                  "Output:",
-                  textScaleFactor: 2,
-                ),
+                const OutputHeader(),
                 ...output(false),
               ],
             ),
@@ -250,10 +247,6 @@ mixin MainScreenElements {
 
   List<Widget> output(bool children) {
     return <Widget>[
-      const SizedBox(
-        height: 10,
-      ),
-      const OutputHeader(),
       const SizedBox(
         height: 5,
       ),

@@ -7,10 +7,14 @@ class RestartTimer extends ChangeNotifier {
   late Timer timer;
 
   RestartTimer() {
-    restartTimer();
+    timer = Timer(const Duration(seconds: 10), () {
+      print("First Timeout");
+      notifyListeners();
+    });
   }
 
   void restartTimer() {
+    timer.cancel();
     timer = Timer(const Duration(seconds: 10), () {
       print("Timeout");
       notifyListeners();
