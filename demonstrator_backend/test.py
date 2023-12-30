@@ -177,7 +177,7 @@ def test_2hp_model_communication(visualize=True):
 
     k = 7.350276541753949086e-10
     p = -2.142171334025262316e-03
-    pos = [40, 40]
+    pos = [40, 45]
 
     st2 = time.time()
     display_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
@@ -193,9 +193,10 @@ def test_2hp_model_communication(visualize=True):
 
 
 def main():
-    # test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
+    test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
+    test_1hp_model_communication(visualize=False)
     # test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
-    test_2hp_model_communication(visualize=True)
+    # test_2hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
     main()

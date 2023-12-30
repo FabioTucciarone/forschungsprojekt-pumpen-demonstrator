@@ -104,6 +104,7 @@ class ModelConfiguration:
 
         self.color_palette = ColorPalette()
 
+
     def set_paths_and_settings(self, stage):
         path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".." / ".."
         paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
@@ -114,7 +115,7 @@ class ModelConfiguration:
             try:
                 default_raw_1hp_dir = pathlib.Path(paths_file["default_raw_dir"])
                 prepared_domain_dir = pathlib.Path(paths_file["datasets_prepared_domain_dir"])
-                prepared_boxes_dir  = pathlib.Path(paths_file["datasets_prepared_dir_2hp"])
+                # prepared_boxes_dir  = pathlib.Path(paths_file["datasets_prepared_dir_2hp"])
                 models_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
                 models_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
             except:
@@ -123,7 +124,7 @@ class ModelConfiguration:
             print(f'1HP_NN/info.yaml not found, trying default path')
             default_raw_1hp_dir = path_to_project_dir / "datasets_raw"
             prepared_domain_dir = path_to_project_dir / "datasets_prepared_domain"
-            prepared_boxes_dir  = path_to_project_dir / "datasets_prepared"
+            # prepared_boxes_dir  = path_to_project_dir / "datasets_prepared"
             models_1hp_dir      = path_to_project_dir / "models_1hpnn"
             models_2hp_dir      = path_to_project_dir / "models_2hpnn"
 
@@ -134,8 +135,8 @@ class ModelConfiguration:
         dataset_2hpnn_names = ["dataset_2hps_demonstrator_1dp"]
         dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
         dataset_domain_prepared_name = None
-        dataset_boxes_prepared_name = None
         raw_dataset_1hpnn_name = None
+        # dataset_boxes_prepared_name = None
 
         for name in dataset_1hpnn_names:
             if os.path.exists(default_raw_1hp_dir / name):
@@ -144,8 +145,8 @@ class ModelConfiguration:
         for name in dataset_2hpnn_names:
             if os.path.exists(prepared_domain_dir / (name + " inputs_gksi")):
                 dataset_domain_prepared_name = name + " inputs_gksi"
-            if os.path.exists(prepared_boxes_dir / (name + " inputs_gksi1000 boxes")):
-                dataset_boxes_prepared_name = name + " inputs_gksi1000 boxes"
+            # if os.path.exists(prepared_boxes_dir / (name + " inputs_gksi1000 boxes")):
+            #     dataset_boxes_prepared_name = name + " inputs_gksi1000 boxes"
 
         if raw_dataset_1hpnn_name is None:
             raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
@@ -153,17 +154,15 @@ class ModelConfiguration:
         if dataset_domain_prepared_name is None:
             raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
 
-        if dataset_boxes_prepared_name is None:
-            raise FileNotFoundError(f'2HP prepared boxes dataset not found at "{prepared_boxes_dir}"')
-        
-        # prepare_data_and_paths(settings):
+        # if dataset_boxes_prepared_name is None:
+        #     raise FileNotFoundError(f'2HP prepared boxes dataset not found at "{prepared_boxes_dir}"')
 
         self.paths2HP = Paths2HP(
             default_raw_1hp_dir / raw_dataset_1hpnn_name,       # 1HP: wegen Grundwahrheit
             "",
             prepared_domain_dir / dataset_domain_prepared_name, # 2HP: wegen info.yaml
             model_1hp_dir,
-            prepared_boxes_dir / dataset_boxes_prepared_name,   # 2HP: wegen /Inputs TODO: loswerden!!!!
+            ""
         )
 
         self.settings = SettingsTraining(
@@ -215,5 +214,5 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     model_2HP.load(config.settings.model, config.settings.device)
     model_2HP.to(config.settings.device)
 
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, model_1HP, pressure, permeability, positions)
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, model_1HP, pressure, permeability, positions, device=config.settings.device)
     return visualize.get_2hp_plots(model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, device=config.settings.device)
