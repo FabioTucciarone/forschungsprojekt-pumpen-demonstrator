@@ -11,17 +11,30 @@ enum ImageType { aIGenerated, groundtruth, differenceField }
 //Outputbox, one Box corresponds to one Image
 //TO-DO (for performance) rearrange it so the response is decoded on a parent level (so the response doesn't get decoded 3 times)
 class OutputBox extends StatelessWidget {
-  OutputBox({super.key, required this.name});
+  OutputBox({super.key, required this.name, required this.children});
   final ImageType name;
+  final bool children;
   final ResponseDecoder responseDecoder = ResponseDecoder();
 
-  String getName(ImageType name) {
+  String getName(ImageType name, bool children) {
     if (name == ImageType.aIGenerated) {
-      return 'KI generiert';
+      if (children) {
+        return 'KI generiert';
+      } else {
+        return 'AI Generated';
+      }
     } else if (name == ImageType.groundtruth) {
-      return 'Grundwahrheit';
+      if (children) {
+        return 'Grundwahrheit';
+      } else {
+        return 'Groundtruth';
+      }
     }
-    return 'Differenzfeld';
+    if (children) {
+      return 'Differenzfeld';
+    } else {
+      return 'Difference Field';
+    }
   }
 
   @override
@@ -64,10 +77,12 @@ class OutputBox extends StatelessWidget {
                         color: Colors.white,
                         border: Border.all(color: Colors.black),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "Kein Wert bis jetzt",
-                        ),
+                      child: Center(
+                        child: children
+                            ? const Text(
+                                "Kein Wert bis jetzt",
+                              )
+                            : const Text('No value so far'),
                       ),
                     );
                   } else {
@@ -111,7 +126,7 @@ class OutputBox extends StatelessWidget {
           width: 30,
         ),
         Text(
-          "${getName(name)}",
+          "${getName(name, children)}",
           textScaleFactor: 1.2,
         ),
       ],
