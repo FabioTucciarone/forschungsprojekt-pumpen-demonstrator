@@ -71,57 +71,26 @@ class MainMaterial extends StatelessWidget {
       restartTimer.addListener(reset);
     }
     return MaterialApp(
-            home: Scaffold(
-              appBar: AppBar(
-                title: const Text("Demonstrator App"),
-                backgroundColor: OurColors.appBarColor,
-                titleTextStyle: const TextStyle(
-                    color: OurColors.appBarTextColor, fontSize: 25),
-                bottom: TabBar(
-                    controller: _tabController,
-                    unselectedLabelStyle: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 20,
-                    ),
-                    unselectedLabelColor: OurColors.appBarTextColor,
-                    labelStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    labelColor: OurColors.appBarTextColor,
-                    indicatorColor: OurColors.appBarTextColor,
-                    tabs: <Widget>[
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.info),
-                          Text("Infotext"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.device_thermostat),
-                          widget.children
-                              ? const Text("Eine Wärmepumpe")
-                              : const Text('One Heat Pump'),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.device_thermostat),
-                          const Icon(Icons.device_thermostat),
-                          widget.children
-                              ? const Text("Zwei Wärmepumpen")
-                              : const Text('Two Heat Pumps'),
-                        ],
-                      ),
-                    ]),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Demonstrator App"),
+          backgroundColor: OurColors.appBarColor,
+          titleTextStyle:
+              const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+          bottom: TabBar(
+              controller: _tabController,
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 20,
+              ),
+              unselectedLabelColor: OurColors.appBarTextColor,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
               ),
               labelColor: OurColors.appBarTextColor,
               indicatorColor: OurColors.appBarTextColor,
-              tabs: const <Widget>[
-                Row(
+              tabs: <Widget>[
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.info),
@@ -131,16 +100,20 @@ class MainMaterial extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.device_thermostat),
-                    Text("Eine Wärmepumpe"),
+                    const Icon(Icons.device_thermostat),
+                    widget.children
+                        ? const Text("Eine Wärmepumpe")
+                        : const Text('One Heat Pump'),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.device_thermostat),
-                    Icon(Icons.device_thermostat),
-                    Text("Zwei Wärmepumpen"),
+                    const Icon(Icons.device_thermostat),
+                    const Icon(Icons.device_thermostat),
+                    widget.children
+                        ? const Text("Zwei Wärmepumpen")
+                        : const Text('Two Heat Pumps'),
                   ],
                 ),
               ]),
@@ -278,12 +251,10 @@ mixin MainScreenElements {
   List<Widget> output(bool children) {
     return <Widget>[
       const SizedBox(
-
         height: 10,
       ),
       const OutputHeader(),
       const SizedBox(
-
         height: 5,
       ),
       OutputBox(

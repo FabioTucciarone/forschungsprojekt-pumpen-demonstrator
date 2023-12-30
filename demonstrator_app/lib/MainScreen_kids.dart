@@ -32,14 +32,13 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
           const SizedBox(
             height: 10,
           ),
-          ScoreBoard(),
+          ScoreBoard(true),
           ...output(true),
         ],
       ),
     );
   }
 }
-
 
 class RobotBox extends StatefulWidget {
   RobotBox({super.key});
