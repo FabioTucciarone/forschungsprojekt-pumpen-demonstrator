@@ -1,22 +1,26 @@
 import 'package:demonstrator_app/MainScreen.dart';
 
 import 'Layout.dart';
-import 'Intro.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+/// specifies what kind of parameter the slider represents
 enum SliderType { pressure, permeability }
 
+/// class for a slider which can be adjusted by its width, range of possible values, type of parameter,
+/// current value of the thumb and a boolean indicating whether the slider is for the children version
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final Map<String, dynamic>? valueRange;
   final SliderType name;
   double currentValue;
+  bool children;
   PressureSlider(
     this.sliderWidth,
     this.valueRange,
     this.name,
     this.currentValue,
+    this.children,
   );
 
   double getCurrent() {
@@ -46,6 +50,7 @@ class _PressureSliderState extends State<PressureSlider>
     widget.currentValue = determineValue(sliderPos);
   }
 
+  /// determines the start value of the value range
   double getStart() {
     double start = 0;
     if (widget.name == SliderType.pressure) {
@@ -56,6 +61,7 @@ class _PressureSliderState extends State<PressureSlider>
     return start;
   }
 
+  /// determines the end value of the value range
   double getEnd() {
     double end = 0;
     if (widget.name == SliderType.pressure) {
@@ -66,13 +72,12 @@ class _PressureSliderState extends State<PressureSlider>
     return end;
   }
 
+  /// determines the value that the position of the thumb represents
   double determineValue(double sliderPos) {
     double diff = getEnd() - getStart();
     double interval = widget.sliderWidth / diff;
     double i = sliderPos / interval;
     double value = getStart() + i;
-    int exp = (log(value.abs()) / ln10).abs().round();
-    value = (value * pow(10, 7 + exp)).round().toDouble() / pow(10, 7 + exp);
     return value;
   }
 
@@ -89,24 +94,36 @@ class _PressureSliderState extends State<PressureSlider>
     });
   }
 
-  Widget getDisplayOfValues(SliderType name, double currentValue) {
+  Widget getDisplayOfValues(
+      SliderType name, double currentValue, bool children) {
+    String identifier = '';
     if (name == SliderType.pressure) {
-      return Container(
-        constraints: const BoxConstraints(minWidth: 250),
-        child: Text(
-          'Druck: $currentValue',
-          textScaleFactor: 1.2,
-        ),
-      );
+
+      if (children) {
+        identifier = 'Druck';
+      } else {
+        identifier = 'Pressure';
+      }
     } else {
-      return Container(
-        constraints: const BoxConstraints(minWidth: 250),
-        child: Text(
-          'Durchlässigkeit: $currentValue',
-          textScaleFactor: 1.2,
-        ),
-      );
+      if (children) {
+        identifier = 'Durchlässigkeit';
+      } else {
+        identifier = 'Permeability';
+      }
+
     }
+    int exp = 0;
+    double value = currentValue.abs();
+    while (value < 1) {
+      value = value * 10;
+      exp++;
+    }
+    currentValue =
+        (currentValue * pow(10, 3 + exp)).round().toDouble() / pow(10, 3 + exp);
+    return Text(
+      '$identifier: ${currentValue.abs()}',
+      textScaleFactor: 1.2,
+    );
   }
 
   @override
@@ -114,7 +131,7 @@ class _PressureSliderState extends State<PressureSlider>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        getDisplayOfValues(widget.name, widget.currentValue),
+        getDisplayOfValues(widget.name, widget.currentValue, widget.children),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,

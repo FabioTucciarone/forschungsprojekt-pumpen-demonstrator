@@ -53,6 +53,7 @@ class IntroHomeScaffold extends StatelessWidget {
         title: const Text("Demonstrator App"),
         titleTextStyle:
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+        automaticallyImplyLeading: false,
         backgroundColor: OurColors.appBarColor,
         actions: const <Widget>[
           DebugSwitch(),

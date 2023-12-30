@@ -150,7 +150,7 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
 def test_1hp_model_communication(visualize=True):
     st1 = time.time()
-    model_configuration = mc.ModelConfiguration()
+    model_configuration = mc.ModelConfiguration(1)
     et1 = time.time()
 
     k = 7.350276541753949086e-10
@@ -170,10 +170,34 @@ def test_1hp_model_communication(visualize=True):
         show_figure(display_data.get_figure("model_result"))
 
 
+def test_2hp_model_communication(visualize=True):
+    st1 = time.time()
+    model_configuration = mc.ModelConfiguration(2)
+    et1 = time.time()
+
+    k = 7.350276541753949086e-10
+    p = -2.142171334025262316e-03
+    pos = [40, 45]
+
+    st2 = time.time()
+    display_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
+    et2 = time.time()
+    
+    print('Initialisierung:', et1 - st1, 'seconds')
+    print('Antwortzeit:', et2 - st2, 'seconds')
+    print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
+
+    if visualize:
+        show_figure(display_data.get_figure("result"))
+
+
+
 def main():
-    # test_groundtruth(0, 19, visualize=False, type="closest", print_all=False)
-    # test_groundtruth(0, 19, visualize=False, type="interpolation", print_all=False)
-    test_1hp_model_communication(visualize=True)
+    test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
+    test_groundtruth(0, 0, visualize=False, type="interpolation", print_all=False)
+    test_1hp_model_communication(visualize=False)
+    # test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
+    # test_2hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
     main()
