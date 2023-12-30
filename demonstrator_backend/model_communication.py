@@ -143,11 +143,17 @@ class ModelConfiguration:
             if os.path.exists(prepared_domain_dir / (name + " inputs_gksi")):
                 dataset_domain_prepared_name = name + " inputs_gksi"
 
-        if raw_dataset_1hpnn_name == "":
+        if stage == 1 and raw_dataset_1hpnn_name == "":
             raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
         
-        if dataset_domain_prepared_name == "" and stage == 2:
-            raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
+        if not os.path.exists(model_1hp_dir):
+            raise FileNotFoundError(f'1HP model not found at "{model_1hp_dir}"')
+        
+        if stage == 2:
+            if dataset_domain_prepared_name == "":
+                raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
+            if not os.path.exists(model_2hp_dir):
+                raise FileNotFoundError(f'2HP model not found at "{model_2hp_dir}"') 
 
         self.paths2HP = Paths2HP(
             default_raw_1hp_dir / raw_dataset_1hpnn_name,       # 1HP: wegen Grundwahrheit

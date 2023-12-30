@@ -15,7 +15,6 @@ app.config['CACHE_THRESHOLD'] = 100          # Datei Maximum
 cache = Cache(app)
 cache.init_app(app)
 
-
 # Backend Interface:
 
 
@@ -181,10 +180,9 @@ def initialize_backend():
 
 # Start Debug Server:
 
-def main():
-    app.run(port=5000, host='0.0.0.0', threaded=True)
-    
 if __name__ == '__main__':
-    main()
+    initialize_backend()
+    app.run(port=5000, host='0.0.0.0', threaded=True)
 
-
+initialize_backend()
+print("Initialized")
