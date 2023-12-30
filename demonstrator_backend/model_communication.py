@@ -132,8 +132,8 @@ class ModelConfiguration:
 
         dataset_2hpnn_names = ["dataset_2hps_demonstrator_1dp"]
         dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
-        dataset_domain_prepared_name = None
-        raw_dataset_1hpnn_name = None
+        dataset_domain_prepared_name = ""
+        raw_dataset_1hpnn_name = ""
 
         for name in dataset_1hpnn_names:
             if os.path.exists(default_raw_1hp_dir / name):
@@ -143,10 +143,10 @@ class ModelConfiguration:
             if os.path.exists(prepared_domain_dir / (name + " inputs_gksi")):
                 dataset_domain_prepared_name = name + " inputs_gksi"
 
-        if raw_dataset_1hpnn_name is None:
+        if raw_dataset_1hpnn_name == "":
             raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
         
-        if dataset_domain_prepared_name is None:
+        if dataset_domain_prepared_name == "" and stage == 2:
             raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
 
         self.paths2HP = Paths2HP(
