@@ -2,6 +2,7 @@ import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/MainScreen_kids.dart';
 import 'package:demonstrator_app/Outputbox.dart';
+import 'package:demonstrator_app/Timer.dart';
 import 'Slider.dart';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class MainSlide extends StatefulWidget with MainScreenElements {
   final bool children;
   MainSlide({super.key, required this.children});
   static FutureNotifier futureNotifier = FutureNotifier();
+  static RestartTimer restartTimer = RestartTimer();
 
   @override
   State<MainSlide> createState() => _MainSlideState();
@@ -36,8 +38,39 @@ class _MainSlideState extends State<MainSlide>
             ChangeNotifierProvider<FutureNotifier>(
               create: ((context) => MainSlide.futureNotifier),
             ),
+            ChangeNotifierProvider<RestartTimer>(
+              create: ((context) => MainSlide.restartTimer),
+            ),
           ],
-          child: MaterialApp(
+          child: MainMaterial(
+            tabController: _tabController,
+            widget: widget,
+          )),
+    );
+  }
+}
+
+class MainMaterial extends StatelessWidget {
+  const MainMaterial({
+    super.key,
+    required TabController tabController,
+    required this.widget,
+  }) : _tabController = tabController;
+
+  final TabController _tabController;
+  final MainSlide widget;
+
+  void reset() {
+    _tabController.animateTo(0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.children) {
+      RestartTimer restartTimer = context.watch<RestartTimer>();
+      restartTimer.addListener(reset);
+    }
+    return MaterialApp(
             home: Scaffold(
               appBar: AppBar(
                 title: const Text("Demonstrator App"),
@@ -85,16 +118,42 @@ class _MainSlideState extends State<MainSlide>
                       ),
                     ]),
               ),
-              backgroundColor: OurColors.backgroundColor,
-              body: TabBarView(controller: _tabController, children: <Widget>[
-                widget.children
-                    ? IntroKids(_tabController)
-                    : IntroductionScience(_tabController),
-                widget.children ? Phase1Kids() : MainScreenContent(),
-                const SciencePhase2(),
+              labelColor: OurColors.appBarTextColor,
+              indicatorColor: OurColors.appBarTextColor,
+              tabs: const <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.info),
+                    Text("Infotext"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.device_thermostat),
+                    Text("Eine Wärmepumpe"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.device_thermostat),
+                    Icon(Icons.device_thermostat),
+                    Text("Zwei Wärmepumpen"),
+                  ],
+                ),
               ]),
-            ),
-          )),
+        ),
+        backgroundColor: OurColors.backgroundColor,
+        body: TabBarView(controller: _tabController, children: <Widget>[
+          widget.children
+              ? IntroKids(_tabController)
+              : IntroductionScience(_tabController),
+          widget.children ? Phase1Kids() : MainScreenContent(),
+          const SciencePhase2(),
+        ]),
+      ),
     );
   }
 }
@@ -219,6 +278,12 @@ mixin MainScreenElements {
   List<Widget> output(bool children) {
     return <Widget>[
       const SizedBox(
+
+        height: 10,
+      ),
+      const OutputHeader(),
+      const SizedBox(
+
         height: 5,
       ),
       OutputBox(
@@ -243,6 +308,87 @@ mixin MainScreenElements {
         height: 10,
       ),
     ];
+  }
+}
+
+class OutputHeader extends StatelessWidget {
+  const OutputHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Output:",
+          textScaleFactor: 2,
+        ),
+        AverageError(false)
+      ],
+    );
+  }
+}
+
+class AverageError extends StatelessWidget {
+  final bool children;
+  AverageError(this.children, {super.key});
+  ResponseDecoder responseDecoder = ResponseDecoder();
+  static dynamic publicError = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final Future<String> future = context.watch<FutureNotifier>().future;
+    final String text = children ? "Score:" : "Average Error:";
+    return Container(
+      constraints: const BoxConstraints(minWidth: 500),
+      child: FutureBuilder(
+          future: future,
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            Widget child;
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data != "keinWert") {
+                responseDecoder.setResponse(snapshot.data);
+                double averageError =
+                    responseDecoder.jsonDecoded["average_error"];
+                publicError = averageError;
+                if (children) {
+                  int roundedError = (averageError * 1000).round();
+                  publicError = roundedError;
+                  child = Text(
+                    "$text $roundedError",
+                    textScaleFactor: 2,
+                  );
+                } else {
+                  child = Text(
+                    "$text $averageError",
+                    textScaleFactor: 2,
+                  );
+                }
+              } else {
+                child = Text(
+                  "$text -",
+                  textScaleFactor: 2,
+                );
+              }
+            } else {
+              child = Row(
+                children: [
+                  Text(
+                    text,
+                    textScaleFactor: 2,
+                  ),
+                  const SizedBox(
+                    child: CircularProgressIndicator(
+                      color: OurColors.accentColor,
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return child;
+          }),
+    );
   }
 }
 

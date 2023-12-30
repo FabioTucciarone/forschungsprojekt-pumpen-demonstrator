@@ -40,6 +40,7 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
   }
 }
 
+
 class RobotBox extends StatefulWidget {
   RobotBox({super.key});
 
@@ -156,72 +157,75 @@ class _RobotBoxState extends State<RobotBox> {
 }
 
 class ScoreBoard extends StatelessWidget {
-  ScoreBoard({super.key});
-  ResponseDecoder responseDecoder = ResponseDecoder();
+  bool children;
+  ScoreBoard(this.children, {super.key});
   @override
   Widget build(BuildContext context) {
-    final Future<String> future = context.watch<FutureNotifier>().future;
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          width: 200,
-          decoration: BoxDecoration(
-              color: OurColors.accentColor,
-              border: Border.all(color: OurColors.appBarColor, width: 4.0),
-              borderRadius: BorderRadius.circular(20)),
-          child: FutureBuilder(
-              future: future,
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                Widget child;
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data != "keinWert") {
-                    responseDecoder.setResponse(snapshot.data);
-                    double averageError =
-                        responseDecoder.jsonDecoded["average_error"];
-                    int roundedError = (averageError * 1000).round();
-                    child = Text(
-                      "Score: $roundedError",
-                      textScaleFactor: 2,
-                    );
-                  } else {
-                    child = const Text(
-                      "Score: -",
-                      textScaleFactor: 2,
-                    );
-                  }
-                } else {
-                  child = Row(
-                    children: [
-                      const Text(
-                        "Score:",
-                        textScaleFactor: 2,
-                      ),
-                      const SizedBox(
-                        child: CircularProgressIndicator(
-                          color: OurColors.accentColor,
-                        ),
-                      ),
-                    ],
-                  );
-                }
-
-                return child;
-              }),
-        ),
+            decoration: BoxDecoration(
+                color: OurColors.accentColor,
+                border: Border.all(color: OurColors.accentColor, width: 4.0),
+                borderRadius: BorderRadius.circular(20)),
+            child: AverageError(true)),
         Container(
-          width: 200,
-          decoration: BoxDecoration(
-              color: OurColors.accentColor,
-              border: Border.all(color: OurColors.appBarColor, width: 4.0),
-              borderRadius: BorderRadius.circular(20)),
-          child: TextButton(
-              onPressed: () => {print("a")},
-              child: Text("Highscore:-",
-                  textScaleFactor: 2,
-                  style: TextStyle(
-                      decoration: TextDecoration.none, color: Colors.black))),
-        )
+            constraints: const BoxConstraints(minWidth: 700),
+            decoration: BoxDecoration(
+                color: OurColors.accentColor,
+                border: Border.all(color: OurColors.accentColor, width: 4.0),
+                borderRadius: BorderRadius.circular(20)),
+            child: const Highscore())
       ],
     );
+  }
+}
+
+class Highscore extends StatefulWidget {
+  const Highscore({super.key});
+
+  @override
+  State<Highscore> createState() => _HighscoreState();
+}
+
+class _HighscoreState extends State<Highscore> {
+  int highscore = 0;
+  String name = "";
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<FutureNotifier>().future;
+    Future<Map<String, dynamic>> futureMap =
+        useOfBackend.backend.getHighscoreAndName();
+    if (AverageError.publicError < highscore) {
+      return Text(
+        "Highscore: $highscore von $name",
+        textScaleFactor: 2,
+      );
+    } else {
+      return FutureBuilder(
+          future: futureMap,
+          builder: (BuildContext context,
+              AsyncSnapshot<Map<String, dynamic>> snapshot) {
+            Widget child;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data!["highscore"] != null &&
+                  snapshot.data!["name"] != null) {
+                highscore = snapshot.data!["highscore"];
+                name = snapshot.data!["name"];
+              }
+              child = Text(
+                "Highscore: $highscore von $name",
+                textScaleFactor: 2,
+              );
+            } else {
+              child = const Text("FEHLER");
+            }
+            return child;
+          });
+    }
   }
 }
