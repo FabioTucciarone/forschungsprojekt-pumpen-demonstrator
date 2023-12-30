@@ -2,6 +2,7 @@ import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:flutter/services.dart';
+import 'Highscores.dart';
 import 'Intro.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -152,78 +153,5 @@ class _RobotBoxState extends State<RobotBox> {
         return child;
       },
     );
-  }
-}
-
-class ScoreBoard extends StatelessWidget {
-  bool children;
-  ScoreBoard(this.children, {super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-            decoration: BoxDecoration(
-                color: OurColors.accentColor,
-                border: Border.all(color: OurColors.accentColor, width: 4.0),
-                borderRadius: BorderRadius.circular(20)),
-            child: AverageError(true)),
-        Container(
-            constraints: const BoxConstraints(minWidth: 700),
-            decoration: BoxDecoration(
-                color: OurColors.accentColor,
-                border: Border.all(color: OurColors.accentColor, width: 4.0),
-                borderRadius: BorderRadius.circular(20)),
-            child: const Highscore())
-      ],
-    );
-  }
-}
-
-class Highscore extends StatefulWidget {
-  const Highscore({super.key});
-
-  @override
-  State<Highscore> createState() => _HighscoreState();
-}
-
-class _HighscoreState extends State<Highscore> {
-  int highscore = 0;
-  String name = "";
-
-  @override
-  Widget build(BuildContext context) {
-    context.watch<FutureNotifier>().future;
-    Future<Map<String, dynamic>> futureMap =
-        useOfBackend.backend.getHighscoreAndName();
-    if (AverageError.publicError < highscore) {
-      return Text(
-        "Highscore: $highscore von $name",
-        textScaleFactor: 2,
-      );
-    } else {
-      return FutureBuilder(
-          future: futureMap,
-          builder: (BuildContext context,
-              AsyncSnapshot<Map<String, dynamic>> snapshot) {
-            Widget child;
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data != null) {
-                highscore = (snapshot.data!["score"] * 1000).round();
-                name = snapshot.data!["name"];
-              }
-              child = Text(
-                "Highscore: $highscore von $name",
-                textScaleFactor: 2,
-              );
-            } else {
-              child = const Text("FEHLER");
-            }
-            return child;
-          });
-    }
   }
 }
