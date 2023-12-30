@@ -140,7 +140,7 @@ class BackendConnection with ChangeNotifier {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
     }
-    final response = await http.get(getUri("get_model_result"));
+    final response = await http.get(getUri("get_highscore_and_name"));
     if (response.statusCode == 200) {
       final highscoreAndName =
           jsonDecode(response.body) as Map<String, dynamic>;

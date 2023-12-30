@@ -148,11 +148,15 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        ""));
+                        "test"));
+                MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(widget.currentValue,
-                        MainScreenElements.pressureSlider.getCurrent(), ""));
+                    .sendInputData(
+                        widget.currentValue,
+                        MainScreenElements.pressureSlider.getCurrent(),
+                        "test"));
+                MainSlide.restartTimer.restartTimer();
               }
             },
             onTapUp: (TapUpDetails details) {
@@ -161,11 +165,15 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        ""));
+                        "test"));
+                MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(widget.currentValue,
-                        MainScreenElements.pressureSlider.getCurrent(), ""));
+                    .sendInputData(
+                        widget.currentValue,
+                        MainScreenElements.pressureSlider.getCurrent(),
+                        "test"));
+                MainSlide.restartTimer.restartTimer();
               }
             },
             child: Padding(
