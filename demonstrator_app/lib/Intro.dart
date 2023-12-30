@@ -68,7 +68,7 @@ class IntroductionScience extends StatelessWidget {
                 tabController.animateTo(1);
               },
               child: const Text(
-                "Verstanden",
+                "Understood",
                 style: TextStyle(color: OurColors.appBarTextColor),
               ))
         ],

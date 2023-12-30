@@ -291,29 +291,37 @@ class _HighscoreState extends State<Highscore> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FutureNotifier>().future;
     Future<Map<String, dynamic>> futureMap =
         useOfBackend.backend.getHighscoreAndName();
-    return FutureBuilder(
-        future: futureMap,
-        builder: (BuildContext context,
-            AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          Widget child;
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data!["highscore"] != null &&
-                snapshot.data!["name"] != null) {
-              highscore = snapshot.data!["highscore"];
-              name = snapshot.data!["name"];
+    if (AverageError.publicError < highscore) {
+      return Text(
+        "Highscore: $highscore von $name",
+        textScaleFactor: 2,
+      );
+    } else {
+      return FutureBuilder(
+          future: futureMap,
+          builder: (BuildContext context,
+              AsyncSnapshot<Map<String, dynamic>> snapshot) {
+            Widget child;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data!["highscore"] != null &&
+                  snapshot.data!["name"] != null) {
+                highscore = snapshot.data!["highscore"];
+                name = snapshot.data!["name"];
+              }
+              child = Text(
+                "Highscore: $highscore von $name",
+                textScaleFactor: 2,
+              );
+            } else {
+              child = const Text("FEHLER");
             }
-            child = Text(
-              "Highscore: $highscore von $name",
-              textScaleFactor: 2,
-            );
-          } else {
-            child = const Text("FEHLER");
-          }
-          return child;
-        });
+            return child;
+          });
+    }
   }
 }
