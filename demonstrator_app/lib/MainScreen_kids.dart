@@ -54,6 +54,7 @@ class _RobotBoxState extends State<RobotBox> {
     'assets/bored.jpeg',
     'assets/confused.jpeg',
     'assets/mad.jpeg',
+    'assets/starry.jpeg'
   ];
   List<String> loading = [
     "Hmmmmm",
@@ -81,7 +82,7 @@ class _RobotBoxState extends State<RobotBox> {
 
   Random random = Random();
   int imageValue = 0;
-  String text = "DIESER TEXT SOLLTE MAN NICHT SEHEN";
+  String text = "";
   final ResponseDecoder responseDecoder = ResponseDecoder();
   @override
   Widget build(BuildContext context) {
@@ -98,17 +99,19 @@ class _RobotBoxState extends State<RobotBox> {
             responseDecoder.setResponse(snapshot.data);
             double averageError = responseDecoder.jsonDecoded["average_error"];
             print(averageError);
-            if (averageError > 0.15) {
+            if (averageError > 0.1) {
               text = midScore[randomScore];
               imageValue = 1;
             }
-            if (averageError > 0.4) {
+            if (averageError > 0.2) {
               imageValue = 0;
+              text = highScore[randomScore];
+            } else if (averageError > 0.4) {
+              imageValue = 4;
               text = highScore[randomScore];
             }
           } else {
-            text =
-                "Hey los geht's! Bewege die Schieberegler und drücke auf den Knopf unten um loszulegen!";
+            text = "Hey los geht's! Bewege die Schieberegler um loszulegen!";
             imageValue = 0;
           }
         } else {
@@ -116,7 +119,7 @@ class _RobotBoxState extends State<RobotBox> {
           imageValue = 2;
           text = loading[randomLoading];
         }
-        child = Container(
+        child = SizedBox(
           width: 450,
           height: 300,
           child: Stack(children: <Widget>[
