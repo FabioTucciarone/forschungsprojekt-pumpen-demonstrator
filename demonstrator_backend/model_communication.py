@@ -179,7 +179,7 @@ class ModelConfiguration:
         self.color_palette = color_palette
 
 
-def get_1hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, name: str):
+def get_1hp_model_results(config: ModelConfiguration, permeability: float, pressure: float):
     """
     Prepare a dataset and run the model.
 
@@ -196,14 +196,21 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
     model.to(config.settings.device)
     model.eval()
 
-    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, info=config.info)
+    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.info, config.settings.device)
     return visualize.get_plots(model, x, y, info, norm, config.color_palette)
 
 
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
 
+    print(f"Start :: Gerät = {config.settings.device}")
+
+    # size_hp_box = info["CellsNumberPrior"]
+    # field_shape = info["CellsNumber"]
+    # image_shape = [field_shape[0] - size_hp_box[0] - 1, field_shape[1] - size_hp_box[1] - 1]
+    # image_shape[1] = min(image_shape[1], 60)
+
     corner_dist = config.info["PositionHPPrior"]
-    positions = [[corner_dist[1] + 50, corner_dist[0] + 50], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
+    positions = [[corner_dist[1] + 50, corner_dist[0] + 30], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
 
     model_1HP = UNet(in_channels=len("gksi")).float()
     model_1HP.load(config.paths2HP.model_1hp_path, config.settings.device)
@@ -212,5 +219,5 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     model_2HP.load(config.settings.model, config.settings.device)
     model_2HP.to(config.settings.device)
 
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, model_1HP, pressure, permeability, positions, device=config.settings.device)
-    return visualize.get_2hp_plots(model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, device=config.settings.device)
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, model_1HP, pressure, permeability, positions, config.settings.device)
+    return visualize.get_2hp_plots(model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, config.settings.device)

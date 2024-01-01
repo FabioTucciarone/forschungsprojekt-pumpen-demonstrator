@@ -138,16 +138,18 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     pos_i = info.hp_pos[0] 
     pos_j = info.hp_pos[1] 
 
+    # TODO: Paralellisieren? Torch ausnutzen?
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             for k in range(3):
                 it, jt = get_sample_indices(pos_i, pos_j, i, j, bounds[k], result_bounds)
 
                 y = temp_fields[k].at(it, jt)
-                if y < info.base_temp: y = info.base_temp
+                if y < info.base_temp: y = info.base_temp # TODO: Loswerden? Auch torch verwenden?
 
                 transformed[k].set(i, j, y)
 
+    # TODO: Paralellisieren? Torch ausnutzen?
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             result.set(i, j, transformed[0].at(i, j)*weights[0] + transformed[1].at(i, j)*weights[1] + transformed[2].at(i, j)*weights[2])

@@ -3,6 +3,7 @@ from flask_caching import Cache
 import csv
 import model_communication as mc
 import os
+import time
 
 # Global Variables:
 
@@ -39,7 +40,7 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     pressure = float(request.json.get('pressure'))
     name = request.json.get('name')
 
-    display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, name)
+    display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure)
 
     insert_highscore(name, display_data.average_error)
 
@@ -59,7 +60,10 @@ def browser_input():
         pressure = float(request.form['pressure'])
         name = request.form['name']
 
-        display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, name)
+        a = time.perf_counter()
+        display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure)
+        b = time.perf_counter()
+        print(b-a)
         insert_highscore(name, display_data.average_error)
         
         return f"""
@@ -87,6 +91,16 @@ def browser_input():
 
 @app.route('/test_response', methods = ['GET'])
 def test_response():
+    model_configuration = mc.ModelConfiguration(2)
+
+    k = 7.350276541753949086e-10
+    p = -2.142171334025262316e-03
+    pos = [40, 45]
+
+    st2 = time.time()
+    display_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
+    et2 = time.time()
+    print('Antwortzeit:', et2 - st2, 'seconds')
     return 'success'
 
   
