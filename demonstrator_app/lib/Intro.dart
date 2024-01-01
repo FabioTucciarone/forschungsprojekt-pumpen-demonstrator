@@ -104,15 +104,23 @@ class _RobotIntroState extends State<RobotIntro> {
   int times = 0;
   List<String> imagePaths = [
     'assets/happy.jpeg',
-    'assets/bored.jpeg',
+    'assets/starry.jpeg',
+    'assets/happy.jpeg',
+    'assets/starry.jpeg',
     'assets/confused.jpeg',
     'assets/happy.jpeg',
+    'assets/starry.jpeg',
+    'assets/starry.jpeg',
   ];
   List<String> speeches = [
     "",
     "Hallo mein Name ist Kai",
     "Ich bin eine Künstliche Intelligenz",
-    "Leider bin ich noch jung und tollpatschig, kannst du mir helfen ein Paar meiner Fehler zu finden?"
+    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen auszurechnen. Eine Wärmefahne ist sozusagen das Feld, in dem sich die Temperatur um die Pumpe herum ändert.",
+    "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
+    "Wenn du hohe Scores erreichst, sehe ich wo ich mich noch verbessern kann",
+    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Viel Erfolg!",
+    ""
   ];
 
   void nextState() {
@@ -197,7 +205,7 @@ class _RobotIntroState extends State<RobotIntro> {
               backgroundColor: OurColors.appBarColor,
             ),
             onPressed: () {
-              if (times == 3) {
+              if (times == 6) {
                 widget.tabController.animateTo(1);
               } else {
                 nextState();
@@ -217,9 +225,12 @@ class _RobotIntroState extends State<RobotIntro> {
 class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
+    "animalese1.wav",
+    "animalese1.wav",
     "animalese0.wav",
     "animalese2.wav",
-    "animalese1.wav"
+    "animalese0.wav",
+    "animalese1.wav",
   ];
 
   Player() {
@@ -232,7 +243,7 @@ class Player {
   }
 
   void play(int state) async {
-    if (state == 2) {
+    if (state == 6) {
       await player.release();
     } else {
       await player.stop();

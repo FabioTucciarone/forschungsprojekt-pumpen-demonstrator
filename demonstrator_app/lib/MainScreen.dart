@@ -3,6 +3,7 @@ import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/MainScreen_kids.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:demonstrator_app/Timer.dart';
+import 'Highscores.dart';
 import 'Slider.dart';
 
 import 'package:flutter/material.dart';
@@ -289,69 +290,6 @@ class OutputHeader extends StatelessWidget {
         ),
         AverageError(false)
       ],
-    );
-  }
-}
-
-class AverageError extends StatelessWidget {
-  final bool children;
-  AverageError(this.children, {super.key});
-  ResponseDecoder responseDecoder = ResponseDecoder();
-  static dynamic publicError = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final Future<String> future = context.watch<FutureNotifier>().future;
-    final String text = children ? "Score:" : "Average Error:";
-    return Container(
-      constraints: const BoxConstraints(minWidth: 500),
-      child: FutureBuilder(
-          future: future,
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            Widget child;
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data != "keinWert") {
-                responseDecoder.setResponse(snapshot.data);
-                double averageError =
-                    responseDecoder.jsonDecoded["average_error"];
-                publicError = averageError;
-                if (children) {
-                  int roundedError = (averageError * 1000).round();
-                  publicError = roundedError;
-                  child = Text(
-                    "$text $roundedError",
-                    textScaleFactor: 2,
-                  );
-                } else {
-                  child = Text(
-                    "$text $averageError",
-                    textScaleFactor: 2,
-                  );
-                }
-              } else {
-                child = Text(
-                  "$text -",
-                  textScaleFactor: 2,
-                );
-              }
-            } else {
-              child = Row(
-                children: [
-                  Text(
-                    text,
-                    textScaleFactor: 2,
-                  ),
-                  const SizedBox(
-                    child: CircularProgressIndicator(
-                      color: OurColors.accentColor,
-                    ),
-                  ),
-                ],
-              );
-            }
-
-            return child;
-          }),
     );
   }
 }

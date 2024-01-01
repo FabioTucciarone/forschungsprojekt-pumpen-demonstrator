@@ -2,6 +2,7 @@ import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:flutter/services.dart';
+import 'Highscores.dart';
 import 'Intro.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -53,6 +54,7 @@ class _RobotBoxState extends State<RobotBox> {
     'assets/bored.jpeg',
     'assets/confused.jpeg',
     'assets/mad.jpeg',
+    'assets/starry.jpeg'
   ];
   List<String> loading = [
     "Hmmmmm",
@@ -80,7 +82,7 @@ class _RobotBoxState extends State<RobotBox> {
 
   Random random = Random();
   int imageValue = 0;
-  String text = "DIESER TEXT SOLLTE MAN NICHT SEHEN";
+  String text = "";
   final ResponseDecoder responseDecoder = ResponseDecoder();
   @override
   Widget build(BuildContext context) {
@@ -97,17 +99,19 @@ class _RobotBoxState extends State<RobotBox> {
             responseDecoder.setResponse(snapshot.data);
             double averageError = responseDecoder.jsonDecoded["average_error"];
             print(averageError);
-            if (averageError > 0.15) {
+            if (averageError > 0.1) {
               text = midScore[randomScore];
               imageValue = 1;
             }
-            if (averageError > 0.4) {
+            if (averageError > 0.2) {
               imageValue = 0;
+              text = highScore[randomScore];
+            } else if (averageError > 0.4) {
+              imageValue = 4;
               text = highScore[randomScore];
             }
           } else {
-            text =
-                "Hey los geht's! Bewege die Schieberegler und drücke auf den Knopf unten um loszulegen!";
+            text = "Hey los geht's! Bewege die Schieberegler um loszulegen!";
             imageValue = 0;
           }
         } else {
@@ -115,7 +119,7 @@ class _RobotBoxState extends State<RobotBox> {
           imageValue = 2;
           text = loading[randomLoading];
         }
-        child = Container(
+        child = SizedBox(
           width: 450,
           height: 300,
           child: Stack(children: <Widget>[
@@ -152,78 +156,5 @@ class _RobotBoxState extends State<RobotBox> {
         return child;
       },
     );
-  }
-}
-
-class ScoreBoard extends StatelessWidget {
-  bool children;
-  ScoreBoard(this.children, {super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-            decoration: BoxDecoration(
-                color: OurColors.accentColor,
-                border: Border.all(color: OurColors.accentColor, width: 4.0),
-                borderRadius: BorderRadius.circular(20)),
-            child: AverageError(true)),
-        Container(
-            constraints: const BoxConstraints(minWidth: 700),
-            decoration: BoxDecoration(
-                color: OurColors.accentColor,
-                border: Border.all(color: OurColors.accentColor, width: 4.0),
-                borderRadius: BorderRadius.circular(20)),
-            child: const Highscore())
-      ],
-    );
-  }
-}
-
-class Highscore extends StatefulWidget {
-  const Highscore({super.key});
-
-  @override
-  State<Highscore> createState() => _HighscoreState();
-}
-
-class _HighscoreState extends State<Highscore> {
-  int highscore = 0;
-  String name = "";
-
-  @override
-  Widget build(BuildContext context) {
-    context.watch<FutureNotifier>().future;
-    Future<Map<String, dynamic>> futureMap =
-        useOfBackend.backend.getHighscoreAndName();
-    if (AverageError.publicError < highscore) {
-      return Text(
-        "Highscore: $highscore von $name",
-        textScaleFactor: 2,
-      );
-    } else {
-      return FutureBuilder(
-          future: futureMap,
-          builder: (BuildContext context,
-              AsyncSnapshot<Map<String, dynamic>> snapshot) {
-            Widget child;
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data != null) {
-                highscore = (snapshot.data!["score"] * 1000).round();
-                name = snapshot.data!["name"];
-              }
-              child = Text(
-                "Highscore: $highscore von $name",
-                textScaleFactor: 2,
-              );
-            } else {
-              child = const Text("FEHLER");
-            }
-            return child;
-          });
-    }
   }
 }
