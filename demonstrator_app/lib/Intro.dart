@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
+/// Class for the introduction of the science version with an information text.
 class IntroductionScience extends StatelessWidget {
   final TabController tabController;
   const IntroductionScience(this.tabController, {super.key});
@@ -77,6 +78,7 @@ class IntroductionScience extends StatelessWidget {
   }
 }
 
+/// Class for the introduction of the children version with a roboter animation.
 class IntroKids extends StatelessWidget {
   final TabController tabController;
   const IntroKids(this.tabController, {super.key});
@@ -89,6 +91,7 @@ class IntroKids extends StatelessWidget {
   }
 }
 
+/// Class for the roboter which is used for the introduction. The roboter can "talk" and show several emotions.
 class RobotIntro extends StatefulWidget {
   final TabController tabController;
   const RobotIntro(this.tabController, {super.key});

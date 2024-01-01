@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
+/// Class for the site the user interacts with.
 class MainSlide extends StatefulWidget with MainScreenElements {
   final bool children;
   MainSlide({super.key, required this.children});
@@ -50,6 +51,7 @@ class _MainSlideState extends State<MainSlide>
   }
 }
 
+/// Class for the tab bar with which the user can choose between the information text, phase 1 and phase 2.
 class MainMaterial extends StatelessWidget {
   const MainMaterial({
     super.key,
@@ -131,6 +133,7 @@ class MainMaterial extends StatelessWidget {
   }
 }
 
+/// Class for the phase 1 simulation in the science version.
 class MainScreenContent extends StatelessWidget with MainScreenElements {
   MainScreenContent({super.key});
 
@@ -163,6 +166,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
   }
 }
 
+/// Class for the phase 2 simulation with 2 heat pumps in the science version.
 class SciencePhase2 extends StatelessWidget {
   const SciencePhase2({super.key});
 
@@ -182,6 +186,8 @@ class SciencePhase2 extends StatelessWidget {
   }
 }
 
+/// Mixin for the elements of the main screen consisting of 2 sliders for pressure and permeability and
+/// the output boxes for the ai generated output, groundtruth and difference field.
 mixin MainScreenElements {
   static PressureSlider pressureSlider = PressureSlider(
       900,
@@ -275,6 +281,7 @@ mixin MainScreenElements {
   }
 }
 
+/// Class for the header of the output with the average error.
 class OutputHeader extends StatelessWidget {
   const OutputHeader({super.key});
 

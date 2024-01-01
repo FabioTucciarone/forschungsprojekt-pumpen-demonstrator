@@ -15,9 +15,9 @@ class Introduction extends StatelessWidget {
   }
 }
 
-//this is the Homescreen for admins
+/// This is the Homescreen for admins.
 class IntroHomeScaffold extends StatelessWidget {
-  //method for showing the Errordialog, when neither the debug mode is enabled nor a valid connection is established
+  /// Method for showing the Errordialog, when neither the debug mode is enabled nor a valid connection is established.
   void showErrorDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -135,6 +135,7 @@ class IntroHomeScaffold extends StatelessWidget {
   }
 }
 
+/// Class for a switch with which the admin can activate the debug mode.
 class DebugSwitch extends StatefulWidget {
   const DebugSwitch({super.key});
 
@@ -163,6 +164,7 @@ class _DebugSwitchState extends State<DebugSwitch> {
   }
 }
 
+/// This class is used so that [backend] and its methods can be accessed from anywhere.
 class UseOfBackendConnection {
   static final UseOfBackendConnection _useOfBackendConnection =
       UseOfBackendConnection._internal();
