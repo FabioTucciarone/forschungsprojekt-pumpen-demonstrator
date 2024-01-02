@@ -119,7 +119,7 @@ class _RobotIntroState extends State<RobotIntro> {
     "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen auszurechnen. Eine Wärmefahne ist sozusagen das Feld, in dem sich die Temperatur um die Pumpe herum ändert.",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
     "Wenn du hohe Scores erreichst, sehe ich wo ich mich noch verbessern kann",
-    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Viel Erfolg!",
+    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Dieser wird oben rechts angezeigt. Viel Erfolg!",
     ""
   ];
 
@@ -182,7 +182,7 @@ class _RobotIntroState extends State<RobotIntro> {
               ),
               Positioned(
                   top: 450,
-                  left: 200,
+                  left: 250,
                   child: Slider(
                     value: volume,
                     thumbColor: OurColors.appBarColor,
@@ -214,6 +214,7 @@ class _RobotIntroState extends State<RobotIntro> {
             child: const Text(
               "Weiter",
               style: TextStyle(color: OurColors.appBarTextColor),
+              textScaleFactor: 2,
             ),
           ),
         ),
@@ -226,11 +227,11 @@ class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
     "animalese1.wav",
-    "animalese1.wav",
+    "animalese2.wav",
     "animalese0.wav",
     "animalese2.wav",
     "animalese0.wav",
-    "animalese1.wav",
+    "animalese2.wav",
   ];
 
   Player() {
