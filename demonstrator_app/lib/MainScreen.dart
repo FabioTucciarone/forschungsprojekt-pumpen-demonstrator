@@ -61,18 +61,21 @@ class MainMaterial extends StatefulWidget {
   }) : _tabController = tabController;
   final TabController _tabController;
   final MainSlide widget;
+  static String name = NamePicker.getRandomName();
+
+  static String getName() {
+    return name;
+  }
 
   @override
   State<MainMaterial> createState() => _MainMaterialState();
 }
 
 class _MainMaterialState extends State<MainMaterial> {
-  String name = NamePicker.getRandomName();
-
   void reset() {
     widget._tabController.animateTo(0);
     setState(() {
-      name = NamePicker.getRandomName();
+      MainMaterial.name = NamePicker.getRandomName();
     });
   }
 
@@ -95,7 +98,7 @@ class _MainMaterialState extends State<MainMaterial> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        name,
+                        MainMaterial.name,
                         style: const TextStyle(
                             color: OurColors.appBarTextColor, fontSize: 20),
                       ),

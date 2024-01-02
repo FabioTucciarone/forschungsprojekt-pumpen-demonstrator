@@ -161,6 +161,10 @@ class HighscoreDialog extends StatelessWidget {
                 ]));
               }
               child = Table(
+                columnWidths: const <int, TableColumnWidth>{
+                  1: FixedColumnWidth(128),
+                  2: FlexColumnWidth(),
+                },
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 children: tableRows,
               );

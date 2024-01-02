@@ -151,14 +151,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
                     .sendInputData(
                         widget.currentValue,
                         MainScreenElements.pressureSlider.getCurrent(),
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               }
             },
@@ -168,14 +168,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
                     .sendInputData(
                         widget.currentValue,
                         MainScreenElements.pressureSlider.getCurrent(),
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               }
             },
