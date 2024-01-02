@@ -150,6 +150,19 @@ class BackendConnection with ChangeNotifier {
     }
   }
 
+  Future<List<dynamic>> getTopTenList() async {
+    if (!readyForHTTPRequests && !debugEnabled) {
+      throw "Error: No SSH-port forwarding established.";
+    }
+    final response = await http.get(getUri("get_top_ten_list"));
+    if (response.statusCode == 200) {
+      final highscoreAndName = jsonDecode(response.body) as List<dynamic>;
+      return highscoreAndName;
+    } else {
+      throw "HTTP-request failed with status code ${response.statusCode}";
+    }
+  }
+
   /// If [debug] is true then all ssh methods will be ignored and http-requests will be sent to http://localhost:5000.
   /// This is useful for testing the backend with a flask debug-server on the lokal machine.
   void setDebugMode(bool enabled) {

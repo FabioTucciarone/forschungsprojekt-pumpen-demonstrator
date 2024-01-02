@@ -136,7 +136,10 @@ class _PressureSliderState extends State<PressureSlider>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        getDisplayOfValues(widget.name, widget.currentValue, widget.children),
+        Container(
+            constraints: const BoxConstraints(minWidth: 200),
+            child: getDisplayOfValues(
+                widget.name, widget.currentValue, widget.children)),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -155,14 +158,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
                     .sendInputData(
                         widget.currentValue,
                         MainScreenElements.pressureSlider.getCurrent(),
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               }
             },
@@ -172,14 +175,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
                     .sendInputData(
                         widget.currentValue,
                         MainScreenElements.pressureSlider.getCurrent(),
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               }
             },
