@@ -8,70 +8,83 @@ class IntroductionScience extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            decoration: const BoxDecoration(color: OurColors.accentColor),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                child: RichText(
-                    text: const TextSpan(
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                        children: <TextSpan>[
-                      TextSpan(
-                          text:
-                              "Open-loop groundwater heat pumps are a renewable approach for cooling and heating buildings.\n"),
-                      TextSpan(
-                          text:
-                              "For planning it is important to learn about the environmental effect of these pumps in form of their heat plumes.\n"),
-                      TextSpan(
-                          text:
-                              "Since fully resolved simulations would be too computationally expensive, Julia Pelzer (1) has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
-                      TextSpan(text: "\nIt can: \n"),
-                      TextSpan(
-                          text:
-                              "a) approximate the heat plume of one heat pump with input pressure and permeability \n"),
-                      TextSpan(
-                          text:
-                              "b) approximate the heat plume of two heat pumps positioned relative to one another \n"),
-                      TextSpan(
-                          text:
-                              "\nTo communicate the results to the scientific community we have built a demonstrator. \n"),
-                      TextSpan(
-                          text:
-                              "We generate a groundtruth using ***TODO GROUNDTRUTH BESCHREIBEN*** and compare it to a) to realize an error field. \n"),
-                      TextSpan(
-                          text:
-                              "Since generating a groundtruth for b) is not feasible we just provide its results. \n"),
-                      TextSpan(
-                          text:
-                              "\nFeel free to play around with this app to get a feel for how far AI has come in terms of real life simulation. \n"),
-                    ])),
-              ),
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: SizedBox(
+          width: 1350,
+          height: 800,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        RichText(
+                            text: const TextSpan(
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.black),
+                                children: [
+                              TextSpan(
+                                  text:
+                                      "Open-loop groundwater heat pumps are a renewable approach for cooling and heating buildings.\n"),
+                              TextSpan(
+                                  text:
+                                      "For planning it is important to learn about the environmental effect of these pumps in form of their heat plumes. Figure 1 shows an example of a heatvane in form of a heatmap.\n"),
+                              TextSpan(
+                                  text:
+                                      "Since fully resolved simulations would be too computationally expensive, Julia Pelzer (1) has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
+                              TextSpan(text: "\nIt can: \n"),
+                              TextSpan(
+                                  text:
+                                      "a) approximate the heat plume of one heat pump with input pressure and permeability \n"),
+                              TextSpan(
+                                  text:
+                                      "b) approximate the heat plume of two heat pumps positioned relative to one another \n"),
+                              TextSpan(
+                                  text:
+                                      "\nTo communicate the results to the scientific community we have built a demonstrator. \n"),
+                              TextSpan(
+                                  text:
+                                      "We generate a groundtruth using ***TODO GROUNDTRUTH BESCHREIBEN*** and compare it to a) to realize an error field. \n"),
+                              TextSpan(
+                                  text:
+                                      "Since generating a groundtruth for b) is not feasible we just provide its results. \n"),
+                              TextSpan(
+                                  text:
+                                      "\nFeel free to play around with this app to get a feel for how far AI has come in terms of real life simulation. \n"),
+                            ])),
+                        Image.asset('assets/examplePlume.jpeg'),
+                        const Text("Figure 1: An example Heat Plume")
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.black),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          OurColors.appBarColor,
+                        )),
+                    onPressed: () {
+                      tabController.animateTo(1);
+                    },
+                    child: const Text(
+                      "Understood",
+                      style: TextStyle(color: OurColors.appBarTextColor),
+                    ))
+              ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    OurColors.appBarColor,
-                  )),
-              onPressed: () {
-                tabController.animateTo(1);
-              },
-              child: const Text(
-                "Understood",
-                style: TextStyle(color: OurColors.appBarTextColor),
-              ))
-        ],
+        ),
       ),
     );
   }
@@ -133,92 +146,104 @@ class _RobotIntroState extends State<RobotIntro> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: [
-        Center(
-            child: SizedBox(
-          width: 700,
-          height: 500,
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                top: 20,
-                left: 350,
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 5),
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(200)),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(200),
-                    child: Image.asset(
-                      imagePaths[times],
-                      fit: BoxFit.cover,
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Center(
+                  child: SizedBox(
+                width: 700,
+                height: 500,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      top: 20,
+                      left: 350,
+                      child: Container(
+                        height: 300,
+                        width: 300,
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 5),
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(200)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(200),
+                          child: Image.asset(
+                            imagePaths[times],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
+                    Positioned(
+                      top: 50,
+                      left: 0,
+                      width: 400,
+                      height: 700,
+                      child: AnimatedOpacity(
+                        opacity: speechBubble ? 1.0 : 0,
+                        duration: const Duration(milliseconds: 500),
+                        child: BubbleSpecialThree(
+                          text: speeches[times],
+                          color: OurColors.accentColor,
+                          tail: true,
+                          textStyle: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              decoration: TextDecoration.none),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                        top: 450,
+                        left: 250,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.volume_up_rounded),
+                            Slider(
+                              value: volume,
+                              thumbColor: OurColors.appBarColor,
+                              activeColor: OurColors.accentColor,
+                              inactiveColor: Color.fromARGB(174, 206, 135, 135),
+                              onChanged: (value) => setState(() {
+                                volume = value;
+                                player.setVolume(volume);
+                              }),
+                            ),
+                          ],
+                        ))
+                  ],
+                ),
+              )),
+              const SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: OurColors.appBarColor,
+                  ),
+                  onPressed: () {
+                    if (times == 6) {
+                      widget.tabController.animateTo(1);
+                    } else {
+                      nextState();
+                    }
+                  },
+                  child: const Text(
+                    "Weiter",
+                    style: TextStyle(color: OurColors.appBarTextColor),
+                    textScaleFactor: 2,
                   ),
                 ),
               ),
-              Positioned(
-                top: 50,
-                left: 0,
-                width: 400,
-                height: 700,
-                child: AnimatedOpacity(
-                  opacity: speechBubble ? 1.0 : 0,
-                  duration: const Duration(milliseconds: 500),
-                  child: BubbleSpecialThree(
-                    text: speeches[times],
-                    color: OurColors.accentColor,
-                    tail: true,
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        decoration: TextDecoration.none),
-                  ),
-                ),
-              ),
-              Positioned(
-                  top: 450,
-                  left: 250,
-                  child: Slider(
-                    value: volume,
-                    thumbColor: OurColors.appBarColor,
-                    activeColor: OurColors.accentColor,
-                    inactiveColor: Color.fromARGB(174, 206, 135, 135),
-                    onChanged: (value) => setState(() {
-                      volume = value;
-                      player.setVolume(volume);
-                    }),
-                  ))
             ],
           ),
-        )),
-        const SizedBox(
-          height: 20,
         ),
-        Center(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: OurColors.appBarColor,
-            ),
-            onPressed: () {
-              if (times == 6) {
-                widget.tabController.animateTo(1);
-              } else {
-                nextState();
-              }
-            },
-            child: const Text(
-              "Weiter",
-              style: TextStyle(color: OurColors.appBarTextColor),
-              textScaleFactor: 2,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
