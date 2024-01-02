@@ -13,25 +13,35 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView(
-        padding: const EdgeInsets.all(10),
-        children: [
-          Row(
-            children: [
-              Column(
-                children: [...input(500, true)],
-              ),
-              RobotBox()
-            ],
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: SizedBox(
+          width: 1350,
+          height: 750,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [...input(500, true)],
+                    ),
+                    RobotBox()
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ScoreBoard(true),
+                ...output(true),
+              ],
+            ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          ScoreBoard(true),
-          ...output(true),
-        ],
+        ),
       ),
     );
   }
