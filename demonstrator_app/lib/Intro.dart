@@ -119,7 +119,7 @@ class _RobotIntroState extends State<RobotIntro> {
     "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen auszurechnen. Eine Wärmefahne ist sozusagen das Feld, in dem sich die Temperatur um die Pumpe herum ändert.",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
     "Wenn du hohe Scores erreichst, sehe ich wo ich mich noch verbessern kann",
-    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Viel Erfolg!",
+    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Dieser wird oben rechts angezeigt. Viel Erfolg!",
     ""
   ];
 

@@ -1,11 +1,7 @@
 import 'package:chat_bubbles/chat_bubbles.dart';
-import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/Outputbox.dart';
-import 'package:flutter/services.dart';
 import 'Highscores.dart';
 import 'Intro.dart';
-import 'Slider.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'MainScreen.dart';
 
 import 'package:flutter/material.dart';

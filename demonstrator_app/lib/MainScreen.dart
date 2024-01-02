@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/MainScreen_kids.dart';
+import 'package:demonstrator_app/NamePicker.dart';
 import 'package:demonstrator_app/Outputbox.dart';
 import 'package:demonstrator_app/Timer.dart';
 import 'Highscores.dart';
@@ -8,7 +11,6 @@ import 'Slider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
 
 class MainSlide extends StatefulWidget with MainScreenElements {
   final bool children;
@@ -51,23 +53,32 @@ class _MainSlideState extends State<MainSlide>
   }
 }
 
-class MainMaterial extends StatelessWidget {
-  const MainMaterial({
+class MainMaterial extends StatefulWidget {
+  MainMaterial({
     super.key,
     required TabController tabController,
     required this.widget,
   }) : _tabController = tabController;
-
   final TabController _tabController;
   final MainSlide widget;
 
+  @override
+  State<MainMaterial> createState() => _MainMaterialState();
+}
+
+class _MainMaterialState extends State<MainMaterial> {
+  String name = NamePicker.getRandomName();
+
   void reset() {
-    _tabController.animateTo(0);
+    widget._tabController.animateTo(0);
+    setState(() {
+      name = NamePicker.getRandomName();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.children) {
+    if (widget.widget.children) {
       RestartTimer restartTimer = context.watch<RestartTimer>();
       restartTimer.addListener(reset);
     }
@@ -78,8 +89,25 @@ class MainMaterial extends StatelessWidget {
           backgroundColor: OurColors.appBarColor,
           titleTextStyle:
               const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+          actions: widget.widget.children
+              ? [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                            color: OurColors.appBarTextColor, fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  )
+                ]
+              : [],
           bottom: TabBar(
-              controller: _tabController,
+              controller: widget._tabController,
               unselectedLabelStyle: const TextStyle(
                 fontWeight: FontWeight.normal,
                 fontSize: 20,
@@ -102,7 +130,7 @@ class MainMaterial extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.device_thermostat),
-                    widget.children
+                    widget.widget.children
                         ? const Text("Eine Wärmepumpe")
                         : const Text('One Heat Pump'),
                   ],
@@ -112,7 +140,7 @@ class MainMaterial extends StatelessWidget {
                   children: [
                     const Icon(Icons.device_thermostat),
                     const Icon(Icons.device_thermostat),
-                    widget.children
+                    widget.widget.children
                         ? const Text("Zwei Wärmepumpen")
                         : const Text('Two Heat Pumps'),
                   ],
@@ -120,11 +148,11 @@ class MainMaterial extends StatelessWidget {
               ]),
         ),
         backgroundColor: OurColors.backgroundColor,
-        body: TabBarView(controller: _tabController, children: <Widget>[
-          widget.children
-              ? IntroKids(_tabController)
-              : IntroductionScience(_tabController),
-          widget.children ? Phase1Kids() : MainScreenContent(),
+        body: TabBarView(controller: widget._tabController, children: <Widget>[
+          widget.widget.children
+              ? IntroKids(widget._tabController)
+              : IntroductionScience(widget._tabController),
+          widget.widget.children ? Phase1Kids() : MainScreenContent(),
           const SciencePhase2(),
         ]),
       ),
