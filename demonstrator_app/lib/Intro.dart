@@ -182,7 +182,7 @@ class _RobotIntroState extends State<RobotIntro> {
               ),
               Positioned(
                   top: 450,
-                  left: 200,
+                  left: 250,
                   child: Slider(
                     value: volume,
                     thumbColor: OurColors.appBarColor,
@@ -214,6 +214,7 @@ class _RobotIntroState extends State<RobotIntro> {
             child: const Text(
               "Weiter",
               style: TextStyle(color: OurColors.appBarTextColor),
+              textScaleFactor: 2,
             ),
           ),
         ),
@@ -226,11 +227,11 @@ class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
     "animalese1.wav",
-    "animalese1.wav",
+    "animalese2.wav",
     "animalese0.wav",
     "animalese2.wav",
     "animalese0.wav",
-    "animalese1.wav",
+    "animalese2.wav",
   ];
 
   Player() {

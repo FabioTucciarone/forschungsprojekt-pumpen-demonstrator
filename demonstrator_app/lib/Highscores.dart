@@ -6,6 +6,8 @@ import 'Layout.dart';
 import 'MainScreen.dart';
 import 'Outputbox.dart';
 
+//Widget that outputs the average Error of the Output.
+//If for children the value gets rounded and multiplied by 1000
 class AverageError extends StatelessWidget {
   final bool children;
   AverageError(this.children, {super.key});
@@ -69,6 +71,9 @@ class AverageError extends StatelessWidget {
   }
 }
 
+//Widget that outputs the Highscore
+//only for children
+//Doesnt update if the averageError is smaller than the current Highscore
 class Highscore extends StatefulWidget {
   const Highscore({super.key});
 
@@ -79,25 +84,41 @@ class Highscore extends StatefulWidget {
 class _HighscoreState extends State<Highscore> {
   int highscore = 0;
   String name = "";
-
+  bool updateOnNext = true;
+  bool update = true;
   @override
   Widget build(BuildContext context) {
     context.watch<FutureNotifier>().future;
-    Future<Map<String, dynamic>> futureMap =
-        useOfBackend.backend.getHighscoreAndName();
+    if (updateOnNext) {
+      update = true;
+      updateOnNext = false;
+    } else {
+      update = false;
+    }
     if (AverageError.publicError < highscore) {
+      updateOnNext = false;
+    } else {
+      updateOnNext = true;
+    }
+    if (!update) {
       return Text(
         "Highscore: $highscore von $name",
         textScaleFactor: 2,
       );
     } else {
+      Future<Map<String, dynamic>> futureMap =
+          useOfBackend.backend.getHighscoreAndName();
       return FutureBuilder(
           future: futureMap,
           builder: (BuildContext context,
               AsyncSnapshot<Map<String, dynamic>> snapshot) {
             Widget child;
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return const SizedBox(
+                child: CircularProgressIndicator(
+                  color: OurColors.accentColor,
+                ),
+              );
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.data != null) {
                 highscore = (snapshot.data!["score"] * 1000).round();
@@ -116,6 +137,7 @@ class _HighscoreState extends State<Highscore> {
   }
 }
 
+//Highscore Dialog for the Top 10 Highscores Button
 class HighscoreDialog extends StatelessWidget {
   const HighscoreDialog({super.key});
 
@@ -127,7 +149,10 @@ class HighscoreDialog extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           Widget child;
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const SizedBox(
+                child: CircularProgressIndicator(
+              color: OurColors.accentColor,
+            ));
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data != null) {
               List<dynamic> highscores = snapshot.data!;
@@ -219,6 +244,7 @@ class HighscoreDialog extends StatelessWidget {
   }
 }
 
+//combines all 3 Widgets for Children Mainscreen
 class ScoreBoard extends StatelessWidget {
   bool children;
   ScoreBoard(this.children, {super.key});
