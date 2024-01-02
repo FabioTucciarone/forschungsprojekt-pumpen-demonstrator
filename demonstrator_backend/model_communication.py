@@ -47,7 +47,7 @@ class DisplayData:
 
 
     def set_figure(self, figure_name, pixel_data, **imshowargs):
-        self.figures[figure_name] = Figure(figsize=(21, 2))
+        self.figures[figure_name] = Figure(dpi=200)
         axis = self.figures[figure_name].add_subplot(1, 1, 1)
         axis.invert_yaxis()
         axis.tick_params(colors=self.color_palette.text_color)
@@ -66,7 +66,7 @@ class DisplayData:
 
     def get_encoded_figure(self, figure_name):
         image_bytes = io.BytesIO()
-        self.figures[figure_name].savefig(image_bytes, format="png")
+        self.figures[figure_name].savefig(image_bytes, format="png", bbox_inches='tight')
         return self.encode_image(image_bytes)
 
 
@@ -99,6 +99,9 @@ class ModelConfiguration:
         elif self.stage == 2:
             with open(self.paths2HP.dataset_1st_prep_path / "info.yaml", "r") as f:
                 self.info = yaml.safe_load(f)
+            size_hp_box = self.info["CellsNumberPrior"]
+            domain_shape = self.info["CellsNumber"]
+            self.field_shape_2hp = [domain_shape[0] - size_hp_box[0] - 1, min(domain_shape[1] - size_hp_box[1] - 1, 60)]
         else:
             raise f"stage {self.stage} does not exist"
 
@@ -202,15 +205,8 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
 
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
 
-    print(f"Start :: Gerät = {config.settings.device}")
-
-    # size_hp_box = info["CellsNumberPrior"]
-    # field_shape = info["CellsNumber"]
-    # image_shape = [field_shape[0] - size_hp_box[0] - 1, field_shape[1] - size_hp_box[1] - 1]
-    # image_shape[1] = min(image_shape[1], 60)
-
     corner_dist = config.info["PositionHPPrior"]
-    positions = [[corner_dist[1] + 50, corner_dist[0] + 30], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
+    positions = [[corner_dist[1] + min(config.field_shape_2hp[0], 50), corner_dist[0] + int(config.field_shape_2hp[1] / 2)], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
 
     model_1HP = UNet(in_channels=len("gksi")).float()
     model_1HP.load(config.paths2HP.model_1hp_path, config.settings.device)

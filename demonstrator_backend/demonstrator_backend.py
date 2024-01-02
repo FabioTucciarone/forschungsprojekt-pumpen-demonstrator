@@ -20,7 +20,7 @@ cache.init_app(app)
 
 
 @app.route('/get_model_result', methods = ['POST'])
-def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / Höchstpunktzahl mitsenden
+def get_model_result():
     """
     Returns a JSON object of all three resulting images.
     The images are encoded as a base64 string.
@@ -50,10 +50,37 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
              "average_error" : display_data.average_error }
 
 
+@app.route('/get_2hp_model_result', methods = ['POST'])
+def get_2hp_model_result():
+    """
+    Returns a base64 encoded images as a string.
+
+    Parameters:
+    ----------
+    {"permeability": <float>, "pressure": <float>, "pos": <list[float]>}
+
+    Return:
+    ----------
+    Example: "iVB...YII="
+    """
+
+    model_configuration = cache.get("model_configuration")
+
+    permeability = float(request.json.get('permeability'))
+    pressure = float(request.json.get('pressure'))
+    pos = [float(request.json.get('pos')[0]), float(request.json.get('pos')[1])]
+
+    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
+
+    return display_data.get_encoded_figure("model_result"), 
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 def browser_input():
 
-    model_configuration = cache.get("model_configuration")  
+    model_configuration_1hp = mc.ModelConfiguration(1)
+    model_configuration_2hp = mc.ModelConfiguration(2)
 
     if request.method == 'POST':
         permeability = float(request.form['permeability'])
@@ -61,10 +88,14 @@ def browser_input():
         name = request.form['name']
 
         a = time.perf_counter()
-        display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure)
+        display_data_1hp = mc.get_1hp_model_results(model_configuration_1hp, permeability, pressure)
         b = time.perf_counter()
         print(b-a)
-        insert_highscore(name, display_data.average_error)
+        a = time.perf_counter()
+        display_data_2hp = mc.get_2hp_model_results(model_configuration_2hp, permeability, pressure, [40, 25])
+        b = time.perf_counter()
+        print(b-a)
+        insert_highscore(name, display_data_1hp.average_error)
         
         return f"""
             <form method="post">
@@ -74,9 +105,10 @@ def browser_input():
                 <input type="text" id="name" name="name" value="{name}" required />
                 <button type="submit">Submit</button
             </form> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure("model_result")}" alt="Fehler: model_result" width="60%" /> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure("groundtruth")}" alt="Fehler: groundtruth" width="60%" /> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure("error_measure")}" alt="Fehler: error_measure" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_1hp.get_encoded_figure("model_result")}" alt="Fehler: model_result" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_1hp.get_encoded_figure("groundtruth")}" alt="Fehler: groundtruth" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_1hp.get_encoded_figure("error_measure")}" alt="Fehler: error_measure" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_2hp.get_encoded_figure("model_result")}" alt="Fehler: model_result 2hp" width="60%" /> <br>
             """
 
     return f"""
@@ -91,16 +123,6 @@ def browser_input():
 
 @app.route('/test_response', methods = ['GET'])
 def test_response():
-    model_configuration = mc.ModelConfiguration(2)
-
-    k = 7.350276541753949086e-10
-    p = -2.142171334025262316e-03
-    pos = [40, 45]
-
-    st2 = time.time()
-    display_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
-    et2 = time.time()
-    print('Antwortzeit:', et2 - st2, 'seconds')
     return 'success'
 
   
@@ -119,7 +141,12 @@ def get_highscore_and_name():
     Returns the current highscore (maximum average error) and the name of the person who achieved it.
     """
     top_ten_list = cache.get("top_ten_list")
-    return {"name": top_ten_list[0][0], "score": top_ten_list[0][1]}
+    name = None
+    score = None
+    if len(top_ten_list) > 0:
+        name = top_ten_list[0][0]
+        score = top_ten_list[0][1]
+    return {"name": name, "score": score}
 
 
 @app.route('/get_top_ten_list', methods = ['GET'])
@@ -142,6 +169,11 @@ def save_highscore():
         for score in scores:
             writer.writerow(score)
     return 0
+
+
+@app.route('/get_2hp_field_shape', methods = ['GET'])
+def get_2hp_field_shape():
+    return cache.get("model_configuration").field_shape_2hp
 
 
 # Internal Methods:

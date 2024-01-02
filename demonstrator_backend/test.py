@@ -64,6 +64,7 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
     max_error = None
     average_error = None
 
+    a = time.perf_counter()
     triangle_i = gt.triangulate_data_point(info, x)
     if isinstance(triangle_i, list):
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
@@ -74,6 +75,9 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
         error = np.abs(np.array(true_result) - np.array(interp_result))
         error_closest = np.abs(np.array(true_result) - np.array(closest_result))
             
+        b = time.perf_counter()
+        print(f"\nZeit :: {b-a}")
+
         max_temp = np.max(true_result)
         average_error = np.average(error)
         min_error = np.min(error)
@@ -157,7 +161,7 @@ def test_1hp_model_communication(visualize=True):
     p = -2.142171334025262316e-03
 
     st2 = time.time()
-    display_data = mc.get_1hp_model_results(model_configuration, k, p, "test")
+    display_data = mc.get_1hp_model_results(model_configuration, k, p)
     et2 = time.time()
     
     print('Initialisierung:', et1 - st1, 'seconds')
@@ -177,7 +181,7 @@ def test_2hp_model_communication(visualize=True):
 
     k = 7.350276541753949086e-10
     p = -2.142171334025262316e-03
-    pos = [40, 45]
+    pos = [40, 25]
 
     st2 = time.time()
     display_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
@@ -188,14 +192,14 @@ def test_2hp_model_communication(visualize=True):
     print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
 
     if visualize:
-        show_figure(display_data.get_figure("result"))
+        show_figure(display_data.get_figure("model_result"))
 
 
 
 def main():
-    test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
-    test_groundtruth(0, 0, visualize=False, type="interpolation", print_all=False)
-    test_1hp_model_communication(visualize=False)
+    # test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
+    # test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
+    # test_1hp_model_communication(visualize=True)
     # test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
     test_2hp_model_communication(visualize=True)
 

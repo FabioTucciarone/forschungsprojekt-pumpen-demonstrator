@@ -34,6 +34,7 @@ class PolyInterpolatedField(TemperatureField):
         TemperatureField.__init__(self, info, run_index)
         X = list(range(info.dims[0]))
         Y = list(range(info.dims[1]))
+        self.T.cpu().numpy()
         self.interp = sp.interpolate.RegularGridInterpolator((X, Y), self.T, method='linear', bounds_error=False, fill_value=None)
         self.max = np.max(self.T)
 
@@ -208,6 +209,9 @@ class TaylorInterpolatedField(TemperatureField):
         else:
             id, jd = self.get_1st_derivative(i0, j0)
 
+        y = T[i0, j0] 
+        y += (id * (i - i0)*h + jd * (j - j0)*h)
+
         if use_second_order:
             Tij = np.diff(np.diff(T,0),1) / h**2 # TODO: provisorisch und unschön
             ijdd = Tij[min(i0,254), min(j0,254)]
@@ -217,21 +221,13 @@ class TaylorInterpolatedField(TemperatureField):
                 idd, jdd = self.get_2nd_derivative_filter(i0, j0)
             else:
                 idd, jdd = self.get_2nd_derivative_higher_order(i0, j0)
-        else:
-            ijdd = 0
-            idd = 0
-            jdd = 0
+            y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 
 
-        
-        y = T[i0, j0] 
-        y += (id * (i - i0)*h + jd * (j - j0)*h)
-        y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 
-
-        return max(y, 10.6), id, jd, idd, jdd
+        return max(y, 10.6)
 
 
     def at(self, i: float, j: float):
-        return self.get_values(i, j)[0]
+        return self.get_values(i, j)
 
 
 def main():
