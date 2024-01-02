@@ -38,8 +38,9 @@ class AverageError extends StatelessWidget {
                     textScaleFactor: 2,
                   );
                 } else {
+                  averageError = double.parse(averageError.toStringAsFixed(6));
                   child = Text(
-                    "$text $averageError",
+                    "$text $averageError °C",
                     textScaleFactor: 2,
                   );
                 }

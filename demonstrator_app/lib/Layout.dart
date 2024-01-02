@@ -3,12 +3,14 @@ import 'package:demonstrator_app/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'Intro.dart';
 import 'package:demonstrator_app/BuildConnection.dart';
+import 'NamePicker.dart';
 
 class Introduction extends StatelessWidget {
   const Introduction({super.key});
 
   @override
   Widget build(BuildContext context) {
+    NamePicker.loadNameFile();
     return const MaterialApp(
       home: IntroHomeScaffold(),
     );
