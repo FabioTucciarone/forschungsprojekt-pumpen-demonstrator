@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/Layout.dart';
 import 'package:demonstrator_app/MainScreen_kids.dart';

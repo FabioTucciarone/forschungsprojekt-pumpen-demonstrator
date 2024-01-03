@@ -101,18 +101,21 @@ class _PressureSliderState extends State<PressureSlider>
   Widget getDisplayOfValues(
       SliderType name, double currentValue, bool children) {
     String identifier = '';
+    String unit = '';
     if (name == SliderType.pressure) {
       if (children) {
         identifier = 'Druck';
       } else {
         identifier = 'Pressure';
       }
+      unit = 'Pa';
     } else {
       if (children) {
         identifier = 'Durchlässigkeit';
       } else {
         identifier = 'Permeability';
       }
+      unit = 'm\u00B2';
     }
     int exp = 0;
     double value = currentValue.abs();
@@ -123,7 +126,7 @@ class _PressureSliderState extends State<PressureSlider>
     currentValue =
         (currentValue * pow(10, 3 + exp)).round().toDouble() / pow(10, 3 + exp);
     return Text(
-      '$identifier: ${currentValue.abs()}',
+      '$identifier: ${currentValue.abs()} $unit',
       textScaleFactor: 1.2,
     );
   }
@@ -137,7 +140,7 @@ class _PressureSliderState extends State<PressureSlider>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
-            constraints: const BoxConstraints(minWidth: 200),
+            constraints: const BoxConstraints(minWidth: 250),
             child: getDisplayOfValues(
                 widget.name, widget.currentValue, widget.children)),
         Center(
