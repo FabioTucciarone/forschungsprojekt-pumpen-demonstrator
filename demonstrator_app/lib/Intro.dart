@@ -37,7 +37,7 @@ class IntroductionScience extends StatelessWidget {
                                       "For planning it is important to learn about the environmental effect of these pumps in form of their heat plumes. Figure 1 shows an example of a heatvane in form of a heatmap.\n"),
                               TextSpan(
                                   text:
-                                      "Since fully resolved simulations would be too computationally expensive, Julia Pelzer (1) has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
+                                      "Since fully resolved simulations would be too computationally expensive, Julia Pelzer has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
                               TextSpan(text: "\nIt can: \n"),
                               TextSpan(
                                   text:
@@ -50,7 +50,7 @@ class IntroductionScience extends StatelessWidget {
                                       "\nTo communicate the results to the scientific community we have built a demonstrator. \n"),
                               TextSpan(
                                   text:
-                                      "We generate a groundtruth using ***TODO GROUNDTRUTH BESCHREIBEN*** and compare it to a) to realize an error field. \n"),
+                                      "We generate a groundtruth using already simulated datapoints and interpolation and compare it to a) to realize an error field. \n"),
                               TextSpan(
                                   text:
                                       "Since generating a groundtruth for b) is not feasible we just provide its results. \n"),
