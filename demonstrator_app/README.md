@@ -20,9 +20,9 @@ https://docs.flutter.dev/get-started/install/windows/desktop
 Gehe zu demonstrator_app.
 Im Terminal benutze:
 
-'''
+
 flutter build windows
-'''
+
 
 Aktiviere ggf. Develepor Settings, da mit Plugins gearbeitet wird (kann nach building wieder ausgeschaltet werden)
 
