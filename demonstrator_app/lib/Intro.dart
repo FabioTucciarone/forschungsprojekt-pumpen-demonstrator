@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
+/// Class for the introduction of the science version with an information text.
 class IntroductionScience extends StatelessWidget {
   final TabController tabController;
   const IntroductionScience(this.tabController, {super.key});
@@ -12,8 +13,8 @@ class IntroductionScience extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.contain,
         child: SizedBox(
-          width: 1350,
-          height: 800,
+          width: 1600,
+          height: 680,
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -80,6 +81,7 @@ class IntroductionScience extends StatelessWidget {
                     child: const Text(
                       "Understood",
                       style: TextStyle(color: OurColors.appBarTextColor),
+                      textScaleFactor: 1.2,
                     ))
               ],
             ),
@@ -90,6 +92,7 @@ class IntroductionScience extends StatelessWidget {
   }
 }
 
+/// Class for the introduction of the children version with a roboter animation.
 class IntroKids extends StatelessWidget {
   final TabController tabController;
   const IntroKids(this.tabController, {super.key});
@@ -102,6 +105,7 @@ class IntroKids extends StatelessWidget {
   }
 }
 
+/// Class for the roboter which is used for the introduction. The roboter can "talk" and show several emotions.
 class RobotIntro extends StatefulWidget {
   final TabController tabController;
   const RobotIntro(this.tabController, {super.key});
@@ -279,7 +283,7 @@ class Player {
   }
 }
 
-//Class to acces all of our Colors throughout the App
+/// Class to acces all of our Colors throughout the App.
 class OurColors {
   static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
   static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);

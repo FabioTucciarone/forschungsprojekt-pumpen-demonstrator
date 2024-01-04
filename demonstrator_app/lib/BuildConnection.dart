@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'BackendConnection.dart';
 
+/// Button for login of the ssh account.
 class ButtonAnmelden extends StatefulWidget {
   const ButtonAnmelden({super.key});
 
@@ -73,6 +74,7 @@ class RegisterBox extends StatefulWidget {
   State<RegisterBox> createState() => _RegisterState();
 }
 
+/// Class for the entry form with the fields username and password to be filled.
 class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
@@ -258,6 +260,7 @@ class Result extends StatefulWidget {
   State<Result> createState() => _ResultState();
 }
 
+/// This class is used for showing whether the login was successful.
 class _ResultState extends State<Result> {
   bool errorSSHConnect = false;
 
