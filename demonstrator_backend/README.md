@@ -70,7 +70,7 @@ Alle für's Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demo
 
 - Ist alles korrekt installiert sollte `test.py` fehlerfrei ausgeführt werden können. Unter `test.py: main()` können einige Dinge separat getestet und visualisiert werden.
 
-- Als Standardgerät für 1HP_NN wird die **cpu** verwendet. Ist das nicht gewünscht, so muss im Code manuell unter `model_communication.py: ModelConfiguration:set_paths_and_settings()` bei `self.settings = SettingsTraining(...)` (ca. Zeile 160) ein anderes Gerät spezifiziert werden. Siehe README.md von 1HP_NN. ACHTUNG: Nicht getestet.
+- Als Standardgerät für 1HP_NN wird die **cpu** verwendet. Ist das nicht gewünscht, so muss im Code bisher manuell unter `model_communication.py: ModelConfiguration:set_paths_and_settings()` bei `self.settings = SettingsTraining(...)` (ca. Zeile 160) ein anderes Gerät spezifiziert werden. Siehe README.md von 1HP_NN.
 
 - Ein Flask **Debugserver** kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
