@@ -14,7 +14,7 @@ class PressureSlider extends StatefulWidget {
   final Map<String, dynamic>? valueRange;
   final SliderType name;
   double currentValue;
-  bool children;
+  final bool children;
   PressureSlider(
     this.sliderWidth,
     this.valueRange,

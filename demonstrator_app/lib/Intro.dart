@@ -13,8 +13,8 @@ class IntroductionScience extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.contain,
         child: SizedBox(
-          width: 1350,
-          height: 800,
+          width: 1600,
+          height: 680,
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -81,6 +81,7 @@ class IntroductionScience extends StatelessWidget {
                     child: const Text(
                       "Understood",
                       style: TextStyle(color: OurColors.appBarTextColor),
+                      textScaleFactor: 1.2,
                     ))
               ],
             ),
@@ -282,7 +283,7 @@ class Player {
   }
 }
 
-//Class to acces all of our Colors throughout the App
+/// Class to acces all of our Colors throughout the App.
 class OurColors {
   static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
   static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
