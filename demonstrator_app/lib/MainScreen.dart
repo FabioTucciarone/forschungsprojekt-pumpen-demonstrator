@@ -6,6 +6,7 @@ import 'package:demonstrator_app/Outputbox.dart';
 import 'package:demonstrator_app/Timer.dart';
 import 'Highscores.dart';
 import 'Slider.dart';
+import 'PumpInputBox.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -197,19 +198,32 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
 }
 
 /// Class for the phase 2 simulation with 2 heat pumps in the science version.
-class SciencePhase2 extends StatelessWidget {
+class SciencePhase2 extends StatelessWidget with MainScreenElements {
   const SciencePhase2({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 700,
-      height: 300,
-      decoration: const BoxDecoration(color: OurColors.accentColor),
-      child: const Center(
-        child: Text(
-          "TODO Phase 2",
-          textScaleFactor: 1.5,
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: SizedBox(
+          width: 1350,
+          height: 600,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...input(900, false),
+                const SizedBox(
+                  height: 10,
+                ),
+                const OutputHeader(),
+                const PumpInputBox(width: 737, height: 290, children: false),
+              ],
+            ),
+          ),
         ),
       ),
     );
