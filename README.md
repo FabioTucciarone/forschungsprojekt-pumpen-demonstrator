@@ -10,4 +10,4 @@ Unser Fork: https://github.com/FabioTucciarone/1HP_NN
 
 ## Phase 1 Zwschenstand:
 
-Commit SHA: 1ca3e98133309f85835f3093bce25255b9844856
+Commit SHA: 8ff39d5e4d50101823bf38ba2b03981162d71d52
