@@ -2,11 +2,11 @@
 
 ## Frontend Ausführung/Installation
 
-Über 2 Wege möglich: Prebuilt oder selber builden
-
-Vorraussetzungen: Windows 10/11
+Über 2 Wege möglich: Vorkompiliert, selbst kompilieren.
 
 ### 1. Vorkompiliert
+
+Voraussetzungen: Windows 10/11
 
 Starte das Backend lokal oder auf dem Server.
 Öffne [demonstrator_app.exe](demonstrator_app/Releases/ReleasePhase1/demonstrator_app.exe).
