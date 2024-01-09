@@ -92,7 +92,7 @@ def browser_input():
         b = time.perf_counter()
         print(f"Zeit :: get_1hp_model_results(): {b-a}\n")
         a = time.perf_counter()
-        display_data_2hp = mc.get_2hp_model_results(model_configuration_2hp, permeability, pressure, [40, 25])
+        display_data_2hp = mc.get_2hp_model_results(model_configuration_2hp, permeability, pressure, [40, 15])
         b = time.perf_counter()
         print(f"Zeit :: get_2hp_model_results(): {b-a}\n")
         insert_highscore(name, display_data_1hp.average_error)

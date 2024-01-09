@@ -79,7 +79,8 @@ class ModelConfiguration:
     paths2HP: Paths2HP = None
     settings: SettingsTraining = None
     groundtruth_info: gt.GroundTruthInfo = None
-    info: dict = None
+    model_1HP_info: dict = None
+    model_2HP_info: dict = None
     color_palette: ColorPalette = None
 
     def __post_init__(self):
@@ -95,15 +96,11 @@ class ModelConfiguration:
         """
         self.set_paths_and_settings(self.stage)
         if self.stage == 1:
-            with open(os.path.join(os.getcwd(), self.settings.model, "info.yaml"), "r") as file:
-                self.info = yaml.safe_load(file)
             self.groundtruth_info = gt.GroundTruthInfo(self.paths2HP.raw_path, 10.6)
         elif self.stage == 2:
-            with open(self.paths2HP.dataset_1st_prep_path / "info.yaml", "r") as f:
-                self.info = yaml.safe_load(f)
-            size_hp_box = self.info["CellsNumberPrior"]
-            domain_shape = self.info["CellsNumber"]
-            self.info["OutFieldShape"] = [domain_shape[0] - size_hp_box[0] - 1, min(domain_shape[1] - size_hp_box[1] - 1, 60)]
+            size_hp_box = self.model_2HP_info["CellsNumberPrior"]
+            domain_shape = self.model_2HP_info["CellsNumber"]
+            self.model_2HP_info["OutFieldShape"] = [domain_shape[0] - size_hp_box[0] - 1, min(domain_shape[1] - size_hp_box[1] - 1, 60)]
         else:
             raise f"stage {self.stage} does not exist"
 
@@ -134,6 +131,12 @@ class ModelConfiguration:
 
         model_2hp_dir = models_2hp_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
         model_1hp_dir = models_1hp_dir / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
+        
+        with open(os.path.join(os.getcwd(), model_2hp_dir, "info.yaml"), "r") as file:
+            self.model_2HP_info = yaml.safe_load(file)
+
+        with open(os.path.join(os.getcwd(), model_1hp_dir, "info.yaml"), "r") as file:
+            self.model_1HP_info = yaml.safe_load(file)
 
         dataset_2hpnn_names = ["dataset_2hps_demonstrator_1dp"]
         dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
@@ -171,7 +174,7 @@ class ModelConfiguration:
         self.settings = SettingsTraining(
             dataset_raw = raw_dataset_1hpnn_name,
             inputs = "gksi1000",
-            device = "cuda",
+            device = "cpu",
             epochs = 1,
             case = "test",
             model = model_1hp_dir if stage == 1 else model_2hp_dir,
@@ -205,17 +208,17 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
 
     config.model_1HP.eval()
 
-    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.info, config.settings.device)
+    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.model_1HP_info, config.settings.device)
     return visualize.get_plots(config.model_1HP, x, y, info, norm, config.color_palette)
 
 
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
 
-    corner_dist = config.info["PositionHPPrior"]
-    field_shape_2hp = config.info["OutFieldShape"]
+    corner_dist = config.model_1HP_info["PositionLastHP"]
+    field_shape_2hp = config.model_2HP_info["OutFieldShape"]
     positions = [[corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
 
     config.model_2HP.to(config.settings.device)
 
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, config.model_1HP, pressure, permeability, positions, config.settings.device)
-    return visualize.get_2hp_plots(config.model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, config.settings.device)
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp([config.model_1HP_info, config.model_2HP_info], config.model_1HP, pressure, permeability, positions, config.settings.device)
+    return visualize.get_2hp_plots(config.model_2HP, [config.model_1HP_info, config.model_2HP_info], hp_inputs, corners_ll, corner_dist, config.color_palette, config.settings.device)

@@ -179,9 +179,14 @@ def test_2hp_model_communication(visualize=True):
     model_configuration = mc.ModelConfiguration(2)
     et1 = time.time()
 
-    k = 7.350276541753949086e-10
-    p = -2.142171334025262316e-03
-    pos = [40, 25]
+    # locs_hp_x_2:  6.350000000000000000e+02
+    # locs_hp_y_2:  1.830000000000000000e+02
+    # pressure:     -3.040452194657028689e-03
+    # permeability: 1.053944076782911543e-09
+
+    k = 1.053944076782911543e-09
+    p = -3.040452194657028689e-03
+    pos = [60, 34]
 
     st2 = time.time()
     display_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
