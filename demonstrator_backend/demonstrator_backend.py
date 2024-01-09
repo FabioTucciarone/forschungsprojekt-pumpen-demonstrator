@@ -173,7 +173,7 @@ def save_highscore():
 
 @app.route('/get_2hp_field_shape', methods = ['GET'])
 def get_2hp_field_shape():
-    return cache.get("model_configuration").field_shape_2hp
+    return cache.get("model_configuration").info["OutFieldShape"]
 
 
 # Internal Methods:
