@@ -1,22 +1,19 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
+//Timer for Timeouts in Kinder Version
 class RestartTimer extends ChangeNotifier {
   late Timer timer;
 
   RestartTimer() {
-    timer = Timer(const Duration(seconds: 10), () {
-      print("First Timeout");
+    timer = Timer(const Duration(seconds: 60), () {
       notifyListeners();
     });
   }
 
   void restartTimer() {
     timer.cancel();
-    timer = Timer(const Duration(seconds: 10), () {
-      print("Timeout");
+    timer = Timer(const Duration(seconds: 60), () {
       notifyListeners();
     });
   }

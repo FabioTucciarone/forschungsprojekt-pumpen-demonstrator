@@ -4,17 +4,17 @@ import 'Layout.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-/// specifies what kind of parameter the slider represents
+/// Specifies what kind of parameter the slider represents.
 enum SliderType { pressure, permeability }
 
-/// class for a slider which can be adjusted by its width, range of possible values, type of parameter,
-/// current value of the thumb and a boolean indicating whether the slider is for the children version
+/// Class for a slider which can be adjusted by its width, range of possible values, type of parameter,
+/// current value of the thumb and a boolean indicating whether the slider is for the children version.
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final Map<String, dynamic>? valueRange;
   final SliderType name;
   double currentValue;
-  bool children;
+  final bool children;
   PressureSlider(
     this.sliderWidth,
     this.valueRange,
@@ -50,7 +50,7 @@ class _PressureSliderState extends State<PressureSlider>
     widget.currentValue = determineValue(sliderPos);
   }
 
-  /// determines the start value of the value range
+  /// Determines the start value of the value range.
   double getStart() {
     double start = 0;
     if (widget.name == SliderType.pressure) {
@@ -61,7 +61,7 @@ class _PressureSliderState extends State<PressureSlider>
     return start;
   }
 
-  /// determines the end value of the value range
+  /// Determines the end value of the value range.
   double getEnd() {
     double end = 0;
     if (widget.name == SliderType.pressure) {
@@ -72,7 +72,7 @@ class _PressureSliderState extends State<PressureSlider>
     return end;
   }
 
-  /// determines the value that the position of the thumb represents
+  /// Determines the value that the position of the thumb represents.
   double determineValue(double sliderPos) {
     double diff = getEnd() - getStart();
     double interval = widget.sliderWidth / diff;
@@ -81,6 +81,7 @@ class _PressureSliderState extends State<PressureSlider>
     return value;
   }
 
+  /// This method makes sure that the slider thumb doesn't leave the track.
   void correctingPosition(double position) {
     if (position > widget.sliderWidth) {
       position = widget.sliderWidth;
@@ -94,21 +95,27 @@ class _PressureSliderState extends State<PressureSlider>
     });
   }
 
+  /// Gets the value and parameter name to display. If the slider is used for the children version then
+  /// the parameter name is given in German otherwise in English. The number of the value's decimal places
+  /// is limited to three.
   Widget getDisplayOfValues(
       SliderType name, double currentValue, bool children) {
     String identifier = '';
+    String unit = '';
     if (name == SliderType.pressure) {
       if (children) {
         identifier = 'Druck';
       } else {
         identifier = 'Pressure';
       }
+      unit = 'Pa';
     } else {
       if (children) {
         identifier = 'Durchlässigkeit';
       } else {
         identifier = 'Permeability';
       }
+      unit = 'm\u00B2';
     }
     int exp = 0;
     double value = currentValue.abs();
@@ -119,17 +126,23 @@ class _PressureSliderState extends State<PressureSlider>
     currentValue =
         (currentValue * pow(10, 3 + exp)).round().toDouble() / pow(10, 3 + exp);
     return Text(
-      '$identifier: ${currentValue.abs()}',
+      '$identifier: ${currentValue.abs()} $unit',
       textScaleFactor: 1.2,
     );
   }
 
+  /// Builds a row consisting of the displayed value and the slider. The sending of the selected data is triggered
+  /// when the thumb is released or clicked. The position is corrected
+  /// whenever the thumb is moved or the track is clicked.
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        getDisplayOfValues(widget.name, widget.currentValue, widget.children),
+        Container(
+            constraints: const BoxConstraints(minWidth: 250),
+            child: getDisplayOfValues(
+                widget.name, widget.currentValue, widget.children)),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -148,14 +161,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
                     .sendInputData(
                         widget.currentValue,
                         MainScreenElements.pressureSlider.getCurrent(),
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               }
             },
@@ -165,14 +178,14 @@ class _PressureSliderState extends State<PressureSlider>
                     .sendInputData(
                         MainScreenElements.permeabilitySlider.getCurrent(),
                         widget.currentValue,
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               } else {
                 MainSlide.futureNotifier.setFuture(useOfBackend.backend
                     .sendInputData(
                         widget.currentValue,
                         MainScreenElements.pressureSlider.getCurrent(),
-                        "test"));
+                        MainMaterial.getName()));
                 MainSlide.restartTimer.restartTimer();
               }
             },
@@ -197,10 +210,13 @@ class _PressureSliderState extends State<PressureSlider>
   }
 }
 
+/// Class for the appearance and position of the slider thumb.
 class SliderThumb extends CustomPainter {
   final double pos;
   SliderThumb(this.pos);
 
+  /// Paints the thumb in the shape of a rectangle with rounded corners. [pos] is used to put the thumb
+  /// at the position the user chooses.
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRRect(
