@@ -154,7 +154,7 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
 def test_1hp_model_communication(visualize=True):
     st1 = time.time()
-    model_configuration = mc.ModelConfiguration(1)
+    model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
     k = 7.350276541753949086e-10
@@ -176,7 +176,7 @@ def test_1hp_model_communication(visualize=True):
 
 def test_2hp_model_communication(visualize=True):
     st1 = time.time()
-    model_configuration = mc.ModelConfiguration(2)
+    model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
     # locs_hp_x_2:  6.350000000000000000e+02
@@ -204,7 +204,7 @@ def test_2hp_model_communication(visualize=True):
 def main():
     # test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
     # test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
-    # test_1hp_model_communication(visualize=True)
+    test_1hp_model_communication(visualize=True)
     # test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
     test_2hp_model_communication(visualize=True)
 

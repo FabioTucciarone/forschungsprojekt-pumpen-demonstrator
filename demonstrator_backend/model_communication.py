@@ -75,12 +75,12 @@ class DisplayData:
 @dataclass
 class ModelConfiguration:
 
-    stage: int
+    device: str = "cpu"
+    inputs: str = "gksi1000"
     paths2HP: Paths2HP = None
-    settings: SettingsTraining = None
     groundtruth_info: gt.GroundTruthInfo = None
-    model_1HP_info: dict = None
-    model_2HP_info: dict = None
+    model_1hp_info: dict = None
+    model_2hp_info: dict = None
     color_palette: ColorPalette = None
 
     def __post_init__(self):
@@ -94,20 +94,24 @@ class ModelConfiguration:
         dataset_name: str
             Name of "dataset" containing the settings.yaml file from which the pflortran settings are extracted.
         """
-        self.set_paths_and_settings(self.stage)
-        if self.stage == 1:
-            self.groundtruth_info = gt.GroundTruthInfo(self.paths2HP.raw_path, 10.6)
-        elif self.stage == 2:
-            size_hp_box = self.model_2HP_info["CellsNumberPrior"]
-            domain_shape = self.model_2HP_info["CellsNumber"]
-            self.model_2HP_info["OutFieldShape"] = [domain_shape[0] - size_hp_box[0] - 1, min(domain_shape[1] - size_hp_box[1] - 1, 60)]
-        else:
-            raise f"stage {self.stage} does not exist"
+        model_1hp_dir, model_2hp_dir = self.set_paths_and_settings()
+
+        self.model_1hp = UNet(in_channels=len("gksi")).float()
+        self.model_1hp.load(model_1hp_dir, self.device)
+
+        self.model_2hp = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
+        self.model_2hp.load(model_2hp_dir, self.device)
+
+        self.groundtruth_info = gt.GroundTruthInfo(self.paths2HP.raw_path, 10.6)
+
+        size_hp_box = self.model_2hp_info["CellsNumberPrior"]
+        domain_shape = self.model_2hp_info["CellsNumber"]
+        self.model_2hp_info["OutFieldShape"] = [domain_shape[0] - size_hp_box[0] - 1, min(domain_shape[1] - size_hp_box[1] - 1, 60)]
 
         self.color_palette = ColorPalette()
 
 
-    def set_paths_and_settings(self, stage):
+    def set_paths_and_settings(self):
         path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".." / ".."
         paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
 
@@ -116,7 +120,6 @@ class ModelConfiguration:
                 paths_file = yaml.safe_load(f)
             try:
                 default_raw_1hp_dir = pathlib.Path(paths_file["default_raw_dir"])
-                prepared_domain_dir = pathlib.Path(paths_file["datasets_prepared_domain_dir"])
                 models_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
                 models_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
             except:
@@ -124,7 +127,6 @@ class ModelConfiguration:
         else:
             print(f'1HP_NN/info.yaml not found, trying default path')
             default_raw_1hp_dir = path_to_project_dir / "datasets_raw"
-            prepared_domain_dir = path_to_project_dir / "datasets_prepared_domain"
             models_1hp_dir      = path_to_project_dir / "models_1hpnn"
             models_2hp_dir      = path_to_project_dir / "models_2hpnn"
 
@@ -133,61 +135,30 @@ class ModelConfiguration:
         model_1hp_dir = models_1hp_dir / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
         
         with open(os.path.join(os.getcwd(), model_2hp_dir, "info.yaml"), "r") as file:
-            self.model_2HP_info = yaml.safe_load(file)
+            self.model_2hp_info = yaml.safe_load(file)
 
         with open(os.path.join(os.getcwd(), model_1hp_dir, "info.yaml"), "r") as file:
-            self.model_1HP_info = yaml.safe_load(file)
+            self.model_1hp_info = yaml.safe_load(file)
 
-        dataset_2hpnn_names = ["dataset_2hps_demonstrator_1dp"]
         dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
-        dataset_domain_prepared_name = ""
         raw_dataset_1hpnn_name = ""
 
         for name in dataset_1hpnn_names:
             if os.path.exists(default_raw_1hp_dir / name):
                 raw_dataset_1hpnn_name = name
 
-        for name in dataset_2hpnn_names:
-            if os.path.exists(prepared_domain_dir / (name + " inputs_gksi")):
-                dataset_domain_prepared_name = name + " inputs_gksi"
-
-        if stage == 1 and raw_dataset_1hpnn_name == "":
+        if raw_dataset_1hpnn_name == "":
             raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
         
         if not os.path.exists(model_1hp_dir):
             raise FileNotFoundError(f'1HP model not found at "{model_1hp_dir}"')
         
-        if stage == 2:
-            if dataset_domain_prepared_name == "":
-                raise FileNotFoundError(f'2HP prepared domain dataset not found at "{prepared_domain_dir}"')
-            if not os.path.exists(model_2hp_dir):
-                raise FileNotFoundError(f'2HP model not found at "{model_2hp_dir}"') 
+        if not os.path.exists(model_2hp_dir):
+            raise FileNotFoundError(f'2HP model not found at "{model_2hp_dir}"') 
 
-        self.paths2HP = Paths2HP(
-            default_raw_1hp_dir / raw_dataset_1hpnn_name,       # 1HP: wegen Grundwahrheit
-            "",
-            prepared_domain_dir / dataset_domain_prepared_name, # 2HP: wegen info.yaml
-            model_1hp_dir,
-            ""
-        )
+        self.paths2HP = Paths2HP(default_raw_1hp_dir / raw_dataset_1hpnn_name, "", "", model_1hp_dir, "")
 
-        self.settings = SettingsTraining(
-            dataset_raw = raw_dataset_1hpnn_name,
-            inputs = "gksi1000",
-            device = "cpu",
-            epochs = 1,
-            case = "test",
-            model = model_1hp_dir if stage == 1 else model_2hp_dir,
-            visualize = True,
-            dataset_prep = self.paths2HP.datasets_boxes_prep_path
-        )
-
-        self.model_1HP = UNet(in_channels=len("gksi")).float()
-        self.model_1HP.load(self.paths2HP.model_1hp_path, self.settings.device)
-
-        if stage == 2:
-            self.model_2HP = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
-            self.model_2HP.load(self.settings.model, self.settings.device)
+        return model_1hp_dir, model_2hp_dir
 
 
     def set_color_palette(self, color_palette):
@@ -206,19 +177,19 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
         The pressure input parameter of the demonstrator app.
     """
 
-    config.model_1HP.eval()
+    config.model_1hp.eval()
 
-    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.model_1HP_info, config.settings.device)
-    return visualize.get_plots(config.model_1HP, x, y, info, norm, config.color_palette)
+    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.model_1hp_info, config.device)
+    return visualize.get_plots(config.model_1hp, x, y, info, norm, config.color_palette)
 
 
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
 
-    corner_dist = config.model_1HP_info["PositionLastHP"]
-    field_shape_2hp = config.model_2HP_info["OutFieldShape"]
+    corner_dist = config.model_1hp_info["PositionLastHP"]
+    field_shape_2hp = config.model_2hp_info["OutFieldShape"]
     positions = [[corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
 
-    config.model_2HP.to(config.settings.device)
+    config.model_2hp.to(config.device)
 
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp([config.model_1HP_info, config.model_2HP_info], config.model_1HP, pressure, permeability, positions, config.settings.device)
-    return visualize.get_2hp_plots(config.model_2HP, [config.model_1HP_info, config.model_2HP_info], hp_inputs, corners_ll, corner_dist, config.color_palette, config.settings.device)
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.model_1hp_info, config.model_2hp_info, config.model_1hp, pressure, permeability, positions, config.device)
+    return visualize.get_2hp_plots(config.model_2hp, config.model_2hp_info, hp_inputs, corners_ll, corner_dist, config.color_palette, config.device)

@@ -79,8 +79,7 @@ def get_2hp_model_result():
 @app.route('/', methods=['GET', 'POST'])
 def browser_input():
 
-    model_configuration_1hp = mc.ModelConfiguration(1)
-    model_configuration_2hp = mc.ModelConfiguration(2)
+    model_configuration = cache.get("model_configuration")
 
     if request.method == 'POST':
         permeability = float(request.form['permeability'])
@@ -88,11 +87,11 @@ def browser_input():
         name = request.form['name']
 
         a = time.perf_counter()
-        display_data_1hp = mc.get_1hp_model_results(model_configuration_1hp, permeability, pressure)
+        display_data_1hp = mc.get_1hp_model_results(model_configuration, permeability, pressure)
         b = time.perf_counter()
         print(f"Zeit :: get_1hp_model_results(): {b-a}\n")
         a = time.perf_counter()
-        display_data_2hp = mc.get_2hp_model_results(model_configuration_2hp, permeability, pressure, [40, 15])
+        display_data_2hp = mc.get_2hp_model_results(model_configuration, permeability, pressure, [40, 15])
         b = time.perf_counter()
         print(f"Zeit :: get_2hp_model_results(): {b-a}\n")
         insert_highscore(name, display_data_1hp.average_error)
@@ -208,7 +207,7 @@ def initialize_backend():
 
     data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "saved_files", "scores.csv")
 
-    model_configuration = mc.ModelConfiguration(1)
+    model_configuration = mc.ModelConfiguration(device="cuda")
     model_configuration.set_color_palette(color_palette)
     cache.set("model_configuration", model_configuration, timeout=0)
 
@@ -227,6 +226,7 @@ def initialize_backend():
 # Start Debug Server:
 
 if __name__ == '__main__':
+    print("Flask-Debug: Initialized")
     initialize_backend()
     app.run(port=5000, host='0.0.0.0', threaded=True)
 else:
