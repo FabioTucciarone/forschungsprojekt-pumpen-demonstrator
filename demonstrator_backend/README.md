@@ -27,16 +27,13 @@ Das Projekt kann eine Standardordnerstruktur verwenden oder die Pfade können in
  ..
 ```
 
-Die folgenden Datensätze müssen gleich benannt vorliegen.
+Die folgenden Datensätze und Modelle müssen gleich benannt vorliegen.
 (Standardordnerstruktur die ohne paths.yaml funktioniert)
 ```bash
 data # Das wird als Standardpfad verwendet
  |- datasets_raw # Phase 1. Einer von beiden:
  |   |- dataset_2d_small_1000dp # Von pcsgs08
  |   |- datasets_raw_1000_1HP   # Von Darus
- |   ..
- |- datasets_prepared_domain # Phase 2
- |   |- dataset_2hps_demonstrator_1dp inputs_gksi # Vorläufiger Testdatensatz
  |   ..
  |- models_1hpnn # Phase 1
  |   |- gksi1000
@@ -58,7 +55,7 @@ Folgende Datei respektiert die Standardordnerstruktur:
 default_raw_dir:                        <Forschungsprojekt-Ordner>/data/datasets_raw # Phase 1
 datasets_prepared_dir:                  "" # manuelle Ausführung
 datasets_raw_domain_dir:                "" # manuelle Ausführung
-datasets_prepared_domain_dir:           <Forschungsprojekt-Ordner>/data/datasets_prepared_domain # Phase 2
+datasets_prepared_domain_dir:           "" # manuelle Ausführung
 prepared_1hp_best_models_and_data_dir:  "" # manuelle Ausführung
 models_1hp_dir:                         <Forschungsprojekt-Ordner>/data/models_1hpnn # Phase 2
 models_2hp_dir:                         <Forschungsprojekt-Ordner>/data/models_2hpnn # Phase 2
@@ -70,7 +67,7 @@ Alle für's Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demo
 
 - Ist alles korrekt installiert sollte `test.py` fehlerfrei ausgeführt werden können. Unter `test.py: main()` können einige Dinge separat getestet und visualisiert werden.
 
-- Als Standardgerät für 1HP_NN wird die **cpu** verwendet. Ist das nicht gewünscht, so muss im Code bisher manuell unter `model_communication.py: ModelConfiguration:set_paths_and_settings()` bei `self.settings = SettingsTraining(...)` (ca. Zeile 160) ein anderes Gerät spezifiziert werden. Siehe README.md von 1HP_NN.
+- Als Standardgerät für 1HP_NN wird die **cpu** verwendet. Ist das nicht gewünscht, so muss im Code bisher manuell unter `demonstrator_backend.py: initialize_backend()` bei `model_configuration = mc.ModelConfiguration(device="cuda")` oder `test.py` ein anderes Gerät spezifiziert werden.
 
 - Ein Flask **Debugserver** kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
