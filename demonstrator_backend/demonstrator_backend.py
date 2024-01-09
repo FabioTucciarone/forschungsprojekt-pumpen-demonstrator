@@ -3,6 +3,7 @@ from flask_caching import Cache
 import csv
 import model_communication as mc
 import os
+import time
 
 # Global Variables:
 
@@ -19,7 +20,7 @@ cache.init_app(app)
 
 
 @app.route('/get_model_result', methods = ['POST'])
-def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / Höchstpunktzahl mitsenden
+def get_model_result():
     """
     Returns a JSON object of all three resulting images.
     The images are encoded as a base64 string.
@@ -39,7 +40,7 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
     pressure = float(request.json.get('pressure'))
     name = request.json.get('name')
 
-    display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, name)
+    display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure)
 
     insert_highscore(name, display_data.average_error)
 
@@ -49,18 +50,51 @@ def get_model_result(): # TODO: Namen des "Spielers" für Fehlerdokumentation / 
              "average_error" : display_data.average_error }
 
 
+@app.route('/get_2hp_model_result', methods = ['POST'])
+def get_2hp_model_result():
+    """
+    Returns a base64 encoded images as a string.
+
+    Parameters:
+    ----------
+    {"permeability": <float>, "pressure": <float>, "pos": <list[float]>}
+
+    Return:
+    ----------
+    Example: "iVB...YII="
+    """
+
+    model_configuration = cache.get("model_configuration")
+
+    permeability = float(request.json.get('permeability'))
+    pressure = float(request.json.get('pressure'))
+    pos = [float(request.json.get('pos')[0]), float(request.json.get('pos')[1])]
+
+    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
+
+    return display_data.get_encoded_figure("model_result"), 
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 def browser_input():
 
-    model_configuration = cache.get("model_configuration")  
+    model_configuration = cache.get("model_configuration")
 
     if request.method == 'POST':
         permeability = float(request.form['permeability'])
         pressure = float(request.form['pressure'])
         name = request.form['name']
 
-        display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure, name)
-        insert_highscore(name, display_data.average_error)
+        a = time.perf_counter()
+        display_data_1hp = mc.get_1hp_model_results(model_configuration, permeability, pressure)
+        b = time.perf_counter()
+        print(f"Zeit :: get_1hp_model_results(): {b-a}\n")
+        a = time.perf_counter()
+        display_data_2hp = mc.get_2hp_model_results(model_configuration, permeability, pressure, [40, 15])
+        b = time.perf_counter()
+        print(f"Zeit :: get_2hp_model_results(): {b-a}\n")
+        insert_highscore(name, display_data_1hp.average_error)
         
         return f"""
             <form method="post">
@@ -70,9 +104,10 @@ def browser_input():
                 <input type="text" id="name" name="name" value="{name}" required />
                 <button type="submit">Submit</button
             </form> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure("model_result")}" alt="Fehler: model_result" width="60%" /> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure("groundtruth")}" alt="Fehler: groundtruth" width="60%" /> <br>
-            <img src="data:image/png;base64, {display_data.get_encoded_figure("error_measure")}" alt="Fehler: error_measure" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_1hp.get_encoded_figure("model_result")}" alt="Fehler: model_result" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_1hp.get_encoded_figure("groundtruth")}" alt="Fehler: groundtruth" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_1hp.get_encoded_figure("error_measure")}" alt="Fehler: error_measure" width="60%" /> <br>
+            <img src="data:image/png;base64, {display_data_2hp.get_encoded_figure("model_result")}" alt="Fehler: model_result 2hp" width="60%" /> <br>
             """
 
     return f"""
@@ -105,7 +140,12 @@ def get_highscore_and_name():
     Returns the current highscore (maximum average error) and the name of the person who achieved it.
     """
     top_ten_list = cache.get("top_ten_list")
-    return {"name": top_ten_list[0][0], "score": top_ten_list[0][1]}
+    name = None
+    score = None
+    if len(top_ten_list) > 0:
+        name = top_ten_list[0][0]
+        score = top_ten_list[0][1]
+    return {"name": name, "score": score}
 
 
 @app.route('/get_top_ten_list', methods = ['GET'])
@@ -128,6 +168,11 @@ def save_highscore():
         for score in scores:
             writer.writerow(score)
     return 0
+
+
+@app.route('/get_2hp_field_shape', methods = ['GET'])
+def get_2hp_field_shape():
+    return cache.get("model_configuration").info["OutFieldShape"]
 
 
 # Internal Methods:
@@ -162,7 +207,7 @@ def initialize_backend():
 
     data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "saved_files", "scores.csv")
 
-    model_configuration = mc.ModelConfiguration(1)
+    model_configuration = mc.ModelConfiguration(device="cuda")
     model_configuration.set_color_palette(color_palette)
     cache.set("model_configuration", model_configuration, timeout=0)
 
@@ -181,8 +226,9 @@ def initialize_backend():
 # Start Debug Server:
 
 if __name__ == '__main__':
+    print("Flask-Debug: Initialized")
     initialize_backend()
     app.run(port=5000, host='0.0.0.0', threaded=True)
-
-initialize_backend()
-print("Initialized")
+else:
+    initialize_backend()
+    print("Initialized")

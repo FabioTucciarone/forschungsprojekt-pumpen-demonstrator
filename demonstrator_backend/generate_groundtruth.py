@@ -4,7 +4,8 @@ import torch
 
 from groundtruth_data import DataPoint, GroundTruthInfo, HPBounds, load_temperature_field_raw
 from extrapolation import TaylorInterpolatedField
-
+from multiprocessing import Pool
+from itertools import repeat
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
@@ -75,97 +76,105 @@ def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: Da
     return [w1, w2, w3]
 
 
-def calculate_hp_bounds(info, temp_fields):
-    bounds = [HPBounds(), HPBounds(), HPBounds()]
+def calculate_hp_bounds(info, temp_field):
+    bounds = HPBounds()
 
-    for k in range(0, 3):
-        for j in range(0, info.hp_pos[1]):
-            flound_edge = False
-            for i in range(0, info.dims[0]):
-                flound_edge = flound_edge or temp_fields[k].at(i, j) >= info.threshold_temp
-                if flound_edge:
-                    break
-            bounds[k].y0 += 1
+    for j in range(0, info.hp_pos[1]):
+        flound_edge = False
+        for i in range(0, info.dims[0]):
+            flound_edge = flound_edge or temp_field.at(i, j) >= info.threshold_temp
             if flound_edge:
                 break
-        for j in reversed(range(info.hp_pos[1]+1, 256)): # TODO?
-            flound_edge = False
-            for i in range(0, info.dims[0]):
-                flound_edge = flound_edge or temp_fields[k].at(i, j) >= info.threshold_temp
-                if flound_edge:
-                    break
-            bounds[k].y1 -= 1
+        bounds  .y0 += 1
+        if flound_edge:
+            break
+    for j in reversed(range(info.hp_pos[1]+1, 256)): # TODO?
+        flound_edge = False
+        for i in range(0, info.dims[0]):
+            flound_edge = flound_edge or temp_field.at(i, j) >= info.threshold_temp
             if flound_edge:
                 break
-        for i in range(0, info.hp_pos[0]):
-            flound_edge = False
-            for j in range(0, info.dims[1]):
-                flound_edge = flound_edge or temp_fields[k].at(i, j) >= info.threshold_temp
-                if flound_edge:
-                    break
-            bounds[k].x0 += 1
+        bounds.y1 -= 1
+        if flound_edge:
+            break
+    for i in range(0, info.hp_pos[0]):
+        flound_edge = False
+        for j in range(0, info.dims[1]):
+            flound_edge = flound_edge or temp_field.at(i, j) >= info.threshold_temp
             if flound_edge:
                 break
-        for i in  reversed(range(info.hp_pos[0]+1, 20)):
-            flound_edge = False
-            for j in range(0, info.dims[1]):
-                flound_edge = flound_edge or temp_fields[k].at(i, j) >= info.threshold_temp
-                if flound_edge:
-                    break
-            bounds[k].x1 -= 1
+        bounds.x0 += 1
+        if flound_edge:
+            break
+    for i in  reversed(range(info.hp_pos[0]+1, 20)):
+        flound_edge = False
+        for j in range(0, info.dims[1]):
+            flound_edge = flound_edge or temp_field.at(i, j) >= info.threshold_temp
             if flound_edge:
                 break
+        bounds.x1 -= 1
+        if flound_edge:
+            break
 
     return bounds
 
 
-def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: list):
-
-    temp_fields = [[], [], []]
-    for k in range(0, 3):
-        temp_fields[k] = TaylorInterpolatedField(info, run_index=triangle_i[k]) 
-
-    bounds = calculate_hp_bounds(info, temp_fields)
-
-    transformed = [TaylorInterpolatedField(info) for i in range(3)]
-    result = TaylorInterpolatedField(info)
-
+def get_result_bounds(bounds, weights):
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
     result_bounds.x1 = weights[0] * bounds[0].x1 + weights[1] * bounds[1].x1 + weights[2] * bounds[2].x1
     result_bounds.y0 = weights[0] * bounds[0].y0 + weights[1] * bounds[1].y0 + weights[2] * bounds[2].y0
     result_bounds.y1 = weights[0] * bounds[0].y1 + weights[1] * bounds[1].y1 + weights[2] * bounds[2].y1
-    pos_i = info.hp_pos[0] 
-    pos_j = info.hp_pos[1] 
+    return result_bounds
 
+
+def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: list):
+    
+    temp_fields = []
+    bounds = []
+    transformed = []
+
+    pool = Pool(3)
+
+    for k in range(3):
+        temp_fields.append(TaylorInterpolatedField(info, run_index=triangle_i[k]))
+        transformed.append(TaylorInterpolatedField(info))
+    
+    bounds = pool.starmap(calculate_hp_bounds, zip(repeat(info), temp_fields))
+    result_bounds = get_result_bounds(bounds, weights)
+    transformed = pool.starmap(transform_fields, zip(repeat(info), temp_fields, bounds, repeat(result_bounds)))
+
+    result = transformed[0].T * weights[0] + transformed[1].T * weights[1] + transformed[2].T * weights[2]
+
+    return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
+
+
+def transform_fields(info, temp_fields, bounds, result_bounds):
+    t = TaylorInterpolatedField(info)
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
-            for k in range(3):
-                it, jt = get_sample_indices(pos_i, pos_j, i, j, bounds[k], result_bounds)
+            it, jt = get_sample_indices(info.hp_pos, i, j, bounds, result_bounds)
+            t.set(i, j, temp_fields.at(it, jt))
+    return t
 
-                y = temp_fields[k].at(it, jt)
-                if y < info.base_temp: y = info.base_temp
-
-                transformed[k].set(i, j, y)
-
+def b(info, temp_field, transformed, field_bounds, result_bounds):
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
-            result.set(i, j, transformed[0].at(i, j)*weights[0] + transformed[1].at(i, j)*weights[1] + transformed[2].at(i, j)*weights[2])
+            it, jt = get_sample_indices(info.hp_pos, i, j, field_bounds, result_bounds)
+            transformed.set(i, j, temp_field.at(it, jt))
 
-    return {"Temperature [C]": torch.tensor(result.T).unsqueeze(2)}
 
-
-def get_sample_indices(pos_i, pos_j, i, j, bounds: HPBounds, result_bounds: HPBounds):
-    it = pos_i
-    jt = pos_j
-    if i < pos_i:
-        it = pos_i + (pos_i - bounds.x0) / (pos_i - result_bounds.x0) * (i - pos_i)
-    elif i > pos_i:
-        it = pos_i + (pos_i - bounds.x1) / (pos_i - result_bounds.x1) * (i - pos_i)
-    if j < pos_j:
-        jt = pos_j + (pos_j - bounds.y0) / (pos_j - result_bounds.y0) * (j - pos_j)
-    elif j > pos_j:
-        jt = pos_j + (pos_j - bounds.y1) / (pos_j - result_bounds.y1) * (j - pos_j)
+def get_sample_indices(hp_pos, i, j, bounds: HPBounds, result_bounds: HPBounds):
+    it = hp_pos[0]
+    jt = hp_pos[1]
+    if i < hp_pos[0]:
+        it = hp_pos[0] + (hp_pos[0] - bounds.x0) / (hp_pos[0] - result_bounds.x0) * (i - hp_pos[0])
+    elif i > hp_pos[0]:
+        it = hp_pos[0] + (hp_pos[0] - bounds.x1) / (hp_pos[0] - result_bounds.x1) * (i - hp_pos[0])
+    if j < hp_pos[1]:
+        jt = hp_pos[1] + (hp_pos[1] - bounds.y0) / (hp_pos[1] - result_bounds.y0) * (j - hp_pos[1])
+    elif j > hp_pos[1]:
+        jt = hp_pos[1] + (hp_pos[1] - bounds.y1) / (hp_pos[1] - result_bounds.y1) * (j - hp_pos[1])
     return it, jt
 
 
