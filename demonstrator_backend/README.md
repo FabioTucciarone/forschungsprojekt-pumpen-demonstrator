@@ -53,12 +53,12 @@ Folgende Datei respektiert die Standardordnerstruktur:
 
 ```yaml
 default_raw_dir:                        <Forschungsprojekt-Ordner>/data/datasets_raw # Phase 1
+models_1hp_dir:                         <Forschungsprojekt-Ordner>/data/models_1hpnn # Phase 1 und 2
+models_2hp_dir:                         <Forschungsprojekt-Ordner>/data/models_2hpnn # Phase 2
 datasets_prepared_dir:                  "" # manuelle Ausführung
 datasets_raw_domain_dir:                "" # manuelle Ausführung
 datasets_prepared_domain_dir:           "" # manuelle Ausführung
 prepared_1hp_best_models_and_data_dir:  "" # manuelle Ausführung
-models_1hp_dir:                         <Forschungsprojekt-Ordner>/data/models_1hpnn # Phase 2
-models_2hp_dir:                         <Forschungsprojekt-Ordner>/data/models_2hpnn # Phase 2
 datasets_prepared_dir_2hp:              "" # manuelle Ausführung
 ```
 
