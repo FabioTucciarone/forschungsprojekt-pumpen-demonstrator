@@ -10,6 +10,7 @@ from dataclasses import dataclass
 import base64
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
+import time 
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -170,13 +171,20 @@ class ModelConfiguration:
         self.settings = SettingsTraining(
             dataset_raw = raw_dataset_1hpnn_name,
             inputs = "gksi1000",
-            device = "cpu",
+            device = "cuda",
             epochs = 1,
             case = "test",
             model = model_1hp_dir if stage == 1 else model_2hp_dir,
             visualize = True,
             dataset_prep = self.paths2HP.datasets_boxes_prep_path
         )
+
+        self.model_1HP = UNet(in_channels=len("gksi")).float()
+        self.model_1HP.load(self.paths2HP.model_1hp_path, self.settings.device)
+
+        if stage == 2:
+            self.model_2HP = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
+            self.model_2HP.load(self.settings.model, self.settings.device)
 
 
     def set_color_palette(self, color_palette):
@@ -195,13 +203,10 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
         The pressure input parameter of the demonstrator app.
     """
 
-    model = UNet(in_channels=len("gksi")).float()
-    model.load_state_dict(torch.load(f"{config.settings.model}/model.pt", map_location=torch.device(config.settings.device)))
-    model.to(config.settings.device)
-    model.eval()
+    config.model_1HP.eval()
 
     (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.info, config.settings.device)
-    return visualize.get_plots(model, x, y, info, norm, config.color_palette)
+    return visualize.get_plots(config.model_1HP, x, y, info, norm, config.color_palette)
 
 
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
@@ -210,12 +215,7 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     field_shape_2hp = config.info["OutFieldShape"]
     positions = [[corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
 
-    model_1HP = UNet(in_channels=len("gksi")).float()
-    model_1HP.load(config.paths2HP.model_1hp_path, config.settings.device)
+    config.model_2HP.to(config.settings.device)
 
-    model_2HP = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
-    model_2HP.load(config.settings.model, config.settings.device)
-    model_2HP.to(config.settings.device)
-
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, model_1HP, pressure, permeability, positions, config.settings.device)
-    return visualize.get_2hp_plots(model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, config.settings.device)
+    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.info, config.model_1HP, pressure, permeability, positions, config.settings.device)
+    return visualize.get_2hp_plots(config.model_2HP, config.info, hp_inputs, corners_ll, corner_dist, config.color_palette, config.settings.device)
