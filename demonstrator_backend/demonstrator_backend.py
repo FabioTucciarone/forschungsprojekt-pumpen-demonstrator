@@ -90,11 +90,11 @@ def browser_input():
         a = time.perf_counter()
         display_data_1hp = mc.get_1hp_model_results(model_configuration_1hp, permeability, pressure)
         b = time.perf_counter()
-        print(b-a)
+        print(f"Zeit :: get_1hp_model_results(): {b-a}\n")
         a = time.perf_counter()
         display_data_2hp = mc.get_2hp_model_results(model_configuration_2hp, permeability, pressure, [40, 25])
         b = time.perf_counter()
-        print(b-a)
+        print(f"Zeit :: get_2hp_model_results(): {b-a}\n")
         insert_highscore(name, display_data_1hp.average_error)
         
         return f"""
@@ -229,6 +229,6 @@ def initialize_backend():
 if __name__ == '__main__':
     initialize_backend()
     app.run(port=5000, host='0.0.0.0', threaded=True)
-
-initialize_backend()
-print("Initialized")
+else:
+    initialize_backend()
+    print("Initialized")
