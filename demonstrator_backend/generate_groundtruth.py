@@ -185,11 +185,11 @@ def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: f
         triangle_i = triangulate_data_point(info, x)
         if isinstance(triangle_i, list):
             weights = calculate_barycentric_weights(info, triangle_i, x)
-            return interpolate_experimental(info, triangle_i, weights)
+            return interpolate_experimental(info, triangle_i, weights), "interpolation"
         else:
-            return load_temperature_field_raw(info, triangle_i)
+            return load_temperature_field_raw(info, triangle_i), "closest"
     else:
-        return load_temperature_field_raw(info, get_closest_point(x))
+        return load_temperature_field_raw(info, get_closest_point(x)), "closest"
 
 
 def main():

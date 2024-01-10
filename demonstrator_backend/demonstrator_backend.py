@@ -10,7 +10,7 @@ import time
 app = Flask(__name__)
 
 app.config['CACHE_TYPE'] = 'FileSystemCache' 
-app.config['CACHE_DIR'] = '../../data/cache' # Server Cache Pfad: TODO: Systemunabhängig machen
+app.config['CACHE_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "cache") # Server Cache Pfad
 app.config['CACHE_THRESHOLD'] = 100          # Datei Maximum
 
 cache = Cache(app)
@@ -40,14 +40,15 @@ def get_model_result():
     pressure = float(request.json.get('pressure'))
     name = request.json.get('name')
 
-    display_data = mc.get_1hp_model_results(model_configuration, permeability, pressure)
+    return_data = mc.get_1hp_model_results(model_configuration, permeability, pressure)
 
-    insert_highscore(name, display_data.average_error)
+    insert_highscore(name, return_data.get_return_value("average_error"))
 
-    return { "model_result":  display_data.get_encoded_figure("model_result"), 
-             "groundtruth":   display_data.get_encoded_figure("groundtruth"), 
-             "error_measure": display_data.get_encoded_figure("error_measure"),
-             "average_error" : display_data.average_error }
+    return { "model_result": return_data.get_encoded_figure("model_result"), 
+             "groundtruth": return_data.get_encoded_figure("groundtruth"), 
+             "error_measure": return_data.get_encoded_figure("error_measure"),
+             "average_error": return_data.get_return_value("average_error"),
+             "groundtruth_method": return_data.get_return_value("groundtruth_method") }
 
 
 @app.route('/get_2hp_model_result', methods = ['POST'])
@@ -94,7 +95,7 @@ def browser_input():
         display_data_2hp = mc.get_2hp_model_results(model_configuration, permeability, pressure, [40, 15])
         b = time.perf_counter()
         print(f"Zeit :: get_2hp_model_results(): {b-a}\n")
-        insert_highscore(name, display_data_1hp.average_error)
+        insert_highscore(name, display_data_1hp.get_return_value("average_error"))
         
         return f"""
             <form method="post">
@@ -130,8 +131,8 @@ def get_value_ranges():
     """
     Returns a JSON object containing the maximum and minimum permeability and pressure values that can be selected on the frontend.
     """
-    print("WARNUNG: Provisorisch implementiert")
-    return {"permeability_range": [1e-11, 1e-10], "pressure_range": [-4e-03, -1e-03]} # TODO: Aus Datei einlesen
+    k_range, p_range = cache.get("model_configuration").get_value_ranges()
+    return {"permeability_range": k_range, "pressure_range": p_range}
 
 
 @app.route('/get_highscore_and_name', methods = ['GET'])
