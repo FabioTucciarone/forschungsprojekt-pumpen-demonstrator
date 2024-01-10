@@ -5,11 +5,11 @@
 - Ggf. eine virtuelle Python Umgebung in `<Forschungsprojekt-Ordner>` erstellen.
   https://docs.python.org/3/library/venv.html
 - [1HP_NN](https://github.com/FabioTucciarone/1HP_NN/tree/baforschungsprojekt_23) und [Demonstrator](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator) klonen.
-- Alle Pakete mit `pip install -r requirements.txt` installieren.
+- Alle Pakete mit `pip install -r requirements.txt` (sollt noch ein bisschen aufgeräumt werden) installieren.
 
 ### Enthaltene Pakete:
 
-- flask, flask-caching, Werkzeug, gunicorn, numpy, scipy
+- flask, flask-caching, Werkzeug, gunicorn, numpy, scipy, csv
 - 1HP_NN Abhängigkeiten
 
 ### 1HP_NN:
