@@ -9,7 +9,7 @@
 
 ### Enthaltene Pakete:
 
-- flask, flask-session, Werkzeug, gunicorn, numpy, scipy
+- flask, flask-caching, Werkzeug, gunicorn, numpy, scipy
 - 1HP_NN Abhängigkeiten
 
 ### 1HP_NN:
