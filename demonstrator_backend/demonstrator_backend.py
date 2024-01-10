@@ -18,8 +18,6 @@ cache.init_app(app)
 
 # Backend Interface:
 
-
-########################
 @app.route('/choose_dataset', methods=['GET', 'POST'])
 def choose_dataset():
 
@@ -36,22 +34,15 @@ def choose_dataset():
     """
 
     if request.method == 'POST':
-        dataset = str(request.json.get('permeability'))
+        dataset = str(request.json.get('dataset'))
         insert_dataset(dataset)
-
-#TODO
-
-        model_configuration = cache.get("model_configuration")
-
-        permeability = float(request.json.get('permeability'))
-        pressure = float(request.json.get('pressure'))
-        pos = [float(request.json.get('pos')[0]), float(request.json.get('pos')[1])]
-
-        display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
-
-        return display_data.get_encoded_figure("model_result") 
-
-
+    return f"""
+            <form method="post">
+                <label>Gewünschten Datensatz: &nbsp</label>
+                <input type="text" id="dataset" name="dataset" value="{dataset}" required />
+                <button type="submit">Submit</button
+            </form> <br>
+            """
 
 @app.route('/get_model_result', methods = ['POST'])
 def get_model_result():
@@ -108,7 +99,6 @@ def get_2hp_model_result():
     display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
 
     return display_data.get_encoded_figure("model_result")#, 
-
 
 
 @app.route('/', methods=['GET', 'POST'])
