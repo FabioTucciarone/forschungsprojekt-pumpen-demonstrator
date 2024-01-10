@@ -30,7 +30,8 @@ class ColorPalette:
     text_color: tuple = (0,0,0)
 
 
-class DisplayData:
+class ReturnData:
+    return_values: dict
     figures: dict
     color_palette: ColorPalette
     color_map: LinearSegmentedColormap = None
@@ -38,6 +39,7 @@ class DisplayData:
 
     def __init__(self, color_palette: ColorPalette):
         self.figures = dict()
+        self.return_values = dict()
         self.colorbar_axis = dict()
         self.color_palette = color_palette
         if self.color_palette.cmap_list is not None:
@@ -70,6 +72,13 @@ class DisplayData:
         image_bytes = io.BytesIO()
         self.figures[figure_name].savefig(image_bytes, format="png", bbox_inches='tight')
         return self.encode_image(image_bytes)
+    
+    def set_return_value(self, key, value):
+        self.return_values[key] = value
+    
+    def get_return_value(self, key):
+        return self.return_values[key]
+
 
 
 @dataclass
@@ -164,6 +173,13 @@ class ModelConfiguration:
     def set_color_palette(self, color_palette):
         self.color_palette = color_palette
 
+    # print("WARNUNG: Provisorisch implementiert")
+    # return {"permeability_range": [1e-11, 1e-10], "pressure_range": [-4e-03, -1e-03]} # TODO: Aus Datei einlesen
+    def get_value_ranges(self):
+        k_info = self.model_1hp_info["Permeability X [m^2]"]
+        p_info = self.model_1hp_info["Pressure Gradient [-]"]
+        return [k_info["min"], k_info["max"]], [p_info["min"], p_info["max"]]
+
 
 def get_1hp_model_results(config: ModelConfiguration, permeability: float, pressure: float):
     """
@@ -179,9 +195,10 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
 
     config.model_1hp.eval()
 
-    (x, y, info, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.model_1hp_info, config.device)
-    return visualize.get_plots(config.model_1hp, x, y, info, norm, config.color_palette)
-
+    (x, y, method, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.model_1hp_info, config.device)
+    return_data = visualize.get_plots(config.model_1hp, x, y, config.model_1hp_info, norm, config.color_palette)
+    return_data.set_return_value("groundtruth_method", method)
+    return return_data
 
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
 
