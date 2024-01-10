@@ -176,8 +176,8 @@ class ModelConfiguration:
     # print("WARNUNG: Provisorisch implementiert")
     # return {"permeability_range": [1e-11, 1e-10], "pressure_range": [-4e-03, -1e-03]} # TODO: Aus Datei einlesen
     def get_value_ranges(self):
-        k_info = self.model_1hp_info["Permeability X [m^2]"]
-        p_info = self.model_1hp_info["Pressure Gradient [-]"]
+        k_info = self.model_1hp_info["Inputs"]["Permeability X [m^2]"]
+        p_info = self.model_1hp_info["Inputs"]["Pressure Gradient [-]"]
         return [k_info["min"], k_info["max"]], [p_info["min"], p_info["max"]]
 
 
