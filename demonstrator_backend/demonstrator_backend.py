@@ -19,6 +19,40 @@ cache.init_app(app)
 # Backend Interface:
 
 
+########################
+@app.route('/choose_dataset', methods=['GET', 'POST'])
+def choose_dataset():
+
+    """
+    Returns a string with the choosen dataset.
+
+    Parameters:
+    ----------
+    {"dataset": <string>}
+
+    Return:
+    ----------
+    {"dataset": <string>}
+    """
+
+    if request.method == 'POST':
+        dataset = str(request.json.get('permeability'))
+        insert_dataset(dataset)
+
+#TODO
+
+        model_configuration = cache.get("model_configuration")
+
+        permeability = float(request.json.get('permeability'))
+        pressure = float(request.json.get('pressure'))
+        pos = [float(request.json.get('pos')[0]), float(request.json.get('pos')[1])]
+
+        display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
+
+        return display_data.get_encoded_figure("model_result") 
+
+
+
 @app.route('/get_model_result', methods = ['POST'])
 def get_model_result():
     """
@@ -73,7 +107,7 @@ def get_2hp_model_result():
 
     display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
 
-    return display_data.get_encoded_figure("model_result"), 
+    return display_data.get_encoded_figure("model_result")#, 
 
 
 
@@ -177,6 +211,12 @@ def get_2hp_field_shape():
 
 
 # Internal Methods:
+
+# sets current dataset in cache
+def insert_dataset(dataset: str):
+    dataset_old = cache.get("dataset")
+    if(dataset != dataset_old):
+        cache.set("dataset", dataset, timeout=0)
 
 def insert_highscore(name: str, average_error: float):
     top_ten_list = cache.get("top_ten_list")
