@@ -115,7 +115,7 @@ class ModelConfiguration:
 
         size_hp_box = self.model_2hp_info["CellsNumberPrior"]
         domain_shape = self.model_2hp_info["CellsNumber"]
-        self.model_2hp_info["OutFieldShape"] = [domain_shape[0] - size_hp_box[0] - 1, min(domain_shape[1] - size_hp_box[1] - 1, 60)]
+        self.model_2hp_info["OutFieldShape"] = [domain_shape[0] - size_hp_box[0] - 1, 2 * size_hp_box[1] - 2]
 
         self.color_palette = ColorPalette()
 
@@ -204,7 +204,8 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
 
     corner_dist = config.model_1hp_info["PositionLastHP"]
     field_shape_2hp = config.model_2hp_info["OutFieldShape"]
-    positions = [[corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)], [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
+    positions = [[corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)], 
+                 [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]]
 
     config.model_2hp.to(config.device)
 

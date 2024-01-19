@@ -69,9 +69,9 @@ def get_2hp_model_result():
 
     permeability = float(request.json.get('permeability'))
     pressure = float(request.json.get('pressure'))
-    pos = [float(request.json.get('pos')[0]), float(request.json.get('pos')[1])]
+    pos = [int(request.json.get('pos')[0]), int(request.json.get('pos')[1])]
 
-    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
+    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, [10, 10])
 
     return display_data.get_encoded_figure("model_result"), 
 
@@ -92,7 +92,7 @@ def browser_input():
         b = time.perf_counter()
         print(f"Zeit :: get_1hp_model_results(): {b-a}\n")
         a = time.perf_counter()
-        display_data_2hp = mc.get_2hp_model_results(model_configuration, permeability, pressure, [40, 15])
+        display_data_2hp = mc.get_2hp_model_results(model_configuration, permeability, pressure, [10, 10])
         b = time.perf_counter()
         print(f"Zeit :: get_2hp_model_results(): {b-a}\n")
         insert_highscore(name, display_data_1hp.get_return_value("average_error"))

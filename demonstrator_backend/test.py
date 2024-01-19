@@ -5,6 +5,7 @@ import numpy as np
 import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
+import random
 
 from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
@@ -186,7 +187,10 @@ def test_2hp_model_communication(visualize=True):
 
     k = 1.053944076782911543e-09
     p = -3.040452194657028689e-03
-    pos = [60, 34]
+    
+    max_x = model_configuration.model_2hp_info["OutFieldShape"][0]
+    max_y = model_configuration.model_2hp_info["OutFieldShape"][1]
+    pos = [random.randint(0, max_x), random.randint(0, max_y)]
 
     st2 = time.time()
     return_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
