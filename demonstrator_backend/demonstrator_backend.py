@@ -96,9 +96,9 @@ def get_2hp_model_result():
     pressure = float(request.json.get('pressure'))
     pos = [int(request.json.get('pos')[0]), int(request.json.get('pos')[1])]
 
-    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, [10, 10])
+    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
 
-    return display_data.get_encoded_figure("model_result")#, 
+    return { "model_result": display_data.get_encoded_figure("model_result") }#, 
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -197,7 +197,7 @@ def save_highscore():
 
 @app.route('/get_2hp_field_shape', methods = ['GET'])
 def get_2hp_field_shape():
-    return cache.get("model_configuration").info["OutFieldShape"]
+    return cache.get("model_configuration").model_2hp_info["OutFieldShape"]
 
 
 # Internal Methods:
@@ -238,7 +238,7 @@ def initialize_backend():
 
     data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "saved_files", "scores.csv")
 
-    model_configuration = mc.ModelConfiguration(device="cuda")
+    model_configuration = mc.ModelConfiguration(device="cpu")
     model_configuration.set_color_palette(color_palette)
     cache.set("model_configuration", model_configuration, timeout=0)
 

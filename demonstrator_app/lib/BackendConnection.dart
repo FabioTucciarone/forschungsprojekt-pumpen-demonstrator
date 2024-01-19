@@ -123,6 +123,33 @@ class BackendConnection with ChangeNotifier {
     }
   }
 
+  /// Send a http-post request with the input data (of phase 2) via the specified ssh tunnel.
+  ///
+  /// [name]: Name for tracking the highest error score.
+  ///
+  /// Returns the json body of the response.
+  Future<String> sendInputDataPhase2(double permeability, double pressure,
+      String name, List<double> pos) async {
+    if (!readyForHTTPRequests && !debugEnabled) {
+      throw "Error: No SSH-port forwarding established.";
+    }
+    final response = await http.post(
+      getUri("get_2hp_model_result"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "permeability": permeability,
+        "pressure": pressure,
+        "name": name,
+        "pos": pos
+      }),
+    );
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw "HTTP-request failed with status code ${response.statusCode}"; // Ich hoff das geht
+    }
+  }
+
   Future<Map<String, dynamic>> getValueRanges() async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
@@ -131,6 +158,19 @@ class BackendConnection with ChangeNotifier {
     if (response.statusCode == 200) {
       final valueRanges = jsonDecode(response.body) as Map<String, dynamic>;
       return valueRanges;
+    } else {
+      throw "HTTP-request failed with status code ${response.statusCode}";
+    }
+  }
+
+  Future<List<dynamic>> getOutputShape() async {
+    if (!readyForHTTPRequests && !debugEnabled) {
+      throw "Error: No SSH-port forwarding established.";
+    }
+    final response = await http.get(getUri("get_2hp_field_shape"));
+    if (response.statusCode == 200) {
+      final outputShape = jsonDecode(response.body) as List<dynamic>;
+      return outputShape;
     } else {
       throw "HTTP-request failed with status code ${response.statusCode}";
     }
