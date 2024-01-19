@@ -18,6 +18,31 @@ cache.init_app(app)
 
 # Backend Interface:
 
+@app.route('/choose_dataset', methods=['GET', 'POST'])
+def choose_dataset():
+
+    """
+    Returns a string with the choosen dataset.
+
+    Parameters:
+    ----------
+    {"dataset": <string>}
+
+    Return:
+    ----------
+    {"dataset": <string>}
+    """
+
+    if request.method == 'POST':
+        dataset = str(request.json.get('dataset'))
+        insert_dataset(dataset)
+    return f"""
+            <form method="post">
+                <label>Gewünschten Datensatz: &nbsp</label>
+                <input type="text" id="dataset" name="dataset" value="{dataset}" required />
+                <button type="submit">Submit</button
+            </form> <br>
+            """
 
 @app.route('/get_model_result', methods = ['POST'])
 def get_model_result():
@@ -73,8 +98,7 @@ def get_2hp_model_result():
 
     display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, [10, 10])
 
-    return display_data.get_encoded_figure("model_result"), 
-
+    return display_data.get_encoded_figure("model_result")#, 
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -177,6 +201,12 @@ def get_2hp_field_shape():
 
 
 # Internal Methods:
+
+# sets current dataset in cache
+def insert_dataset(dataset: str):
+    dataset_old = cache.get("dataset")
+    if(dataset != dataset_old):
+        cache.set("dataset", dataset, timeout=0)
 
 def insert_highscore(name: str, average_error: float):
     top_ten_list = cache.get("top_ten_list")
