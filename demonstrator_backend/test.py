@@ -6,7 +6,8 @@ import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 import random
-
+import requests
+import json
 from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
@@ -180,10 +181,6 @@ def test_2hp_model_communication(visualize=True):
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
-    # locs_hp_x_2:  6.350000000000000000e+02
-    # locs_hp_y_2:  1.830000000000000000e+02
-    # pressure:     -3.040452194657028689e-03
-    # permeability: 1.053944076782911543e-09
 
     k = 1.053944076782911543e-09
     p = -3.040452194657028689e-03
@@ -204,13 +201,31 @@ def test_2hp_model_communication(visualize=True):
         show_figure(return_data.get_figure("model_result"))
 
 
+def test_flask_interface():
+    localhost = "http://127.0.0.1:5000/"
+
+    r = requests.post(url = localhost + "get_model_result",     json ={"permeability": 1e-9, "pressure": -1e-3, "name": "test.py"})
+    print(f"get_model_result: \n\t {r}")
+    r = requests.post(url = localhost + "get_2hp_model_result", json = {"permeability": 1e-9, "pressure": -1e-3, "pos": [10, 10]})
+    print(f"get_2hp_model_result: \n\t {r}")
+    r = requests.get( url = localhost + "get_value_ranges")
+    print(f"get_value_ranges: \n\t {r}")
+    r = requests.get( url = localhost + "get_2hp_field_shape")
+    print(f"get_2hp_field_shape: \n\t {r}")
+    r = requests.get( url = localhost + "get_highscore_and_name")
+    print(f"get_highscore_and_name: \n\t {r}")
+
+
+def test_all():
+    test_flask_interface()
+
 
 def main():
     test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
     test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
     test_1hp_model_communication(visualize=True)
-    # test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
+    test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
     test_2hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
-    main()
+    test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
