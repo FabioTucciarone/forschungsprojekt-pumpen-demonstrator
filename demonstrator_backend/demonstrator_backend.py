@@ -44,6 +44,7 @@ def choose_dataset():
             </form> <br>
             """
 
+
 @app.route('/get_model_result', methods = ['POST'])
 def get_model_result():
     """
@@ -83,7 +84,8 @@ def get_2hp_model_result():
 
     Parameters:
     ----------
-    {"permeability": <float>, "pressure": <float>, "pos": <list[float]>}
+    {"permeability": <float>, "pressure": <float>, "pos": <list[int]>}
+    pos needs to be in the range returned by get_2hp_field_shape()
 
     Return:
     ----------
@@ -96,7 +98,7 @@ def get_2hp_model_result():
     pressure = float(request.json.get('pressure'))
     pos = [int(request.json.get('pos')[0]), int(request.json.get('pos')[1])]
 
-    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, [10, 10])
+    display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
 
     return display_data.get_encoded_figure("model_result")#, 
 
@@ -149,7 +151,7 @@ def browser_input():
 def test_response():
     return 'success'
 
-  
+
 @app.route('/get_value_ranges', methods = ['GET'])
 def get_value_ranges():
     """
@@ -197,7 +199,7 @@ def save_highscore():
 
 @app.route('/get_2hp_field_shape', methods = ['GET'])
 def get_2hp_field_shape():
-    return cache.get("model_configuration").info["OutFieldShape"]
+    return cache.get("model_configuration").model_2hp_info["OutFieldShape"]
 
 
 # Internal Methods:
@@ -224,7 +226,6 @@ def insert_highscore(name: str, average_error: float):
         top_ten_list[9] = (name, average_error)
     top_ten_list = sorted(top_ten_list, key=lambda entry: entry[1], reverse=True)
     cache.set("top_ten_list", top_ten_list, timeout=0)
-
 
 def initialize_backend():
 
@@ -257,8 +258,8 @@ def initialize_backend():
 # Start Debug Server:
 
 if __name__ == '__main__':
-    print("Flask-Debug: Initialized")
     initialize_backend()
+    print("Flask-Debug: Initialized")
     app.run(port=5000, host='0.0.0.0', threaded=True)
 else:
     initialize_backend()

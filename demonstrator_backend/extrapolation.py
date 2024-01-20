@@ -34,7 +34,6 @@ class PolyInterpolatedField(TemperatureField):
         TemperatureField.__init__(self, info, run_index)
         X = list(range(info.dims[0]))
         Y = list(range(info.dims[1]))
-        self.T.cpu().numpy()
         self.interp = sp.interpolate.RegularGridInterpolator((X, Y), self.T, method='linear', bounds_error=False, fill_value=None)
         self.max = np.max(self.T)
 
