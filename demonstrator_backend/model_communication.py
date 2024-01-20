@@ -9,8 +9,6 @@ import generate_groundtruth as gt
 from dataclasses import dataclass
 import base64
 from matplotlib.colors import LinearSegmentedColormap
-import matplotlib.pyplot as plt
-import time 
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -19,23 +17,33 @@ from networks.unet import UNet
 import preprocessing.prepare_1ststage as prep_1hp
 import preprocessing.prepare_2ndstage as prep_2hp
 from utils.prepare_paths import Paths2HP
-from data_stuff.utils import SettingsTraining
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 @dataclass
 class ColorPalette:
+    """
+    Used to set the RGB values (range: [0,1]) of the output images:
+    cmap_list: list of RGB value tuples used for interpolating the color gradient
+    """
+
     cmap_list: list = None
     background_color: tuple = (1,1,1)
     text_color: tuple = (0,0,0)
 
 
+
 class ReturnData:
+    """
+    dict wrapper to easily add or change return parameters and generate encoded matplotlib figures.
+    """
+
     return_values: dict
     figures: dict
     color_palette: ColorPalette
     color_map: LinearSegmentedColormap = None
     average_error = None
+
 
     def __init__(self, color_palette: ColorPalette):
         self.figures = dict()
@@ -44,6 +52,7 @@ class ReturnData:
         self.color_palette = color_palette
         if self.color_palette.cmap_list is not None:
             self.color_map = LinearSegmentedColormap.from_list("demonstrator", color_palette.cmap_list, N=100)
+
 
     def encode_image(self, buffer):
         return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
@@ -65,17 +74,21 @@ class ReturnData:
         axes_image = axis.imshow(pixel_data, **imshowargs)
         self.figures[figure_name].colorbar(axes_image, cax=colorbar_axis)
 
+
     def get_figure(self, figure_name):
         return self.figures[figure_name]
+
 
     def get_encoded_figure(self, figure_name):
         image_bytes = io.BytesIO()
         self.figures[figure_name].savefig(image_bytes, format="png", bbox_inches='tight')
         return self.encode_image(image_bytes)
     
+
     def set_return_value(self, key, value):
         self.return_values[key] = value
     
+
     def get_return_value(self, key):
         return self.return_values[key]
 
@@ -83,6 +96,9 @@ class ReturnData:
 
 @dataclass
 class ModelConfiguration:
+    """
+    Dataclass used to store all model and groundtruth settings.
+    """
 
     device: str = "cpu"
     inputs: str = "gksi1000"
@@ -91,6 +107,7 @@ class ModelConfiguration:
     model_1hp_info: dict = None
     model_2hp_info: dict = None
     color_palette: ColorPalette = None
+
 
     def __post_init__(self):
         """ 
@@ -103,6 +120,10 @@ class ModelConfiguration:
         dataset_name: str
             Name of "dataset" containing the settings.yaml file from which the pflortran settings are extracted.
         """
+
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(f"Initialing with device = '{self.device}'")
+
         model_1hp_dir, model_2hp_dir = self.set_paths_and_settings()
 
         self.model_1hp = UNet(in_channels=len("gksi")).float()
@@ -139,7 +160,6 @@ class ModelConfiguration:
             models_1hp_dir      = path_to_project_dir / "models_1hpnn"
             models_2hp_dir      = path_to_project_dir / "models_2hpnn"
 
-
         model_2hp_dir = models_2hp_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
         model_1hp_dir = models_1hp_dir / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
         
@@ -158,10 +178,8 @@ class ModelConfiguration:
 
         if raw_dataset_1hpnn_name == "":
             raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
-        
         if not os.path.exists(model_1hp_dir):
-            raise FileNotFoundError(f'1HP model not found at "{model_1hp_dir}"')
-        
+            raise FileNotFoundError(f'1HP model not found at "{model_1hp_dir}"')    
         if not os.path.exists(model_2hp_dir):
             raise FileNotFoundError(f'2HP model not found at "{model_2hp_dir}"') 
 
@@ -170,12 +188,16 @@ class ModelConfiguration:
         return model_1hp_dir, model_2hp_dir
 
 
-    def set_color_palette(self, color_palette):
+    def set_color_palette(self, color_palette: ColorPalette):
         self.color_palette = color_palette
 
-    # print("WARNUNG: Provisorisch implementiert")
-    # return {"permeability_range": [1e-11, 1e-10], "pressure_range": [-4e-03, -1e-03]} # TODO: Aus Datei einlesen
+
     def get_value_ranges(self):
+        """
+        Get the value ranges supported by the used model in the following format:
+        [ [min permeability, max permeability], [min pressure, max max] ]
+        """
+
         k_info = self.model_1hp_info["Inputs"]["Permeability X [m^2]"]
         p_info = self.model_1hp_info["Inputs"]["Pressure Gradient [-]"]
         return [k_info["min"], k_info["max"]], [p_info["min"], p_info["max"]]
@@ -200,7 +222,20 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
     return_data.set_return_value("groundtruth_method", method)
     return return_data
 
+
 def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
+    """
+    Prepare a dataset and run the model of the second stage.
+
+    Parameters
+    ----------
+    permeability: float
+        The permeability input parameter of the demonstrator app.
+    pressure: float
+        The pressure input parameter of the demonstrator app.
+    pos_2nd_hp: list[int]
+        Position describing the pixelposition of the heat pump in the range of ModelConfiguration::model_2hp_info["OutFieldShape"]
+    """
 
     corner_dist = config.model_1hp_info["PositionLastHP"]
     field_shape_2hp = config.model_2hp_info["OutFieldShape"]

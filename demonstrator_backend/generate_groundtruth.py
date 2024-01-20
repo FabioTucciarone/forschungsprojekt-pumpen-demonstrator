@@ -3,7 +3,7 @@ import numpy as np
 import torch
 
 from groundtruth_data import DataPoint, GroundTruthInfo, HPBounds, load_temperature_field_raw
-from extrapolation import TaylorInterpolatedField
+from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
 
