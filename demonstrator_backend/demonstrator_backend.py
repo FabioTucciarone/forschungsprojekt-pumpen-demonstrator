@@ -44,6 +44,7 @@ def choose_dataset():
             </form> <br>
             """
 
+
 @app.route('/get_model_result', methods = ['POST'])
 def get_model_result():
     """
@@ -83,7 +84,8 @@ def get_2hp_model_result():
 
     Parameters:
     ----------
-    {"permeability": <float>, "pressure": <float>, "pos": <list[float]>}
+    {"permeability": <float>, "pressure": <float>, "pos": <list[int]>}
+    pos needs to be in the range returned by get_2hp_field_shape()
 
     Return:
     ----------
@@ -149,7 +151,7 @@ def browser_input():
 def test_response():
     return 'success'
 
-  
+
 @app.route('/get_value_ranges', methods = ['GET'])
 def get_value_ranges():
     """
@@ -225,7 +227,6 @@ def insert_highscore(name: str, average_error: float):
     top_ten_list = sorted(top_ten_list, key=lambda entry: entry[1], reverse=True)
     cache.set("top_ten_list", top_ten_list, timeout=0)
 
-
 def initialize_backend():
 
     # TODO: Hier einfach das einstellen, was hübsch aussieht!
@@ -257,8 +258,8 @@ def initialize_backend():
 # Start Debug Server:
 
 if __name__ == '__main__':
-    print("Flask-Debug: Initialized")
     initialize_backend()
+    print("Flask-Debug: Initialized")
     app.run(port=5000, host='0.0.0.0', threaded=True)
 else:
     initialize_backend()
