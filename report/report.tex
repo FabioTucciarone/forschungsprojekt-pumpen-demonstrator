@@ -36,6 +36,10 @@
 
 
     \section{Projektarchitektur}
+
+    Zu Begin möchten wir einen Überblick über die Projektarchitektur und die dazugehörigen Entwurfsentscheidungen geben.
+    
+
     \begin{itemize}
         \item Diagramm: Zusammenspiel der Komponenten (grob)
         \begin{figure}[H]
@@ -68,6 +72,32 @@
         \end{itemize}
     \end{itemize}
     \subsubsection{Triangulation}
+    nächster Punkt bei Interpolanten dabei
+        Gesucht: minimale Punktabstandssumme
+
+    \begin{figure*}[!ht]
+        \centering	
+        \includegraphics[scale=0.5]{triangulation_1_img.png}
+        \caption{Idee Triangulation}
+        \label{fig:triangulation_1}
+    \end{figure*}
+
+    Vorüberlegung:
+    Wir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
+    Dazu sollte die Summe der Abstände, von je $c, c_1$ und $c_2$ zu $p$, minimal sein.
+    Damit ein solches Dreieck eine minimale Punktabstandssumme besitzt,
+    ist es notwendig, dass der, zu $p$ nächste, Datenpunkt Teil dieses Dreiecks ist. Diesen Punkt 
+    nennen wir $c$.
+
+    Beweis:
+    Angenommen, $c$ wäre nicht Teil des Dreiecks mit minimaler Punktabstandssumme.
+    Dieses Dreieck bestehe aus den Eckpunkten $a_1$, $a_2$ und $a_3$. Davon sei $a_1$ der 
+    nächste Punkt zu $p$. Dieser spannt, mit $p$ als Mittelpunkt, einen Kreis auf. 
+    Innerhalb davon muss $c$ liegen.
+    Es gibt nun einen Punkt $\in \{ a_1, a_2, a_3 \}$, der sich durch $c$ ersetzen lässt und
+    mit den anderen beiden Punkten ein Dreieck aufspannt, das immer noch $p$ umschließt.
+    
+         
     
     
     \subsection{Stufe 2 (2HP NN)}
