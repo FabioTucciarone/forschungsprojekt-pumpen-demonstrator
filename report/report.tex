@@ -77,8 +77,8 @@
 
     \begin{figure*}[!ht]
         \centering	
-        \includegraphics[scale=0.5]{triangulation_1_img.png}
-        \caption{Idee Triangulation}
+        \includegraphics[scale=0.10]{bilder/tri_1.pdf}
+        \caption{Ziel Triangulation}
         \label{fig:triangulation_1}
     \end{figure*}
 
@@ -90,12 +90,55 @@
     nennen wir $c$.
 
     Beweis:
-    Angenommen, $c$ wäre nicht Teil des Dreiecks mit minimaler Punktabstandssumme.
-    Dieses Dreieck bestehe aus den Eckpunkten $a_1$, $a_2$ und $a_3$. Davon sei $a_1$ der 
-    nächste Punkt zu $p$. Dieser spannt, mit $p$ als Mittelpunkt, einen Kreis auf. 
-    Innerhalb davon muss $c$ liegen.
+    Angenommen, $c$ wäre nicht Teil des $p$-umschließenden Dreiecks mit minimaler Punktabstandssumme.
+    Dieses Dreieck bestehe aus den Eckpunkten $a_1$, $a_2$ und $a_3$ mit Abstandssumme:
+
+    \begin{eqnarray*}
+        S_{\text{AP}} &=& \mid p - a_1 \mid + \mid p - a_2 \mid + \mid p - a_3 \mid \\
+    \end{eqnarray*}
+    
+    Von den drei Punkten sei $a_1$ der nächste Punkt zu $p$. Dieser spannt, mit $p$ als Mittelpunkt, 
+    einen Kreis auf. Innerhalb davon muss $c$ liegen.
     Es gibt nun einen Punkt $\in \{ a_1, a_2, a_3 \}$, der sich durch $c$ ersetzen lässt und
-    mit den anderen beiden Punkten ein Dreieck aufspannt, das immer noch $p$ umschließt.
+    mit den anderen beiden Punkten ein Dreieck aufspannt, das immer noch $p$ umschließt 
+    (siehe \ref{fig:triangulation_2}).
+
+    \begin{figure*}[!ht]
+        \centering	
+        \includegraphics[scale=0.15]{bilder/tri_2.pdf}
+        \caption{Dreiteilung mit Hilfslinien}
+        \label{fig:triangulation_2}
+    \end{figure*}
+
+    Diesen, zu ersetzenden Punkt, kann man finden, indem man zuerst von jedem Punkt 
+    $\in \{ a_1, a_2, a_3 \}$ eine Linie durch $p$ zieht (in Abb. \ref{fig:triangulation_2} lila, 
+    grün, rot). Diese Linien, von $p$ ausgehend (nur noch die durchgezogenen Linien), teilen die 
+    Ebene in drei Teile auf, wobei in jedem genau ein Punkt $\in \{ a_1, a_2, a_3 \}$ liegt. 
+
+    \begin{figure*}[!ht]
+        \centering	
+        \includegraphics[scale=0.15]{bilder/tri_3.pdf}
+        \caption{kleineres Dreieck}
+        \label{fig:triangulation_3}
+    \end{figure*}
+
+    Sei $a_1$ der Punkt, der im selben Teil wie $c$ liegt. Dieser lässt sich durch $c$ ersetzen, 
+    da jeder Punkt innerhalb dieses Teils, ein $p$ umschließendes Dreieck mit $a_2$ und $a_3$ 
+    aufstellen würde. Das liegt daran, dass die Mindestgröße der 
+    Winkel an jeweils $a_2$ und $a_3$ ausreicht, um $p$ zu umschließen.
+    Die Mindestgröße beider Winkel wird schließlich von dem Teil bestimmt, der $a_1$ beinhaltet. \\
+    Das neue Dreieck ($c$,$a_2$,$a_3$) hat somit die Punktabstandssumme:
+
+    \begin{eqnarray*}
+        S^*_{\text{AP}} &=& \mid p - c \mid + \mid p - a_2 \mid + \mid p - a_3 \mid \\
+    \end{eqnarray*}
+
+    O.B.d.A: $S^*_{\text{AP}}$ ist kleiner als $S_{\text{AP}}$, da der Abstand von $c$ zu $p$
+    kleiner ist als der von $a_1$ zu $p$. Das ist ein Widerspruch zur Annahme, dass $c$ nicht
+    Teil des Dreiecks mit minimaler Abstandssumme ist. Daraus folgt, dass der nächste
+    Punkt Teil dieses Dreiecks sein muss.
+
+
     
          
     
