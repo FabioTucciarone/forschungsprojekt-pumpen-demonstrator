@@ -72,10 +72,12 @@
         \end{itemize}
     \end{itemize}
     \subsubsection{Triangulation}
-    
-    % nächster Punkt bei Interpolanten, dabei gesucht: minimale PunktabstandssummeWir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
-    Wir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
-    Dazu sollte die Summe der Abstände, von je $c, c_1$ und $c_2$ zu $p$, minimal sein.
+    % nächster Punkt bei Interpolanten, dabei gesucht: minimale Punktabstandssumme Wir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
+    Vorüberlegung: Um die Farbe eines Pixels in einer zweidimensionalen Ebene zufällig verteilter
+    Datenpunkte anzunähern, empfiehlt es sich über ein Dreieck aus Datenpunkten, das den Pixel 
+    einschließt zu interpolieren. Dabei, um möglichst viel von den Informationen der Datenpunkte 
+    zu nutzen, sollten die drei Datenpunkte einen möglichst geringen Abstand zum Pixelpunkt $p$ 
+    besitzen. Die drei Datenpunkte, die das Dreieck bilden sollen, nennen wir $c, c_1$ und $c_2$.
     Bevor wir einen Algorithmus konstruieren, der diese Eigenschaft erfüllt erst noch wichtige
     Hilfssätze:
 
@@ -115,7 +117,9 @@
     Diesen, zu ersetzenden Punkt, kann man finden, indem man zuerst von jedem Punkt 
     $\in \{ a_1, a_2, a_3 \}$ eine Linie durch $p$ zieht (in Abb. \ref{fig:triangulation_2} lila, 
     grün, rot). Diese Linien, von $p$ ausgehend (nur noch die durchgezogenen Linien), teilen die 
-    Ebene in drei Teile auf, wobei in jedem genau ein Punkt $\in \{ a_1, a_2, a_3 \}$ liegt. 
+    Ebene in drei Teile auf, wobei in jedem genau ein Punkt $\in \{ a_1, a_2, a_3 \}$ liegt.
+    Wäre mehr als ein Punkt in einem Teil, so umschlössen die drei Punkte nicht mehr $p$ 
+    (Hilfssatz 2).
 
     \begin{figure*}[!ht]
         \centering	
@@ -127,7 +131,7 @@
     Sei $a_1$ der Punkt, der im selben Teil wie $c$ liegt. Dieser lässt sich durch $c$ ersetzen, 
     da jeder Punkt innerhalb dieses Teils, ein $p$ umschließendes Dreieck mit $a_2$ und $a_3$ 
     aufstellen würde. Das liegt daran, dass die Mindestgröße der 
-    Winkel an jeweils $a_2$ und $a_3$ ausreicht, um $p$ zu umschließen (Hilfssatz 1).
+    Winkel an jeweils $a_2$ und $a_3$ ausreicht, um $p$ zu umschließen (Hilfssatz 2).
     Die Mindestgröße beider Winkel wird schließlich von dem Teil bestimmt, der $a_1$ beinhaltet. \\
     Das neue Dreieck ($c$,$a_2$,$a_3$) hat somit die Punktabstandssumme:
 
@@ -136,13 +140,13 @@
     \end{eqnarray*}
 
     O.B.d.A: $S^*_{\text{AP}}$ ist kleiner als $S_{\text{AP}}$, da der Abstand von $c$ zu $p$
-    kleiner ist als der von $a_1$ zu $p$. Das ist ein Widerspruch zur Annahme, dass $c$ nicht
-    Teil des Dreiecks mit minimaler Abstandssumme ist. Daraus folgt, dass der nächste
+    kleiner ist als der von $a_1$ zu $p$. Das ist ein Widerspruch zur Annahme, dass ($a_1, a_2, a_3$) 
+    das Dreieck mit kleinster Punktabstandssumme ist. Daraus folgt, dass der nächste
     Punkt Teil dieses Dreiecks sein muss. $\square$
 
     \subsubsection{Hilfssatz 2: Winkel-Punkteinschluss}
-    Zwei Punkte $a_2, a_3$, die mit einem Punkt $p$ eine Fläche $f_{a_1}$ hinter $p$ projizieren, erzeugen
-    mit jedem Punkt $a_1$ aus $f_{a_1}$ ein Dreieck, das $p$ umschließt. \\
+    Zwei Punkte $a_2, a_3$, die mit einem Punkt $p$ eine Fläche $f_{a_1}$ hinter $p$ projizieren, 
+    erzeugen mit jedem Punkt $a_1$ aus $f_{a_1}$ ein Dreieck, das $p$ umschließt. \\
     $Beweis:$ Seien $a_2, a_3$ und $p$ Punkte auf einer zweidimensionalen Fläche und $\varphi_2, 
     \varphi_3$ die kleineren Winkel (d.h. $\varphi_2, \varphi_3$ < 90°) zwischen den Linien 
     $ \{ (a_2,a_3),(a_2,p) \} $ bzw. $ \{ (a_3,a_2),(a_3,p) \} $.
@@ -154,11 +158,12 @@
         \label{fig:triangulation_hilfssatz_1}
     \end{figure*}
 
-    Um $p$ nun in einem Dreieck mit $a_2$ und $a_3$ einzuschließen, muss der dreiecksvervollständigende
-    Punkt $a_1$ so liegen, dass gilt:
-    $ \{ (a_2,a_3),(a_2,a_1) \} > \varphi_2 $ bzw. $ \{ (a_3,a_2),(a_3,a_1) \} > \varphi_3 $, denn 
-    sonst würde mindestens eine Linie zwischen $p$ und $(a_3,a_2)$ verlaufen, was $p$ ausschließt.
-    Alle Punkte $a_1$, die $ \{ (a_2,a_3),(a_2,a_1) \} > \varphi_2 \land \{ (a_3,a_2),(a_3,a_1) \} > \varphi_3 $ 
+    Um $p$ nun in einem Dreieck mit $a_2$ und $a_3$ einzuschließen, muss der 
+    dreiecksvervollständigende Punkt $a_1$ so liegen, dass gilt:
+    $ \{ (a_2,a_3),(a_2,a_1) \} \geq \varphi_2 $ bzw. $ \{ (a_3,a_2),(a_3,a_1) \} \geq \varphi_3 $, 
+    denn sonst würde mindestens eine Linie zwischen $p$ und $(a_3,a_2)$ verlaufen, was $p$ 
+    ausschließt. Alle Punkte $a_1$, die 
+    $ \{ (a_2,a_3),(a_2,a_1) \} \geq \varphi_2 \land \{ (a_3,a_2),(a_3,a_1) \} \geq \varphi_3 $ 
     erfüllen, liegen also per Definition in $f_{a_1}$. $\square$
 
     \subsubsection{Konstruktion}
@@ -169,6 +174,10 @@
         %\caption{kleineres Dreieck}
         \label{fig:triangulation_hilfssatz_2}
     \end{figure*}
+
+    \subsubsection{Laufzeit}
+    Der Algorithmus läuft in linearer Laufzeit, da sich das k-kleinste Element einer unsortierten
+    Liste in Linearzeit finden lässt.
     
     \subsection{Stufe 2 (2HP NN)}
     \begin{itemize}
