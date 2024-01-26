@@ -239,7 +239,7 @@ def initialize_backend():
 
     data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "saved_files", "scores.csv")
 
-    model_configuration = mc.ModelConfiguration(device="cpu")
+    model_configuration = mc.ModelConfiguration(device="cuda")
     model_configuration.set_color_palette(color_palette)
     cache.set("model_configuration", model_configuration, timeout=0)
 
