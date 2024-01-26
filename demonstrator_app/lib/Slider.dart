@@ -13,14 +13,15 @@ class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final Map<String, dynamic>? valueRange;
   final SliderType name;
-  double currentValue;
+  double currentValue = 0;
   final bool children;
+  final bool firstPhase;
   PressureSlider(
     this.sliderWidth,
     this.valueRange,
     this.name,
-    this.currentValue,
     this.children,
+    this.firstPhase,
   );
 
   double getCurrent() {
@@ -31,8 +32,7 @@ class PressureSlider extends StatefulWidget {
   State<PressureSlider> createState() => _PressureSliderState();
 }
 
-class _PressureSliderState extends State<PressureSlider>
-    with MainScreenElements {
+class _PressureSliderState extends State<PressureSlider> {
   final List<Color> colorsGradient = [
     const Color.fromARGB(255, 182, 2, 2),
     const Color.fromARGB(255, 255, 0, 0),
@@ -157,35 +157,79 @@ class _PressureSliderState extends State<PressureSlider>
             },
             onHorizontalDragEnd: (DragEndDetails details) {
               if (widget.name == SliderType.pressure) {
-                MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(
-                        MainScreenElements.permeabilitySlider.getCurrent(),
-                        widget.currentValue,
-                        MainMaterial.getName()));
+                if (widget.firstPhase) {
+                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                      .sendInputData(
+                          MainScreenElements.permeabilitySlider.getCurrent(),
+                          widget.currentValue,
+                          MainMaterial.getName()));
+                } else {
+                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+                      .sendInputDataPhase2(
+                          MainScreenElements.permeabilitySlider.getCurrent(),
+                          widget.currentValue,
+                          MainMaterial.getName(), [
+                    MainScreenElements.heatPumpBox.getCurrent().dx,
+                    MainScreenElements.heatPumpBox.getCurrent().dy
+                  ]));
+                }
                 MainSlide.restartTimer.restartTimer();
               } else {
-                MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(
-                        widget.currentValue,
-                        MainScreenElements.pressureSlider.getCurrent(),
-                        MainMaterial.getName()));
+                if (widget.firstPhase) {
+                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                      .sendInputData(
+                          widget.currentValue,
+                          MainScreenElements.pressureSlider.getCurrent(),
+                          MainMaterial.getName()));
+                } else {
+                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+                      .sendInputDataPhase2(
+                          widget.currentValue,
+                          MainScreenElements.pressureSlider.getCurrent(),
+                          MainMaterial.getName(), [
+                    MainScreenElements.heatPumpBox.getCurrent().dx,
+                    MainScreenElements.heatPumpBox.getCurrent().dy
+                  ]));
+                }
                 MainSlide.restartTimer.restartTimer();
               }
             },
             onTapUp: (TapUpDetails details) {
               if (widget.name == SliderType.pressure) {
-                MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(
-                        MainScreenElements.permeabilitySlider.getCurrent(),
-                        widget.currentValue,
-                        MainMaterial.getName()));
+                if (widget.firstPhase) {
+                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                      .sendInputData(
+                          MainScreenElements.permeabilitySlider.getCurrent(),
+                          widget.currentValue,
+                          MainMaterial.getName()));
+                } else {
+                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+                      .sendInputDataPhase2(
+                          MainScreenElements.permeabilitySlider.getCurrent(),
+                          widget.currentValue,
+                          MainMaterial.getName(), [
+                    MainScreenElements.heatPumpBox.getCurrent().dx,
+                    MainScreenElements.heatPumpBox.getCurrent().dy
+                  ]));
+                }
                 MainSlide.restartTimer.restartTimer();
               } else {
-                MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(
-                        widget.currentValue,
-                        MainScreenElements.pressureSlider.getCurrent(),
-                        MainMaterial.getName()));
+                if (widget.firstPhase) {
+                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                      .sendInputData(
+                          widget.currentValue,
+                          MainScreenElements.pressureSlider.getCurrent(),
+                          MainMaterial.getName()));
+                } else {
+                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+                      .sendInputDataPhase2(
+                          widget.currentValue,
+                          MainScreenElements.pressureSlider.getCurrent(),
+                          MainMaterial.getName(), [
+                    MainScreenElements.heatPumpBox.getCurrent().dx,
+                    MainScreenElements.heatPumpBox.getCurrent().dy
+                  ]));
+                }
                 MainSlide.restartTimer.restartTimer();
               }
             },

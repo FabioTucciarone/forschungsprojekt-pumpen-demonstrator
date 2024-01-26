@@ -100,7 +100,7 @@ def get_2hp_model_result():
 
     display_data = mc.get_2hp_model_results(model_configuration, permeability, pressure, pos)
 
-    return display_data.get_encoded_figure("model_result")#, 
+    return { "model_result": display_data.get_encoded_figure("model_result") }#, 
 
 
 @app.route('/', methods=['GET', 'POST'])

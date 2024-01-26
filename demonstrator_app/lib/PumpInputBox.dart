@@ -1,45 +1,54 @@
 import 'package:demonstrator_app/MainScreen.dart';
+import 'Layout.dart';
+import 'Intro.dart';
+import 'Outputbox.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /// Class for a box which is above the output picture and where you can change the position of the second heat pump.
 /// It can be adjusted by its width, height and a boolean indicating whether the slider is for the children version.
 class PumpInputBox extends StatefulWidget {
   final double width;
   final double height;
+  final List<dynamic>? valueRange;
   final bool children;
-  const PumpInputBox({
+  Offset currentValue = const Offset(0, 0);
+  PumpInputBox({
     super.key,
     required this.width,
     required this.height,
+    required this.valueRange,
     required this.children,
   });
+
+  Offset getCurrent() {
+    return currentValue;
+  }
 
   @override
   State<PumpInputBox> createState() => _PumpInputBoxState();
 }
 
-class _PumpInputBoxState extends State<PumpInputBox> with MainScreenElements {
-  Offset pumpPos = const Offset(100, 100);
-  Offset currentValue = const Offset(0, 0);
+class _PumpInputBoxState extends State<PumpInputBox> {
+  Offset pumpPos = const Offset(10, 10);
   double opacity = 0.0;
+  final ResponseDecoder responseDecoder = ResponseDecoder();
 
   @override
   void initState() {
     super.initState();
-    currentValue = determineValue(pumpPos);
+    widget.currentValue = determineValue(pumpPos);
   }
 
   /// Determines the value that the position of the thumb represents.
   Offset determineValue(Offset pumpPos) {
-    double endX = 255;
-    double endY = 99;
+    int endX = widget.valueRange?[0];
+    int endY = widget.valueRange?[1];
     double intervalX = widget.width / endX;
     double intervalY = widget.height / endY;
     double valueX = pumpPos.dx / intervalX;
     double valueY = pumpPos.dy / intervalY;
-    print('x: $valueX');
-    print('y: $valueY');
     return Offset(valueX, valueY);
   }
 
@@ -59,7 +68,7 @@ class _PumpInputBoxState extends State<PumpInputBox> with MainScreenElements {
     }
     setState(() {
       pumpPos = position;
-      currentValue = determineValue(pumpPos);
+      widget.currentValue = determineValue(pumpPos);
     });
   }
 
@@ -68,73 +77,144 @@ class _PumpInputBoxState extends State<PumpInputBox> with MainScreenElements {
   /// whenever the pointer is moved or the input box is clicked. The pointer appears when the cursor hovers over the input box.
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: <Widget>[
-        Image.asset(
-          'assets/example2ndPhase.jpg',
-          scale: 2,
-        ),
-        Positioned(
-          top: 12,
-          left: 29,
-          child: MouseRegion(
-            onEnter: (event) => setState(() {
-              opacity = 1.0;
-            }),
-            onExit: (event) => setState(() {
-              opacity = 0.0;
-            }),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onHorizontalDragStart: (DragStartDetails details) {
-                correctingPosition(details.localPosition);
-              },
-              onHorizontalDragUpdate: (DragUpdateDetails details) {
-                correctingPosition(details.localPosition);
-              },
-              onTapDown: (TapDownDetails details) {
-                correctingPosition(details.localPosition);
-              },
-              onHorizontalDragEnd: (DragEndDetails details) {
-                /*MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(
-                        MainScreenElements.permeabilitySlider.getCurrent(),
-                        currentValue,
-                        MainMaterial.getName()));*/
-                MainSlide.restartTimer.restartTimer();
-              },
-              onTapUp: (TapUpDetails details) {
-                /*MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                    .sendInputData(
-                        MainScreenElements.permeabilitySlider.getCurrent(),
-                        currentValue,
-                        MainMaterial.getName()));*/
-                MainSlide.restartTimer.restartTimer();
-              },
-              child: Container(
-                width: widget.width,
-                height: widget.height,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.black),
-                ),
-                child: CustomPaint(
-                  painter: SliderThumb(pumpPos, opacity),
+    final Future<String> future = context.watch<FutureNotifierPhase2>().future;
+    return SizedBox(
+      width: 1600,
+      height: 200,
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: <Widget>[
+          FutureBuilder<String>(
+            future: future,
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              Widget child;
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  child = Container(
+                    width: widget.width,
+                    height: widget.height,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'ERROR',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  );
+                  print('Error ${snapshot.error} occured');
+                } else {
+                  if (snapshot.data == "keinWert") {
+                    child = Container(
+                      width: widget.width,
+                      height: widget.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.white),
+                      ),
+                      child: Center(
+                        child: widget.children
+                            ? const Text(
+                                "Kein Wert bis jetzt",
+                              )
+                            : const Text('No value so far'),
+                      ),
+                    );
+                  } else {
+                    responseDecoder.setResponse(snapshot.data);
+                    child =
+                        Image.memory(responseDecoder.getBytes("model_result"));
+                  }
+                }
+              } else {
+                child = Container(
+                  width: widget.width,
+                  height: widget.height,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: const SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: OurColors.accentColor,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return child;
+            },
+          ),
+          Positioned(
+            top: 21,
+            left: 78,
+            child: MouseRegion(
+              onEnter: (event) => setState(() {
+                opacity = 1.0;
+              }),
+              onExit: (event) => setState(() {
+                opacity = 0.0;
+              }),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onPanStart: (DragStartDetails details) {
+                  correctingPosition(details.localPosition);
+                },
+                onPanUpdate: (DragUpdateDetails details) {
+                  correctingPosition(details.localPosition);
+                },
+                onTapDown: (TapDownDetails details) {
+                  correctingPosition(details.localPosition);
+                },
+                onPanEnd: (DragEndDetails details) {
+                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+                      .sendInputDataPhase2(
+                          MainScreenElements.permeabilitySlider.getCurrent(),
+                          MainScreenElements.pressureSlider.getCurrent(),
+                          MainMaterial.getName(),
+                          [widget.currentValue.dx, widget.currentValue.dy]));
+                  MainSlide.restartTimer.restartTimer();
+                },
+                onTapUp: (TapUpDetails details) {
+                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+                      .sendInputDataPhase2(
+                          MainScreenElements.permeabilitySlider.getCurrent(),
+                          MainScreenElements.pressureSlider.getCurrent(),
+                          MainMaterial.getName(),
+                          [widget.currentValue.dx, widget.currentValue.dy]));
+                  MainSlide.restartTimer.restartTimer();
+                },
+                child: Container(
+                  width: widget.width,
+                  height: widget.height,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.5, color: Colors.black),
+                  ),
+                  child: CustomPaint(
+                    painter: PointerThumb(pumpPos, opacity),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 /// Class for the appearance and position of the pointer.
-class SliderThumb extends CustomPainter {
+class PointerThumb extends CustomPainter {
   final Offset pos;
   double opacity;
-  SliderThumb(this.pos, this.opacity);
+  PointerThumb(this.pos, this.opacity);
 
   /// Paints the pointer in the shape of a circle. [pos] is used to put the pointer at the position
   /// the user chooses and [opacity] determines whether the circle is visible or not.
@@ -145,7 +225,7 @@ class SliderThumb extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SliderThumb oldThumb) {
+  bool shouldRepaint(PointerThumb oldThumb) {
     return true;
   }
 }

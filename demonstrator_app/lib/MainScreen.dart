@@ -16,6 +16,7 @@ class MainSlide extends StatefulWidget with MainScreenElements {
   final bool children;
   MainSlide({super.key, required this.children});
   static FutureNotifier futureNotifier = FutureNotifier();
+  static FutureNotifierPhase2 futureNotifierPhase2 = FutureNotifierPhase2();
   static RestartTimer restartTimer = RestartTimer();
 
   @override
@@ -40,6 +41,9 @@ class _MainSlideState extends State<MainSlide>
           providers: [
             ChangeNotifierProvider<FutureNotifier>(
               create: ((context) => MainSlide.futureNotifier),
+            ),
+            ChangeNotifierProvider<FutureNotifierPhase2>(
+              create: ((context) => MainSlide.futureNotifierPhase2),
             ),
             ChangeNotifierProvider<RestartTimer>(
               create: ((context) => MainSlide.restartTimer),
@@ -157,7 +161,7 @@ class _MainMaterialState extends State<MainMaterial> {
               ? IntroKids(widget._tabController)
               : IntroductionScience(widget._tabController),
           widget.widget.children ? Phase1Kids() : MainScreenContent(),
-          const SciencePhase2(),
+          SciencePhase2(),
         ]),
       ),
     );
@@ -182,7 +186,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...input(900, false),
+                ...input(900, false, true),
                 const SizedBox(
                   height: 10,
                 ),
@@ -199,7 +203,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
 
 /// Class for the phase 2 simulation with 2 heat pumps in the science version.
 class SciencePhase2 extends StatelessWidget with MainScreenElements {
-  const SciencePhase2({super.key});
+  SciencePhase2({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -215,12 +219,12 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...input(900, false),
+                ...input(900, false, false),
                 const SizedBox(
                   height: 10,
                 ),
                 const OutputHeader(),
-                const PumpInputBox(width: 737, height: 290, children: false),
+                outputSecondPhase(),
               ],
             ),
           ),
@@ -240,8 +244,8 @@ mixin MainScreenElements {
         "permeability_range": [0, 1]
       },
       SliderType.pressure,
-      0,
-      false);
+      false,
+      true);
 
   static PressureSlider permeabilitySlider = PressureSlider(
       900,
@@ -250,10 +254,11 @@ mixin MainScreenElements {
         "permeability_range": [0, 1]
       },
       SliderType.permeability,
-      0,
-      false);
+      false,
+      true);
 
-  Widget getSliderWidget(double width, SliderType type, bool children) {
+  Widget getSliderWidget(
+      double width, SliderType type, bool children, bool firstPhase) {
     return FutureBuilder(
       future: useOfBackend.backend.getValueRanges(),
       builder:
@@ -261,12 +266,12 @@ mixin MainScreenElements {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           if (type == SliderType.pressure) {
-            pressureSlider =
-                PressureSlider(width, snapshot.data, type, 0, children);
+            pressureSlider = PressureSlider(
+                width, snapshot.data, type, children, firstPhase);
             child = pressureSlider;
           } else {
-            permeabilitySlider =
-                PressureSlider(width, snapshot.data, type, 0, children);
+            permeabilitySlider = PressureSlider(
+                width, snapshot.data, type, children, firstPhase);
             child = permeabilitySlider;
           }
         } else {
@@ -285,13 +290,13 @@ mixin MainScreenElements {
     );
   }
 
-  List<Widget> input(double width, bool children) {
+  List<Widget> input(double width, bool children, bool firstPhase) {
     return <Widget>[
-      getSliderWidget(width, SliderType.pressure, children),
+      getSliderWidget(width, SliderType.pressure, children, firstPhase),
       const SizedBox(
         height: 10,
       ),
-      getSliderWidget(width, SliderType.permeability, children),
+      getSliderWidget(width, SliderType.permeability, children, firstPhase),
     ];
   }
 
@@ -323,6 +328,37 @@ mixin MainScreenElements {
       ),
     ];
   }
+
+  static PumpInputBox heatPumpBox = PumpInputBox(
+      width: 1000, height: 200, valueRange: const [0, 1], children: false);
+
+  Widget outputSecondPhase() {
+    return FutureBuilder(
+      future: useOfBackend.backend.getOutputShape(),
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        Widget child;
+        if (snapshot.connectionState == ConnectionState.done) {
+          heatPumpBox = PumpInputBox(
+              width: 1130,
+              height: 134,
+              valueRange: snapshot.data,
+              children: false);
+          child = heatPumpBox;
+        } else {
+          child = const SizedBox(
+            width: 100,
+            height: 100,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
+            ),
+          );
+        }
+        return child;
+      },
+    );
+  }
 }
 
 /// Class for the header of the output with the average error.
@@ -345,6 +381,17 @@ class OutputHeader extends StatelessWidget {
 }
 
 class FutureNotifier extends ChangeNotifier {
+  Future<String> future = Future.value("keinWert");
+
+  Future<String> get getFuture => future;
+
+  void setFuture(Future<String> newFuture) {
+    future = newFuture;
+    notifyListeners();
+  }
+}
+
+class FutureNotifierPhase2 extends ChangeNotifier {
   Future<String> future = Future.value("keinWert");
 
   Future<String> get getFuture => future;
