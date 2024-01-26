@@ -4,62 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'BackendConnection.dart';
 
-/// Button for login of the ssh account.
-class ButtonAnmelden extends StatefulWidget {
-  const ButtonAnmelden({super.key});
-
-  @override
-  State<ButtonAnmelden> createState() => _ButtonAnmelden();
-}
-
-class _ButtonAnmelden extends State<ButtonAnmelden> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: OurColors.appBarColor,
-        ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => RegisterApp()),
-          );
-        },
-        child: const Text(
-          'Anmelden',
-          style: TextStyle(color: OurColors.appBarTextColor),
-        ));
-  }
-}
-
+/// Class for the login of the ssh account.
 class RegisterApp extends StatelessWidget {
   const RegisterApp();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Demonstrator App",
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Demonstrator App",
+          ),
+          backgroundColor: OurColors.appBarColor,
+          titleTextStyle:
+              const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         ),
-        backgroundColor: OurColors.appBarColor,
-        titleTextStyle:
-            const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: OurColors.appBarTextColor,
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Introduction()));
-            }),
-      ),
-      backgroundColor: OurColors.backgroundColor,
-      body: Center(
-        child: Container(
-          width: 400,
-          color: OurColors.accentColor,
-          child: Card(
-            child: RegisterBox(),
+        backgroundColor: OurColors.backgroundColor,
+        body: Center(
+          child: Container(
+            width: 400,
+            color: OurColors.accentColor,
+            child: const Card(
+              child: RegisterBox(),
+            ),
           ),
         ),
       ),
@@ -208,6 +176,29 @@ class _RegisterState extends State<RegisterBox> {
                 style: TextStyle(color: OurColors.appBarTextColor),
               ),
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: OurColors.appBarColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () {
+                setState(() {
+                  useOfBackend.backend.debugEnabled = true;
+                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Introduction()),
+                );
+              },
+              child: const Text(
+                'Weiter im Debug Mode',
+                style: TextStyle(color: OurColors.appBarTextColor),
+              ),
+            ),
           ],
         ),
       ),
@@ -234,11 +225,8 @@ class ResultApp extends StatelessWidget {
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Introduction()));
+                  MaterialPageRoute(builder: (context) => RegisterApp()));
             }),
-        actions: const <Widget>[
-          ButtonAnmelden(),
-        ],
       ),
       backgroundColor: OurColors.backgroundColor,
       body: Center(
@@ -334,9 +322,9 @@ class _ResultState extends State<Result> {
               print('HTTP requests can be send now.');
             });
             useOfBackend.backend.forwardConnection('pcsgs08', 5000);
-            Future.delayed(Duration(seconds: 1), () {
+            Future.delayed(const Duration(seconds: 1), () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => IntroHomeScaffold()));
+                  MaterialPageRoute(builder: (context) => Introduction()));
             });
           } else {
             child = const SizedBox(

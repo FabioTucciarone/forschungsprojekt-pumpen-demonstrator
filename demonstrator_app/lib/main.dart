@@ -1,6 +1,6 @@
-import 'package:demonstrator_app/Layout.dart';
+import 'BuildConnection.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const Introduction());
+  runApp(const RegisterApp());
 }
