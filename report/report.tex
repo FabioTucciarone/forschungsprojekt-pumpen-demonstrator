@@ -73,15 +73,15 @@
     \end{itemize}
     \subsubsection{Triangulation}
     % nächster Punkt bei Interpolanten, dabei gesucht: minimale Punktabstandssumme Wir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
-    Vorüberlegung: Um die Farbe eines Pixels in einer zweidimensionalen Ebene zufällig verteilter
+    $Vor"uberlegung:$ Um die Farbe eines Pixels in einer zweidimensionalen Ebene zufällig verteilter
     Datenpunkte anzunähern, empfiehlt es sich über ein Dreieck aus Datenpunkten, das den Pixel 
     einschließt zu interpolieren. Dabei, um möglichst viel von den Informationen der Datenpunkte 
     zu nutzen, sollten die drei Datenpunkte einen möglichst geringen Abstand zum Pixelpunkt $p$ 
     besitzen. Die drei Datenpunkte, die das Dreieck bilden sollen, nennen wir $c, c_1$ und $c_2$.
-    Bevor wir einen Algorithmus konstruieren, der diese Eigenschaft erfüllt erst noch wichtige
-    Hilfssätze:
+    Bevor wir einen Algorithmus \ref{tri_k} konstruieren, der diese Eigenschaft erfüllt erst noch 
+    wichtige Hilfssätze:
 
-    \subsubsection{Hilfssatz 1: Minimales-Abstands-Dreieck beinhaltet nächsten Punkt}
+    \subsubsection{Hilfssatz 1: Minimales-Abstands-Dreieck beinhaltet nächsten Punkt} \label{tri_hs1}
     Damit ein solches Dreieck eine minimale Punktabstandssumme besitzt,
     ist es notwendig, dass der, zu $p$ nächste, Datenpunkt Teil dieses Dreiecks ist. Diesen Punkt 
     nennen wir $c$.
@@ -93,7 +93,7 @@
         \label{fig:triangulation_1}
     \end{figure*}
 
-    Beweis:
+    $Beweis:$
     Angenommen, $c$ wäre nicht Teil des $p$-umschließenden Dreiecks mit minimaler Punktabstandssumme.
     Dieses Dreieck bestehe aus den Eckpunkten $a_1$, $a_2$ und $a_3$ mit Abstandssumme:
 
@@ -119,7 +119,7 @@
     grün, rot). Diese Linien, von $p$ ausgehend (nur noch die durchgezogenen Linien), teilen die 
     Ebene in drei Teile auf, wobei in jedem genau ein Punkt $\in \{ a_1, a_2, a_3 \}$ liegt.
     Wäre mehr als ein Punkt in einem Teil, so umschlössen die drei Punkte nicht mehr $p$ 
-    (Hilfssatz 2).
+    (siehe \ref{tri_hs2}).
 
     \begin{figure*}[!ht]
         \centering	
@@ -131,8 +131,8 @@
     Sei $a_1$ der Punkt, der im selben Teil wie $c$ liegt. Dieser lässt sich durch $c$ ersetzen, 
     da jeder Punkt innerhalb dieses Teils, ein $p$ umschließendes Dreieck mit $a_2$ und $a_3$ 
     aufstellen würde. Das liegt daran, dass die Mindestgröße der 
-    Winkel an jeweils $a_2$ und $a_3$ ausreicht, um $p$ zu umschließen (Hilfssatz 2).
-    Die Mindestgröße beider Winkel wird schließlich von dem Teil bestimmt, der $a_1$ beinhaltet. \\
+    Winkel an jeweils $a_2$ und $a_3$ ausreicht, um $p$ zu umschließen (siehe \ref{tri_hs2}).
+    Die Mindestgröße beider Winkel wird schließlich von dem Teil bestimmt, der $a_1$ beinhaltet.
     Das neue Dreieck ($c$,$a_2$,$a_3$) hat somit die Punktabstandssumme:
 
     \begin{eqnarray*}
@@ -144,8 +144,9 @@
     das Dreieck mit kleinster Punktabstandssumme ist. Daraus folgt, dass der nächste
     Punkt Teil dieses Dreiecks sein muss. $\square$
 
-    \subsubsection{Hilfssatz 2: Winkel-Punkteinschluss}
-    Zwei Punkte $a_2, a_3$, die mit einem Punkt $p$ eine Fläche $f_{a_1}$ hinter $p$ projizieren, 
+    \subsubsection{Hilfssatz 2: Winkel-Punkteinschluss} \label{tri_hs2}
+    Zwei Punkte $a_2, a_3$, die mit einem Punkt $p$ eine Fläche $f_{a_1}$ (blau, Abb. 
+    \ref{fig:triangulation_hilfssatz_2}) hinter $p$ projizieren, 
     erzeugen mit jedem Punkt $a_1$ aus $f_{a_1}$ ein Dreieck, das $p$ umschließt. \\
     $Beweis:$ Seien $a_2, a_3$ und $p$ Punkte auf einer zweidimensionalen Fläche und $\varphi_2, 
     \varphi_3$ die kleineren Winkel (d.h. $\varphi_2, \varphi_3$ < 90°) zwischen den Linien 
@@ -154,8 +155,8 @@
     \begin{figure*}[!ht]
         \centering	
         \includegraphics[scale=0.15]{bilder/tri_hilfssatz.pdf}
-        %\caption{kleineres Dreieck}
-        \label{fig:triangulation_hilfssatz_1}
+        \caption{Winkel-Punkteinschluss}
+        \label{fig:triangulation_hilfssatz_2}
     \end{figure*}
 
     Um $p$ nun in einem Dreieck mit $a_2$ und $a_3$ einzuschließen, muss der 
@@ -166,18 +167,42 @@
     $ \{ (a_2,a_3),(a_2,a_1) \} \geq \varphi_2 \land \{ (a_3,a_2),(a_3,a_1) \} \geq \varphi_3 $ 
     erfüllen, liegen also per Definition in $f_{a_1}$. $\square$
 
-    \subsubsection{Konstruktion}
+    \subsubsection{Konstruktion} \label{tri_k}
+    Zuerst durchsuche man die Datenpunkte nach dem, an $p$ nächstgelegenen. Dieser ist Teil des 
+    Dreiecks minimaler Punktabstandssumme und wir nennen ihn $c$ (\ref{tri_hs1}). Wir teilen die 
+    Ebene mit einer Geraden, die durch $c$ und $p$ verläuft. Orthogonal zu dieser legen wir eine 
+    weitere Gerade, die durch $p$ geht (in Abb. \ref{fig:konstuktion} rot). 
 
     \begin{figure*}[!ht]
         \centering	
         \includegraphics[scale=0.15]{bilder/tri_konstr.pdf}
-        %\caption{kleineres Dreieck}
-        \label{fig:triangulation_hilfssatz_2}
+        \caption{Konstruktion}
+        \label{fig:konstuktion}
     \end{figure*}
+
+    Die beiden Quadranten, die nicht an $c$ angrenzen (in Abb. \ref{fig:konstuktion} grün und blau),
+    werden verwendet, um Datenpunkte $c_1$ bzw. $c_2$, in jedem der beiden Quadranten einer, zu 
+    finden, die mit $c$ ein $p$-umschließendes Dreieck bilden. Dazu nimmt man in beiden Quadranten 
+    den nächsten Punkt zu $c$. Die Punkte $c$, $c_1$ und $c_2$ liefern so ein Dreieck mit einer
+    einigermaßen kleinen Punktabstandssumme.
 
     \subsubsection{Laufzeit}
     Der Algorithmus läuft in linearer Laufzeit, da sich das k-kleinste Element einer unsortierten
-    Liste in Linearzeit finden lässt.
+    Liste in Linearzeit finden lässt. %TODO
+
+    \subsubsection{Selbstkritische Beleuchtung der Konstruktion}
+    Die Konstruktion erzeugt schlechte Ergebnisse, falls in mindestens einem der beiden 
+    Suchquadranten keine oder sehr weit von $p$ entfernte Datenpunkte liegen, weil die an $c$ 
+    angrenzenden Quadranten ignoriert werden, obwohl darin ebenfalls Punkte liegen könnten, die 
+    für eine kleinere Punktabstandssumme sorgen würden (siehe Abb. \ref{fig:konstuktion}).
+    Ein Lösungsansatz dafür bestünde, indem man beispielsweise zuerst den nächsten Punkt zu $p$ 
+    von beiden Quadranten sucht, z.B. $c_1$ und mit diesem dann den möglichen Bereich für $c_2$ 
+    absteckt. Dies würde allerdings eine sequentielle Suche nach $c_1$ und $c_2$ verlangen, 
+    während unsere Konstruktion Parallelisierung zulässt. \\
+    Ein sehr guter Aspekt an der Abstandsminimierung des ersten Punkts $c$ ist, dass, falls $p$ nahe 
+    oder auf einem Datenpunkt liegt, die Abweichung von den Messdaten sehr gering ist. \\
+    Eine weitere, hervorragende Eigenschaft ist, das sich die Konstruktion in Form eines Algorithmus 
+    mit linearer Laufzeit implementieren lässt.
     
     \subsection{Stufe 2 (2HP NN)}
     \begin{itemize}
