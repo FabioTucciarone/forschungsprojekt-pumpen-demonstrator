@@ -73,15 +73,13 @@
     \end{itemize}
     \subsubsection{Triangulation}
     % nächster Punkt bei Interpolanten, dabei gesucht: minimale Punktabstandssumme Wir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
-    $Vor"uberlegung:$ Um die Farbe eines Pixels in einer zweidimensionalen Ebene zufällig verteilter
-    Datenpunkte anzunähern, empfiehlt es sich über ein Dreieck aus Datenpunkten, das den Pixel 
+    $Vor"uberlegung:$ Um die Farbe eines Pixels in einer zweidimensionalen Ebene, zufällig verteilter
+    Datenpunkte, anzunähern, empfiehlt es sich über ein Dreieck aus Datenpunkten, das den Pixel 
     einschließt zu interpolieren. Dabei, um möglichst viel von den Informationen der Datenpunkte 
     zu nutzen, sollten die drei Datenpunkte einen möglichst geringen Abstand zum Pixelpunkt $p$ 
     besitzen. Die drei Datenpunkte, die das Dreieck bilden sollen, nennen wir $c, c_1$ und $c_2$.
     Bevor wir einen Algorithmus \ref{tri_k} konstruieren, der diese Eigenschaft erfüllt erst noch 
     wichtige Hilfssätze:
-
-    \section*{SAG MIR BESCHEID, BEVOR DU WAS LÖSCHT, FABIO}
 
     \subsubsection{Hilfssatz 1: Minimales-Abstands-Dreieck beinhaltet nächsten Punkt} \label{tri_hs1}
     Damit ein solches Dreieck eine minimale Punktabstandssumme besitzt,
@@ -205,6 +203,8 @@
     oder auf einem Datenpunkt liegt, die Abweichung von den Messdaten sehr gering ist. \\
     Eine weitere, hervorragende Eigenschaft ist, das sich die Konstruktion in Form eines Algorithmus 
     mit linearer Laufzeit implementieren lässt.
+
+    \section*{SAG MIR BESCHEID, BEVOR DU WAS LÖSCHT, FABIO}
     
     \subsection{Stufe 2 (2HP NN)}
     \begin{itemize}
