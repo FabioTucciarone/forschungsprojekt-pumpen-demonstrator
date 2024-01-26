@@ -71,7 +71,7 @@ class OutputBox extends StatelessWidget {
                 } else {
                   if (snapshot.data == "keinWert") {
                     child = Container(
-                      width: 1050,
+                      width: 940,
                       height: 80,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -101,7 +101,7 @@ class OutputBox extends StatelessWidget {
                 }
               } else {
                 child = Container(
-                  width: 1050,
+                  width: 940,
                   height: 80,
                   decoration: BoxDecoration(
                     color: Colors.white,

@@ -28,7 +28,7 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
-                      children: [...input(500, true)],
+                      children: [...input(500, true, true)],
                     ),
                     RobotBox()
                   ],
