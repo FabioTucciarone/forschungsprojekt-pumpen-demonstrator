@@ -5,3 +5,5 @@
 *.synctex(busy)
 *.out
 *.fls
+*.blg
+report.tex
