@@ -19,29 +19,83 @@ class Introduction extends StatelessWidget {
 
 /// This is the Homescreen for admins.
 class IntroHomeScaffold extends StatelessWidget {
-  /// Method for showing the Errordialog, when neither the debug mode is enabled nor a valid connection is established.
-  void showErrorDialog(BuildContext context) {
+  /// Method for showing the Errordialog, when the server hasn't been started.
+  void getStatus(BuildContext context, bool children) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Fehler!"),
-            content: const Text(
-                "Melde dich erst an oder benutze den Debug Modus für lokale Benutzung!"),
-            actions: <Widget>[
-              TextButton(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarTextColor),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarColor)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Verstanden"))
-            ],
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: getDialogComponents("content", children),
+          actions: <Widget>[
+            getDialogComponents("actions", children),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget getDialogComponents(String component, bool children) {
+    return FutureBuilder<bool>(
+      future: useOfBackend.backend.testServerStatus(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        Widget child;
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.data == false) {
+            if (component == "content") {
+              child = const Text("Server wurde nicht gestartet!");
+            } else {
+              child = TextButton(
+                style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                        OurColors.appBarTextColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        OurColors.appBarColor)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Verstanden"),
+              );
+            }
+          } else {
+            if (component == "content") {
+              child = const Text("Server läuft.");
+            } else {
+              child = const Text("");
+            }
+            Future.delayed(const Duration(seconds: 1), () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MainSlide(children: children)));
+            });
+          }
+        } else {
+          if (component == "content") {
+            child = const SizedBox(
+              width: 60,
+              height: 60,
+              child: Center(
+                  child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              )),
+            );
+          } else {
+            child = TextButton(
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(OurColors.appBarColor)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Abbrechen"),
+            );
+          }
+        }
+        return child;
+      },
+    );
   }
 
   const IntroHomeScaffold({
@@ -57,10 +111,14 @@ class IntroHomeScaffold extends StatelessWidget {
             const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
         automaticallyImplyLeading: false,
         backgroundColor: OurColors.appBarColor,
-        actions: const <Widget>[
-          DebugSwitch(),
-          ButtonAnmelden(),
-        ],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: OurColors.appBarTextColor,
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => RegisterApp()));
+          },
+        ),
       ),
       backgroundColor: OurColors.backgroundColor,
       body: Column(
@@ -68,7 +126,7 @@ class IntroHomeScaffold extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.fromLTRB(80, 0, 80, 0),
             child: RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(children: <TextSpan>[
@@ -77,7 +135,7 @@ class IntroHomeScaffold extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   TextSpan(
                       text:
-                          "1. Oben rechts anmelden \n 2. Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
+                          "Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
                 ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
           ),
           const SizedBox(
@@ -91,15 +149,7 @@ class IntroHomeScaffold extends StatelessWidget {
                   OurColors.appBarColor,
                 )),
             onPressed: () {
-              if (useOfBackend.backend.debugEnabled ||
-                  useOfBackend.backend.readyForHTTPRequests) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MainSlide(children: false)));
-              } else {
-                showErrorDialog(context);
-              }
+              getStatus(context, false);
             },
             child: const Text(
               "Los geht's zur wissenschaftlichen Version",
@@ -117,15 +167,7 @@ class IntroHomeScaffold extends StatelessWidget {
                     OurColors.appBarColor,
                   )),
               onPressed: () {
-                if (useOfBackend.backend.debugEnabled ||
-                    useOfBackend.backend.readyForHTTPRequests) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MainSlide(children: true)));
-                } else {
-                  showErrorDialog(context);
-                }
+                getStatus(context, true);
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
@@ -134,35 +176,6 @@ class IntroHomeScaffold extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-/// Class for a switch with which the admin can activate the debug mode.
-class DebugSwitch extends StatefulWidget {
-  const DebugSwitch({super.key});
-
-  @override
-  State<DebugSwitch> createState() => _DebugSwitchState();
-}
-
-class _DebugSwitchState extends State<DebugSwitch> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      const Text(
-        'Debug Mode',
-        style: TextStyle(color: OurColors.appBarTextColor, fontSize: 15),
-      ),
-      Switch(
-        value: useOfBackend.backend.debugEnabled,
-        activeColor: Colors.green,
-        onChanged: (bool value) {
-          setState(() {
-            useOfBackend.backend.debugEnabled = value;
-          });
-        },
-      )
-    ]);
   }
 }
 

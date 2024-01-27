@@ -95,6 +95,20 @@ class BackendConnection with ChangeNotifier {
         : "http://127.0.0.1:$localPort/$destination");
   }
 
+  /// Test whether the server is running.
+  Future<bool> testServerStatus() async {
+    if (!readyForHTTPRequests && !debugEnabled) {
+      throw "Error: No SSH-port forwarding established.";
+    }
+    bool isRunning = true;
+    try {
+      final response = await http.get(getUri("test_response"));
+    } catch (e) {
+      isRunning = false;
+    }
+    return isRunning;
+  }
+
   /// Send a http-post request with the input data (of phase 1) via the specified ssh tunnel.
   ///
   /// [name]: Name for tracking the highest error score.
