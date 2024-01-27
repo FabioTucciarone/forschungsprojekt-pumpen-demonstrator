@@ -6,4 +6,5 @@
 *.out
 *.fls
 *.blg
+*.bbl
 report.tex
