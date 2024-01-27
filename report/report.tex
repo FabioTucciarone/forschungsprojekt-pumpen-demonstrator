@@ -1,6 +1,7 @@
 \documentclass[a4paper]{extarticle}
 \input{makros_und_pakete.tex}
-\usepackage{abstract}
+
+
 
 \begin{document}
     \begin{center}
@@ -32,13 +33,32 @@
 
     \section{Einführung}
 
-    
+    In dieser Projektarbeit soll ein Demonstratorprogramm zur Präsentierung eines von Julia Pelzer trainierten neuronalen Netzwerks
+    zur Vorhersage von Wärmepumpen erzeugten Temperaturfeldern entwickelt und vorgestellt werden.
+    Dieser Demonstrator soll zur Vermittlung der Ergebnisse an eine Wissenschaftliche und nicht-Wissenschaftliche Zielgruppe dienen.
+    Für die nicht-Wissenschaftliche Version soll ein spielerischer Ansatz verwendet werden, 
+    um vor allem auch bei Kindern ein Interesse für künstliche Intelligenzen zu wecken, ohne sie miss zu repräsentieren.
 
+    Um dieses Ziel zu erreichen, implementieren wir eine Klientenapp und eine Serveranwendung.
+    Die Klientenapp dient zur Darstellung der Ergebnisse und Information aber auch zur Eingabe der Parameter.
+    Die Serveranwendung wertet die Modellanfragen aus und antwortet mit den Ergebnissen.
+
+    \subsection{Unterteilung in Stufen}
+    
+    Im folgenden Bericht werden zwei Phasen oder auch Stufen des Projekts beschrieben.
+    Diese Phasen orientieren sich an Pelzers Phasen aus [ZIT]. \todo{Überlegen wie wir uns auf Quellen beziehen!}
+
+    Die erste Phase befasst sich mit der Darstellung einer Wärmepumpe und der Generierung einer Grundwahrheit mittels einer Interpolation von Datenpunken aus einem Rohdatensatz.
+
+    In der zweiten Phase liegt der Fokus auf der Darstellung der Ergebnisse zweier Wärmepumpen und der Veränderung der Position. 
+    Es wird dabei keine Grundwahrheit generiert. 
 
     \section{Projektarchitektur}
 
-    Zu Beginn möchten wir einen Überblick über die Projektarchitektur und die dazugehörigen Entwurfsentscheidungen geben.
+    Zunächst möchten wir einen Überblick über die Projektarchitektur und die dazugehörigen Entwurfsentscheidungen geben.
     
+    \subsection{Überblick über die Komponenten}
+
     \begin{figure}[H]
         \centering
         \includegraphics[trim={5cm 3.5cm 5cm 0}, clip, width=0.8\linewidth]{bilder/architektur_projekt.pdf}
@@ -49,7 +69,7 @@
     Auf der linken Seite sind die Benutzerendgeräte dargestellt. 
     Auf diesen kann die sogenannte Demonstrator App gestartet werden.
     Sie ist die Schnittstelle zwischen Benutzer und Modell und dient der Eingabe von Parametern und der Ausgabe der Endergebnisse, 
-    die vom Demonstrator Backend generiert werden.
+    die vom Demonstrator Backend generiert werden. \todo{Anmerken: Grafiken von Backend, warum?}
     Die Demonstrator App selbst benötigt keine Datensätze oder Modelle um zu funktionieren, sondern kommuniziert über HTTP-Anfragen mit einem Server.
     Dieser Server kann sowohl lokal auf dem Nutzergerät gestartet werden, als auch auf einem der Institutsserver des IPVS.
     Über die Demonstrator App ist hier bisher jedoch fest der Server \glqq{}pcsgs08\grqq{} vorgegeben.
@@ -67,12 +87,37 @@
     umfasst HTTP um ausreichend Funktionalität.
 
     Die Schnittstelle des Backends wurde aufgrund der umfangreichen Dokumentation und Einsteigerfreundlichkeit mit Flask implementiert.
+    
+    \subsection{Beschreibung des Backends}
 
+    Nun soll ein genauerer Überblick über das Backend anhand des Schaubilds \ref{fig:architektur-backend} angegeben werden.
+  
+    Das Backend besteht aus einer Flask-Schnittstelle die links dargestellt wird, einem Kommunikations- und Konfigurationsblock in der Mitte
+    und der tatsächlichen Modellanwendung und Generierung der Grundwahrheit rechts.
+    Um die Modellergebnisse für unsere Zwecke geeignet erzeugen zu können verwenden wir eine angepasste Version des Projekts von Pelzer.
+    Dieses soll im Folgenden einfach mit 1HP\_NN abgekürzt werden.
+
+    Auf der Grafik sind die wichtigsten Methoden der Flask-Schnittstelle dargestellt.
+    Diese können, sobald der Flask-Server gestartet ist, über 172.0.0.1:PORT/name angesprochen werden.
+    Die Flask-Schnittstelle speichert zur Initialisierung ein Objekt der Klasse ModelConfiguration in einen Dateisystem-Cache.
+    Dadurch kann für spätere Aufrufe Initialisierungszeit gespart werden.
+    ModelConfiguration verfügt dabei sowohl über Informationen zu den Datensätzen und Modellen, als auch zur Generierung der Grundwahrheit und den Bildern.
+
+    Mit den blauen Pfeilen sind die Kommunikationspfade für die Anfragen an das Modell beschrieben. \todo{Struktur verbessern}
+    Hierfür gibt es zwei Methoden, die mit den Stufen des Projekts korrespondieren. 
+    Die erste Methode generiert die Hitzefahne einer Wärmepumpe und eine Grundwahrheit zum Vergleich und die zweite nur ein Temperaturfeld mit zwei Wärmepumpen.
+    Beide Methoden geben Objekte der Klasse ReturnData zurück. 
+    Diese funktioniert so ähnlich wie ein Python dict, erlaubt es jedoch direkt matplotlib Grafiken zu erstellen und kodiert zwischenzuspeichern.
+
+    \todo{Fortsetzen, Bild positionieren}
+    
     \begin{figure}[H]
         \centering
         \includegraphics[trim={0cm 6cm 0cm 0}, clip, width=\linewidth]{bilder/architektur_backend.pdf}
         \caption{Grobe Projektarchitektur} \label{fig:architektur-backend}
     \end{figure}
+
+    \subsection{Beschreibung des Frontends}
 
 
     \section{Backend}
