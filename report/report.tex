@@ -37,24 +37,43 @@
 
     \section{Projektarchitektur}
 
-    Zu Begin möchten wir einen Überblick über die Projektarchitektur und die dazugehörigen Entwurfsentscheidungen geben.
+    Zu Beginn möchten wir einen Überblick über die Projektarchitektur und die dazugehörigen Entwurfsentscheidungen geben.
     
+    \begin{figure}[H]
+        \centering
+        \includegraphics[trim={5cm 3.5cm 5cm 0}, clip, width=0.8\linewidth]{bilder/architektur_projekt.pdf}
+        \caption{Grobe Projektarchitektur} \label{fig:architektur-projekt}
+    \end{figure}
 
-    \begin{itemize}
-        \item Diagramm: Zusammenspiel der Komponenten (grob)
-        \begin{figure}[H]
-            \centering
-            \includegraphics[trim={5cm 3.5cm 5cm 0}, clip, width=0.8\linewidth]{bilder/architektur_projekt.pdf}
-            \caption{Grobe Projektarchitektur} \label{fig:architektur-projekt}
-        \end{figure}
-        \item Backend
-        \begin{figure}[H]
-            \centering
-            \includegraphics[trim={0cm 6cm 0cm 0}, clip, width=\linewidth]{bilder/architektur_backend.pdf}
-            \caption{Grobe Projektarchitektur} \label{fig:architektur-backend}
-        \end{figure}
-        \item Frontend?
-    \end{itemize}
+    Das in Abbildung \ref{fig:architektur-projekt} beschriebene Diagramm zeigt das Zusammenspiel der gröbsten Komponenten des Projekts.
+    Auf der linken Seite sind die Benutzerendgeräte dargestellt. 
+    Auf diesen kann die sogenannte Demonstrator App gestartet werden.
+    Sie ist die Schnittstelle zwischen Benutzer und Modell und dient der Eingabe von Parametern und der Ausgabe der Endergebnisse, 
+    die vom Demonstrator Backend generiert werden.
+    Die Demonstrator App selbst benötigt keine Datensätze oder Modelle um zu funktionieren, sondern kommuniziert über HTTP-Anfragen mit einem Server.
+    Dieser Server kann sowohl lokal auf dem Nutzergerät gestartet werden, als auch auf einem der Institutsserver des IPVS.
+    Über die Demonstrator App ist hier bisher jedoch fest der Server \glqq{}pcsgs08\grqq{} vorgegeben.
+    Der lokale Server diente dabei während der Entwicklung zum Testen der Funktionalitäten. 
+
+    Die Kommunikation mit dem Institutsserver wird mittels eines ssh-Tunnels realisiert, 
+    da von außerhalb des Universitätsnetzwerks sonst keine Verbindung aufgebaut werden kann.
+    Der ipvslogin-Weiterleitungsserver wird dabei verwendet, 
+    um einen automatisch ausgewählten Port am Endgerät an den Port 5000 des pcsgs08-Servers weiterzuleiten.
+    Auch der lokale Server läuft auf Port 5000.
+
+    Als Kommunikationsmethode wurden HTTP-Anfragen gewählt. 
+    Diese können in übersichtlicher Art und Weise aufgesetzt und angesprochen werden.
+    Da keine Bidirektionale Kommunikation notwendig ist und zurückgesendete Bilddaten als Text in Basis 64 kodiert werden können,
+    umfasst HTTP um ausreichend Funktionalität.
+
+    Die Schnittstelle des Backends wurde aufgrund der umfangreichen Dokumentation und Einsteigerfreundlichkeit mit Flask implementiert.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[trim={0cm 6cm 0cm 0}, clip, width=\linewidth]{bilder/architektur_backend.pdf}
+        \caption{Grobe Projektarchitektur} \label{fig:architektur-backend}
+    \end{figure}
+
 
     \section{Backend}
     \subsection{Stufe 1 (1HP NN)}
