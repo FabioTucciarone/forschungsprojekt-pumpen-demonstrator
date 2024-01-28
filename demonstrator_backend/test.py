@@ -205,19 +205,39 @@ def test_flask_interface():
     localhost = "http://127.0.0.1:5000/"
 
     r = requests.post(url = localhost + "get_model_result",     json ={"permeability": 1e-9, "pressure": -1e-3, "name": "test.py"})
-    print(f"get_model_result: \n\t {r}")
+    assert r.status_code == 200, f"ERROR: get_model_result response code = {r.status_code}"
+
     r = requests.post(url = localhost + "get_2hp_model_result", json = {"permeability": 1e-9, "pressure": -1e-3, "pos": [10, 10]})
-    print(f"get_2hp_model_result: \n\t {r}")
+    assert r.status_code == 200, f"ERROR: get_2hp_model_result response code = {r.status_code}"
+
     r = requests.get( url = localhost + "get_value_ranges")
-    print(f"get_value_ranges: \n\t {r}")
+    assert r.status_code == 200, f"ERROR: get_value_ranges response code = {r.status_code}"
+
     r = requests.get( url = localhost + "get_2hp_field_shape")
-    print(f"get_2hp_field_shape: \n\t {r}")
+    assert r.status_code == 200, f"ERROR: get_2hp_field_shape response code = {r.status_code}"
+
     r = requests.get( url = localhost + "get_highscore_and_name")
-    print(f"get_highscore_and_name: \n\t {r}")
+    assert r.status_code == 200, f"ERROR: get_highscore_and_name response code = {r.status_code}"
 
 
 def test_all():
-    test_flask_interface()
+    try:
+        test_flask_interface()
+    except:
+        raise Exception("Flask app response not valid!")
+    try:
+        test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interpolation", print_all=False)
+    except:
+        raise Exception("Groundtruth generation and comparison failed!")
+    try:
+        test_1hp_model_communication(visualize=False)
+    except:
+        raise Exception("1HP Model communication failed!")
+    try:
+        test_2hp_model_communication(visualize=False)
+    except:
+        raise Exception("2HP Model communication failed!")
 
 
 def main():
@@ -228,4 +248,5 @@ def main():
     test_2hp_model_communication(visualize=True)
 
 if __name__ == "__main__":
-    test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
+    test_all()
+    main()
