@@ -392,7 +392,16 @@
     % In-Zeilen-Kode
     \newcommand{\code}[1] {\lstinline[style = cpp_fabio_inline]{#1}}
 
+    \lstset{
+        frameround=fttt,
+        numbers=left,
+        breaklines=true,
+        basicstyle=\ttfamily,
+    }
+    \lstMakeShortInline[columns=fixed]|
+
 % Ende Listings
 
 \setlength{\parindent}{0cm} % Einrückung bei Textblockanfang aus
+\setlength{\parskip}{0.2cm} 
 \renewcommand{\arraystretch}{1.3}

@@ -95,33 +95,56 @@
     Das Backend besteht aus einer Flask-Schnittstelle die links dargestellt wird, einem Kommunikations- und Konfigurationsblock in der Mitte
     und der tatsächlichen Modellanwendung und Generierung der Grundwahrheit rechts.
     Um die Modellergebnisse für unsere Zwecke geeignet erzeugen zu können verwenden wir eine angepasste Version des Projekts von Pelzer.
-    Dieses soll im Folgenden einfach mit 1HP\_NN abgekürzt werden.
+    Dieses soll im Folgenden einfach mit |1HP_NN| abgekürzt werden.
 
-    Auf der Grafik sind die wichtigsten Methoden der Flask-Schnittstelle dargestellt.
-    Diese können, sobald der Flask-Server gestartet ist, über 172.0.0.1:PORT/name angesprochen werden.
-    Die Flask-Schnittstelle speichert zur Initialisierung ein Objekt der Klasse ModelConfiguration in einen Dateisystem-Cache.
-    Dadurch kann für spätere Aufrufe Initialisierungszeit gespart werden.
-    ModelConfiguration verfügt dabei sowohl über Informationen zu den Datensätzen und Modellen, als auch zur Generierung der Grundwahrheit und den Bildern.
-
-    Mit den blauen Pfeilen sind die Kommunikationspfade für die Anfragen an das Modell beschrieben. \todo{Struktur verbessern}
-    Hierfür gibt es zwei Methoden, die mit den Stufen des Projekts korrespondieren. 
-    Die erste Methode generiert die Hitzefahne einer Wärmepumpe und eine Grundwahrheit zum Vergleich und die zweite nur ein Temperaturfeld mit zwei Wärmepumpen.
-    Beide Methoden geben Objekte der Klasse ReturnData zurück. 
-    Diese funktioniert so ähnlich wie ein Python dict, erlaubt es jedoch direkt matplotlib Grafiken zu erstellen und kodiert zwischenzuspeichern.
-
-    \todo{Fortsetzen, Bild positionieren}
-    
     \begin{figure}[H]
         \centering
         \includegraphics[trim={0cm 6cm 0cm 0}, clip, width=\linewidth]{bilder/architektur_backend.pdf}
         \caption{Grobe Projektarchitektur} \label{fig:architektur-backend}
     \end{figure}
 
+    Auf der Grafik sind die wichtigsten Methoden der Flask-Schnittstelle dargestellt.
+    Diese können, sobald der Flask-Server gestartet ist, über |172.0.0.1:PORT/name| angesprochen werden.
+    Die Flask-Schnittstelle speichert zur Initialisierung ein Objekt der Klasse |ModelConfiguration| in einen Dateisystem-Cache.
+    Dadurch kann für spätere Aufrufe Initialisierungszeit gespart werden.
+    |ModelConfiguration| verfügt dabei sowohl über Informationen zu den Datensätzen und Modellen, als auch zur Generierung der Grundwahrheit und den Bildern.
+
+    Mit den blauen Pfeilen sind die Kommunikationspfade für die Anfragen an das Modell gekennzeichnet. \todo{Struktur verbessern}
+    Hierfür gibt es zwei Methoden, die mit den Stufen des Projekts korrespondieren. 
+    Die erste Methode generiert die Hitzefahne einer Wärmepumpe und eine Grundwahrheit zum Vergleich und die zweite nur ein Temperaturfeld mit zwei Wärmepumpen.
+    Beide Methoden geben Objekte der Klasse |ReturnData| zurück. 
+    Diese funktioniert so ähnlich wie ein Python |dict|, erlaubt es jedoch direkt Matplotlib-Grafiken zu erstellen und kodiert zwischenzuspeichern.
+
+    Der Ablauf einer solchen Anfrage funktioniert innerhalb des Backends dann folgendermaßen:
+    Eine HTTP-Anfrage sendet die nötigen Eingabeparameter, diese werden an die Methoden aus |ModelConfiguration| weitergeleitet.
+    Diese rufen die angepassten Funktionen zur Vorbereitung, Modellanwendung und Visualisierung aus |1HP_NN| auf.
+    Handelt es sich um eine Anfrage der Stufe 1, wird eine Grundwahrheit generiert und mit dem Modellergebnis verglichen.
+
     \subsection{Beschreibung des Frontends}
+
+    \todo{Ergänzen}
 
 
     \section{Backend}
+
+    Nachdem in den vorherigen Abschnitten ein Überblick über das Projekt und die dazugehörigen Komponenten geschaffen wurde,
+    soll im Folgenden genauer auf die Implementierung der beiden Projektphasen im Backend eingegangen werden.
+
     \subsection{Stufe 1 (1HP NN)}
+
+    \subsubsection{Allgemeines? / Implementierung}
+
+    \subsubsection{Grundwahrheit}
+
+    Es gibt verschiedene Möglichkeiten eine Grundwahrheit als Vergleich zum Modellergebnis zu generieren.
+    In allen Fällen ist es das Ziel eine Wärmefahne aus verfügbaren Daten eines Datensatzes mittels einer Interpolation zu generieren.
+
+    Wir stellen im Folgenden einige Varianten einer Interpolationsmethode und vergleichen sie mit dem naiven Ansatz einfach den nächstgelegenen Datenpunkt als Grundwahrheit zu verwenden.
+    Mit dem Abstand der Punkte beziehen wir uns hier auf die euklidische Distanz der Modelleingabetupel, 
+    die in der ersten Phase nur aus einem Permeabilitätswert und einem Druckwert bestehen, da die Position der Wärmepumpe fest ist.
+
+    
+    
     \begin{itemize}
         \item Hauptaufgabe: Generierung einer Grundwahrheit für eine Wärmepumpe
         \begin{itemize}
@@ -135,7 +158,8 @@
             \item Optimierungen / Engpässe
         \end{itemize}
     \end{itemize}
-    \subsubsection{Triangulation}
+    \subsubsection{Triangulation}\todo{Umformatieren}
+
     % nächster Punkt bei Interpolanten, dabei gesucht: minimale Punktabstandssumme Wir wollen ein Dreieck aus drei Datenpunkten, $c, c_1$ und $c_2$ um einen Punkt $p$ legen.
     $Vor"uberlegung:$ Um die Farbe eines Pixels in einer zweidimensionalen Ebene, zufällig verteilter
     Datenpunkte, anzunähern, empfiehlt es sich über ein Dreieck aus Datenpunkten, das den Pixel 
@@ -304,5 +328,8 @@
     \subsection{Weiterführende Ideen}
 
     \section{Fazit}
+
+    \bibliographystyle{apalike}
+    \bibliography{quellen.bib}
     
 \end{document}
