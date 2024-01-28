@@ -238,6 +238,7 @@ def test_all():
         test_2hp_model_communication(visualize=False)
     except:
         raise Exception("2HP Model communication failed!")
+    print("Tests successful!")
 
 
 def main():
