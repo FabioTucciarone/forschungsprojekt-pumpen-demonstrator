@@ -71,26 +71,6 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
                         dist_last = d
                         last_i = i
 
-    # c2 = info.datapoints[last_i]
-    # plt.plot(c1.k, c1.p, '+', color='red')
-    # plt.annotate("c1", (c1.k, c1.p))
-
-    # plt.plot(c2.k, c2.p, '+', color='red')
-    # plt.annotate("c2", (c2.k, c2.p))
-
-    # plt.plot(c.k, c.p, 'o', color='red')
-    # plt.annotate("c", (c.k, c.p))
-
-    # plt.plot(p.k, p.p, 'o', color='blue')
-    # plt.annotate("p", (p.k, p.p))
-
-    # plt.plot(q.k, q.p, '+', color='blue')
-    # plt.annotate("q", (q.k, q.p))
-
-    # plt.gca().set_aspect('equal')
-
-    # plt.show()
-
     if dist_below < np.inf and dist_last < np.inf:      
         return [closest_i, below_i, last_i]
     else:
@@ -98,13 +78,40 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
 
 
 def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
+    closest_i = get_closest_point(p, info.datapoints)
+    c = info.datapoints[closest_i]
+    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
 
-    for i in range(0):
-        for j in range(j,0):
-            pass # nicht jede Permutation durchgehen
+    min_sum = np.inf
+    c1_i = 0
+    c2_i = 0
+
+    for i in range(len(info.datapoints)):
+        for j in range(j, len(info.datapoints)):
+            c1 = info.datapoints[i]
+            c2 = info.datapoints[j]
+            if not c1 == None and not c2 == None: # Fehlertests
+                det_cq1 = get_line_determinant(c, q, c1)
+                det_cq2 = get_line_determinant(c, q, c2)
+
+                if det_cq1 >= 0 and det_cq2 >= 0:
+                    det_cp1 = get_line_determinant(c, p, c1)
+                    det_cp2 = get_line_determinant(c, p, c2)
+                
+                    if det_cp1 * det_cp2 <= 0:
+                        d = square_distance(c1, p) + square_distance(c2, p)
+                        if d < min_sum:
+                            min_sum = d
+                            c1_i = i
+                            c2_j = j
+
+    if min_sum < np.inf:      
+        return [closest_i, c1_i, c2_i]
+    else:
+        return closest_i
 
 
-def triangulate_data_point(info: GroundTruthInfo, p: DataPoint):
+def triangulate_data_point_old(info: GroundTruthInfo, p: DataPoint):
     p = DataPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
