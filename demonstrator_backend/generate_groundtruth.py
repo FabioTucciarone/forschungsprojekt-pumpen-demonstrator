@@ -6,8 +6,14 @@ from groundtruth_data import DataPoint, GroundTruthInfo, HPBounds, load_temperat
 from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
+import matplotlib.pyplot as plt
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
+    """
+    return > 0 => b is left of a1->a2
+    return < 0 => b is right of a1->a2
+    return = 0 => b is on a1->a2
+    """
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
 
 
@@ -29,6 +35,73 @@ def get_closest_point(p: DataPoint, datapoints: list):
                 min_distance = d
                 closest_i = i
     return closest_i
+
+
+def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
+    closest_i = get_closest_point(p, info.datapoints)
+    c = info.datapoints[closest_i]
+    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
+
+    below_i = 0
+    last_i = 0
+    dist_below = np.inf
+    dist_last = np.inf
+
+    for i, x in enumerate(info.datapoints):
+        if not x == None: # Für Fehlertests
+            det_pq = get_line_determinant(p, q, x)
+
+            if det_pq >= 0: # links
+                d = square_distance(p, x)
+                if (d < dist_below):
+                    dist_below = d
+                    below_i = i
+
+    c1 = info.datapoints[below_i]
+
+    for i, x in enumerate(info.datapoints):
+        if not x == None: # Für Fehlertests
+            det_cp = get_line_determinant(c, p, x)
+
+            if det_cp <= 0 : # rechts
+                det_c1p = get_line_determinant(c1, p, x)
+                if det_c1p >= 0: # links
+                    d = square_distance(p, x)
+                    if (d < dist_last):
+                        dist_last = d
+                        last_i = i
+
+    # c2 = info.datapoints[last_i]
+    # plt.plot(c1.k, c1.p, '+', color='red')
+    # plt.annotate("c1", (c1.k, c1.p))
+
+    # plt.plot(c2.k, c2.p, '+', color='red')
+    # plt.annotate("c2", (c2.k, c2.p))
+
+    # plt.plot(c.k, c.p, 'o', color='red')
+    # plt.annotate("c", (c.k, c.p))
+
+    # plt.plot(p.k, p.p, 'o', color='blue')
+    # plt.annotate("p", (p.k, p.p))
+
+    # plt.plot(q.k, q.p, '+', color='blue')
+    # plt.annotate("q", (q.k, q.p))
+
+    # plt.gca().set_aspect('equal')
+
+    # plt.show()
+
+    if dist_below < np.inf and dist_last < np.inf:      
+        return [closest_i, below_i, last_i]
+    else:
+        return closest_i
+
+
+def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
+
+    for i in range(0):
+        for j in range(j,0):
+            pass # nicht jede Permutation durchgehen
 
 
 def triangulate_data_point(info: GroundTruthInfo, p: DataPoint):
@@ -182,7 +255,7 @@ def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: f
     x = DataPoint(permeability * 1e10, pressure * 1e3)  # TODO: skalieren?
 
     if use_interpolation:
-        triangle_i = triangulate_data_point(info, x)
+        triangle_i = find_heuristic_triangle(info, x)
         if isinstance(triangle_i, list):
             weights = calculate_barycentric_weights(info, triangle_i, x)
             return interpolate_experimental(info, triangle_i, weights), "interpolation"
@@ -197,5 +270,14 @@ def main():
     info = GroundTruthInfo(path_to_dataset, 10.6)
     interpolate_experimental(info, [1, 2, 3], [1/3, 1/3, 1/3])
 
+def test():
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+    k = 7.350276541753949086e-10
+    p = -2.200171334025262316e-03
+    x = DataPoint(k * 1e10, p * 1e3)
+    info = GroundTruthInfo(path_to_dataset, 10.6)
+    find_heuristic_triangle(info, x)
+
+
 if __name__ == "__main__":
-    main()
+    test()
