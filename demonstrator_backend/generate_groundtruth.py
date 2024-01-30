@@ -103,7 +103,7 @@ def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
                         if d < min_sum:
                             min_sum = d
                             c1_i = i
-                            c2_j = j
+                            c2_i = j
 
     if min_sum < np.inf:      
         return [closest_i, c1_i, c2_i]
