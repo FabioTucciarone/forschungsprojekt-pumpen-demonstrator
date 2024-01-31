@@ -128,15 +128,19 @@ class _RobotIntroState extends State<RobotIntro> {
     'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/starry.jpeg',
+    'assets/happy.jpeg',
+    'assets/starry.jpeg',
   ];
   List<String> speeches = [
     "",
-    "Hallo mein Name ist Kai",
-    "Ich bin eine Künstliche Intelligenz",
-    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen auszurechnen. Eine Wärmefahne ist sozusagen das Feld, in dem sich die Temperatur um die Pumpe herum ändert.",
+    "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
+    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
+    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet",
+    "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch, verstehst du?",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
-    "Wenn du hohe Scores erreichst, sehe ich wo ich mich noch verbessern kann",
-    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Dieser wird oben rechts angezeigt. Viel Erfolg!",
+    "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, ich zeig dir was ich meine!",
+    "Hier siehst du, dass ich sehr schlecht war :( Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
+    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Viel Erfolg!",
     ""
   ];
 
@@ -145,6 +149,20 @@ class _RobotIntroState extends State<RobotIntro> {
       speechBubble = true;
       player.play(times);
       times++;
+    });
+  }
+
+  void previousState() {
+    setState(() {
+      if (times != 0) {
+        if (times == 1) {
+          speechBubble = false;
+          times--;
+        } else {
+          times--;
+          player.play(times);
+        }
+      }
     });
   }
 
@@ -225,24 +243,46 @@ class _RobotIntroState extends State<RobotIntro> {
               const SizedBox(
                 height: 20,
               ),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: OurColors.appBarColor,
+              Row(
+                children: [
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: OurColors.appBarColor,
+                      ),
+                      onPressed: () {
+                        previousState();
+                      },
+                      child: const Text(
+                        "Zurück",
+                        style: TextStyle(color: OurColors.appBarTextColor),
+                        textScaleFactor: 2,
+                      ),
+                    ),
                   ),
-                  onPressed: () {
-                    if (times == 6) {
-                      widget.tabController.animateTo(1);
-                    } else {
-                      nextState();
-                    }
-                  },
-                  child: const Text(
-                    "Weiter",
-                    style: TextStyle(color: OurColors.appBarTextColor),
-                    textScaleFactor: 2,
+                  const SizedBox(
+                    width: 50,
                   ),
-                ),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: OurColors.appBarColor,
+                      ),
+                      onPressed: () {
+                        if (times == 8) {
+                          widget.tabController.animateTo(1);
+                        } else {
+                          nextState();
+                        }
+                      },
+                      child: const Text(
+                        "Weiter",
+                        style: TextStyle(color: OurColors.appBarTextColor),
+                        textScaleFactor: 2,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -261,6 +301,8 @@ class Player {
     "animalese2.wav",
     "animalese0.wav",
     "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
   ];
 
   Player() {
@@ -273,7 +315,7 @@ class Player {
   }
 
   void play(int state) async {
-    if (state == 6) {
+    if (state == 8) {
       await player.release();
     } else {
       await player.stop();
