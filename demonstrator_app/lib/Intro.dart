@@ -99,9 +99,7 @@ class IntroKids extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: RobotIntro(tabController),
-    );
+    return RobotIntro(tabController);
   }
 }
 
@@ -135,7 +133,7 @@ class _RobotIntroState extends State<RobotIntro> {
     "",
     "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
     "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
-    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet",
+    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieh",
     "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch, verstehst du?",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
     "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, ich zeig dir was ich meine!",
@@ -164,6 +162,34 @@ class _RobotIntroState extends State<RobotIntro> {
         }
       }
     });
+  }
+
+  Widget introIllustration() {
+    Widget child = Container();
+    if (times == 7) {
+      return SizedBox(
+        width: 800,
+        height: 400,
+        child: Image.asset(
+          "assets/examplePlume.jpeg",
+          fit: BoxFit.contain,
+        ),
+      );
+    } else if (times == 2) {
+      return Image.asset("assets/examplePlume.jpeg");
+    } else if (times == 3) {
+      return SizedBox(
+        width: 800,
+        height: 400,
+        child: Image.asset(
+          "assets/examplePlume.jpeg",
+          fit: BoxFit.contain,
+        ),
+      );
+    } else if (times == 6) {
+      return Image.asset("assets/examplePlume.jpeg");
+    }
+    return child;
   }
 
   @override
@@ -236,7 +262,8 @@ class _RobotIntroState extends State<RobotIntro> {
                               }),
                             ),
                           ],
-                        ))
+                        )),
+                    Positioned(top: 160, left: 0, child: introIllustration())
                   ],
                 ),
               )),
@@ -332,6 +359,6 @@ class OurColors {
   static const Color textColor = Color.fromARGB(255, 0, 0, 0);
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
   static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
-
+  static const Color darkerAccentColor = Color.fromARGB(174, 212, 47, 47);
   //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }
