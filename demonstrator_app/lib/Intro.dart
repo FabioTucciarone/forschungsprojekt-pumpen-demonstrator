@@ -133,11 +133,11 @@ class _RobotIntroState extends State<RobotIntro> {
     "",
     "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
     "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
-    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieh",
+    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieht",
     "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch, verstehst du?",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
     "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, ich zeig dir was ich meine!",
-    "Hier siehst du, dass ich sehr schlecht war :( Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
+    "Hier siehst du, dass ich sehr schlecht war :( meine Wärmefahne (die obere) ist länger als sie sein soll. In der Mitte sieht man wie es eigentlich sein sollte und darunter den Unterschied. Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
     "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Viel Erfolg!",
     ""
   ];
@@ -167,27 +167,51 @@ class _RobotIntroState extends State<RobotIntro> {
   Widget introIllustration() {
     Widget child = Container();
     if (times == 7) {
-      return SizedBox(
-        width: 800,
-        height: 400,
-        child: Image.asset(
-          "assets/examplePlume.jpeg",
-          fit: BoxFit.contain,
+      return Positioned(
+        top: 160,
+        child: SizedBox(
+          width: 550,
+          height: 400,
+          child: Image.asset(
+            "assets/bigDifference.png",
+            fit: BoxFit.contain,
+          ),
         ),
       );
     } else if (times == 2) {
-      return Image.asset("assets/examplePlume.jpeg");
+      return Positioned(
+        top: 250,
+        left: 0,
+        child: SizedBox(
+            width: 250,
+            height: 250,
+            child: Image.asset(
+              "assets/heatpump.png",
+              fit: BoxFit.contain,
+            )),
+      );
     } else if (times == 3) {
-      return SizedBox(
-        width: 800,
-        height: 400,
-        child: Image.asset(
-          "assets/examplePlume.jpeg",
-          fit: BoxFit.contain,
+      return Positioned(
+        top: 160,
+        left: 0,
+        child: SizedBox(
+          width: 800,
+          height: 400,
+          child: Image.asset(
+            "assets/examplePlume.jpeg",
+            fit: BoxFit.contain,
+          ),
         ),
       );
     } else if (times == 6) {
-      return Image.asset("assets/examplePlume.jpeg");
+      return Positioned(
+          top: 300,
+          child: SizedBox(
+              width: 800,
+              child: Image.asset(
+                "assets/examplePlume.jpeg",
+                fit: BoxFit.contain,
+              )));
     }
     return child;
   }
@@ -263,7 +287,7 @@ class _RobotIntroState extends State<RobotIntro> {
                             ),
                           ],
                         )),
-                    Positioned(top: 160, left: 0, child: introIllustration())
+                    introIllustration()
                   ],
                 ),
               )),
