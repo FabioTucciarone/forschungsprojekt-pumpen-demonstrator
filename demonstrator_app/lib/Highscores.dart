@@ -122,8 +122,10 @@ class _HighscoreState extends State<Highscore> {
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.data != null) {
-                highscore = (snapshot.data!["score"] * 1000).round();
-                name = snapshot.data!["name"];
+                if (snapshot.data!["score"] != null) {
+                  highscore = (snapshot.data!["score"] * 1000).round();
+                  name = snapshot.data!["name"];
+                }
               }
               child = Text(
                 "Highscore: $highscore von $name",
