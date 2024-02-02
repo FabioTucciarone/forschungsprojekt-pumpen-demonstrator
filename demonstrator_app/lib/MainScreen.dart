@@ -174,26 +174,24 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: SizedBox(
-          width: 1350,
-          height: 600,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...input(900, false, true),
-                const SizedBox(
-                  height: 10,
-                ),
-                const OutputHeader(),
-                ...output(false),
-              ],
-            ),
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: SizedBox(
+        width: 1350,
+        height: 600,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...input(900, false, true),
+              const SizedBox(
+                height: 10,
+              ),
+              const OutputHeader(),
+              ...output(false),
+            ],
           ),
         ),
       ),
@@ -207,26 +205,24 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: SizedBox(
-          width: 1350,
-          height: 600,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...input(900, false, false),
-                const SizedBox(
-                  height: 10,
-                ),
-                const OutputHeader(),
-                outputSecondPhase(),
-              ],
-            ),
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: SizedBox(
+        width: 1350,
+        height: 600,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...input(900, false, false),
+              const SizedBox(
+                height: 10,
+              ),
+              const OutputHeader(),
+              outputSecondPhase(),
+            ],
           ),
         ),
       ),
@@ -240,8 +236,8 @@ mixin MainScreenElements {
   static PressureSlider pressureSlider = PressureSlider(
       900,
       const {
-        "pressure_range": [0, 1],
-        "permeability_range": [0, 1]
+        "pressure_range": [0.0, 1.0],
+        "permeability_range": [0.0, 1.0]
       },
       SliderType.pressure,
       false,
@@ -250,8 +246,8 @@ mixin MainScreenElements {
   static PressureSlider permeabilitySlider = PressureSlider(
       900,
       const {
-        "pressure_range": [0, 1],
-        "permeability_range": [0, 1]
+        "pressure_range": [0.0, 1.0],
+        "permeability_range": [0.0, 1.0]
       },
       SliderType.permeability,
       false,
