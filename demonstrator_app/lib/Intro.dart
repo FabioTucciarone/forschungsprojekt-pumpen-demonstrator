@@ -60,7 +60,7 @@ class IntroductionScience extends StatelessWidget {
                                     "\nFeel free to play around with this app to get a feel for how far AI has come in terms of real life simulation. \n"),
                           ])),
                       Image.asset('assets/examplePlume.jpeg'),
-                      const Text("Figure 1: An example Heat Plume")
+                      const Text("Figure 1: An example heat plume")
                     ],
                   ),
                 ),

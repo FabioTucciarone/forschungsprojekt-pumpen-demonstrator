@@ -140,7 +140,7 @@ class _MainMaterialState extends State<MainMaterial> {
                     const Icon(Icons.device_thermostat),
                     widget.widget.children
                         ? const Text("Eine Wärmepumpe")
-                        : const Text('One Heat Pump'),
+                        : const Text('Single Heat Pump'),
                   ],
                 ),
                 Row(
@@ -150,7 +150,7 @@ class _MainMaterialState extends State<MainMaterial> {
                     const Icon(Icons.device_thermostat),
                     widget.widget.children
                         ? const Text("Zwei Wärmepumpen")
-                        : const Text('Two Heat Pumps'),
+                        : const Text('Interaction of heat plumes'),
                   ],
                 ),
               ]),
