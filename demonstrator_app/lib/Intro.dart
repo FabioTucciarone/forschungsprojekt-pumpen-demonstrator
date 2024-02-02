@@ -98,9 +98,7 @@ class IntroKids extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: RobotIntro(tabController),
-    );
+    return RobotIntro(tabController);
   }
 }
 
@@ -127,15 +125,19 @@ class _RobotIntroState extends State<RobotIntro> {
     'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/starry.jpeg',
+    'assets/happy.jpeg',
+    'assets/starry.jpeg',
   ];
   List<String> speeches = [
     "",
-    "Hallo mein Name ist Kai",
-    "Ich bin eine Künstliche Intelligenz",
-    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen auszurechnen. Eine Wärmefahne ist sozusagen das Feld, in dem sich die Temperatur um die Pumpe herum ändert.",
+    "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
+    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
+    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieht",
+    "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch, verstehst du?",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
-    "Wenn du hohe Scores erreichst, sehe ich wo ich mich noch verbessern kann",
-    "Dir wird automatisch ein Nutzername gegeben, dass man dich auf der Bestenliste verewigen kann. Dieser wird oben rechts angezeigt. Viel Erfolg!",
+    "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, ich zeig dir was ich meine!",
+    "Hier siehst du, dass ich sehr schlecht war :( meine Wärmefahne (die obere) ist länger als sie sein soll. In der Mitte sieht man wie es eigentlich sein sollte und darunter den Unterschied. Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
+    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Viel Erfolg!",
     ""
   ];
 
@@ -145,6 +147,72 @@ class _RobotIntroState extends State<RobotIntro> {
       player.play(times);
       times++;
     });
+  }
+
+  void previousState() {
+    setState(() {
+      if (times != 0) {
+        if (times == 1) {
+          speechBubble = false;
+          times--;
+        } else {
+          times--;
+          player.play(times);
+        }
+      }
+    });
+  }
+
+  Widget introIllustration() {
+    Widget child = Container();
+    if (times == 7) {
+      return Positioned(
+        top: 160,
+        child: SizedBox(
+          width: 550,
+          height: 400,
+          child: Image.asset(
+            "assets/bigDifference.png",
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    } else if (times == 2) {
+      return Positioned(
+        top: 250,
+        left: 0,
+        child: SizedBox(
+            width: 250,
+            height: 250,
+            child: Image.asset(
+              "assets/heatpump.png",
+              fit: BoxFit.contain,
+            )),
+      );
+    } else if (times == 3) {
+      return Positioned(
+        top: 160,
+        left: 0,
+        child: SizedBox(
+          width: 800,
+          height: 400,
+          child: Image.asset(
+            "assets/examplePlume.jpeg",
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    } else if (times == 6) {
+      return Positioned(
+          top: 300,
+          child: SizedBox(
+              width: 800,
+              child: Image.asset(
+                "assets/examplePlume.jpeg",
+                fit: BoxFit.contain,
+              )));
+    }
+    return child;
   }
 
   @override
@@ -219,7 +287,8 @@ class _RobotIntroState extends State<RobotIntro> {
                               }),
                             ),
                           ],
-                        ))
+                        )),
+                    introIllustration()
                   ],
                 ),
               )),
@@ -236,24 +305,46 @@ class _RobotIntroState extends State<RobotIntro> {
               const SizedBox(
                 height: 20,
               ),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: OurColors.appBarColor,
+              Row(
+                children: [
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: OurColors.appBarColor,
+                      ),
+                      onPressed: () {
+                        previousState();
+                      },
+                      child: const Text(
+                        "Zurück",
+                        style: TextStyle(color: OurColors.appBarTextColor),
+                        textScaleFactor: 2,
+                      ),
+                    ),
                   ),
-                  onPressed: () {
-                    if (times == 6) {
-                      widget.tabController.animateTo(1);
-                    } else {
-                      nextState();
-                    }
-                  },
-                  child: const Text(
-                    "Weiter",
-                    style: TextStyle(color: OurColors.appBarTextColor),
-                    textScaleFactor: 2,
+                  const SizedBox(
+                    width: 50,
                   ),
-                ),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: OurColors.appBarColor,
+                      ),
+                      onPressed: () {
+                        if (times == 8) {
+                          widget.tabController.animateTo(1);
+                        } else {
+                          nextState();
+                        }
+                      },
+                      child: const Text(
+                        "Weiter",
+                        style: TextStyle(color: OurColors.appBarTextColor),
+                        textScaleFactor: 2,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -272,6 +363,8 @@ class Player {
     "animalese2.wav",
     "animalese0.wav",
     "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
   ];
 
   Player() {
@@ -284,7 +377,7 @@ class Player {
   }
 
   void play(int state) async {
-    if (state == 6) {
+    if (state == 8) {
       await player.release();
     } else {
       await player.stop();
@@ -301,6 +394,6 @@ class OurColors {
   static const Color textColor = Color.fromARGB(255, 0, 0, 0);
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
   static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
-
+  static const Color darkerAccentColor = Color.fromARGB(174, 212, 47, 47);
   //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }
