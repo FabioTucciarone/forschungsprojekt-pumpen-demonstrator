@@ -220,7 +220,10 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
               const SizedBox(
                 height: 10,
               ),
-              const OutputHeader(),
+              const Text(
+                "Output:",
+                textScaleFactor: 2,
+              ),
               outputSecondPhase(),
             ],
           ),
