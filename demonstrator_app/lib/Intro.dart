@@ -1,3 +1,4 @@
+import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
@@ -9,82 +10,80 @@ class IntroductionScience extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: SizedBox(
-          width: 1600,
-          height: 680,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        RichText(
-                            text: const TextSpan(
-                                style: TextStyle(
-                                    fontSize: 20, color: Colors.black),
-                                children: [
-                              TextSpan(
-                                  text:
-                                      "Open-loop groundwater heat pumps are a renewable approach for cooling and heating buildings.\n"),
-                              TextSpan(
-                                  text:
-                                      "For planning it is important to learn about the environmental effect of these pumps in form of their heat plumes. Figure 1 shows an example of a heatvane in form of a heatmap.\n"),
-                              TextSpan(
-                                  text:
-                                      "Since fully resolved simulations would be too computationally expensive, Julia Pelzer has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
-                              TextSpan(text: "\nIt can: \n"),
-                              TextSpan(
-                                  text:
-                                      "a) approximate the heat plume of one heat pump with input pressure and permeability \n"),
-                              TextSpan(
-                                  text:
-                                      "b) approximate the heat plume of two heat pumps positioned relative to one another \n"),
-                              TextSpan(
-                                  text:
-                                      "\nTo communicate the results to the scientific community we have built a demonstrator. \n"),
-                              TextSpan(
-                                  text:
-                                      "We generate a groundtruth using already simulated datapoints and interpolation and compare it to a) to realize an error field. \n"),
-                              TextSpan(
-                                  text:
-                                      "Since generating a groundtruth for b) is not feasible we just provide its results. \n"),
-                              TextSpan(
-                                  text:
-                                      "\nFeel free to play around with this app to get a feel for how far AI has come in terms of real life simulation. \n"),
-                            ])),
-                        Image.asset('assets/examplePlume.jpeg'),
-                        const Text("Figure 1: An example Heat Plume")
-                      ],
-                    ),
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: SizedBox(
+        width: 1600,
+        height: 680,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      RichText(
+                          text: const TextSpan(
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.black),
+                              children: [
+                            TextSpan(
+                                text:
+                                    "Open-loop groundwater heat pumps are a renewable approach for cooling and heating buildings.\n"),
+                            TextSpan(
+                                text:
+                                    "For planning it is important to learn about the environmental effect of these pumps in form of their heat plumes. Figure 1 shows an example of a heatvane in form of a heatmap.\n"),
+                            TextSpan(
+                                text:
+                                    "Since fully resolved simulations would be too computationally expensive, Julia Pelzer has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
+                            TextSpan(text: "\nIt can: \n"),
+                            TextSpan(
+                                text:
+                                    "a) approximate the heat plume of one heat pump with input pressure and permeability \n"),
+                            TextSpan(
+                                text:
+                                    "b) approximate the heat plume of two heat pumps positioned relative to one another \n"),
+                            TextSpan(
+                                text:
+                                    "\nTo communicate the results to the scientific community we have built a demonstrator. \n"),
+                            TextSpan(
+                                text:
+                                    "We generate a groundtruth using already simulated datapoints and interpolation and compare it to a) to realize an error field. \n"),
+                            TextSpan(
+                                text:
+                                    "Since generating a groundtruth for b) is not feasible we just provide its results. \n"),
+                            TextSpan(
+                                text:
+                                    "\nFeel free to play around with this app to get a feel for how far AI has come in terms of real life simulation. \n"),
+                          ])),
+                      Image.asset('assets/examplePlume.jpeg'),
+                      const Text("Figure 1: An example Heat Plume")
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                    style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.black),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarColor,
-                        )),
-                    onPressed: () {
-                      tabController.animateTo(1);
-                    },
-                    child: const Text(
-                      "Understood",
-                      style: TextStyle(color: OurColors.appBarTextColor),
-                      textScaleFactor: 1.2,
-                    ))
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                  style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.black),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        OurColors.appBarColor,
+                      )),
+                  onPressed: () {
+                    tabController.animateTo(1);
+                  },
+                  child: const Text(
+                    "Understood",
+                    style: TextStyle(color: OurColors.appBarTextColor),
+                    textScaleFactor: 1.2,
+                  ))
+            ],
           ),
         ),
       ),
@@ -150,9 +149,11 @@ class _RobotIntroState extends State<RobotIntro> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: FittedBox(
-        fit: BoxFit.contain,
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: SizedBox(
+        width: 1350,
+        height: 700,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -222,6 +223,16 @@ class _RobotIntroState extends State<RobotIntro> {
                   ],
                 ),
               )),
+              PressureSlider(
+                600,
+                const {
+                  "pressure_range": [0.0, 100.0],
+                  "permeability_range": [0.0, 100.0],
+                },
+                SliderType.dummy,
+                true,
+                true,
+              ),
               const SizedBox(
                 height: 20,
               ),
