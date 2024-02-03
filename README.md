@@ -10,7 +10,7 @@ Unser Fork: https://github.com/FabioTucciarone/1HP_NN
 
 ## Bericht / Dokumentation
 
-Die aktuellste Version des Berichts ist unter [overleaf.com/project/65b664b8c973e469b2a8d791](https://www.overleaf.com/read/hsnfdjxddxxf#3cba3a) zu finden.
+Die aktuellste Version des Berichts ist unter [overleaf.com/read/hsnfdjxddxxf#3cba3a](https://www.overleaf.com/read/hsnfdjxddxxf#3cba3a) zu finden.
 
 ## Phase 1 Zwschenstand:
 
