@@ -17,7 +17,7 @@ class AverageError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifier>().future;
-    final String text = children ? "Score:" : "Average Error:";
+    final String text = children ? "Punktzahl:" : "Average Error:";
     return Container(
       constraints: const BoxConstraints(minWidth: 300),
       child: FutureBuilder(
@@ -122,8 +122,10 @@ class _HighscoreState extends State<Highscore> {
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.data != null) {
-                highscore = (snapshot.data!["score"] * 1000).round();
-                name = snapshot.data!["name"];
+                if (snapshot.data!["score"] != null) {
+                  highscore = (snapshot.data!["score"] * 1000).round();
+                  name = snapshot.data!["name"];
+                }
               }
               child = Text(
                 "Highscore: $highscore von $name",
@@ -171,7 +173,7 @@ class HighscoreDialog extends StatelessWidget {
                 )),
                 TableCell(
                     child: Text(
-                  "Score",
+                  "Punktzahl",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))
               ]));
@@ -189,7 +191,7 @@ class HighscoreDialog extends StatelessWidget {
               child = Table(
                 columnWidths: const <int, TableColumnWidth>{
                   1: FixedColumnWidth(128),
-                  2: FlexColumnWidth(),
+                  2: FixedColumnWidth(80),
                 },
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 children: tableRows,
@@ -209,7 +211,7 @@ class HighscoreDialog extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Highscores"),
+            title: const Text("Bestenliste"),
             content: getToptenList(),
             actions: <Widget>[
               TextButton(
@@ -234,12 +236,12 @@ class HighscoreDialog extends StatelessWidget {
             foregroundColor:
                 MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
             backgroundColor:
-                MaterialStateProperty.all<Color>(OurColors.appBarColor)),
+                MaterialStateProperty.all<Color>(OurColors.darkerAccentColor)),
         onPressed: () {
           showHighscores(context);
         },
         child: const Text(
-          "Highscores",
+          "Bestenliste",
           textScaleFactor: 2,
         ));
   }

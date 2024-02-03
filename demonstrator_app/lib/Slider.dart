@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 /// Specifies what kind of parameter the slider represents.
-enum SliderType { pressure, permeability }
+enum SliderType { pressure, permeability, dummy }
 
 /// Class for a slider which can be adjusted by its width, range of possible values, type of parameter,
 /// current value of the thumb and a boolean indicating whether the slider is for the children version.
@@ -91,7 +91,9 @@ class _PressureSliderState extends State<PressureSlider> {
     }
     setState(() {
       sliderPos = position;
-      widget.currentValue = determineValue(sliderPos);
+      if (widget.name != SliderType.dummy) {
+        widget.currentValue = determineValue(sliderPos);
+      }
     });
   }
 
@@ -137,12 +139,16 @@ class _PressureSliderState extends State<PressureSlider> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: (widget.name != SliderType.dummy)
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.center,
       children: <Widget>[
-        Container(
-            constraints: const BoxConstraints(minWidth: 250),
-            child: getDisplayOfValues(
-                widget.name, widget.currentValue, widget.children)),
+        (widget.name != SliderType.dummy)
+            ? Container(
+                constraints: const BoxConstraints(minWidth: 250),
+                child: getDisplayOfValues(
+                    widget.name, widget.currentValue, widget.children))
+            : const SizedBox.shrink(),
         Center(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -174,7 +180,7 @@ class _PressureSliderState extends State<PressureSlider> {
                   ]));
                 }
                 MainSlide.restartTimer.restartTimer();
-              } else {
+              } else if (widget.name == SliderType.permeability) {
                 if (widget.firstPhase) {
                   MainSlide.futureNotifier.setFuture(useOfBackend.backend
                       .sendInputData(
@@ -213,7 +219,7 @@ class _PressureSliderState extends State<PressureSlider> {
                   ]));
                 }
                 MainSlide.restartTimer.restartTimer();
-              } else {
+              } else if (widget.name == SliderType.permeability) {
                 if (widget.firstPhase) {
                   MainSlide.futureNotifier.setFuture(useOfBackend.backend
                       .sendInputData(
