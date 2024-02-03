@@ -79,8 +79,8 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
     if isinstance(triangle_i, list):
         #print(triangle_i)
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
-        b = time.perf_counter()
         interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"]
+        b = time.perf_counter()
 
         interp_result = interp_result.detach().cpu().squeeze().numpy()
 
