@@ -29,8 +29,9 @@ def add_plot_info(image, title):
 
 def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print_all=True):
 
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    info = GroundTruthInfo(path_to_dataset, 10.6)
+    model_configuration = mc.ModelConfiguration()
+
+    info = model_configuration.groundtruth_info
     info.visualize = visualize
 
     average_error_ges = 0
@@ -52,7 +53,7 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
                 print("Interpolationstyp existiert nicht")
                 break
 
-            csv_writer.writerow([average_error, min_error, max_error, time])
+            if not time == np.inf: csv_writer.writerow([average_error, min_error, max_error, time])
 
             if not average_error == None:
                 average_error_ges += average_error
@@ -74,13 +75,14 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
     a = time.perf_counter()
     b = np.inf
 
-    triangle_i = gt.find_heuristic_triangle(info, x)
+    triangle_i = gt.triangulate_data_point_old(info, x)
     if isinstance(triangle_i, list):
-        print(triangle_i)
+        #print(triangle_i)
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
-        interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"].detach().cpu().squeeze().numpy()
-
         b = time.perf_counter()
+        interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"]
+
+        interp_result = interp_result.detach().cpu().squeeze().numpy()
 
         closest_result = load_temperature_field(info, triangle_i[0])
         true_result = load_temperature_field(info, i)
@@ -88,7 +90,7 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
         error = np.abs(np.array(true_result) - np.array(interp_result))
         error_closest = np.abs(np.array(true_result) - np.array(closest_result))
             
-        print(f"\nZeit :: {b-a}")
+        #print(f"\nZeit :: {b-a}")
 
         max_temp = np.max(true_result)
         average_error = np.average(error)
@@ -256,7 +258,7 @@ def test_all():
 
 
 def main():
-    test_groundtruth(0, 10, visualize=False, type="interpolation", print_all=False)
+    test_groundtruth(0, 1, visualize=False, type="interpolation", print_all=False)
 
 if __name__ == "__main__":
     # test_all()
