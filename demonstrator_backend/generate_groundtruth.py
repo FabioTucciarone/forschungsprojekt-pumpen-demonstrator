@@ -103,14 +103,9 @@ def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
             c1 = info.datapoints[i]
             c2 = info.datapoints[j]
             if not c1 == None and not c2 == None: # Fehlertests
-                det_cq1 = get_line_determinant(p, q, c1)
-                det_cq2 = get_line_determinant(p, q, c2)
-
-                if det_cq1 >= 0 and det_cq2 >= 0:
-                    det_cp1 = get_line_determinant(c, p, c1)
-                    det_cp2 = get_line_determinant(c, p, c2)
-                
-                    if det_cp1 * det_cp2 < 0 or (det_cp1 == 0 and not det_cp2 == 0) or (not det_cp1 == 0 and det_cp2 == 0):
+                if not c1 == c and not c2 == c and not c1 == c2:
+                    w1, w2, w3 = calculate_barycentric_weights(info, [c, c1, c2], p)
+                    if 0 <= w1 <= 1 and 0 <= w2 <= 1 and 0 <= w3 <= 1:
                         d = square_distance(c1, p) + square_distance(c2, p)
                         if d < min_sum:
                             min_sum = d
@@ -123,7 +118,7 @@ def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
         return closest_i
 
 # Quadrantenmethode
-def triangulate_data_point_old(info: GroundTruthInfo, p: DataPoint):
+def find_old_triangle(info: GroundTruthInfo, p: DataPoint):
     p = DataPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
@@ -165,7 +160,7 @@ def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: Da
     w2 = ((t3.p - t1.p) * (x.k - t3.k) + (t1.k - t3.k) * (x.p - t3.p)) / d
     w3 = 1 - w1 - w2
 
-    return [w1, w2, w3]
+    return (w1, w2, w3)
 
 
 def calculate_hp_bounds(info, temp_field):

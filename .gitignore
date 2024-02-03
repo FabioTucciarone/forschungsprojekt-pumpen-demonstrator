@@ -3,3 +3,4 @@ demonstrator_backend/__pycache__
 demonstrator_backend/runs
 demonstrator_backend/paths.yaml
 .vscode
+demonstrator_backend/*.csv

@@ -37,7 +37,7 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
     average_error_ges = 0
     successful_runs = 0
 
-    with open('performance.csv', 'w', newline='') as csv_file:
+    with open(f'performance_{type}.csv', 'w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(["average_error", "min_error", "max_error", "time"])
 
@@ -45,8 +45,12 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
             x = info.datapoints[i]
             info.datapoints[i] = None
 
-            if type == "interpolation":
-                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i)
+            if type == "interp_heuristic":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_heuristic_triangle)
+            elif type == "interp_min":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_minimal_triangle)
+            elif type == "interp_old_triangle":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_old_triangle)
             elif type == "closest":
                 average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
             else:
@@ -66,7 +70,7 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
     print(f"Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
-def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
+def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, find_triangle):
 
     min_error = None
     max_error = None
@@ -75,7 +79,7 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
     a = time.perf_counter()
     b = np.inf
 
-    triangle_i = gt.triangulate_data_point_old(info, x)
+    triangle_i = find_triangle(info, x)
     if isinstance(triangle_i, list):
         #print(triangle_i)
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
@@ -258,7 +262,10 @@ def test_all():
 
 
 def main():
-    test_groundtruth(0, 1, visualize=False, type="interpolation", print_all=False)
+    test_groundtruth(0, 100, visualize=False, type="interp_heuristic", print_all=False)
+    test_groundtruth(0, 100, visualize=False, type="interp_min", print_all=False)
+    test_groundtruth(0, 100, visualize=False, type="interp_old_triangle", print_all=False)
+    test_groundtruth(0, 100, visualize=False, type="closest", print_all=False)
 
 if __name__ == "__main__":
     # test_all()
