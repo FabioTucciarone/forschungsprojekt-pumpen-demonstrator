@@ -7,11 +7,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 import random
 import requests
-import json
 from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
-
+import csv
 
 def show_figure(figure: Figure):
     managed_fig = plt.figure()
@@ -37,25 +36,31 @@ def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print
     average_error_ges = 0
     successful_runs = 0
 
-    for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
-        x = info.datapoints[i]
-        info.datapoints[i] = None
+    with open('performance.csv', 'w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(["average_error", "min_error", "max_error", "time"])
 
-        if type == "interpolation":
-            average_error, min_error, max_error = test_interpolation_groundtruth(info, x, i)
-        elif type == "closest":
-            average_error, min_error, max_error = test_closest_groundtruth(info, x, i)
-        else:
-            print("Interpolationstyp existiert nicht")
-            break
+        for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
+            x = info.datapoints[i]
+            info.datapoints[i] = None
 
-        if not average_error == None:
-            average_error_ges += average_error
-            successful_runs += 1
-        info.datapoints[i] = x
+            if type == "interpolation":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i)
+            elif type == "closest":
+                average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
+            else:
+                print("Interpolationstyp existiert nicht")
+                break
 
-        if print_all: 
-            print(f"Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
+            csv_writer.writerow([average_error, min_error, max_error, time])
+
+            if not average_error == None:
+                average_error_ges += average_error
+                successful_runs += 1
+            info.datapoints[i] = x
+
+            if print_all: 
+                print(f"Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
     
     print(f"Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
@@ -67,17 +72,22 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
     average_error = None
 
     a = time.perf_counter()
-    triangle_i = gt.triangulate_data_point(info, x)
+    b = np.inf
+
+    triangle_i = gt.find_heuristic_triangle(info, x)
     if isinstance(triangle_i, list):
+        print(triangle_i)
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
         interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"].detach().cpu().squeeze().numpy()
-        closest_result = load_temperature_field(info, triangle_i[0])
 
+        b = time.perf_counter()
+
+        closest_result = load_temperature_field(info, triangle_i[0])
         true_result = load_temperature_field(info, i)
+
         error = np.abs(np.array(true_result) - np.array(interp_result))
         error_closest = np.abs(np.array(true_result) - np.array(closest_result))
             
-        b = time.perf_counter()
         print(f"\nZeit :: {b-a}")
 
         max_temp = np.max(true_result)
@@ -116,14 +126,18 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
 
             plt.show()
 
-    return average_error, min_error, max_error
+    return average_error, min_error, max_error, b-a
         
 
 def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
-    j = gt.get_closest_point(x, info.datapoints)
+    a = time.perf_counter()
 
+    j = gt.get_closest_point(x, info.datapoints)
     closest_result = load_temperature_field(info, j)
+
+    b = time.perf_counter()
+
     true_result = load_temperature_field(info, i)
     error = np.abs(np.array(true_result) - np.array(closest_result))
             
@@ -151,7 +165,7 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
         plt.show()
 
-    return average_error, min_error, max_error   
+    return average_error, min_error, max_error, b-a
 
 
 def test_1hp_model_communication(visualize=True):
@@ -242,12 +256,8 @@ def test_all():
 
 
 def main():
-    test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
-    test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
-    test_1hp_model_communication(visualize=True)
-    test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
-    test_2hp_model_communication(visualize=True)
+    test_groundtruth(0, 10, visualize=False, type="interpolation", print_all=False)
 
 if __name__ == "__main__":
-    test_all()
+    # test_all()
     main()

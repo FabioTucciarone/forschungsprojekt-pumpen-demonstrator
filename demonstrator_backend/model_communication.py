@@ -155,7 +155,7 @@ class ModelConfiguration:
             except:
                 print(f'Error loading "{paths_file}"')
         else:
-            print(f'1HP_NN/info.yaml not found, trying default path')
+            print(f'1HP_NN/paths.yaml not found, trying default path')
             default_raw_1hp_dir = path_to_project_dir / "datasets_raw"
             models_1hp_dir      = path_to_project_dir / "models_1hpnn"
             models_2hp_dir      = path_to_project_dir / "models_2hpnn"

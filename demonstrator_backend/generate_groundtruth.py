@@ -52,24 +52,54 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
             det_pq = get_line_determinant(p, q, x)
 
             if det_pq >= 0: # links
+                if x.k < 20: plt.plot(x.k, x.p, 'g+')
                 d = square_distance(p, x)
                 if (d < dist_below):
                     dist_below = d
                     below_i = i
+            else:
+                if x.k < 20: plt.plot(x.k, x.p, 'k+')
 
     c1 = info.datapoints[below_i]
+    det_cp_c1 = get_line_determinant(c, p, c1)
 
-    for i, x in enumerate(info.datapoints):
-        if not x == None: # Für Fehlertests
-            det_cp = get_line_determinant(c, p, x)
+    if not det_cp_c1 == 0:
+        for i, x in enumerate(info.datapoints):
+            if not x == None: # Für Fehlertests
+                det_cp_x = get_line_determinant(c, p, x)
 
-            if det_cp <= 0 : # rechts
-                det_c1p = get_line_determinant(c1, p, x)
-                if det_c1p >= 0: # links
-                    d = square_distance(p, x)
-                    if (d < dist_last):
-                        dist_last = d
-                        last_i = i
+                if det_cp_c1 * det_cp_x <= 0:
+                    det_c1p_x = get_line_determinant(c1, p, x)
+                    
+                    if det_cp_c1 * det_c1p_x >= 0:
+                        d = square_distance(p, x)
+                        if x.k < 20: plt.plot(x.k, x.p, 'b+')
+                        if (d < dist_last):
+                            dist_last = d
+                            last_i = i
+    else:
+        for i in range(len(info.datapoints)):
+            if not i == below_i and not i == closest_i:
+                last_i = i
+                break
+
+    c = info.datapoints[closest_i]
+    c1 = info.datapoints[below_i]
+    c2 = info.datapoints[last_i]
+    
+    plt.plot(c.k, c.p, 'ro')
+    plt.plot(c1.k, c1.p, 'ro')
+    plt.plot(c2.k, c2.p, 'ro')
+    plt.plot(p.k, p.p, 'mo')
+
+    plt.annotate("c", (c.k, c.p))
+    plt.annotate("c1", (c1.k, c1.p))
+    plt.annotate("c2", (c2.k, c2.p))
+    plt.annotate("p", (p.k, p.p))
+
+    plt.gca().set_aspect('equal')
+    
+    plt.show()
 
     if dist_below < np.inf and dist_last < np.inf:      
         return [closest_i, below_i, last_i]
@@ -110,7 +140,7 @@ def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
     else:
         return closest_i
 
-
+# Quadrantenmethode
 def triangulate_data_point_old(info: GroundTruthInfo, p: DataPoint):
     p = DataPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
