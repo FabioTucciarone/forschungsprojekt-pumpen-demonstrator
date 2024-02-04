@@ -232,7 +232,7 @@ def initialize_backend():
     # TODO: Hier einfach das einstellen, was hübsch aussieht!
     # Farbtupel: (R, G, B) mit 0 <= R, G, B <= 1
     color_palette = mc.ColorPalette(
-        cmap_list        = [(0.019,0.188,0.38), (1,1,1), (0.8,0.2,0.2)],
+        cmap_list        = [(0.0,0.1098,0.26666), (1,1,1), (0.2588,0,0)],
         background_color = (1,1,1),
         text_color       = (0,0,0) 
     )
