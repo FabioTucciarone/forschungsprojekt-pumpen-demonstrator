@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import scipy as sp
+from scipy.interpolate import RectBivariateSpline
 import numpy as np
 import os
 
@@ -27,26 +28,17 @@ class TemperatureField:
 
 class PolyInterpolatedField(TemperatureField):
     
-    interp: sp.interpolate.RegularGridInterpolator
+    interp: RectBivariateSpline
     max: float
 
     def __init__(self, info: GroundTruthInfo, run_index: int=None):
         TemperatureField.__init__(self, info, run_index)
         X = list(range(info.dims[0]))
         Y = list(range(info.dims[1]))
-        self.interp = sp.interpolate.RegularGridInterpolator((X, Y), self.T, method='linear', bounds_error=False, fill_value=None)
-        self.max = np.max(self.T)
+        self.interp = RectBivariateSpline(X, Y, self.T, kx=3, ky=3)
 
     def at(self, i: float, j: float):
-        if i >= 0 and np.ceil(i) < self.info.dims[0] and j >= 0 and np.ceil(j) < self.info.dims[1]:
-            return self.interpolate_inner_pixel(i, j)
-        else:
-            edge_i = int(max(min(i, self.info.dims[0]-1), 0))
-            edge_j = int(max(min(j, self.info.dims[1]-1), 0))
-            if not self.T[edge_i, edge_j] == 10.6:
-                return min(max(self.interp((i, j)), 10.6), self.max)
-            else:
-                return 10.6
+        return max(10.6, self.interp(i,j))
 
     def interpolate_inner_pixel(self, x: float, y: float):
         x1 = int(np.floor(x)) 

@@ -27,7 +27,7 @@ def add_plot_info(image, title):
     axis.set_xlabel(title, fontsize='small')
 
 
-def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print_all=True):
+def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, print_all=True):
 
     model_configuration = mc.ModelConfiguration()
 
@@ -81,7 +81,6 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, 
 
     triangle_i = find_triangle(info, x)
     if isinstance(triangle_i, list):
-        #print(triangle_i)
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
         interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"]
         b = time.perf_counter()
@@ -93,8 +92,6 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, 
 
         error = np.abs(np.array(true_result) - np.array(interp_result))
         error_closest = np.abs(np.array(true_result) - np.array(closest_result))
-            
-        #print(f"\nZeit :: {b-a}")
 
         max_temp = np.max(true_result)
         average_error = np.average(error)

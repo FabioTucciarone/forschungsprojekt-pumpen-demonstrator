@@ -52,13 +52,10 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
             det_pq = get_line_determinant(p, q, x)
 
             if det_pq >= 0: # links
-                #if x.k < 20: plt.plot(x.k, x.p, 'g+')
                 d = square_distance(p, x)
                 if (d < dist_below):
                     dist_below = d
                     below_i = i
-            #else:
-                #if x.k < 20: plt.plot(x.k, x.p, 'k+')
 
     c1 = info.datapoints[below_i]
     det_cp_c1 = get_line_determinant(c, p, c1)
@@ -73,7 +70,6 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
                     
                     if det_cp_c1 * det_c1p_x >= 0:
                         d = square_distance(p, x)
-                        #if x.k < 20: plt.plot(x.k, x.p, 'b+')
                         if (d < dist_last):
                             dist_last = d
                             last_i = i
@@ -90,32 +86,30 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
 
 
 def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
-    closest_i = get_closest_point(p, info.datapoints)
-    c = info.datapoints[closest_i]
-    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
+    c_i = get_closest_point(p, info.datapoints)
+    c = info.datapoints[c_i]
 
     min_sum = np.inf
     c1_i = 0
     c2_i = 0
 
     for i in range(len(info.datapoints)):
-        for j in range(i, len(info.datapoints)):
+        for j in range(i+1, len(info.datapoints)):
             c1 = info.datapoints[i]
             c2 = info.datapoints[j]
-            if not c1 == None and not c2 == None: # Fehlertests
-                if not c1 == c and not c2 == c and not c1 == c2:
-                    w1, w2, w3 = calculate_barycentric_weights(info, [c, c1, c2], p)
-                    if 0 <= w1 <= 1 and 0 <= w2 <= 1 and 0 <= w3 <= 1:
-                        d = square_distance(c1, p) + square_distance(c2, p)
-                        if d < min_sum:
-                            min_sum = d
-                            c1_i = i
-                            c2_i = j
+            if not (c1 == None or c2 == None or i == c_i or j == c_i): # Fehlertests
+                w1, w2, w3 = calculate_barycentric_weights(info, [c_i, i, j], p)
+                if 0 <= w1 <= 1 and 0 <= w2 <= 1 and 0 <= w3 <= 1:
+                    d = square_distance(c1, p) + square_distance(c2, p)
+                    if d < min_sum:
+                        min_sum = d
+                        c1_i = i
+                        c2_i = j
 
     if min_sum < np.inf:      
-        return [closest_i, c1_i, c2_i]
+        return [c_i, c1_i, c2_i]
     else:
-        return closest_i
+        return c_i
 
 # Quadrantenmethode
 def find_old_triangle(info: GroundTruthInfo, p: DataPoint):
