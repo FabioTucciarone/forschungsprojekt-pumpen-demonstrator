@@ -13,7 +13,7 @@ def generate_boxplot(show_title=True):
     if show_title: plt.title("Mittlerer Fehler")
     plt.boxplot([closest_csv["average_error"], interp_min_csv["average_error"], interp_heuristic_csv["average_error"], interp_old_triangle_csv["average_error"]], vert = False, showfliers=False)
     plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(["Nächster", "Minimal", "Heuristik", "Quadranten"])
+    plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
     plt.xlabel("Fehler in °C")
     plt.show()
 
@@ -21,7 +21,7 @@ def generate_boxplot(show_title=True):
     if show_title: plt.title("Maximaler Fehler")
     plt.boxplot([closest_csv["max_error"], interp_min_csv["max_error"], interp_heuristic_csv["max_error"], interp_old_triangle_csv["max_error"]], vert = False, showfliers=False)
     plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(["Nächster", "Minimal", "Heuristik", "Quadranten"])
+    plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
     plt.xlabel("Fehler in °C")
     plt.show()
 
@@ -29,7 +29,7 @@ def generate_boxplot(show_title=True):
     if show_title: plt.title("Zeit")
     plt.boxplot([closest_csv["time"], interp_min_csv["time"], interp_heuristic_csv["time"], interp_old_triangle_csv["time"]], vert = False, showfliers=False)
     plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(["Nächster", "Minimal", "Heuristik", "Quadranten"])
+    plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
     plt.xlabel("Zeit in s")
     plt.show()
 

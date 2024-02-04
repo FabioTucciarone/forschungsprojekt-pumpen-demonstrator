@@ -259,10 +259,10 @@ def test_all():
 
 
 def main():
-    test_groundtruth(0, 100, visualize=False, type="interp_heuristic", print_all=False)
-    test_groundtruth(0, 100, visualize=False, type="interp_min", print_all=False)
-    test_groundtruth(0, 100, visualize=False, type="interp_old_triangle", print_all=False)
-    test_groundtruth(0, 100, visualize=False, type="closest", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_heuristic", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_min", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_old_triangle", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
 
 if __name__ == "__main__":
     # test_all()
