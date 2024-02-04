@@ -1,3 +1,5 @@
+import 'package:flutter/gestures.dart';
+
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -10,83 +12,151 @@ class IntroductionScience extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.contain,
-      child: SizedBox(
-        width: 1600,
-        height: 680,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Center(
+    return ListView(
+      padding: const EdgeInsets.all(30),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Center(
+            child: Column(
+              children: [
+                Theme(
+                  data: Theme.of(context).copyWith(
+                      textSelectionTheme: const TextSelectionThemeData(
+                          selectionColor: OurColors.accentColor)),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                          text: const TextSpan(
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.black),
-                              children: [
+                      const SelectableText.rich(
+                        TextSpan(
+                          style: TextStyle(
+                              fontSize: 18, color: Colors.black, height: 2),
+                          children: [
                             TextSpan(
                                 text:
-                                    "Open-loop groundwater heat pumps are a renewable approach for cooling and heating buildings.\n"),
+                                    "Open-loop groundwater heat pumps represent a renewable approach for cooling and heating buildings.\n"),
                             TextSpan(
                                 text:
-                                    "For planning it is important to learn about the environmental effect of these pumps in form of their heat plumes. Figure 1 shows an example of a heatvane in form of a heatmap.\n"),
+                                    "Understanding the environmental impact of these systems, particularly in terms of their heat contribution to the groundwater, is crucial for "),
+                            TextSpan(
+                                text: "effective city planning",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                             TextSpan(
                                 text:
-                                    "Since fully resolved simulations would be too computationally expensive, Julia Pelzer has developed an artificial intelligence using convolutional neural networks to help approximate those plumes.\n"),
-                            TextSpan(text: "\nIt can: \n"),
+                                    " since heat pumps can influence the heating or cooling process of other pumps if they are installed too close. \n"),
                             TextSpan(
                                 text:
-                                    "a) approximate the heat plume of one heat pump with input pressure and permeability \n"),
+                                    "Figure 1 illustrates an exemplary heat plume presented as a heatmap.\n"),
                             TextSpan(
                                 text:
-                                    "b) approximate the heat plume of two heat pumps positioned relative to one another \n"),
+                                    "Since fully resolved simulations would be too computationally expensive, we have developed a convolutional neural network "),
+                            TextSpan(
+                              text: "(CNN) to approximate these plumes.\n",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Tooltip(
+                        richMessage: WidgetSpan(
+                          child: Container(
+                            constraints: const BoxConstraints(
+                                maxHeight: 500, maxWidth: 700),
+                            child: Image.asset("assets/CNN_Architektur.png"),
+                          ),
+                        ),
+                        child: const Text(
+                          "The CNN:",
+                          style: TextStyle(
+                              fontSize: 18, color: Colors.black, height: 2),
+                        ),
+                      ),
+                      SelectableText.rich(
+                        TextSpan(
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.black, height: 2),
+                          children: [
+                            const TextSpan(text: "a) approximates the "),
+                            TextSpan(
+                                text: "heat plume of a single heat pump",
+                                style: const TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => tabController.animateTo(1)),
+                            const TextSpan(
+                                text: " based on the input parameters of "),
+                            const TextSpan(
+                                text: "pressure and permeability.\n",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            const TextSpan(
+                                text:
+                                    "The CNN can be tested with varying input parameters which can be selected using the sliders. The output consists of the AI-generated heat plume, the groundtruth and the difference field between these two heat plumes.\n"),
+                            const TextSpan(
+                                text:
+                                    "As a groundtruth, we interpolate between previously simulated data points.\n"),
+                            const TextSpan(text: "b) approximates the "),
                             TextSpan(
                                 text:
-                                    "\nTo communicate the results to the scientific community we have built a demonstrator. \n"),
-                            TextSpan(
+                                    "interaction of heat plumes from two pumps",
+                                style: const TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => tabController.animateTo(2)),
+                            const TextSpan(
+                                text: " positioned relative to each other.\n"),
+                            const TextSpan(text: "The CNN can be tested with "),
+                            const TextSpan(
+                                text: "varying pressure and permeability ",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            const TextSpan(
                                 text:
-                                    "We generate a groundtruth using already simulated datapoints and interpolation and compare it to a) to realize an error field. \n"),
-                            TextSpan(
+                                    "which can be selected using the sliders and with "),
+                            const TextSpan(
+                                text: "varying position ",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            const TextSpan(
                                 text:
-                                    "Since generating a groundtruth for b) is not feasible we just provide its results. \n"),
-                            TextSpan(
+                                    "of the second heat pump which can be selected on the output field.\n"),
+                            const TextSpan(
                                 text:
-                                    "\nFeel free to play around with this app to get a feel for how far AI has come in terms of real life simulation. \n"),
-                          ])),
-                      Image.asset('assets/examplePlume.jpeg'),
-                      const Text("Figure 1: An example heat plume")
+                                    "For this scenario, we chose not to generate a groundtruth so that the input parameters are freely selectable, and thus, only the AI-generated results are provided.\n"),
+                            const TextSpan(
+                                text:
+                                    "\nFeel free to play around with this app to get a feeling for how far artificial intelligence has come in terms of real life simulation.\n"),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                  style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.black),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        OurColors.appBarColor,
-                      )),
-                  onPressed: () {
-                    tabController.animateTo(1);
-                  },
-                  child: const Text(
-                    "Understood",
-                    style: TextStyle(color: OurColors.appBarTextColor),
-                    textScaleFactor: 1.2,
-                  ))
-            ],
+                Image.asset('assets/examplePlume.png'),
+                const Text("Figure 1: An example heat plume")
+              ],
+            ),
           ),
         ),
-      ),
+        const SizedBox(
+          height: 20,
+        ),
+        Center(
+          child: ElevatedButton(
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                )),
+            onPressed: () {
+              tabController.animateTo(1);
+            },
+            child: const Text(
+              "Understood",
+              style: TextStyle(color: OurColors.appBarTextColor),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -286,7 +356,8 @@ class _RobotIntroState extends State<RobotIntro> {
                               value: volume,
                               thumbColor: OurColors.appBarColor,
                               activeColor: OurColors.accentColor,
-                              inactiveColor: Color.fromARGB(174, 206, 135, 135),
+                              inactiveColor:
+                                  const Color.fromARGB(174, 206, 135, 135),
                               onChanged: (value) => setState(() {
                                 volume = value;
                                 player.setVolume(volume);
