@@ -218,8 +218,8 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     pool = Pool(3)
 
     for k in range(3):
-        temp_fields.append(PolyInterpolatedField(info, run_index=triangle_i[k]))
-        transformed.append(PolyInterpolatedField(info))
+        temp_fields.append(TaylorInterpolatedField(info, run_index=triangle_i[k]))
+        transformed.append(TaylorInterpolatedField(info))
     
     bounds = pool.starmap(calculate_hp_bounds, zip(repeat(info), temp_fields))
     result_bounds = get_result_bounds(bounds, weights)
@@ -231,7 +231,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
 
 
 def transform_fields(info, temp_fields, bounds, result_bounds):
-    t = PolyInterpolatedField(info)
+    t = TaylorInterpolatedField(info)
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
             it, jt = get_sample_indices(info.hp_pos, i, j, bounds, result_bounds)
