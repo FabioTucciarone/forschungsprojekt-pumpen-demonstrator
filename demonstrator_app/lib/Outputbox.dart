@@ -16,6 +16,13 @@ class OutputBox extends StatelessWidget {
   final bool children;
   final ResponseDecoder responseDecoder = ResponseDecoder();
 
+  Widget textWidget(ImageType name, bool children) {
+    if (name == ImageType.groundtruth && children == false) {
+      return GroundtruthText();
+    }
+    return Text(getName(name, children), textScaleFactor: 1.2);
+  }
+
   String getName(ImageType name, bool children) {
     if (name == ImageType.aIGenerated) {
       if (children) {
@@ -125,11 +132,43 @@ class OutputBox extends StatelessWidget {
         const SizedBox(
           width: 30,
         ),
-        Text(
-          "${getName(name, children)}",
-          textScaleFactor: 1.2,
-        ),
+        textWidget(name, children)
       ],
+    );
+  }
+}
+
+class GroundtruthText extends StatefulWidget {
+  const GroundtruthText({super.key});
+  @override
+  State<GroundtruthText> createState() => _GroundtruthTextState();
+}
+
+class _GroundtruthTextState extends State<GroundtruthText> {
+  String method = " ";
+
+  @override
+  Widget build(BuildContext context) {
+    final Future<String> future = context.watch<FutureNotifier>().future;
+    final ResponseDecoder responseDecoder = ResponseDecoder();
+    future.then((value) => {
+          if (value != "keinWert" && mounted)
+            {
+              responseDecoder.setResponse(value),
+              setState(() {
+                String methodName =
+                    responseDecoder.jsonDecoded["groundtruth_method"];
+                if (methodName == "closest") {
+                  method = ": Closest Datapoint";
+                } else {
+                  method = ": Interpolation";
+                }
+              })
+            }
+        });
+    return Text(
+      "Groundtruth $method",
+      textScaleFactor: 1.2,
     );
   }
 }
