@@ -152,7 +152,7 @@ class _GroundtruthTextState extends State<GroundtruthText> {
     final Future<String> future = context.watch<FutureNotifier>().future;
     final ResponseDecoder responseDecoder = ResponseDecoder();
     future.then((value) => {
-          if (value != "keinWert")
+          if (value != "keinWert" && mounted)
             {
               responseDecoder.setResponse(value),
               setState(() {
