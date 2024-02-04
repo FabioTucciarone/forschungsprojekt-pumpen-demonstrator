@@ -2,35 +2,40 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-show_title = True
 
-def generate_boxplot(csv_file_name, title):
-    data_csv = pd.read_csv(csv_file_name)
-    average_error_dp = np.array(data_csv['average_error'])
-    min_error_dp = np.array(data_csv['min_error'])
-    max_error_dp = np.array(data_csv['max_error'])
-    time_dp = np.array(data_csv['time'])
+def generate_boxplot(show_title=True):
+    closest_csv = pd.read_csv("performance_closest.csv")
+    interp_min_csv = pd.read_csv("performance_interp_min.csv")
+    interp_heuristic_csv = pd.read_csv("performance_interp_heuristic.csv")
+    interp_old_triangle_csv = pd.read_csv("performance_interp_old_triangle.csv")
 
     plt.figure(figsize=(10, 3))
-    if show_title: plt.title(title)
-    plt.boxplot([average_error_dp, min_error_dp, max_error_dp], vert = False, widths=[0.6, 0.6, 0.6])
+    if show_title: plt.title("Mittlerer Fehler")
+    plt.boxplot([closest_csv["average_error"], interp_min_csv["average_error"], interp_heuristic_csv["average_error"], interp_old_triangle_csv["average_error"]], vert = False, showfliers=False)
     plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(['Mittlerer Fehler', 'Min. Fehler', 'Max. Fehler'])
+    plt.gca().set_yticklabels(["Nächster", "Minimal", "Heuristik", "Quadranten"])
     plt.xlabel("Fehler in °C")
     plt.show()
 
     plt.figure(figsize=(10, 3))
-    if show_title: plt.title(title)
-    plt.boxplot(time_dp, vert = False)
+    if show_title: plt.title("Maximaler Fehler")
+    plt.boxplot([closest_csv["max_error"], interp_min_csv["max_error"], interp_heuristic_csv["max_error"], interp_old_triangle_csv["max_error"]], vert = False, showfliers=False)
     plt.subplots_adjust(top=0.95, bottom=0.2)
+    plt.gca().set_yticklabels(["Nächster", "Minimal", "Heuristik", "Quadranten"])
+    plt.xlabel("Fehler in °C")
+    plt.show()
+
+    plt.figure(figsize=(10, 3))
+    if show_title: plt.title("Zeit")
+    plt.boxplot([closest_csv["time"], interp_min_csv["time"], interp_heuristic_csv["time"], interp_old_triangle_csv["time"]], vert = False, showfliers=False)
+    plt.subplots_adjust(top=0.95, bottom=0.2)
+    plt.gca().set_yticklabels(["Nächster", "Minimal", "Heuristik", "Quadranten"])
     plt.xlabel("Zeit in s")
     plt.show()
 
+
 def main():
-    generate_boxplot("interp_heuristic.csv", "Heuristik+Taylor")
-    generate_boxplot("interp_min.csv", "Min+Taylor")
-    generate_boxplot("interp_triangle_old.csv", "Quadranten+Taylor")
-    generate_boxplot("closest.csv", "Nächster")
+    generate_boxplot(show_title=False)
 
 if __name__ == "__main__":
     main()
