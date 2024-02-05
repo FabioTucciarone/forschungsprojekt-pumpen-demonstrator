@@ -137,7 +137,7 @@ class _RobotIntroState extends State<RobotIntro> {
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
     "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, hier unten ist so ein Schieberegler, probier ihn mal aus!",
     "Hier siehst du, dass ich sehr schlecht war :( meine Wärmefahne (die obere) ist länger als sie sein soll. In der Mitte sieht man wie es eigentlich sein sollte und darunter den Unterschied. Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
-    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Viel Erfolg!",
+    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Wenn du willst kannst du später du auch oben auf den Tab ganz rechts gehen und schauen was dich da erwartet. Viel Erfolg!",
     ""
   ];
 
@@ -293,7 +293,7 @@ class _RobotIntroState extends State<RobotIntro> {
     return FittedBox(
       fit: BoxFit.contain,
       child: SizedBox(
-        width: 1350,
+        width: 1400,
         height: 700,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -308,7 +308,7 @@ class _RobotIntroState extends State<RobotIntro> {
                   children: <Widget>[
                     Positioned(
                       top: 20,
-                      left: 350,
+                      left: 380,
                       child: Container(
                         height: 300,
                         width: 300,
