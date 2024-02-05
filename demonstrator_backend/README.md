@@ -72,3 +72,7 @@ Alle für's Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demo
 - Ein Flask **Debugserver** kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
 - Ein Gunicorn **Produktionsserver** kann mittels `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'` gestartet werden. Windows wird nicht unterstützt aber WSL. Auch hier muss Port 5000 verwendet werden.
+
+## Links zu den Datensätzen auf DaRUS
+- [1HP-Boxen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3650)
+- [2HP-Domänen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3652)
