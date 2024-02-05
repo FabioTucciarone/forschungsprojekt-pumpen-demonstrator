@@ -258,8 +258,8 @@ def test_all():
     print("Tests successful!")
 
 
-def measure_performance():
-    test_groundtruth(0, 999, visualize=True, type="interp_heuristic", print_all=False)
+def main():
+    test_groundtruth(0, 999, visualize=False, type="interp_heuristic", print_all=False)
     test_groundtruth(0, 999, visualize=False, type="interp_min", print_all=False)
     test_groundtruth(0, 999, visualize=False, type="interp_old_triangle", print_all=False)
     test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
