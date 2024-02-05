@@ -9,29 +9,27 @@ def generate_boxplot(show_title=True):
     interp_heuristic_csv = pd.read_csv("measurements/performance_interp_seq_heuristic.csv")
     interp_old_triangle_csv = pd.read_csv("measurements/performance_interp_quad_heuristic.csv")
 
-    plt.figure(figsize=(10, 3))
-    if show_title: plt.title("Mittlerer Fehler")
-    plt.boxplot([closest_csv["average_error"], interp_min_csv["average_error"], interp_heuristic_csv["average_error"], interp_old_triangle_csv["average_error"]], vert = False, showfliers=False)
-    plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
-    plt.xlabel("Fehler in °C")
-    plt.show()
+    fields = ["average_error", "max_error", "time"]
+    tick_distances = [0.01, 0.1, 0.1]
 
-    plt.figure(figsize=(10, 3))
-    if show_title: plt.title("Maximaler Fehler")
-    plt.boxplot([closest_csv["max_error"], interp_min_csv["max_error"], interp_heuristic_csv["max_error"], interp_old_triangle_csv["max_error"]], vert = False, showfliers=False)
-    plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
-    plt.xlabel("Fehler in °C")
-    plt.show()
+    for i, field in enumerate(fields):
+        plt.figure(figsize=(10, 3))
+        plt.grid(color='lightgray', linestyle='-', linewidth=0.5)
 
-    plt.figure(figsize=(10, 3))
-    if show_title: plt.title("Zeit")
-    plt.boxplot([closest_csv["time"], interp_min_csv["time"], interp_heuristic_csv["time"], interp_old_triangle_csv["time"]], vert = False, showfliers=False)
-    plt.subplots_adjust(top=0.95, bottom=0.2)
-    plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
-    plt.xlabel("Zeit in s")
-    plt.show()
+        max_value = np.max(closest_csv)
+        x_ticks = list(np.arange(0, max_value, tick_distances[i]))
+        plt.gca().set_xticks(x_ticks)
+
+        boxplot = plt.boxplot([closest_csv[field], interp_min_csv[field], interp_heuristic_csv[field], interp_old_triangle_csv[field]], vert = False, showfliers=False)
+        
+        if show_title: plt.title(field)
+        plt.subplots_adjust(top=0.95, bottom=0.2)
+        plt.gca().set_yticklabels(["Nächster", "Minimum", "Seq. Heuristik", "Quadr. Heuristik"])
+        if field == "average_error" or field == "max_error":
+            plt.xlabel("Fehler in °C")
+        else:
+            plt.xlabel("Zeit in s")
+        plt.show()
 
 
 def main():
