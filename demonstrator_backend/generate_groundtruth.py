@@ -87,7 +87,6 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
 
 def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
     c_i = get_closest_point(p, info.datapoints)
-    c = info.datapoints[c_i]
 
     min_sum = np.inf
     c1_i = 0
@@ -110,6 +109,7 @@ def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
         return [c_i, c1_i, c2_i]
     else:
         return c_i
+
 
 # Quadrantenmethode
 def find_old_triangle(info: GroundTruthInfo, p: DataPoint):
@@ -214,7 +214,6 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     temp_fields = []
     bounds = []
     transformed = []
-
     pool = Pool(3)
 
     for k in range(3):
@@ -224,7 +223,6 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     bounds = pool.starmap(calculate_hp_bounds, zip(repeat(info), temp_fields))
     result_bounds = get_result_bounds(bounds, weights)
     transformed = pool.starmap(transform_fields, zip(repeat(info), temp_fields, bounds, repeat(result_bounds)))
-
     result = transformed[0].T * weights[0] + transformed[1].T * weights[1] + transformed[2].T * weights[2]
 
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
@@ -237,12 +235,6 @@ def transform_fields(info, temp_fields, bounds, result_bounds):
             it, jt = get_sample_indices(info.hp_pos, i, j, bounds, result_bounds)
             t.set(i, j, temp_fields.at(it, jt))
     return t
-
-def b(info, temp_field, transformed, field_bounds, result_bounds):
-    for j in range(info.dims[1]):
-        for i in range(info.dims[0]):
-            it, jt = get_sample_indices(info.hp_pos, i, j, field_bounds, result_bounds)
-            transformed.set(i, j, temp_field.at(it, jt))
 
 
 def get_sample_indices(hp_pos, i, j, bounds: HPBounds, result_bounds: HPBounds):
@@ -287,5 +279,7 @@ def test():
     find_heuristic_triangle(info, x)
 
 
+# Komische Tests!
 if __name__ == "__main__":
     main()
+    test()
