@@ -161,3 +161,71 @@ class _RobotBoxState extends State<RobotBox> {
     );
   }
 }
+
+class Phase2Kids extends StatelessWidget with MainScreenElements {
+  const Phase2Kids({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: SizedBox(
+        width: 1350,
+        height: 600,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        width: 800,
+                        child: const BubbleSpecialThree(
+                          text:
+                              "Hallo, ich bin es wieder! Hier kannst du sehen wie sich 2 Wärmepumpen zueinander verhalten. Du musst zuerst einmal die Schieberegler wie vorhin bewegen und dann kannst du unten in das Ergebnis reinklicken und die Position der zweiten Pumpe anpassen! Weil ich hier schon effizienter als andere bin, gibt es hier keine Grundwahrheit mit der ich verglichen werden kann. Tob dich aus!",
+                          color: OurColors.accentColor,
+                          tail: true,
+                          textStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              decoration: TextDecoration.none),
+                        ),
+                      ),
+                      ...input(500, true, false)
+                    ],
+                  ),
+                  Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 5),
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(200)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(1000),
+                        child:
+                            Image.asset('assets/happy.jpeg', fit: BoxFit.cover),
+                      )),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Ausgabe:",
+                textScaleFactor: 2,
+              ),
+              outputSecondPhase(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
