@@ -243,8 +243,10 @@ def test_all():
     except:
         raise Exception("Flask app response not valid!")
     try:
-        test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
-        test_groundtruth(2, 2, visualize=False, type="interpolation", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="closest", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interp_seq_heuristic", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interp_min", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interp_quad_heuristic", print_all=False)
     except:
         raise Exception("Groundtruth generation and comparison failed!")
     try:
@@ -258,12 +260,12 @@ def test_all():
     print("Tests successful!")
 
 
-def main():
-    test_groundtruth(0, 999, visualize=False, type="interp_heuristic", print_all=False)
+def measure_performance():
+    test_groundtruth(0, 999, visualize=False, type="interp_seq_heuristic", print_all=False)
     test_groundtruth(0, 999, visualize=False, type="interp_min", print_all=False)
-    test_groundtruth(0, 999, visualize=False, type="interp_old_triangle", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_quad_heuristic", print_all=False)
     test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
 
 if __name__ == "__main__":
     test_all()
-    # main()
+    # measure_performance()

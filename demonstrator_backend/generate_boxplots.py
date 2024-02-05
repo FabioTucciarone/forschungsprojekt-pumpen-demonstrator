@@ -4,10 +4,10 @@ import numpy as np
 
 
 def generate_boxplot(show_title=True):
-    closest_csv = pd.read_csv("performance_closest.csv")
-    interp_min_csv = pd.read_csv("performance_interp_min.csv")
-    interp_heuristic_csv = pd.read_csv("performance_interp_heuristic.csv")
-    interp_old_triangle_csv = pd.read_csv("performance_interp_old_triangle.csv")
+    closest_csv = pd.read_csv("measurements/performance_closest.csv")
+    interp_min_csv = pd.read_csv("measurements/performance_interp_min.csv")
+    interp_heuristic_csv = pd.read_csv("measurements/performance_interp_seq_heuristic.csv")
+    interp_old_triangle_csv = pd.read_csv("measurements/performance_interp_quad_heuristic.csv")
 
     plt.figure(figsize=(10, 3))
     if show_title: plt.title("Mittlerer Fehler")
