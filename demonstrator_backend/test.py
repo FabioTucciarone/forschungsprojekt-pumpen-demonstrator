@@ -2,7 +2,7 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import numpy as np
-import os
+import sys
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 import random
@@ -29,6 +29,7 @@ def add_plot_info(image, title):
 
 def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, print_all=True):
 
+    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
 
     info = model_configuration.groundtruth_info
@@ -54,7 +55,7 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
             elif type == "closest":
                 average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
             else:
-                print("Interpolationstyp existiert nicht")
+                print("> Interpolationstyp existiert nicht")
                 break
 
             if not time == np.inf: csv_writer.writerow([average_error, min_error, max_error, time])
@@ -65,9 +66,9 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
             info.datapoints[i] = x
 
             if print_all: 
-                print(f"Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
+                print(f"> Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
     
-    print(f"Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
+    print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
 def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, find_triangle):
@@ -173,6 +174,7 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
 def test_1hp_model_communication(visualize=True):
     st1 = time.time()
+    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
@@ -183,11 +185,11 @@ def test_1hp_model_communication(visualize=True):
     return_data = mc.get_1hp_model_results(model_configuration, k, p)
     et2 = time.time()
     
-    print('Initialisierung:', et1 - st1, 'seconds')
-    print('Antwortzeit:', et2 - st2, 'seconds')
-    print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
+    print('> Initialization:', et1 - st1, 'seconds')
+    print('> Response time:', et2 - st2, 'seconds')
+    print('> Total time:', et2 - st2 + et1 - st1, 'seconds')
 
-    print(f"Error: {return_data.get_return_value('average_error')}")
+    print(f"> Error: {return_data.get_return_value('average_error')}")
 
     if visualize:
         show_figure(return_data.get_figure("model_result"))
@@ -195,6 +197,7 @@ def test_1hp_model_communication(visualize=True):
 
 def test_2hp_model_communication(visualize=True):
     st1 = time.time()
+    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
@@ -210,9 +213,9 @@ def test_2hp_model_communication(visualize=True):
     return_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
     et2 = time.time()
     
-    print('Initialisierung:', et1 - st1, 'seconds')
-    print('Antwortzeit:', et2 - st2, 'seconds')
-    print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
+    print('> Initialization:', et1 - st1, 'seconds')
+    print('> Response time:', et2 - st2, 'seconds')
+    print('> Total time:', et2 - st2 + et1 - st1, 'seconds')
 
     if visualize:
         show_figure(return_data.get_figure("model_result"))
@@ -223,26 +226,33 @@ def test_flask_interface():
 
     r = requests.post(url = localhost + "get_model_result",     json ={"permeability": 1e-9, "pressure": -1e-3, "name": "test.py"})
     assert r.status_code == 200, f"ERROR: get_model_result response code = {r.status_code}"
+    print("Flask Test: get_model_result response valid")
 
     r = requests.post(url = localhost + "get_2hp_model_result", json = {"permeability": 1e-9, "pressure": -1e-3, "pos": [10, 10]})
     assert r.status_code == 200, f"ERROR: get_2hp_model_result response code = {r.status_code}"
+    print("Flask Test: get_2hp_model_result response valid")
 
     r = requests.get( url = localhost + "get_value_ranges")
     assert r.status_code == 200, f"ERROR: get_value_ranges response code = {r.status_code}"
+    print("Flask Test: get_value_ranges response valid")
 
     r = requests.get( url = localhost + "get_2hp_field_shape")
     assert r.status_code == 200, f"ERROR: get_2hp_field_shape response code = {r.status_code}"
+    print("Flask Test: get_2hp_field_shape response valid")
 
     r = requests.get( url = localhost + "get_highscore_and_name")
     assert r.status_code == 200, f"ERROR: get_highscore_and_name response code = {r.status_code}"
+    print("Flask Test: get_highscore_and_name response valid")
 
 
 def test_all():
     try:
+        print("TESTING: Flask interface")
         test_flask_interface()
     except:
         raise Exception("Flask app response not valid!")
     try:
+        print("TESTING: Groundtruth methods")
         test_groundtruth(2, 2, visualize=False, type="closest", print_all=False)
         test_groundtruth(2, 2, visualize=False, type="interp_seq_heuristic", print_all=False)
         test_groundtruth(2, 2, visualize=False, type="interp_min", print_all=False)
@@ -250,14 +260,16 @@ def test_all():
     except:
         raise Exception("Groundtruth generation and comparison failed!")
     try:
+        print("TESTING: 1HP model response")
         test_1hp_model_communication(visualize=False)
     except:
         raise Exception("1HP Model communication failed!")
     try:
+        print("TESTING: 2HP model response")
         test_2hp_model_communication(visualize=False)
     except:
         raise Exception("2HP Model communication failed!")
-    print("Tests successful!")
+    print("RESULT: Tests successful!")
 
 
 def measure_performance():
@@ -267,5 +279,12 @@ def measure_performance():
     test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
 
 if __name__ == "__main__":
-    test_all()
-    # measure_performance()
+    if len(sys.argv) > 0 :
+        if sys.argv[1] == "-t":
+            test_all()
+        elif sys.argv[1] == "-m":
+            measure_performance()
+        else:
+            print("Invalid arguments!")
+    else:
+        print("Invalid arguments!")
