@@ -155,35 +155,40 @@ class _RegisterState extends State<RegisterBox> {
                 ),
               ),
             ),
-            TextButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.textColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
               ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ResultApp(
-                            username: username.text,
-                            password: password.text,
-                          )),
+                    builder: (context) => ResultApp(
+                      username: username.text,
+                      password: password.text,
+                    ),
+                  ),
                 );
               },
-              child: const Text(
-                'Verbinden',
-                style: TextStyle(color: OurColors.appBarTextColor),
-              ),
+              child: const Text('Verbinden'),
             ),
             const SizedBox(
               height: 20,
             ),
-            TextButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+            ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.textColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
               ),
               onPressed: () {
                 setState(() {
@@ -194,10 +199,7 @@ class _RegisterState extends State<RegisterBox> {
                   MaterialPageRoute(builder: (context) => Introduction()),
                 );
               },
-              child: const Text(
-                'Weiter im Debug Mode',
-                style: TextStyle(color: OurColors.appBarTextColor),
-              ),
+              child: const Text('Weiter im Debug Mode'),
             ),
           ],
         ),

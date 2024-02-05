@@ -126,7 +126,7 @@ class IntroHomeScaffold extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(80, 0, 80, 0),
+            padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
             child: RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(children: <TextSpan>[
