@@ -6,8 +6,14 @@ from groundtruth_data import DataPoint, GroundTruthInfo, HPBounds, load_temperat
 from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
+import matplotlib.pyplot as plt
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
+    """
+    return > 0 => b is left of a1->a2
+    return < 0 => b is right of a1->a2
+    return = 0 => b is on a1->a2
+    """
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
 
 
@@ -31,7 +37,82 @@ def get_closest_point(p: DataPoint, datapoints: list):
     return closest_i
 
 
-def triangulate_data_point(info: GroundTruthInfo, p: DataPoint):
+def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
+    closest_i = get_closest_point(p, info.datapoints)
+    c = info.datapoints[closest_i]
+    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
+
+    below_i = 0
+    last_i = 0
+    dist_below = np.inf
+    dist_last = np.inf
+
+    for i, x in enumerate(info.datapoints):
+        if not x == None: # Für Fehlertests
+            det_pq = get_line_determinant(p, q, x)
+
+            if det_pq >= 0: # links
+                d = square_distance(p, x)
+                if (d < dist_below):
+                    dist_below = d
+                    below_i = i
+
+    c1 = info.datapoints[below_i]
+    det_cp_c1 = get_line_determinant(c, p, c1)
+
+    if not det_cp_c1 == 0:
+        for i, x in enumerate(info.datapoints):
+            if not x == None: # Für Fehlertests
+                det_cp_x = get_line_determinant(c, p, x)
+
+                if det_cp_c1 * det_cp_x <= 0:
+                    det_c1p_x = get_line_determinant(c1, p, x)
+                    
+                    if det_cp_c1 * det_c1p_x >= 0:
+                        d = square_distance(p, x)
+                        if (d < dist_last):
+                            dist_last = d
+                            last_i = i
+    else:
+        for i in range(len(info.datapoints)):
+            if not i == below_i and not i == closest_i:
+                last_i = i
+                break
+
+    if dist_below < np.inf and dist_last < np.inf:      
+        return [closest_i, below_i, last_i]
+    else:
+        return closest_i
+
+
+def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
+    c_i = get_closest_point(p, info.datapoints)
+
+    min_sum = np.inf
+    c1_i = 0
+    c2_i = 0
+
+    for i in range(len(info.datapoints)):
+        for j in range(i+1, len(info.datapoints)):
+            c1 = info.datapoints[i]
+            c2 = info.datapoints[j]
+            if not (c1 == None or c2 == None or i == c_i or j == c_i): # Fehlertests
+                w1, w2, w3 = calculate_barycentric_weights(info, [c_i, i, j], p)
+                if 0 <= w1 <= 1 and 0 <= w2 <= 1 and 0 <= w3 <= 1:
+                    d = square_distance(c1, p) + square_distance(c2, p)
+                    if d < min_sum:
+                        min_sum = d
+                        c1_i = i
+                        c2_i = j
+
+    if min_sum < np.inf:      
+        return [c_i, c1_i, c2_i]
+    else:
+        return c_i
+
+
+# Quadrantenmethode
+def find_old_triangle(info: GroundTruthInfo, p: DataPoint):
     p = DataPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
@@ -73,7 +154,7 @@ def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: Da
     w2 = ((t3.p - t1.p) * (x.k - t3.k) + (t1.k - t3.k) * (x.p - t3.p)) / d
     w3 = 1 - w1 - w2
 
-    return [w1, w2, w3]
+    return (w1, w2, w3)
 
 
 def calculate_hp_bounds(info, temp_field):
@@ -133,7 +214,6 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     temp_fields = []
     bounds = []
     transformed = []
-
     pool = Pool(3)
 
     for k in range(3):
@@ -143,7 +223,6 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     bounds = pool.starmap(calculate_hp_bounds, zip(repeat(info), temp_fields))
     result_bounds = get_result_bounds(bounds, weights)
     transformed = pool.starmap(transform_fields, zip(repeat(info), temp_fields, bounds, repeat(result_bounds)))
-
     result = transformed[0].T * weights[0] + transformed[1].T * weights[1] + transformed[2].T * weights[2]
 
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
@@ -156,12 +235,6 @@ def transform_fields(info, temp_fields, bounds, result_bounds):
             it, jt = get_sample_indices(info.hp_pos, i, j, bounds, result_bounds)
             t.set(i, j, temp_fields.at(it, jt))
     return t
-
-def b(info, temp_field, transformed, field_bounds, result_bounds):
-    for j in range(info.dims[1]):
-        for i in range(info.dims[0]):
-            it, jt = get_sample_indices(info.hp_pos, i, j, field_bounds, result_bounds)
-            transformed.set(i, j, temp_field.at(it, jt))
 
 
 def get_sample_indices(hp_pos, i, j, bounds: HPBounds, result_bounds: HPBounds):
@@ -182,7 +255,7 @@ def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: f
     x = DataPoint(permeability * 1e10, pressure * 1e3)  # TODO: skalieren?
 
     if use_interpolation:
-        triangle_i = triangulate_data_point(info, x)
+        triangle_i = find_heuristic_triangle(info, x)
         if isinstance(triangle_i, list):
             weights = calculate_barycentric_weights(info, triangle_i, x)
             return interpolate_experimental(info, triangle_i, weights), "interpolation"
@@ -197,5 +270,16 @@ def main():
     info = GroundTruthInfo(path_to_dataset, 10.6)
     interpolate_experimental(info, [1, 2, 3], [1/3, 1/3, 1/3])
 
+def test():
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
+    k = 7.350276541753949086e-10
+    p = -2.200171334025262316e-03
+    x = DataPoint(k * 1e10, p * 1e3)
+    info = GroundTruthInfo(path_to_dataset, 10.6)
+    find_heuristic_triangle(info, x)
+
+
+# Komische Tests!
 if __name__ == "__main__":
     main()
+    test()

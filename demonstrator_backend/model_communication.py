@@ -114,11 +114,6 @@ class ModelConfiguration:
         Initialize paths and model settings.
         Model is searched according to the paths.yaml file.
         If no such file exists default folder structure is assumed (see README.md).
-
-        Parameters
-        ----------
-        dataset_name: str
-            Name of "dataset" containing the settings.yaml file from which the pflortran settings are extracted.
         """
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -142,26 +137,32 @@ class ModelConfiguration:
 
 
     def set_paths_and_settings(self):
-        path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".." / ".."
-        paths_file = path_to_project_dir / "1HP_NN" / "paths.yaml"
+        path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".."
+        paths_file = path_to_project_dir / "paths.yaml"
 
         if os.path.exists(paths_file):
             with open(paths_file, "r") as f:
                 paths_file = yaml.safe_load(f)
             try:
                 default_raw_1hp_dir = pathlib.Path(paths_file["default_raw_dir"])
-                models_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
-                models_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
+                model_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
+                model_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
             except:
                 print(f'Error loading "{paths_file}"')
         else:
-            print(f'1HP_NN/info.yaml not found, trying default path')
-            default_raw_1hp_dir = path_to_project_dir / "datasets_raw"
-            models_1hp_dir      = path_to_project_dir / "models_1hpnn"
-            models_2hp_dir      = path_to_project_dir / "models_2hpnn"
+            print(f'forschungsprojekt-pumpen-demonstrator/paths.yaml not found, trying default path')
+            default_raw_1hp_dir = path_to_project_dir / ".." / "data" / "datasets_raw"
+            model_1hp_dir       = path_to_project_dir / ".." / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
+            model_2hp_dir       = path_to_project_dir / ".." / "data" / "models_2hpnn" / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
 
-        model_2hp_dir = models_2hp_dir / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
-        model_1hp_dir = models_1hp_dir / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
+            dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
+            found = False
+            for name in dataset_1hpnn_names:
+                if os.path.exists(default_raw_1hp_dir / name):
+                    default_raw_1hp_dir = default_raw_1hp_dir / name
+                    found = True
+            if not found:
+                raise FileNotFoundError(f'Couldn\'t find raw dataset folders at default path: "{default_raw_1hp_dir}"')
         
         with open(os.path.join(os.getcwd(), model_2hp_dir, "info.yaml"), "r") as file:
             self.model_2hp_info = yaml.safe_load(file)
@@ -169,21 +170,14 @@ class ModelConfiguration:
         with open(os.path.join(os.getcwd(), model_1hp_dir, "info.yaml"), "r") as file:
             self.model_1hp_info = yaml.safe_load(file)
 
-        dataset_1hpnn_names = ["dataset_2d_small_1000dp", "datasets_raw_1000_1HP"]
-        raw_dataset_1hpnn_name = ""
-
-        for name in dataset_1hpnn_names:
-            if os.path.exists(default_raw_1hp_dir / name):
-                raw_dataset_1hpnn_name = name
-
-        if raw_dataset_1hpnn_name == "":
-            raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"')
-        if not os.path.exists(model_1hp_dir):
+        if not (os.path.exists(model_1hp_dir / "info.yaml") and os.path.exists(model_1hp_dir / "model.pt")):
             raise FileNotFoundError(f'1HP model not found at "{model_1hp_dir}"')    
-        if not os.path.exists(model_2hp_dir):
+        if not (os.path.exists(model_2hp_dir / "info.yaml") and os.path.exists(model_2hp_dir / "model.pt")):
             raise FileNotFoundError(f'2HP model not found at "{model_2hp_dir}"') 
+        if not os.path.exists(default_raw_1hp_dir / "RUN_0" / "pflotran.h5"):
+            raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"') 
 
-        self.paths2HP = Paths2HP(default_raw_1hp_dir / raw_dataset_1hpnn_name, "", "", model_1hp_dir, "")
+        self.paths2HP = Paths2HP(default_raw_1hp_dir, "", "", model_1hp_dir, "")
 
         return model_1hp_dir, model_2hp_dir
 

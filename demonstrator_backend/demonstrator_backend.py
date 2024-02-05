@@ -18,33 +18,6 @@ cache.init_app(app)
 
 # Backend Interface:
 
-@app.route('/choose_dataset', methods=['GET', 'POST'])
-def choose_dataset():
-
-    """
-    Returns a string with the choosen dataset.
-
-    Parameters:
-    ----------
-    {"dataset": <string>}
-
-    Return:
-    ----------
-    {"dataset": <string>}
-    """
-
-    if request.method == 'POST':
-        dataset = str(request.json.get('dataset'))
-        insert_dataset(dataset)
-    return f"""
-            <form method="post">
-                <label>Gewünschten Datensatz: &nbsp</label>
-                <input type="text" id="dataset" name="dataset" value="{dataset}" required />
-                <button type="submit">Submit</button
-            </form> <br>
-            """
-
-
 @app.route('/get_model_result', methods = ['POST'])
 def get_model_result():
     """
@@ -204,26 +177,21 @@ def get_2hp_field_shape():
 
 # Internal Methods:
 
-# sets current dataset in cache
-def insert_dataset(dataset: str):
-    dataset_old = cache.get("dataset")
-    if(dataset != dataset_old):
-        cache.set("dataset", dataset, timeout=0)
-
 def insert_highscore(name: str, average_error: float):
     top_ten_list = cache.get("top_ten_list")
 
+    updated = False
     for i, entry in enumerate(top_ten_list):
         if entry[0] == name:
             if entry[1] < average_error:
                 top_ten_list[i] = (name, average_error)
-            else:
-                return
+            updated = True
 
-    if len(top_ten_list) < 10:
-        top_ten_list.append((name, average_error))
-    else:
-        top_ten_list[9] = (name, average_error)
+    if not updated:
+        if len(top_ten_list) < 10:
+            top_ten_list.append((name, average_error))
+        else:
+            top_ten_list[9] = (name, average_error)
     top_ten_list = sorted(top_ten_list, key=lambda entry: entry[1], reverse=True)
     cache.set("top_ten_list", top_ten_list, timeout=0)
 

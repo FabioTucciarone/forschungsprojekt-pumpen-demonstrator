@@ -2,16 +2,15 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import numpy as np
-import os
+import sys
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 import random
 import requests
-import json
 from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
-
+import csv
 
 def show_figure(figure: Figure):
     managed_fig = plt.figure()
@@ -28,57 +27,72 @@ def add_plot_info(image, title):
     axis.set_xlabel(title, fontsize='small')
 
 
-def test_groundtruth(n_from, n_to, type = "interpolation", visualize=True, print_all=True):
+def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, print_all=True):
 
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    info = GroundTruthInfo(path_to_dataset, 10.6)
+    print("> ", end='')
+    model_configuration = mc.ModelConfiguration()
+
+    info = model_configuration.groundtruth_info
     info.visualize = visualize
 
     average_error_ges = 0
     successful_runs = 0
 
-    for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
-        x = info.datapoints[i]
-        info.datapoints[i] = None
+    with open(f'measurements/performance_{type}.csv', 'w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(["average_error", "min_error", "max_error", "time"])
 
-        if type == "interpolation":
-            average_error, min_error, max_error = test_interpolation_groundtruth(info, x, i)
-        elif type == "closest":
-            average_error, min_error, max_error = test_closest_groundtruth(info, x, i)
-        else:
-            print("Interpolationstyp existiert nicht")
-            break
+        for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
+            x = info.datapoints[i]
+            info.datapoints[i] = None
 
-        if not average_error == None:
-            average_error_ges += average_error
-            successful_runs += 1
-        info.datapoints[i] = x
+            if type == "interp_seq_heuristic":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_heuristic_triangle)
+            elif type == "interp_min":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_minimal_triangle)
+            elif type == "interp_quad_heuristic":
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_old_triangle)
+            elif type == "closest":
+                average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
+            else:
+                print("> Interpolationstyp existiert nicht")
+                break
 
-        if print_all: 
-            print(f"Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
+            if not time == np.inf: csv_writer.writerow([average_error, min_error, max_error, time])
+
+            if not average_error == None:
+                average_error_ges += average_error
+                successful_runs += 1
+            info.datapoints[i] = x
+
+            if print_all: 
+                print(f"> Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
     
-    print(f"Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
+    print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
-def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
+def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, find_triangle):
 
     min_error = None
     max_error = None
     average_error = None
 
     a = time.perf_counter()
-    triangle_i = gt.triangulate_data_point(info, x)
+    b = np.inf
+
+    triangle_i = find_triangle(info, x)
     if isinstance(triangle_i, list):
         weights = gt.calculate_barycentric_weights(info, triangle_i, x)
-        interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"].detach().cpu().squeeze().numpy()
-        closest_result = load_temperature_field(info, triangle_i[0])
+        interp_result = gt.interpolate_experimental(info, triangle_i, weights)["Temperature [C]"]
+        b = time.perf_counter()
 
+        interp_result = interp_result.detach().cpu().squeeze().numpy()
+
+        closest_result = load_temperature_field(info, triangle_i[0])
         true_result = load_temperature_field(info, i)
+
         error = np.abs(np.array(true_result) - np.array(interp_result))
         error_closest = np.abs(np.array(true_result) - np.array(closest_result))
-            
-        b = time.perf_counter()
-        print(f"\nZeit :: {b-a}")
 
         max_temp = np.max(true_result)
         average_error = np.average(error)
@@ -116,14 +130,18 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int):
 
             plt.show()
 
-    return average_error, min_error, max_error
+    return average_error, min_error, max_error, b-a
         
 
 def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
-    j = gt.get_closest_point(x, info.datapoints)
+    a = time.perf_counter()
 
+    j = gt.get_closest_point(x, info.datapoints)
     closest_result = load_temperature_field(info, j)
+
+    b = time.perf_counter()
+
     true_result = load_temperature_field(info, i)
     error = np.abs(np.array(true_result) - np.array(closest_result))
             
@@ -151,11 +169,12 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
 
         plt.show()
 
-    return average_error, min_error, max_error   
+    return average_error, min_error, max_error, b-a
 
 
 def test_1hp_model_communication(visualize=True):
     st1 = time.time()
+    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
@@ -166,11 +185,11 @@ def test_1hp_model_communication(visualize=True):
     return_data = mc.get_1hp_model_results(model_configuration, k, p)
     et2 = time.time()
     
-    print('Initialisierung:', et1 - st1, 'seconds')
-    print('Antwortzeit:', et2 - st2, 'seconds')
-    print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
+    print('> Initialization:', et1 - st1, 'seconds')
+    print('> Response time:', et2 - st2, 'seconds')
+    print('> Total time:', et2 - st2 + et1 - st1, 'seconds')
 
-    print(f"Error: {return_data.get_return_value('average_error')}")
+    print(f"> Error: {return_data.get_return_value('average_error')}")
 
     if visualize:
         show_figure(return_data.get_figure("model_result"))
@@ -178,6 +197,7 @@ def test_1hp_model_communication(visualize=True):
 
 def test_2hp_model_communication(visualize=True):
     st1 = time.time()
+    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
@@ -193,9 +213,9 @@ def test_2hp_model_communication(visualize=True):
     return_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
     et2 = time.time()
     
-    print('Initialisierung:', et1 - st1, 'seconds')
-    print('Antwortzeit:', et2 - st2, 'seconds')
-    print('Gesamtzeit:', et2 - st2 + et1 - st1, 'seconds')
+    print('> Initialization:', et1 - st1, 'seconds')
+    print('> Response time:', et2 - st2, 'seconds')
+    print('> Total time:', et2 - st2 + et1 - st1, 'seconds')
 
     if visualize:
         show_figure(return_data.get_figure("model_result"))
@@ -206,48 +226,65 @@ def test_flask_interface():
 
     r = requests.post(url = localhost + "get_model_result",     json ={"permeability": 1e-9, "pressure": -1e-3, "name": "test.py"})
     assert r.status_code == 200, f"ERROR: get_model_result response code = {r.status_code}"
+    print("Flask Test: get_model_result response valid")
 
     r = requests.post(url = localhost + "get_2hp_model_result", json = {"permeability": 1e-9, "pressure": -1e-3, "pos": [10, 10]})
     assert r.status_code == 200, f"ERROR: get_2hp_model_result response code = {r.status_code}"
+    print("Flask Test: get_2hp_model_result response valid")
 
     r = requests.get( url = localhost + "get_value_ranges")
     assert r.status_code == 200, f"ERROR: get_value_ranges response code = {r.status_code}"
+    print("Flask Test: get_value_ranges response valid")
 
     r = requests.get( url = localhost + "get_2hp_field_shape")
     assert r.status_code == 200, f"ERROR: get_2hp_field_shape response code = {r.status_code}"
+    print("Flask Test: get_2hp_field_shape response valid")
 
     r = requests.get( url = localhost + "get_highscore_and_name")
     assert r.status_code == 200, f"ERROR: get_highscore_and_name response code = {r.status_code}"
+    print("Flask Test: get_highscore_and_name response valid")
 
 
 def test_all():
     try:
+        print("TESTING: Flask interface")
         test_flask_interface()
     except:
         raise Exception("Flask app response not valid!")
     try:
-        test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
-        test_groundtruth(2, 2, visualize=False, type="interpolation", print_all=False)
+        print("TESTING: Groundtruth methods")
+        test_groundtruth(2, 2, visualize=False, type="closest", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interp_seq_heuristic", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interp_min", print_all=False)
+        test_groundtruth(2, 2, visualize=False, type="interp_quad_heuristic", print_all=False)
     except:
         raise Exception("Groundtruth generation and comparison failed!")
     try:
+        print("TESTING: 1HP model response")
         test_1hp_model_communication(visualize=False)
     except:
         raise Exception("1HP Model communication failed!")
     try:
+        print("TESTING: 2HP model response")
         test_2hp_model_communication(visualize=False)
     except:
         raise Exception("2HP Model communication failed!")
-    print("Tests successful!")
+    print("RESULT: Tests successful!")
 
 
-def main():
-    test_groundtruth(0, 0, visualize=False, type="closest", print_all=False)
-    test_groundtruth(2, 2, visualize=True, type="interpolation", print_all=False)
-    test_1hp_model_communication(visualize=True)
-    test_groundtruth(0, 3, visualize=True, type="interpolation", print_all=True)
-    test_2hp_model_communication(visualize=True)
+def measure_performance():
+    test_groundtruth(0, 999, visualize=False, type="interp_seq_heuristic", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_min", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_quad_heuristic", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
 
 if __name__ == "__main__":
-    test_all()
-    main()
+    if len(sys.argv) > 0 :
+        if sys.argv[1] == "-t":
+            test_all()
+        elif sys.argv[1] == "-m":
+            measure_performance()
+        else:
+            print("Invalid arguments!")
+    else:
+        print("Invalid arguments!")

@@ -9,7 +9,8 @@
 
 ### Enthaltene Pakete:
 
-- flask, flask-caching, Werkzeug, gunicorn, numpy, scipy, csv
+- flask, flask-caching, Werkzeug, gunicorn, numpy, scipy, 
+- csv, pandas (Messen und Grafiken erstellen)
 - 1HP_NN Abhängigkeiten
 
 ### 1HP_NN:
@@ -17,18 +18,20 @@
 
 ## Ordnerstruktur und Datensätze
 
-Das Projekt kann eine Standardordnerstruktur verwenden oder die Pfade können in einer paths.yaml Datei in 1HP_NN spezifiziert werden. Folgende Ordnerstruktur wird jedoch vorausgesetzt:
+Das Projekt kann eine Standardordnerstruktur verwenden oder die Pfade können in einer `paths.yaml` Datei im Projektordner spezifiziert werden. 
+Folgende Ordnerstruktur wird jedoch vorausgesetzt:
 
 ```bash
 <Forschungsprojekt-Ordner>
  |- forschungsprojekt-pumpen-demonstrator # Git-Repositiory
+ |   |- paths.yaml # Hier Pfade eintragen
+ |   ..
  |- data # Das wird als Standardpfad verwendet
  |- 1HP_NN # baforschungsprojekt_23 Zweig
  ..
 ```
 
-Die folgenden Datensätze und Modelle müssen gleich benannt vorliegen.
-(Standardordnerstruktur die ohne paths.yaml funktioniert)
+Die folgenden Datensätze und Modelle müssen gleich benannt vorliegen, wenn die Standardordnerstruktur die ohne `paths.yaml` Datei verwendet werden soll.
 ```bash
 data # Das wird als Standardpfad verwendet
  |- datasets_raw # Phase 1. Einer von beiden:
@@ -46,28 +49,26 @@ data # Das wird als Standardpfad verwendet
  ..
 1HP_NN # baforschungsprojekt_23 Zweig
  |- main.py 
- |- paths.yaml # Pfade zu Datensätzen hier eintragen, wenn obige Struktur nicht eingehalten!
  ..  ..
 ```
-Folgende Datei respektiert die Standardordnerstruktur:
+
+Soll die paths.yaml Datei verwendet werden, müssen die vollständigen Pfade wie unten beschrieben angegeben werden.
+D.h. in `default_raw_dir` müssen die Datenpunkte vorliegen und in `models_Xhp_dir` müssen eine info.yaml und eine model.pt Datei zu finden sein.
+Die folgende paths.yaml Datei respektiert die Standardordnerstruktur:
 
 ```yaml
-default_raw_dir:                        <Forschungsprojekt-Ordner>/data/datasets_raw # Phase 1
-models_1hp_dir:                         <Forschungsprojekt-Ordner>/data/models_1hpnn # Phase 1 und 2
-models_2hp_dir:                         <Forschungsprojekt-Ordner>/data/models_2hpnn # Phase 2
-datasets_prepared_dir:                  "" # manuelle Ausführung
-datasets_raw_domain_dir:                "" # manuelle Ausführung
-datasets_prepared_domain_dir:           "" # manuelle Ausführung
-prepared_1hp_best_models_and_data_dir:  "" # manuelle Ausführung
-datasets_prepared_dir_2hp:              "" # manuelle Ausführung
+default_raw_dir: <Forschungsprojekt-Ordner>/data/datasets_raw/dataset_2d_small_1000dp # Phase 1
+models_1hp_dir:  <Forschungsprojekt-Ordner>/data/models_1hpnn/gksi1000/current_unet_dataset_2d_small_1000dp_gksi_v7 # Phase 1 und 2
+models_2hp_dir:  <Forschungsprojekt-Ordner>/data/models_2hpnn/1000dp_1000gksi_separate/current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1 # Phase 2
 ```
 
 ## Ausführen
 Alle für's Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demonstrator/demonstrator_backend`.
 
-- Ist alles korrekt installiert sollte `test.py` fehlerfrei ausgeführt werden können. Unter `test.py: main()` können einige Dinge separat getestet und visualisiert werden.
+- Ist alles korrekt installiert sollte `test.py -t` fehlerfrei ausgeführt werden können.
+- `test.py -m` ist zum Zeit- und Fehlermessen der Grundwahrheiten verwendbar. Generiert csv Dateien, die mit generate_boxplots.py darstellbar sind.
 
-- Als Standardgerät für 1HP_NN wird die **cpu** verwendet. Ist das nicht gewünscht, so muss im Code bisher manuell unter `demonstrator_backend.py: initialize_backend()` bei `model_configuration = mc.ModelConfiguration(device="cuda")` oder `test.py` ein anderes Gerät spezifiziert werden.
+- Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
 
 - Ein Flask **Debugserver** kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
