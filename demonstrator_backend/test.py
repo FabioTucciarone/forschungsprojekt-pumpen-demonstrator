@@ -37,7 +37,7 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
     average_error_ges = 0
     successful_runs = 0
 
-    with open(f'performance_{type}.csv', 'w', newline='') as csv_file:
+    with open(f'measurements/performance_{type}.csv', 'w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(["average_error", "min_error", "max_error", "time"])
 
@@ -45,11 +45,11 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
             x = info.datapoints[i]
             info.datapoints[i] = None
 
-            if type == "interp_heuristic":
+            if type == "interp_seq_heuristic":
                 average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_heuristic_triangle)
             elif type == "interp_min":
                 average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_minimal_triangle)
-            elif type == "interp_old_triangle":
+            elif type == "interp_quad_heuristic":
                 average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_old_triangle)
             elif type == "closest":
                 average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
@@ -258,12 +258,12 @@ def test_all():
     print("Tests successful!")
 
 
-def main():
-    test_groundtruth(0, 100, visualize=False, type="interp_heuristic", print_all=False)
-    test_groundtruth(0, 100, visualize=False, type="interp_min", print_all=False)
-    test_groundtruth(0, 100, visualize=False, type="interp_old_triangle", print_all=False)
-    test_groundtruth(0, 100, visualize=False, type="closest", print_all=False)
+def measure_performance():
+    test_groundtruth(0, 999, visualize=True, type="interp_heuristic", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_min", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="interp_old_triangle", print_all=False)
+    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
 
 if __name__ == "__main__":
-    # test_all()
-    main()
+    test_all()
+    # main()
