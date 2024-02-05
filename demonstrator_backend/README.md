@@ -65,7 +65,8 @@ models_2hp_dir:  <Forschungsprojekt-Ordner>/data/models_2hpnn/1000dp_1000gksi_se
 ## Ausführen
 Alle für's Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demonstrator/demonstrator_backend`.
 
-- Ist alles korrekt installiert sollte `test.py` fehlerfrei ausgeführt werden können.
+- Ist alles korrekt installiert sollte `test.py -t` fehlerfrei ausgeführt werden können.
+- `test.py -m` ist zum Zeit- und Fehlermessen der Grundwahrheiten verwendbar. Generiert csv Dateien, die mit generate_boxplots.py darstellbar sind.
 
 - Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
 
