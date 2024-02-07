@@ -267,7 +267,7 @@ class _RobotIntroState extends State<RobotIntro> {
           width: 800,
           height: 400,
           child: Image.asset(
-            "assets/examplePlume.jpeg",
+            "assets/examplePlume.png",
             fit: BoxFit.contain,
           ),
         ),
