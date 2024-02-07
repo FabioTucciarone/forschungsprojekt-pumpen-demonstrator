@@ -203,11 +203,11 @@ class _RobotIntroState extends State<RobotIntro> {
     "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
     "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
     "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieht",
-    "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch, verstehst du?",
+    "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch und verändert die Temperatur des Wassers, verstehst du?",
     "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
     "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, hier unten ist so ein Schieberegler, probier ihn mal aus!",
     "Hier siehst du, dass ich sehr schlecht war :( meine Wärmefahne (die obere) ist länger als sie sein soll. In der Mitte sieht man wie es eigentlich sein sollte und darunter den Unterschied. Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
-    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Viel Erfolg!",
+    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Wenn du willst kannst du später du auch oben auf den Tab ganz rechts gehen und schauen was dich da erwartet. Viel Erfolg!",
     ""
   ];
 
@@ -231,6 +231,74 @@ class _RobotIntroState extends State<RobotIntro> {
         }
       }
     });
+  }
+
+  Widget getButtons() {
+    if (times == 0) {
+      return Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: OurColors.appBarColor,
+          ),
+          onPressed: () {
+            if (times == 8) {
+              widget.tabController.animateTo(1);
+            } else {
+              nextState();
+            }
+          },
+          child: const Text(
+            "Start",
+            style: TextStyle(color: OurColors.appBarTextColor),
+            textScaleFactor: 3,
+          ),
+        ),
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: OurColors.appBarColor,
+              ),
+              onPressed: () {
+                previousState();
+              },
+              child: const Text(
+                "Zurück",
+                style: TextStyle(color: OurColors.appBarTextColor),
+                textScaleFactor: 3,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 50,
+          ),
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: OurColors.appBarColor,
+              ),
+              onPressed: () {
+                if (times == 8) {
+                  widget.tabController.animateTo(1);
+                } else {
+                  nextState();
+                }
+              },
+              child: const Text(
+                "Weiter",
+                style: TextStyle(color: OurColors.appBarTextColor),
+                textScaleFactor: 3,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   Widget introIllustration() {
@@ -274,7 +342,7 @@ class _RobotIntroState extends State<RobotIntro> {
       );
     } else if (times == 6) {
       return Positioned(
-        top: 300,
+        top: 320,
         child: PressureSlider(
           600,
           const {
@@ -295,7 +363,7 @@ class _RobotIntroState extends State<RobotIntro> {
     return FittedBox(
       fit: BoxFit.contain,
       child: SizedBox(
-        width: 1350,
+        width: 1400,
         height: 700,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -310,7 +378,7 @@ class _RobotIntroState extends State<RobotIntro> {
                   children: <Widget>[
                     Positioned(
                       top: 20,
-                      left: 350,
+                      left: 380,
                       child: Container(
                         height: 300,
                         width: 300,
@@ -372,49 +440,7 @@ class _RobotIntroState extends State<RobotIntro> {
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: OurColors.appBarColor,
-                      ),
-                      onPressed: () {
-                        previousState();
-                      },
-                      child: const Text(
-                        "Zurück",
-                        style: TextStyle(color: OurColors.appBarTextColor),
-                        textScaleFactor: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: OurColors.appBarColor,
-                      ),
-                      onPressed: () {
-                        if (times == 8) {
-                          widget.tabController.animateTo(1);
-                        } else {
-                          nextState();
-                        }
-                      },
-                      child: const Text(
-                        "Weiter",
-                        style: TextStyle(color: OurColors.appBarTextColor),
-                        textScaleFactor: 2,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              getButtons()
             ],
           ),
         ),
