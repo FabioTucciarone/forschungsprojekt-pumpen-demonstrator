@@ -161,7 +161,7 @@ class _MainMaterialState extends State<MainMaterial> {
               ? IntroKids(widget._tabController)
               : IntroductionScience(widget._tabController),
           widget.widget.children ? Phase1Kids() : MainScreenContent(),
-          SciencePhase2(),
+          widget.widget.children ? Phase2Kids() : SciencePhase2()
         ]),
       ),
     );

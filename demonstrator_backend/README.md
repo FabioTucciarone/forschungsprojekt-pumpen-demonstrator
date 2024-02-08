@@ -2,23 +2,30 @@
 
 ## Python Pakete und Git-Repositories
 
+- Erstelle einen Zielordner (`<Forschungsprojekt-Ordner>`).
 - Ggf. eine virtuelle Python Umgebung in `<Forschungsprojekt-Ordner>` erstellen.
   https://docs.python.org/3/library/venv.html
-- [1HP_NN](https://github.com/FabioTucciarone/1HP_NN/tree/baforschungsprojekt_23) und [Demonstrator](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator) klonen.
-- Alle Pakete mit `pip install -r requirements.txt` (sollt noch ein bisschen aufgeräumt werden) installieren.
+- Klone diese [Demonstrator Projekt](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator).
+- Klone einen [Fork des 1HP_NN Projekts](https://github.com/FabioTucciarone/1HP_NN/tree/baforschungsprojekt_23) von Julia Pelzer.
+Hier muss vom Zweig "baforschungsprojekt_23" gepullt werden.
+- Alle Pakete mit `pip install -r requirements.txt` (momentan veraltet und unvollständig) installieren.
 
 ### Enthaltene Pakete:
 
 - flask, flask-caching, Werkzeug, gunicorn, numpy, scipy, 
-- csv, pandas (Messen und Grafiken erstellen)
+- csv, pandas, requests (für Messungen, Grafikerstellung und Tests)
 - 1HP_NN Abhängigkeiten
-
-### 1HP_NN:
 
 
 ## Ordnerstruktur und Datensätze
 
-Das Projekt kann eine Standardordnerstruktur verwenden oder die Pfade können in einer `paths.yaml` Datei im Projektordner spezifiziert werden. 
+Um korrekt funktionieren zu können, benötigt das Demonstrator Backend Zugriff auf einige Daten, die bereitgestellt werden müssen.
+
+- Rohdatensatz der ersten Stufe: [1HP-Boxen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3650).
+- gksi-Modell der ersten Stufe. Trainierbar aus 1HP Datensatz mit [1HP_NN](https://github.com/JuliaPelzer/1HP_NN)
+- gksi-seperate-Modell der zweiten Stufe. Trainierbar mit [1HP_NN](https://github.com/JuliaPelzer/1HP_NN) und [2HP-Domänen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3652)
+
+Um das alles zu finden, kann das Projekt eine Standardordnerstruktur verwenden oder die Pfade können in einer `paths.yaml` Datei im Projektordner spezifiziert werden. 
 Folgende Ordnerstruktur wird jedoch vorausgesetzt:
 
 ```bash
@@ -63,13 +70,29 @@ models_2hp_dir:  <Forschungsprojekt-Ordner>/data/models_2hpnn/1000dp_1000gksi_se
 ```
 
 ## Ausführen
-Alle für's Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demonstrator/demonstrator_backend`.
+Alle für das Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demonstrator/demonstrator_backend`.
 
-- Ist alles korrekt installiert sollte `test.py -t` fehlerfrei ausgeführt werden können.
-- `test.py -m` ist zum Zeit- und Fehlermessen der Grundwahrheiten verwendbar. Generiert csv Dateien, die mit generate_boxplots.py darstellbar sind.
+- **Testen der Installation:** Führe `test.py -t installation` aus. Endet das Programm fehlerfrei, ist alles korrekt installiert.
 
-- Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
+- **Produktionsserver starten:** Um das Backend zu starten, muss `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'`ausgeführt werden. 
 
-- Ein Flask **Debugserver** kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+- **Testen des Servers:** Führe `test.py -t server` aus. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf.
 
-- Ein Gunicorn **Produktionsserver** kann mittels `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'` gestartet werden. Windows wird nicht unterstützt aber WSL. Auch hier muss Port 5000 verwendet werden.
+- **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
+Die Schnittstelle hierzu ist in der Dokumentation von `demonstrator_backend.py` zu finden.
+
+
+## Zusätzliche Ausführungsinformationen
+
+- **Cuda:** Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
+
+- **Zeit- und Fehlermessen:** `test.py -m <n>` testet für die ersten $n$ Datenpunkte den Fehler und die Generationszeit der Grundwahrheiten.
+Es werden csv Dateien mit den Ergebnissen generiert, die anschließend durch die Ausführung von `generate_boxplots.py` visualisiert werden können.
+
+- **Visualisieren Grundwahrheit:** `test.py -m <n> -v`. Die `-v` Flagge aktiviert die Visualisierung der generierten Wärmefahnen.
+
+- **Debugserver:** Ein Flask Debugserver kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+
+## Links zu den Datensätzen auf DaRUS
+- [1HP-Boxen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3650)
+- [2HP-Domänen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3652)

@@ -31,7 +31,7 @@ class AverageError extends StatelessWidget {
                     responseDecoder.jsonDecoded["average_error"];
                 publicError = averageError;
                 if (children) {
-                  int roundedError = (averageError * 1000).round();
+                  int roundedError = (averageError * 10000).round();
                   publicError = roundedError;
                   child = Text(
                     "$text $roundedError",
@@ -123,7 +123,7 @@ class _HighscoreState extends State<Highscore> {
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.data != null) {
                 if (snapshot.data!["score"] != null) {
-                  highscore = (snapshot.data!["score"] * 1000).round();
+                  highscore = (snapshot.data!["score"] * 10000).round();
                   name = snapshot.data!["name"];
                 }
               }
@@ -179,7 +179,7 @@ class HighscoreDialog extends StatelessWidget {
               ]));
               for (int i = 0; i < highscores.length; i++) {
                 String name = highscores[i][0];
-                int score = (highscores[i][1] * 1000).round();
+                int score = (highscores[i][1] * 10000).round();
                 tableRows.add(TableRow(children: [
                   TableCell(
                     child: Text((i + 1).toString()),

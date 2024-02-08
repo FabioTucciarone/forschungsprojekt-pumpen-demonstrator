@@ -11,6 +11,7 @@ from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
 import csv
+import traceback 
 
 def show_figure(figure: Figure):
     managed_fig = plt.figure()
@@ -42,7 +43,7 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(["average_error", "min_error", "max_error", "time"])
 
-        for i in tqdm(range(n_from, n_to+1), desc=f"Testen type='{type}'", total=n_to-n_from, disable=print_all):
+        for i in tqdm(range(n_from, n_to+1), desc=f"> Testen type='{type}'", total=n_to-n_from, disable=print_all):
             x = info.datapoints[i]
             info.datapoints[i] = None
 
@@ -224,67 +225,92 @@ def test_2hp_model_communication(visualize=True):
 def test_flask_interface():
     localhost = "http://127.0.0.1:5000/"
 
+    try:
+        requests.get(url = localhost + "test_response")
+    except:
+        raise Exception(f"ERROR: Server did not respond! Is it running correctly?")
+
     r = requests.post(url = localhost + "get_model_result",     json ={"permeability": 1e-9, "pressure": -1e-3, "name": "test.py"})
-    assert r.status_code == 200, f"ERROR: get_model_result response code = {r.status_code}"
-    print("Flask Test: get_model_result response valid")
+    assert r.status_code == 200, f"ERROR: get_model_result response code = {r.status_code}!"
+    print("SUCCESS: Flask Test: get_model_result response valid.")
 
     r = requests.post(url = localhost + "get_2hp_model_result", json = {"permeability": 1e-9, "pressure": -1e-3, "pos": [10, 10]})
-    assert r.status_code == 200, f"ERROR: get_2hp_model_result response code = {r.status_code}"
-    print("Flask Test: get_2hp_model_result response valid")
+    assert r.status_code == 200, f"ERROR: get_2hp_model_result response code = {r.status_code}!"
+    print("SUCCESS: Flask Test: get_2hp_model_result response valid.")
 
-    r = requests.get( url = localhost + "get_value_ranges")
-    assert r.status_code == 200, f"ERROR: get_value_ranges response code = {r.status_code}"
-    print("Flask Test: get_value_ranges response valid")
+    get_methods = ["get_value_ranges", "get_2hp_field_shape", "get_highscore_and_name", "get_top_ten_list", "get_2hp_field_shape"]
 
-    r = requests.get( url = localhost + "get_2hp_field_shape")
-    assert r.status_code == 200, f"ERROR: get_2hp_field_shape response code = {r.status_code}"
-    print("Flask Test: get_2hp_field_shape response valid")
-
-    r = requests.get( url = localhost + "get_highscore_and_name")
-    assert r.status_code == 200, f"ERROR: get_highscore_and_name response code = {r.status_code}"
-    print("Flask Test: get_highscore_and_name response valid")
+    for get_method in get_methods:
+        r = requests.get( url = localhost + get_method)
+        assert r.status_code == 200, f"ERROR: {get_method} response code = {r.status_code}!"
+        print(f"SUCCESS: Flask Test: {get_method} response valid.")
 
 
-def test_all():
+def test_installation():
+
+    print("TESTING: Initialization")
     try:
-        print("TESTING: Flask interface")
-        test_flask_interface()
+        print("> ", end='')
+        model_configuration = mc.ModelConfiguration()
+        print(f"SUCCESS: All datasets and models found! No errors whilst initializing.")
     except:
-        raise Exception("Flask app response not valid!")
+        traceback.print_exc()
+        print("ERROR: Something went wrong while initializing")
+        return
+
+    print("TESTING: Groundtruth methods")
+    methods = ["closest", "interp_quad_heuristic", "interp_seq_heuristic", "interp_min"]
+    for method in methods:
+        try:
+            test_groundtruth(2, 2, visualize=False, type=method, print_all=False)
+            print(f"SUCCESS: Groundtruth generation {method} did not fail.")
+        except:
+            traceback.print_exc()
+            print(f"ERROR: Groundtruth generation {method} and comparison failed!")
+            return
+        
+    print("TESTING: 1HP model response")
     try:
-        print("TESTING: Groundtruth methods")
-        test_groundtruth(2, 2, visualize=False, type="closest", print_all=False)
-        test_groundtruth(2, 2, visualize=False, type="interp_seq_heuristic", print_all=False)
-        test_groundtruth(2, 2, visualize=False, type="interp_min", print_all=False)
-        test_groundtruth(2, 2, visualize=False, type="interp_quad_heuristic", print_all=False)
-    except:
-        raise Exception("Groundtruth generation and comparison failed!")
-    try:
-        print("TESTING: 1HP model response")
         test_1hp_model_communication(visualize=False)
     except:
-        raise Exception("1HP Model communication failed!")
+        traceback.print_exc()
+        print("ERROR: 1HP Model communication failed!")
+        return
+    
+    print("TESTING: 2HP model response")
     try:
-        print("TESTING: 2HP model response")
         test_2hp_model_communication(visualize=False)
     except:
-        raise Exception("2HP Model communication failed!")
+        traceback.print_exc()
+        print("ERROR: 2HP Model communication failed!")
+        return
+    
     print("RESULT: Tests successful!")
 
 
-def measure_performance():
-    test_groundtruth(0, 999, visualize=False, type="interp_seq_heuristic", print_all=False)
-    test_groundtruth(0, 999, visualize=False, type="interp_min", print_all=False)
-    test_groundtruth(0, 999, visualize=False, type="interp_quad_heuristic", print_all=False)
-    test_groundtruth(0, 999, visualize=False, type="closest", print_all=False)
+def measure_performance(n_runs: int, visualize: bool):
+    test_groundtruth(0, n_runs - 1, visualize=visualize, type="interp_seq_heuristic", print_all=False)
+    test_groundtruth(0, n_runs - 1, visualize=visualize, type="interp_min", print_all=False)
+    test_groundtruth(0, n_runs - 1, visualize=visualize, type="interp_quad_heuristic", print_all=False)
+    test_groundtruth(0, n_runs - 1, visualize=visualize, type="closest", print_all=False)
+
 
 if __name__ == "__main__":
-    if len(sys.argv) > 0 :
-        if sys.argv[1] == "-t":
-            test_all()
-        elif sys.argv[1] == "-m":
-            measure_performance()
+    if len(sys.argv) == 3 and sys.argv[1] == "-t":
+        if sys.argv[2] == "installation": test_installation()
+        if sys.argv[2] == "server": test_flask_interface()
+    elif len(sys.argv) >= 3 and sys.argv[1] == "-m":
+        N = int(sys.argv[2])
+        if len(sys.argv) == 3:
+            measure_performance(N, False)
+        elif len(sys.argv) == 4 and sys.argv[3] == "-v":
+            measure_performance(N, True)
         else:
-            print("Invalid arguments!")
+            print(f"Did you mean: test.py -m {N} -v")
     else:
-        print("Invalid arguments!")
+        print("Invalid arguments! Try the following:")
+        print(" - Measure Groundtruth: test.py -m <N> (-v)")
+        print("   - <N>: Number of measured datapoints: 0,...,N-1")
+        print("   - -v: Show results")
+        print(" - Test functionality:  test.py -t <Method>")
+        print("   - <Method>: server, installation")
