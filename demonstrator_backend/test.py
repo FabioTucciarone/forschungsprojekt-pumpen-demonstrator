@@ -7,11 +7,13 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 import random
 import requests
+import csv
+import traceback 
+import pathlib
+
 from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
-import csv
-import traceback 
 
 def show_figure(figure: Figure):
     managed_fig = plt.figure()
@@ -38,6 +40,8 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
 
     average_error_ges = 0
     successful_runs = 0
+
+    pathlib.Path("measurements").mkdir(exist_ok=True)
 
     with open(f'measurements/performance_{type}.csv', 'w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)

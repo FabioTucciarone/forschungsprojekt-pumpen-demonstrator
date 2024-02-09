@@ -1,6 +1,15 @@
 # Backend Installation und Ausführung
 
-## Python Pakete und Git-Repositories
+Das Backend kann entweder als lokaler Server auf dem Rechner des Klienten ("lokale Installation") oder als Serveranwendung auf den IPVS-Institutsservern installiert werden ("Serverinstalation").
+Die lokale Installation ist für Tests und zum Debugging gedacht.
+Es ist jeweils nur einer der beiden Schritte notwendig.
+
+## Installation und Ausführung
+1. Lade Python-Code und Pakete herunter: [Abschnitt 1](##1.-Python-Pakete-und-Git-Repositories)
+2. Konfiguriere Pfade und Datensätze: [Abschnitt 2](##2.-Ordnerstruktur-und-Datensätze)
+3. Ausführung und Testen: [Abschnitt 3](##3.-Ausführen-und-Testen)
+
+## 1. Python Pakete und Git-Repositories
 
 - Erstelle einen Zielordner (`<Forschungsprojekt-Ordner>`).
 - Ggf. eine virtuelle Python Umgebung in `<Forschungsprojekt-Ordner>` erstellen.
@@ -17,7 +26,7 @@ Hier muss vom Zweig "baforschungsprojekt_23" gepullt werden.
 - 1HP_NN Abhängigkeiten
 
 
-## Ordnerstruktur und Datensätze
+## 2. Ordnerstruktur und Datensätze
 
 Um korrekt funktionieren zu können, benötigt das Demonstrator Backend Zugriff auf einige Daten, die bereitgestellt werden müssen.
 
@@ -69,20 +78,34 @@ models_1hp_dir:  <Forschungsprojekt-Ordner>/data/models_1hpnn/gksi1000/current_u
 models_2hp_dir:  <Forschungsprojekt-Ordner>/data/models_2hpnn/1000dp_1000gksi_separate/current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1 # Phase 2
 ```
 
-## Ausführen
+## 3. Ausführen und Testen
 Alle für das Backend nötigen Dateien liegen unter `forschungsprojekt-pumpen-demonstrator/demonstrator_backend`.
 
-- **Testen der Installation:** Führe `test.py -t installation` aus. Endet das Programm fehlerfrei, ist alles korrekt installiert.
+Das Frontend ist nicht ohne einen aktiven Backendserver funktionsfähig.
+Daher muss zunächst dieser gestartet werden.
 
-- **Produktionsserver starten:** Um das Backend zu starten, muss `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'`ausgeführt werden. 
+### Erstmaliges Ausführen und Testen
 
-- **Testen des Servers:** Führe `test.py -t server` aus. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf.
+Wird das Backend zum ersten Mal gestartet, sollten folgende Schritte durchgeführt werden:
 
-- **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
+1. **Testen der Installation:** Führe `test.py -t installation` aus. Endet das Programm fehlerfrei, ist alles korrekt installiert.
+
+2. **Server starten:** Es ist je nach Installation nur einer der beiden Schritte notwendig.
+   - **Produktionsserver starten (Serverinstallation):** Um das Backend zu starten, muss `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'`ausgeführt werden. 
+   - **Debugserver starten (lokale Installation):** Ein Flask Debugserver kann durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+
+3. **Testen des Servers:** Führe `test.py -t server` aus, während der Server läuft. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf.
+
+4. **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
 Die Schnittstelle hierzu ist in der Dokumentation von `demonstrator_backend.py` zu finden.
 
+### Reguläre Ausführung
 
-## Zusätzliche Ausführungsinformationen
+**Server starten:** Es ist je nach Installation nur einer der beiden Schritte notwendig.
+- Führe bei Serverinstallation `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'` aus.
+- Führe bei lokaler Installation  `python3 demonstrator_backend.py` aus.
+
+### Zusätzliche Ausführungsinformationen
 
 - **Cuda:** Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
 
