@@ -91,8 +91,8 @@ class BackendConnection with ChangeNotifier {
 
   Uri getUri(String destination) {
     return Uri.parse(debugEnabled
-        ? "http://localhost:5000/$destination"
-        : "http://localhost:$localPort/$destination");
+        ? "http://127.0.0.1:5000/$destination"
+        : "http://127.0.0.1:$localPort/$destination");
   }
 
   /// Test whether the server is running.
