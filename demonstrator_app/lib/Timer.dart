@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'Highscores.dart';
+import 'MainScreen.dart';
 
 //Timer for Timeouts in Kinder Version
 class RestartTimer extends ChangeNotifier {
@@ -7,6 +9,7 @@ class RestartTimer extends ChangeNotifier {
 
   RestartTimer() {
     timer = Timer(const Duration(seconds: 60), () {
+      resetValues();
       notifyListeners();
     });
   }
@@ -14,7 +17,14 @@ class RestartTimer extends ChangeNotifier {
   void restartTimer() {
     timer.cancel();
     timer = Timer(const Duration(seconds: 60), () {
+      resetValues();
       notifyListeners();
     });
+  }
+
+  void resetValues() {
+    AverageError.publicError = 0;
+    MainSlide.futureNotifier.setFuture(Future(() => "keinWert"));
+    MainSlide.futureNotifierPhase2.setFuture(Future(() => "keinWert"));
   }
 }
