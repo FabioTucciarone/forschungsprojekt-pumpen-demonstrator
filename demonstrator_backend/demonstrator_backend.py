@@ -228,7 +228,7 @@ def initialize_backend():
 if __name__ == '__main__':
     initialize_backend()
     print("Flask-Debug: Initialized")
-    app.run(port=5000, host='0.0.0.0', threaded=True)
+    app.run(port=5000, host='localhost', threaded=True)
 else:
     initialize_backend()
     print("Initialized")
