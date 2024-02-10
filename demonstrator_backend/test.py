@@ -300,21 +300,17 @@ def measure_performance(n_runs: int, visualize: bool):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3 and sys.argv[1] == "-t":
-        if sys.argv[2] == "installation": test_installation()
-        if sys.argv[2] == "server": test_flask_interface()
-    elif len(sys.argv) >= 3 and sys.argv[1] == "-m":
-        N = int(sys.argv[2])
-        if len(sys.argv) == 3:
-            measure_performance(N, False)
-        elif len(sys.argv) == 4 and sys.argv[3] == "-v":
-            measure_performance(N, True)
-        else:
-            print(f"Did you mean: test.py -m {N} -v")
-    else:
-        print("Invalid arguments! Try the following:")
-        print(" - Measure Groundtruth: test.py -m <N> (-v)")
-        print("   - <N>: Number of measured datapoints: 0,...,N-1")
-        print("   - -v: Show results")
-        print(" - Test functionality:  test.py -t <Method>")
-        print("   - <Method>: server, installation")
+    k = 7.350276541753949086e-10
+    p = -2.142171334025262316e-03
+
+    st1 = time.time()
+    model_configuration = mc.ModelConfiguration()
+    et1 = time.time()
+    print('> Initialization:', et1 - st1, 'seconds')
+
+    for i in range(10):
+        st2 = time.time()
+        return_data = mc.get_1hp_model_results(model_configuration, k, p)
+        et2 = time.time()
+        
+        print('> Response time:', et2 - st2, 'seconds')

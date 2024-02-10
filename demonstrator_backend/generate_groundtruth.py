@@ -7,6 +7,7 @@ from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
 import matplotlib.pyplot as plt
+import time
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     """
@@ -219,11 +220,17 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     for k in range(3):
         temp_fields.append(TaylorInterpolatedField(info, run_index=triangle_i[k]))
         transformed.append(TaylorInterpolatedField(info))
+
     
+    t1 = time.perf_counter()
     bounds = pool.starmap(calculate_hp_bounds, zip(repeat(info), temp_fields))
     result_bounds = get_result_bounds(bounds, weights)
     transformed = pool.starmap(transform_fields, zip(repeat(info), temp_fields, bounds, repeat(result_bounds)))
+    t2 = time.perf_counter()
     result = transformed[0].T * weights[0] + transformed[1].T * weights[1] + transformed[2].T * weights[2]
+
+
+    print(f"> ?????? {t2 - t1}")
 
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
 
