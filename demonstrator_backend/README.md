@@ -94,9 +94,7 @@ Wird das Backend zum ersten Mal gestartet, sollten folgende Schritte durchgefüh
    - **Produktionsserver starten (Serverinstallation):** Um das Backend zu starten, muss `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'`ausgeführt werden. 
    - **Debugserver starten (lokale Installation):** Ein Flask Debugserver kann durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
-3. **Testen des Servers:** Führe `test.py -t server` aus, während der Server läuft. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf.
-
-4. **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
+3. **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
 Die Schnittstelle hierzu ist in der Dokumentation von `demonstrator_backend.py` zu finden.
 
 ### Reguläre Ausführung
@@ -107,14 +105,16 @@ Die Schnittstelle hierzu ist in der Dokumentation von `demonstrator_backend.py` 
 
 ### Zusätzliche Ausführungsinformationen
 
-- **Cuda:** Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
+- **Testen des Servers:** Führe `test.py -t server` aus, während der Server läuft. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf. Dazu muss der Server unter `127.0.0.1:5000` erreichbar sein. Starte dafür einen Flask-Debugserver oder öffne einen SSH Tunnel zu pcsgs08.
 
 - **Zeit- und Fehlermessen:** `test.py -m <n>` testet für die ersten $n$ Datenpunkte den Fehler und die Generationszeit der Grundwahrheiten.
 Es werden csv Dateien mit den Ergebnissen generiert, die anschließend durch die Ausführung von `generate_boxplots.py` visualisiert werden können.
 
 - **Visualisieren Grundwahrheit:** `test.py -m <n> -v`. Die `-v` Flagge aktiviert die Visualisierung der generierten Wärmefahnen.
 
-- **Debugserver:** Ein Flask Debugserver kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+- **Debugserver:** Ein Flask-Debugserver kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+
+- **Cuda:** Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
 
 ## Links zu den Datensätzen auf DaRUS
 - [1HP-Boxen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3650)
