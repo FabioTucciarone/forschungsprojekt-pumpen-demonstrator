@@ -230,7 +230,7 @@ def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: l
     result = transformed[0].T * weights[0] + transformed[1].T * weights[1] + transformed[2].T * weights[2]
 
 
-    print(f"> ?????? {t2 - t1}")
+    #print(f"> ?????? {t2 - t1}")
 
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
 

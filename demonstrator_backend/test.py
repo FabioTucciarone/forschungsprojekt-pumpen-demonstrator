@@ -299,18 +299,38 @@ def measure_performance(n_runs: int, visualize: bool):
     test_groundtruth(0, n_runs - 1, visualize=visualize, type="closest", print_all=False)
 
 
-if __name__ == "__main__":
+def print_1hp_times(n):
+
+    print("\n1HP Messungen:")
     k = 7.350276541753949086e-10
     p = -2.142171334025262316e-03
-
-    st1 = time.time()
     model_configuration = mc.ModelConfiguration()
-    et1 = time.time()
-    print('> Initialization:', et1 - st1, 'seconds')
 
-    for i in range(10):
-        st2 = time.time()
-        return_data = mc.get_1hp_model_results(model_configuration, k, p)
-        et2 = time.time()
-        
-        print('> Response time:', et2 - st2, 'seconds')
+    print("groundtruth, prepare, model, total")
+    for i in range(n):
+        total_t1 = time.time()
+        mc.get_1hp_model_results(model_configuration, k, p)
+        total_t2 = time.time()
+        print(total_t2 - total_t1)
+
+
+def print_2hp_times(n):
+
+    print("\n2HP Messungen:")
+    k = 7.350276541753949086e-10
+    p = -2.142171334025262316e-03
+    pos = [10, 10]
+    model_configuration = mc.ModelConfiguration()
+
+    print("model_1hp, prepare, model_2hp, total")
+    for i in range(n):
+        total_t1 = time.time()
+        mc.get_2hp_model_results(model_configuration, k, p, pos)
+        total_t2 = time.time()
+        print(total_t2 - total_t1)
+
+
+
+if __name__ == "__main__":
+    print_1hp_times(100)
+    print_2hp_times(100)
