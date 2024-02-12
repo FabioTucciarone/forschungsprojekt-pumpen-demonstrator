@@ -88,12 +88,12 @@ def generate_dataset_boxplot(data: dict, fields: list, tick_distance: float, fig
     plt.show()
 
 
-def print_statistics(data: dict, fields: dict):
+def print_statistics(data: dict, fields: list):
     
     for method_name in data.keys():
         for field in fields:
             values = data[method_name][field]
-            print(f"{field} of {method_name} method:")
+            print(f'"{field}" of {method_name} method:')
             print(f" > mean = {values.mean()}")
             print(f" > median = {values.median()}")
             print(f" > std = {values.std()}")
@@ -107,16 +107,21 @@ def main():
             except:
                 print("Could not find measurements. Run test.py -m <number>.")
                 return
-            generate_compare_datasets_boxplots(data, fields, tick_distances, fig_size)
+            print("\nGroundtruth:")
             print_statistics(data, fields)
+            generate_compare_datasets_boxplots(data, fields, tick_distances, fig_size)
         elif sys.argv[1] == "-time":
            
                 data, fields, tick_distance, fig_size = load_1hp_response_measurements()
+                print("\n1 HP response time:")
+                print_statistics({"1 HP" : data}, fields)
                 generate_dataset_boxplot(data, fields, tick_distance, fig_size)
 
                 data, fields, tick_distance, fig_size = load_2hp_response_measurements()
+                print("\n2 HP response time:")
+                print_statistics({"2 HP" : data}, fields)
                 generate_dataset_boxplot(data, fields, tick_distance, fig_size)
-           
+
                 print("Could not find measurements. Run test.py -m <number> on 'messung' branch.")
                 return
         else:
