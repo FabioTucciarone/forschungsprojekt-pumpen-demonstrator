@@ -299,7 +299,7 @@ def measure_performance(n_runs: int, visualize: bool):
     test_groundtruth(0, n_runs - 1, visualize=visualize, type="closest", print_all=False)
 
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) == 3 and sys.argv[1] == "-t":
         if sys.argv[2] == "installation": test_installation()
         if sys.argv[2] == "server": test_flask_interface()
@@ -318,3 +318,7 @@ if __name__ == "__main__":
         print("   - -v: Show results")
         print(" - Test functionality:  test.py -t <Method>")
         print("   - <Method>: server, installation")
+   
+    
+if __name__ == "__main__":
+    main()

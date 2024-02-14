@@ -12,8 +12,6 @@ Es ist jeweils nur einer der beiden Schritte notwendig.
 ## 1. Python Pakete und Git-Repositories
 
 - Erstelle einen Zielordner (`<Forschungsprojekt-Ordner>`).
-- Ggf. eine virtuelle Python Umgebung in `<Forschungsprojekt-Ordner>` erstellen.
-  https://docs.python.org/3/library/venv.html
 - Klone diese [Demonstrator Projekt](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator).
 - Klone einen [Fork des 1HP_NN Projekts](https://github.com/FabioTucciarone/1HP_NN/tree/baforschungsprojekt_23) von Julia Pelzer.
 Hier muss vom Zweig "baforschungsprojekt_23" gepullt werden.
@@ -91,30 +89,30 @@ Wird das Backend zum ersten Mal gestartet, sollten folgende Schritte durchgefüh
 1. **Testen der Installation:** Führe `test.py -t installation` aus. Endet das Programm fehlerfrei, ist alles korrekt installiert.
 
 2. **Server starten:** Es ist je nach Installation nur einer der beiden Schritte notwendig.
-   - **Produktionsserver starten (Serverinstallation):** Um das Backend zu starten, muss `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'`ausgeführt werden. 
+   - **Produktionsserver starten (Serverinstallation):** Um das Backend zu starten, muss `start_production_server.sh'` ausgeführt werden. 
    - **Debugserver starten (lokale Installation):** Ein Flask Debugserver kann durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
-3. **Testen des Servers:** Führe `test.py -t server` aus, während der Server läuft. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf.
-
-4. **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
+3. **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
 Die Schnittstelle hierzu ist in der Dokumentation von `demonstrator_backend.py` zu finden.
 
 ### Reguläre Ausführung
 
 **Server starten:** Es ist je nach Installation nur einer der beiden Schritte notwendig.
-- Führe bei Serverinstallation `gunicorn --bind 0.0.0.0:5000 'demonstrator_backend:app'` aus.
+- Führe bei Serverinstallation `start_production_server.sh'` aus.
 - Führe bei lokaler Installation  `python3 demonstrator_backend.py` aus.
 
 ### Zusätzliche Ausführungsinformationen
 
-- **Cuda:** Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
+- **Testen des Servers:** Führe `test.py -t server` aus, während der Server läuft. Endet das Programm fehlerfrei, treten keine Ausnahmen bei der HTTP-Kommunikation auf. Dazu muss der Server unter `127.0.0.1:5000` erreichbar sein. Starte dafür einen Flask-Debugserver oder öffne einen SSH Tunnel zu pcsgs08.
 
 - **Zeit- und Fehlermessen:** `test.py -m <n>` testet für die ersten $n$ Datenpunkte den Fehler und die Generationszeit der Grundwahrheiten.
-Es werden csv Dateien mit den Ergebnissen generiert, die anschließend durch die Ausführung von `generate_boxplots.py` visualisiert werden können.
+Es werden csv Dateien mit den Ergebnissen generiert, die anschließend durch die Ausführung von `show_statistics.py -boxplot` visualisiert werden können.
 
 - **Visualisieren Grundwahrheit:** `test.py -m <n> -v`. Die `-v` Flagge aktiviert die Visualisierung der generierten Wärmefahnen.
 
-- **Debugserver:** Ein Flask Debugserver kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+- **Debugserver:** Ein Flask-Debugserver kann einfach durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
+
+- **Cuda:** Das standardmäßig von 1HP_NN und pytorch verwendete Gerät ist "cuda" sofern dieses verfügbar ist, ansonsten wird "cpu" verwendet.
 
 ## Links zu den Datensätzen auf DaRUS
 - [1HP-Boxen 1000 Punkte Rohdatensatz](https://doi.org/10.18419/darus-3650)
