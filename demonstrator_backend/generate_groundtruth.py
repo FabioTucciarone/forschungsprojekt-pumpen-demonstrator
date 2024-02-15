@@ -166,7 +166,7 @@ def calculate_hp_bounds(info, temp_field):
             flound_edge = flound_edge or temp_field.at(i, j) >= info.threshold_temp
             if flound_edge:
                 break
-        bounds  .y0 += 1
+        bounds.y0 += 1
         if flound_edge:
             break
     for j in reversed(range(info.hp_pos[1]+1, 256)): # TODO?

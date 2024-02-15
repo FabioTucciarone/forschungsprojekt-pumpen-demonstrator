@@ -31,12 +31,12 @@ class GroundTruthInfo:
 
     def __post_init__(self):
         self.datapoints = load_data_points(self.dataset_path)
-        self.threshold_temp = self.base_temp + 0.5
+        self.threshold_temp = self.base_temp + 0.5 # TODO: Achtung: fest gekodet!
         pflotran_settings = get_pflotran_settings(self.dataset_path)
         self.dims = pflotran_settings["grid"]["ncells"]
 
 
-# TODO: ACHTUNG skaliertes laden!
+# TODO: Achtung: skaliertes laden!
 def load_data_points(path_to_dataset):
     permeability_values_path = os.path.join(path_to_dataset, "inputs", "permeability_values.txt")
     pressure_values_path = os.path.join(path_to_dataset, "inputs", "pressure_values.txt")
@@ -58,7 +58,7 @@ def load_temperature_field(info: GroundTruthInfo, run_index: int):
     return temperature_field
 
 
-# Kopiert von Julia (Imports in Python machen mich wahnsinnig)
+# TODO: Kopiert von Julia (Imports in Python machen mich wahnsinnig)
 
 def get_pflotran_settings(dataset_path_raw: str):
     with open(os.path.join(dataset_path_raw, "inputs", "settings.yaml"), "r") as f:

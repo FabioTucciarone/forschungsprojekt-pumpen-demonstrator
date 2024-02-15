@@ -132,9 +132,11 @@ class ModelConfiguration:
         size_hp_box = self.model_2hp_info["CellsNumberPrior"]
         domain_shape = self.model_2hp_info["CellsNumber"]
 
+         # TODO: Achtung: Fest für ein Modell/Datensatz gekodet:
         border_distance_x = 115
         border_distance_y_upper = 20
         border_distance_y_lower = 233
+        
         max_width = domain_shape[1] - 2 * border_distance_x
         max_height = domain_shape[0] - border_distance_y_upper - border_distance_y_lower
 
@@ -197,7 +199,7 @@ class ModelConfiguration:
     def get_value_ranges(self):
         """
         Get the value ranges supported by the used model in the following format:
-        [ [min permeability, max permeability], [min pressure, max max] ]
+        [ [min permeability, max permeability], [min pressure, max pressure] ]
         """
 
         k_info = self.model_1hp_info["Inputs"]["Permeability X [m^2]"]
@@ -236,7 +238,7 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     pressure: float
         The pressure input parameter of the demonstrator app.
     pos_2nd_hp: list[int]
-        Position describing the pixelposition of the heat pump in the range of ModelConfiguration::model_2hp_info["OutFieldShape"]
+        Position describing the pixel position of the heat pump in the range of ModelConfiguration::model_2hp_info["OutFieldShape"]
     """
     corner_dist = [0, 0]
     corner_dist[0] = max(config.model_1hp_info["PositionLastHP"][0], config.model_2hp_info["OutFieldOffset"][0])
