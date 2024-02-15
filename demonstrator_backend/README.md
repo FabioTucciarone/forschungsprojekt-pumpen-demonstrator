@@ -15,7 +15,8 @@ Es ist jeweils nur einer der beiden Schritte notwendig.
 - Klone diese [Demonstrator Projekt](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator).
 - Klone einen [Fork des 1HP_NN Projekts](https://github.com/FabioTucciarone/1HP_NN/tree/baforschungsprojekt_23) von Julia Pelzer.
 Hier muss vom Zweig "baforschungsprojekt_23" gepullt werden.
-- Alle Pakete mit `pip install -r requirements.txt` (momentan veraltet und unvollständig) installieren.
+- `install_server.sh` ausführen um Paktete in eine virtuelle Pythonumgebung zu installieren.
+Ist das nicht gewollt, können die Pakete mit `pip install -r requirements.txt` installiert werden.
 
 ### Enthaltene Pakete:
 
