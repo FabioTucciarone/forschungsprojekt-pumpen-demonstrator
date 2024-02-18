@@ -281,5 +281,11 @@ def test():
 
 # Komische Tests!
 if __name__ == "__main__":
-    main()
-    test()
+
+    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_domain", "dataset_2hps_1fixed_1000dp")
+    info = GroundTruthInfo(path_to_dataset, 10.6)
+    info.hp_pos = [24, 40]
+    y = interpolate_experimental(info, [5, 6, 7], [0, 0.5, 0.5])["Temperature [C]"]
+
+    plt.imshow(y, cmap="RdBu_r")
+    plt.show()
