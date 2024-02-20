@@ -1,5 +1,6 @@
 import os
 import io
+import numpy as np
 import pathlib
 import sys
 import torch
@@ -58,7 +59,7 @@ class ReturnData:
         return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
 
 
-    def set_figure(self, figure_name, pixel_data, **imshowargs):
+    def set_figure(self, figure_name: str, pixel_data: type[np.ndarray | torch.Tensor], **imshowargs):
         self.figures[figure_name] = Figure(dpi=200)
         axis = self.figures[figure_name].add_subplot(1, 1, 1)
         axis.invert_yaxis()
@@ -75,11 +76,11 @@ class ReturnData:
         self.figures[figure_name].colorbar(axes_image, cax=colorbar_axis)
 
 
-    def get_figure(self, figure_name):
+    def get_figure(self, figure_name: str):
         return self.figures[figure_name]
 
 
-    def get_encoded_figure(self, figure_name):
+    def get_encoded_figure(self, figure_name: str):
         image_bytes = io.BytesIO()
         self.figures[figure_name].savefig(image_bytes, format="png", bbox_inches='tight')
         return self.encode_image(image_bytes)
@@ -117,7 +118,7 @@ class ModelConfiguration:
         """
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"Initialing with device = '{self.device}'")
+        print(f"> Initialing with device = '{self.device}'")
 
         model_1hp_dir, model_2hp_dir = self.set_paths_and_settings()
 
@@ -137,11 +138,11 @@ class ModelConfiguration:
         border_distance_y_upper = 20
         border_distance_y_lower = 233
         
-        max_width = domain_shape[1] - 2 * border_distance_x
-        max_height = domain_shape[0] - border_distance_y_upper - border_distance_y_lower
+        max_height = min(domain_shape[1] - 2 * border_distance_x, 2 * size_hp_box[1] - 2)
+        max_width = min(domain_shape[0] - border_distance_y_upper - border_distance_y_lower, domain_shape[0] - size_hp_box[0] - 1)
 
-        self.model_2hp_info["OutFieldShape"] = [min(domain_shape[0] - size_hp_box[0] - 1, max_height), min(2 * size_hp_box[1] - 2, max_width)]
-        self.model_2hp_info["OutFieldOffset"] = [border_distance_y_upper, border_distance_x]
+        self.model_2hp_info["OutFieldShape"] = [min(domain_shape[0] - size_hp_box[0] - 1, max_width), min(2 * size_hp_box[1] - 2, max_height)]
+        self.model_2hp_info["OutFieldOffset"] = [border_distance_x, border_distance_y_upper]
 
         self.color_palette = ColorPalette()
 
@@ -160,7 +161,7 @@ class ModelConfiguration:
             except:
                 print(f'Error loading "{paths_file}"')
         else:
-            print(f'forschungsprojekt-pumpen-demonstrator/paths.yaml not found, trying default path')
+            print(f'WARNING: forschungsprojekt-pumpen-demonstrator/paths.yaml not found, trying default path')
             default_raw_1hp_dir = path_to_project_dir / ".." / "data" / "datasets_raw"
             model_1hp_dir       = path_to_project_dir / ".." / "data" / "models_1hpnn" / "gksi1000" / "current_unet_dataset_2d_small_1000dp_gksi_v7"
             model_2hp_dir       = path_to_project_dir / ".." / "data" / "models_2hpnn" / "1000dp_1000gksi_separate" / "current_unet_dataset_2hps_1fixed_1000dp_2hp_gksi_1000dp_v1"
@@ -246,6 +247,7 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     field_shape_2hp = config.model_2hp_info["OutFieldShape"]
     pos_fix = [corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)]
     pos_var = [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]
+
     positions = [pos_fix, pos_var]
 
     config.model_2hp.to(config.device)

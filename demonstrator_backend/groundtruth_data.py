@@ -4,6 +4,7 @@ import os
 import yaml
 import h5py
 import torch
+import pathlib
 
 @dataclass
 class DataPoint:
@@ -21,11 +22,10 @@ class HPBounds:
 
 @dataclass
 class GroundTruthInfo:
-    dataset_path: str
+    dataset_path: pathlib.Path
     base_temp: float
     datapoints: list = None
     threshold_temp: float = 0
-    visualize: bool = False
     dims: list = None
     hp_pos = [9, 23]
 
@@ -34,6 +34,16 @@ class GroundTruthInfo:
         self.threshold_temp = self.base_temp + 0.5 # TODO: Achtung: fest gekodet!
         pflotran_settings = get_pflotran_settings(self.dataset_path)
         self.dims = pflotran_settings["grid"]["ncells"]
+
+        settings_path = self.dataset_path / "inputs" / "settings.yaml"
+        if os.path.exists(settings_path):
+            with open(settings_path, "r") as f:
+                settings = yaml.safe_load(f)
+                self.hp_pos = settings["grid"]["loc_hp"]
+                self.hp_pos[0] /= 5 
+                self.hp_pos[1] /= 5 
+        else:
+            print("WARNING: no settings.yaml found in dataset")
 
 
 # TODO: Achtung: skaliertes laden!

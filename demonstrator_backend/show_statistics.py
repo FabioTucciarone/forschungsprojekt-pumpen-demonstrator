@@ -5,10 +5,10 @@ import sys
 
 def load_groundtruth_measurements():
     files = {}
-    files["closest"] = pd.read_csv("measurements/performance_closest.csv")
-    files["min"] = pd.read_csv("measurements/performance_interp_min.csv")
-    files["seq_heuristic"] = pd.read_csv("measurements/performance_interp_seq_heuristic.csv")
-    files["quad_heuristic"] = pd.read_csv("measurements/performance_interp_quad_heuristic.csv")
+    files["Nächster"] = pd.read_csv("measurements/performance_closest.csv")
+    files["Min."] = pd.read_csv("measurements/performance_interp_min.csv")
+    files["Seq. Heuristik"] = pd.read_csv("measurements/performance_interp_seq_heuristic.csv")
+    files["Quadr. Heuristik"] = pd.read_csv("measurements/performance_interp_quad_heuristic.csv")
     fields = ["average_error", "max_error", "time"]
     tick_distances = [0.01, 0.1, 0.05]
     fig_size = (10, 3)

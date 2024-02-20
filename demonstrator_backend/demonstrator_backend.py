@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_caching import Cache
 import csv
 import model_communication as mc
@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['CACHE_TYPE'] = 'FileSystemCache' 
 app.config['CACHE_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "cache") # Server Cache Pfad
-app.config['CACHE_THRESHOLD'] = 100          # Datei Maximum
+app.config['CACHE_THRESHOLD'] = 100 # Datei Maximum
 
 cache = Cache(app)
 cache.init_app(app)
@@ -78,6 +78,14 @@ def get_2hp_model_result():
 
 @app.route('/', methods=['GET', 'POST'])
 def browser_input():
+    """
+    Shows a small visually uninteresting browser-demonstrator for testing.
+    Usage: Start server, open http://127.0.0.1:5000/ in your browser.
+
+    Return:
+    ----------
+    HTML-Form source
+    """
 
     model_configuration = cache.get("model_configuration")
 
@@ -172,6 +180,14 @@ def save_highscore():
 
 @app.route('/get_2hp_field_shape', methods = ['GET'])
 def get_2hp_field_shape():
+    """
+    Returns the size of the field in which the second HP can be positioned.
+    See: get_2hp_model_result()
+
+    Return:
+    ----------
+    List: [max_x, max_y]
+    """
     return cache.get("model_configuration").model_2hp_info["OutFieldShape"]
 
 
@@ -196,6 +212,10 @@ def insert_highscore(name: str, average_error: float):
     cache.set("top_ten_list", top_ten_list, timeout=0)
 
 def initialize_backend():
+    """
+    Initializes the ModelConfiguration, Top-Ten-List, and determines the color palette.
+    Note: Colors must be changed in code.
+    """
 
     # TODO: Hier einfach das einstellen, was hübsch aussieht!
     # Farbtupel: (R, G, B) mit 0 <= R, G, B <= 1

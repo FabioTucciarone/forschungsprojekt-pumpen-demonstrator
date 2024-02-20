@@ -1,6 +1,7 @@
 import time
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from matplotlib.image import AxesImage
 import numpy as np
 import sys
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -10,12 +11,16 @@ import requests
 import csv
 import traceback 
 import pathlib
+from typing import Callable
 
 from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
 
 def show_figure(figure: Figure):
+    """
+    Display a matplotlib Figure in a new window without much formatting.
+    """
     managed_fig = plt.figure()
     canvas_manager = managed_fig.canvas.manager
     canvas_manager.canvas.figure = figure
@@ -23,16 +28,29 @@ def show_figure(figure: Figure):
     plt.show()
 
 
-def add_plot_info(image, title):
+def add_plot_info(image: AxesImage, title: str):
+    """
+    Add a colorbar and title to a plt.inshow image.
+    """
     axis = plt.gca()
     plt.colorbar(image, cax = make_axes_locatable(axis).append_axes("right", size="5%", pad=0.05))
     axis.xaxis.set_label_position('top')
     axis.set_xlabel(title, fontsize='small')
 
 
-def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, print_all=True):
+def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visualize: bool=True, print_all: bool=True):
+    """
+    Measure and store accuracy and time of the given ground truth generation method.
 
-    print("> ", end='')
+    Parameters:
+    ----------
+    n_from:    Index of first datapoint (RUN_<n_from>)
+    n_to:      Index of last datapoint (RUN_<n_to>)
+    type:      Type of interpolation used: "interp_seq_heuristic", "interp_quad_heuristic", "interp_min", "closest"
+    visualize: Whether to show images of the results and comparisons
+    print_all: Whether to print the error values
+    """
+
     model_configuration = mc.ModelConfiguration()
 
     info = model_configuration.groundtruth_info
@@ -76,7 +94,25 @@ def test_groundtruth(n_from, n_to, type = "interp_heuristic", visualize=True, pr
     print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
-def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, find_triangle):
+def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, find_triangle: Callable):
+    """
+    Test some triangle finding algorithm of the input point x against the known data point with the index i.
+
+    Parameters:
+    ----------
+    info: Information object passed to interpolation function. Contains loaded dataset.
+    x:    The input parameters of the point to be interpolated
+    i:    Index of the correct result in the dataset (RUN_i)
+    find_triangle: triangle finding function
+                   call: find_triangle(info, x)
+
+    Returns:
+    ----------
+    average_error: average error of all cells
+    min_error: minimal error of all cells
+    max_error: maximal error of all cells
+    run_time:  duration of the interpolation
+    """
 
     min_error = None
     max_error = None
@@ -139,6 +175,9 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, 
         
 
 def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
+    """
+    Exactly like test_interpolation_groundtruth(...) but uses the closest data point as a groundtruth.
+    """
 
     a = time.perf_counter()
 
@@ -177,9 +216,8 @@ def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
     return average_error, min_error, max_error, b-a
 
 
-def test_1hp_model_communication(visualize=True):
+def test_1hp_model_communication(visualize: bool=True):
     st1 = time.time()
-    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
 
@@ -200,23 +238,22 @@ def test_1hp_model_communication(visualize=True):
         show_figure(return_data.get_figure("model_result"))
 
 
-def test_2hp_model_communication(visualize=True):
+def test_2hp_model_communication(visualize: bool=True):
     st1 = time.time()
-    print("> ", end='')
     model_configuration = mc.ModelConfiguration()
     et1 = time.time()
-
 
     k = 1.053944076782911543e-09
     p = -3.040452194657028689e-03
     
     max_x = model_configuration.model_2hp_info["OutFieldShape"][0]
     max_y = model_configuration.model_2hp_info["OutFieldShape"][1]
-    pos = [random.randint(0, max_x), random.randint(0, max_y)]
+    positions = [[0, 0], [max_x, 0], [0, max_y], [max_x, max_y], [random.randint(0, max_x), random.randint(0, max_y)]]
 
-    st2 = time.time()
-    return_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
-    et2 = time.time()
+    for pos in positions:
+        st2 = time.time()
+        return_data = mc.get_2hp_model_results(model_configuration, k, p, pos)
+        et2 = time.time()
     
     print('> Initialization:', et1 - st1, 'seconds')
     print('> Response time:', et2 - st2, 'seconds')
@@ -254,12 +291,11 @@ def test_installation():
 
     print("TESTING: Initialization")
     try:
-        print("> ", end='')
         model_configuration = mc.ModelConfiguration()
         print(f"SUCCESS: All datasets and models found! No errors whilst initializing.")
     except:
         traceback.print_exc()
-        print("ERROR: Something went wrong while initializing")
+        print("ERROR: Something went wrong while initializing the datasets and models.")
         return
 
     print("TESTING: Groundtruth methods")

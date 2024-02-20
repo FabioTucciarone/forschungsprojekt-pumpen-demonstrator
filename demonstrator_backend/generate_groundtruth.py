@@ -7,6 +7,7 @@ from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     """
@@ -285,7 +286,13 @@ if __name__ == "__main__":
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_domain", "dataset_2hps_1fixed_1000dp")
     info = GroundTruthInfo(path_to_dataset, 10.6)
     info.hp_pos = [24, 40]
-    y = interpolate_experimental(info, [5, 6, 7], [0, 0.5, 0.5])["Temperature [C]"]
+    y = interpolate_experimental(info, [5, 9, 7], [0, 0.5, 0.5])["Temperature [C]"]
 
-    plt.imshow(y, cmap="RdBu_r")
+    plt.xlabel("Länge [m]")
+    plt.ylabel("Breite [m]")
+    image = plt.imshow(y, cmap="RdBu_r", extent=[0,5*y.shape[1],5*y.shape[0],0])
+    axis = plt.gca()
+    cbar = plt.colorbar(image, cax = make_axes_locatable(axis).append_axes("right", size="5%", pad=0.05))
+    cbar.set_label('°C')
+
     plt.show()
