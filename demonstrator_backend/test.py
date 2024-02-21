@@ -10,10 +10,11 @@ import random
 import requests
 import csv
 import traceback 
-import pathlib
+from pathlib import Path
+from os import path
 from typing import Callable
 
-from groundtruth_data import GroundTruthInfo, DataPoint, load_temperature_field
+from groundtruth_data import DatasetInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
 
@@ -38,6 +39,25 @@ def add_plot_info(image: AxesImage, title: str):
     axis.set_xlabel(title, fontsize='small')
 
 
+def interpolate_2hp_example():
+    """
+    Generates bad example from project presentation.
+    """
+    path_to_dataset = Path(path.dirname(path.abspath(__file__))) / ".." / ".." / "data" / "datasets_domain" / "dataset_2hps_1fixed_1000dp"
+    info = DatasetInfo(path_to_dataset, 10.6)
+    info.hp_pos = [24, 40]
+    y = gt.interpolate_experimental(info, [5, 9, 7], [0, 0.5, 0.5])["Temperature [C]"]
+
+    plt.xlabel("Länge [m]")
+    plt.ylabel("Breite [m]")
+    image = plt.imshow(y, cmap="RdBu_r", extent=[0,5*y.shape[1],5*y.shape[0],0])
+    axis = plt.gca()
+    cbar = plt.colorbar(image, cax = make_axes_locatable(axis).append_axes("right", size="5%", pad=0.05))
+    cbar.set_label('°C')
+
+    plt.show()
+
+
 def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visualize: bool=True, print_all: bool=True):
     """
     Measure and store accuracy and time of the given ground truth generation method.
@@ -53,13 +73,13 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
 
     model_configuration = mc.ModelConfiguration()
 
-    info = model_configuration.groundtruth_info
+    info = model_configuration.dataset_info
     info.visualize = visualize
 
     average_error_ges = 0
     successful_runs = 0
 
-    pathlib.Path("measurements").mkdir(exist_ok=True)
+    Path("measurements").mkdir(exist_ok=True)
 
     with open(f'measurements/performance_{type}.csv', 'w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -70,11 +90,11 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
             info.datapoints[i] = None
 
             if type == "interp_seq_heuristic":
-                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_heuristic_triangle)
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_sequential_heuristic_triangle)
             elif type == "interp_min":
                 average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_minimal_triangle)
             elif type == "interp_quad_heuristic":
-                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_old_triangle)
+                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_quadrant_heuristic_triangle)
             elif type == "closest":
                 average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
             else:
@@ -94,7 +114,7 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
     print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
-def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, find_triangle: Callable):
+def test_interpolation_groundtruth(info: DatasetInfo, x: DataPoint, i: int, find_triangle: Callable):
     """
     Test some triangle finding algorithm of the input point x against the known data point with the index i.
 
@@ -174,7 +194,7 @@ def test_interpolation_groundtruth(info: GroundTruthInfo, x: DataPoint, i: int, 
     return average_error, min_error, max_error, b-a
         
 
-def test_closest_groundtruth(info: gt.GroundTruthInfo, x: gt.DataPoint, i: int):
+def test_closest_groundtruth(info: gt.DatasetInfo, x: gt.DataPoint, i: int):
     """
     Exactly like test_interpolation_groundtruth(...) but uses the closest data point as a groundtruth.
     """

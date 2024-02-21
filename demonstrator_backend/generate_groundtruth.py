@@ -2,7 +2,7 @@ import os
 import numpy as np
 import torch
 
-from groundtruth_data import DataPoint, GroundTruthInfo, HPBounds, load_temperature_field_raw
+from groundtruth_data import DataPoint, DatasetInfo, HPBounds, load_temperature_field_raw
 from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
@@ -38,7 +38,7 @@ def get_closest_point(p: DataPoint, datapoints: list):
     return closest_i
 
 
-def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
+def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint):
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
     q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
@@ -86,7 +86,7 @@ def find_heuristic_triangle(info: GroundTruthInfo, p: DataPoint):
         return closest_i
 
 
-def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
+def find_minimal_triangle(info: DatasetInfo, p: DataPoint):
     c_i = get_closest_point(p, info.datapoints)
 
     min_sum = np.inf
@@ -112,8 +112,7 @@ def find_minimal_triangle(info: GroundTruthInfo, p: DataPoint):
         return c_i
 
 
-# Quadrantenmethode
-def find_old_triangle(info: GroundTruthInfo, p: DataPoint):
+def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint):
     p = DataPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
@@ -146,7 +145,7 @@ def find_old_triangle(info: GroundTruthInfo, p: DataPoint):
         return closest_i
 
 
-def calculate_barycentric_weights(info: GroundTruthInfo, triangle_i: list, x: DataPoint):
+def calculate_barycentric_weights(info: DatasetInfo, triangle_i: list, x: DataPoint):
     t1 = info.datapoints[triangle_i[0]]
     t2 = info.datapoints[triangle_i[1]]
     t3 = info.datapoints[triangle_i[2]]
@@ -210,7 +209,7 @@ def get_result_bounds(bounds, weights):
     return result_bounds
 
 
-def interpolate_experimental(info: GroundTruthInfo, triangle_i: list, weights: list):
+def interpolate_experimental(info: DatasetInfo, triangle_i: list, weights: list):
     
     temp_fields = []
     bounds = []
@@ -252,11 +251,11 @@ def get_sample_indices(hp_pos, i, j, bounds: HPBounds, result_bounds: HPBounds):
     return it, jt
 
 
-def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: float, use_interpolation: bool = True):
+def generate_groundtruth(info: DatasetInfo, permeability: float, pressure: float, use_interpolation: bool=True):
     x = DataPoint(permeability * 1e10, pressure * 1e3)  # TODO: skalieren?
 
     if use_interpolation:
-        triangle_i = find_heuristic_triangle(info, x)
+        triangle_i = find_sequential_heuristic_triangle(info, x)
         if isinstance(triangle_i, list):
             weights = calculate_barycentric_weights(info, triangle_i, x)
             return interpolate_experimental(info, triangle_i, weights), "interpolation"
@@ -264,35 +263,3 @@ def generate_groundtruth(info: GroundTruthInfo, permeability: float, pressure: f
             return load_temperature_field_raw(info, triangle_i), "closest"
     else:
         return load_temperature_field_raw(info, get_closest_point(x)), "closest"
-
-
-def main():
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    info = GroundTruthInfo(path_to_dataset, 10.6)
-    interpolate_experimental(info, [1, 2, 3], [1/3, 1/3, 1/3])
-
-def test():
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    k = 7.350276541753949086e-10
-    p = -2.200171334025262316e-03
-    x = DataPoint(k * 1e10, p * 1e3)
-    info = GroundTruthInfo(path_to_dataset, 10.6)
-    find_heuristic_triangle(info, x)
-
-
-# Komische Tests!
-if __name__ == "__main__":
-
-    path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_domain", "dataset_2hps_1fixed_1000dp")
-    info = GroundTruthInfo(path_to_dataset, 10.6)
-    info.hp_pos = [24, 40]
-    y = interpolate_experimental(info, [5, 9, 7], [0, 0.5, 0.5])["Temperature [C]"]
-
-    plt.xlabel("Länge [m]")
-    plt.ylabel("Breite [m]")
-    image = plt.imshow(y, cmap="RdBu_r", extent=[0,5*y.shape[1],5*y.shape[0],0])
-    axis = plt.gca()
-    cbar = plt.colorbar(image, cax = make_axes_locatable(axis).append_axes("right", size="5%", pad=0.05))
-    cbar.set_label('°C')
-
-    plt.show()

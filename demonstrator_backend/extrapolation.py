@@ -5,14 +5,14 @@ from scipy.interpolate import RectBivariateSpline
 import numpy as np
 import os
 
-from groundtruth_data import GroundTruthInfo, load_temperature_field
+from groundtruth_data import DatasetInfo, load_temperature_field
 
 
 class TemperatureField:
-    info: GroundTruthInfo
+    info: DatasetInfo
     T: np.ndarray
 
-    def __init__(self, info: GroundTruthInfo, run_index: int=None):
+    def __init__(self, info: DatasetInfo, run_index: int=None):
         if run_index == None:
             self.T = np.ndarray((info.dims[0], info.dims[1]))
         else:
@@ -31,7 +31,7 @@ class PolyInterpolatedField(TemperatureField):
     interp: RectBivariateSpline
     max: float
 
-    def __init__(self, info: GroundTruthInfo, run_index: int=None):
+    def __init__(self, info: DatasetInfo, run_index: int=None):
         TemperatureField.__init__(self, info, run_index)
         X = list(range(info.dims[0]))
         Y = list(range(info.dims[1]))
@@ -67,7 +67,7 @@ class PolyInterpolatedField(TemperatureField):
 class TaylorInterpolatedField(TemperatureField):
     h = 1
     
-    def __init__(self, info: GroundTruthInfo, run_index: int=None):
+    def __init__(self, info: DatasetInfo, run_index: int=None):
         TemperatureField.__init__(self, info, run_index)
         self.h = 1/(self.T.shape[1] + 1)
 
@@ -233,7 +233,7 @@ def main():
     plt.sca(axes[0])
 
     path_to_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "datasets_raw", "datasets_raw_1000_1HP")
-    info = GroundTruthInfo(path_to_dataset, 10.6)
+    info = DatasetInfo(path_to_dataset, 10.6)
     T0 = TaylorInterpolatedField(info, run_index)
     size = (T0.T.shape[0] + 30, T0.T.shape[1] + 30)
 

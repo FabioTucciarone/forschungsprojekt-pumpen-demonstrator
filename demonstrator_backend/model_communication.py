@@ -1,7 +1,7 @@
 import os
 import io
 import numpy as np
-import pathlib
+from pathlib import Path
 import sys
 import torch
 from matplotlib.figure import Figure
@@ -27,7 +27,6 @@ class ColorPalette:
     Used to set the RGB values (range: [0,1]) of the output images:
     cmap_list: list of RGB value tuples used for interpolating the color gradient
     """
-
     cmap_list: list = None
     background_color: tuple = (1,1,1)
     text_color: tuple = (0,0,0)
@@ -55,7 +54,7 @@ class ReturnData:
             self.color_map = LinearSegmentedColormap.from_list("demonstrator", color_palette.cmap_list, N=100)
 
 
-    def encode_image(self, buffer):
+    def encode_image(self, buffer: io.BytesIO):
         return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
 
 
@@ -104,7 +103,7 @@ class ModelConfiguration:
     device: str = "cpu"
     inputs: str = "gksi1000"
     paths2HP: Paths2HP = None
-    groundtruth_info: gt.GroundTruthInfo = None
+    dataset_info: gt.DatasetInfo = None
     model_1hp_info: dict = None
     model_2hp_info: dict = None
     color_palette: ColorPalette = None
@@ -128,12 +127,12 @@ class ModelConfiguration:
         self.model_2hp = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
         self.model_2hp.load(model_2hp_dir, self.device)
 
-        self.groundtruth_info = gt.GroundTruthInfo(self.paths2HP.raw_path, 10.6)
+        self.dataset_info = gt.DatasetInfo(self.paths2HP.raw_path, 10.6)
 
         size_hp_box = self.model_2hp_info["CellsNumberPrior"]
         domain_shape = self.model_2hp_info["CellsNumber"]
 
-         # TODO: Achtung: Fest für ein Modell/Datensatz gekodet:
+        # TODO: Achtung: Fest für ein Modell/Datensatz gekodet:
         border_distance_x = 115
         border_distance_y_upper = 20
         border_distance_y_lower = 233
@@ -148,16 +147,28 @@ class ModelConfiguration:
 
 
     def set_paths_and_settings(self):
-        path_to_project_dir = pathlib.Path((os.path.dirname(os.path.abspath(__file__)))) / ".."
+        """
+        Configures all paths of the project.
+        - Read paths from paths.yaml if available.
+        - Load default paths if no paths.yaml file was found.
+        Checks if necessary files are available and throws errors accordingly.
+
+        Returns
+        ----------
+        (model_1hp_dir, model_2hp_dir): tuple[Path, Path]
+            path to the one-heatpump and two-heatpump models (where the info.yaml files are located)
+        """
+
+        path_to_project_dir = Path((os.path.dirname(os.path.abspath(__file__)))) / ".."
         paths_file = path_to_project_dir / "paths.yaml"
 
         if os.path.exists(paths_file):
             with open(paths_file, "r") as f:
                 paths_file = yaml.safe_load(f)
             try:
-                default_raw_1hp_dir = pathlib.Path(paths_file["default_raw_dir"])
-                model_1hp_dir      = pathlib.Path(paths_file["models_1hp_dir"])
-                model_2hp_dir      = pathlib.Path(paths_file["models_2hp_dir"])
+                default_raw_1hp_dir = Path(paths_file["default_raw_dir"])
+                model_1hp_dir       = Path(paths_file["models_1hp_dir"])
+                model_2hp_dir       = Path(paths_file["models_2hp_dir"])
             except:
                 print(f'Error loading "{paths_file}"')
         else:
@@ -175,18 +186,20 @@ class ModelConfiguration:
             if not found:
                 raise FileNotFoundError(f'Couldn\'t find raw dataset folders at default path: "{default_raw_1hp_dir}"')
         
-        with open(os.path.join(os.getcwd(), model_2hp_dir, "info.yaml"), "r") as file:
-            self.model_2hp_info = yaml.safe_load(file)
-
-        with open(os.path.join(os.getcwd(), model_1hp_dir, "info.yaml"), "r") as file:
-            self.model_1hp_info = yaml.safe_load(file)
-
         if not (os.path.exists(model_1hp_dir / "info.yaml") and os.path.exists(model_1hp_dir / "model.pt")):
             raise FileNotFoundError(f'1HP model not found at "{model_1hp_dir}"')    
         if not (os.path.exists(model_2hp_dir / "info.yaml") and os.path.exists(model_2hp_dir / "model.pt")):
             raise FileNotFoundError(f'2HP model not found at "{model_2hp_dir}"') 
+        
+        with open(os.path.join(os.getcwd(), model_2hp_dir, "info.yaml"), "r") as file:
+            self.model_2hp_info = yaml.safe_load(file)
+        with open(os.path.join(os.getcwd(), model_1hp_dir, "info.yaml"), "r") as file:
+            self.model_1hp_info = yaml.safe_load(file)
+
         if not os.path.exists(default_raw_1hp_dir / "RUN_0" / "pflotran.h5"):
             raise FileNotFoundError(f'1HP raw dataset not found at "{default_raw_1hp_dir}"') 
+        if not os.path.exists(default_raw_1hp_dir / "inputs" / "settings.yaml"):
+            raise FileNotFoundError(f'1HP raw dataset has no "{Path("inputs", "settings.yaml")}"') 
 
         self.paths2HP = Paths2HP(default_raw_1hp_dir, "", "", model_1hp_dir, "")
 
@@ -218,11 +231,18 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
         The permeability input parameter of the demonstrator app.
     pressure: float
         The pressure input parameter of the demonstrator app.
+
+    Returns
+    ---------- 
+    return_data: ReturnData
+        ReturnData object containing "model_result" (Figure), 
+        "groundtruth" (Figure), "error_measure" (Figure), 
+        "average_error" (float), "groundtruth_method" (str)
     """
 
     config.model_1hp.eval()
 
-    (x, y, method, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.groundtruth_info, permeability, pressure, config.model_1hp_info, config.device)
+    (x, y, method, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.dataset_info, permeability, pressure, config.model_1hp_info, config.device)
     return_data = visualize.get_plots(config.model_1hp, x, y, config.model_1hp_info, norm, config.color_palette)
     return_data.set_return_value("groundtruth_method", method)
     return return_data
@@ -240,6 +260,11 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
         The pressure input parameter of the demonstrator app.
     pos_2nd_hp: list[int]
         Position describing the pixel position of the heat pump in the range of ModelConfiguration::model_2hp_info["OutFieldShape"]
+
+    Returns
+    ---------- 
+    return_data: ReturnData
+        ReturnData object containing "model_result" (Figure)
     """
     corner_dist = [0, 0]
     corner_dist[0] = max(config.model_1hp_info["PositionLastHP"][0], config.model_2hp_info["OutFieldOffset"][0])
