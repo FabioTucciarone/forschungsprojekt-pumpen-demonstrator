@@ -354,8 +354,8 @@ mixin MainScreenElements {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           heatPumpBox = PumpInputBox(
-              width: 1130,
-              height: 134,
+              width: 1157,
+              height: 94,
               valueRange: snapshot.data,
               children: false);
           child = heatPumpBox;
