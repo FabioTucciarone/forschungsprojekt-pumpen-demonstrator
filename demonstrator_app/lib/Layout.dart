@@ -58,11 +58,11 @@ class IntroHomeScaffold extends StatelessWidget {
             }
           } else {
             if (component == "content") {
-              child = const Text("Server läuft.");
+              child = const Text("");
             } else {
               child = const Text("");
             }
-            Future.delayed(const Duration(seconds: 1), () {
+            Future.delayed(const Duration(microseconds: 0), () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
