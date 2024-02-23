@@ -250,7 +250,8 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
 }
 
 /// Mixin for the elements of the main screen consisting of 2 sliders for pressure and permeability and
-/// the output boxes for the ai generated output, groundtruth and difference field.
+/// the output boxes for the ai generated output, groundtruth and difference field or the pump input box
+/// if it is phase 2.
 mixin MainScreenElements {
   static PressureSlider pressureSlider = PressureSlider(
       900,
