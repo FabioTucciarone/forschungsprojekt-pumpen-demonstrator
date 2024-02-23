@@ -73,7 +73,7 @@ class _PumpInputBoxState extends State<PumpInputBox> {
 
   /// Builds a stack consisting of the output and the input box for the position of the second heat pump.
   /// The sending of the selected data is triggered when the pointer is released or clicked. The position is corrected
-  /// whenever the pointer is moved or the input box is clicked. The pointer appears when the cursor hovers over the input box.
+  /// whenever the pointer is moved or the input box is clicked.
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifierPhase2>().future;
