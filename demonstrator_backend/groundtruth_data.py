@@ -5,15 +5,22 @@ import yaml
 import h5py
 import torch
 from pathlib import Path 
+from typing import Dict, List, Tuple, Any, Union
 
 @dataclass
 class DataPoint:
-    k: np.float64 # permeability
-    p: np.float64 # pressure
+    """
+    Represents a data point in parameter space.
+    """
+    k: float # permeability
+    p: float # pressure
 
 
 @dataclass
 class HPBounds:
+    """
+    Stores the approximate extents of a heat plume in each direction around the pump location.
+    """
     x0: int = -1
     x1: int = 20
     y0: int = -1
@@ -22,12 +29,17 @@ class HPBounds:
 
 @dataclass
 class DatasetInfo:
+    """
+    Dataclass to store information about a dataset and the generation of the ground truth.
+    Stores all simulated input parameters, the heat pump location, and a threshold temperature (0.5 + base temperature).
+    """
+
     dataset_path: Path
     base_temp: float
     datapoints: list = None
     threshold_temp: float = None
-    dims: list = None
-    hp_pos: tuple = None
+    dims: List[int] = None
+    hp_pos: List[int] = None
 
     def __post_init__(self):
         self.datapoints = load_data_points(self.dataset_path)
@@ -47,9 +59,9 @@ class DatasetInfo:
 
 
 # TODO: Achtung: skaliertes laden!
-def load_data_points(path_to_dataset):
-    permeability_values_path = os.path.join(path_to_dataset, "inputs", "permeability_values.txt")
-    pressure_values_path = os.path.join(path_to_dataset, "inputs", "pressure_values.txt")
+def load_data_points(path_to_dataset: Path):
+    permeability_values_path = path_to_dataset / "inputs" / "permeability_values.txt"
+    pressure_values_path = path_to_dataset / "inputs" / "pressure_values.txt"
 
     permeability_values = []
     with open(permeability_values_path) as file:
@@ -70,8 +82,8 @@ def load_temperature_field(info: DatasetInfo, run_index: int):
 
 # TODO: Kopiert von Julia (Imports in Python machen mich wahnsinnig)
 
-def get_pflotran_settings(dataset_path_raw: str):
-    with open(os.path.join(dataset_path_raw, "inputs", "settings.yaml"), "r") as f:
+def get_pflotran_settings(dataset_path_raw: Path):
+    with open(dataset_path_raw / "inputs" / "settings.yaml", "r") as f:
         pflotran_settings = yaml.safe_load(f)
     return pflotran_settings
 

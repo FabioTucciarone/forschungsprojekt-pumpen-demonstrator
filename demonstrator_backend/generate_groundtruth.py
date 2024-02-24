@@ -6,9 +6,10 @@ from extrapolation import TemperatureField, TaylorInterpolatedField, PolyInterpo
 from multiprocessing import Pool
 from itertools import repeat
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any, Union
 
-def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
+
+def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint) -> float:
     """
     return > 0 => b is left of a1->a2
     return < 0 => b is right of a1->a2
@@ -17,15 +18,18 @@ def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
 
 
-def square_distance(a: DataPoint, b: DataPoint):
+def square_distance(a: DataPoint, b: DataPoint) -> float:
     return (b.k - a.k)**2 + (b.p - a.p)**2
 
 
-def distance(a: DataPoint, b: DataPoint):
+def distance(a: DataPoint, b: DataPoint) -> float:
     return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
 
 
-def get_closest_point(p: DataPoint, datapoints: List[DataPoint]):
+def get_closest_point(p: DataPoint, datapoints: List[DataPoint]) -> int:
+    """
+    Returns the dataset index of the closest datapoint to p in parameter space.
+    """
     closest_i = 0
     min_distance = np.inf
     for i, x in enumerate(datapoints):
@@ -37,7 +41,16 @@ def get_closest_point(p: DataPoint, datapoints: List[DataPoint]):
     return closest_i
 
 
-def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint):
+def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[int]]:
+    """
+    Tries to find a triangle that encloses p.
+    Heuristic that usualy finds more triangles than find_quadrant_heuristic_triangle().
+    Time complexity: O(n)
+
+    Returns
+    ---------
+    A list of triangle indices or the index of the nearest point
+    """
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
     q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
@@ -85,7 +98,16 @@ def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint):
         return closest_i
 
 
-def find_minimal_triangle(info: DatasetInfo, p: DataPoint):
+def find_minimal_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[int]]:
+    """
+    Tries to find a triangle that encloses p.
+    Minimizes the sum of distances from the corner points to p.
+    Slow: O(n^2)
+
+    Returns
+    ---------
+    A list of triangle indices or the index of the nearest point
+    """
     c_i = get_closest_point(p, info.datapoints)
 
     min_sum = np.inf
@@ -111,7 +133,16 @@ def find_minimal_triangle(info: DatasetInfo, p: DataPoint):
         return c_i
 
 
-def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint):
+def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[int]]:
+    """
+    Tries to find a triangle that encloses p.
+    Heuristic that usualy finds more triangles than find_quadrant_heuristic_triangle().
+    Time complexity: O(n)
+
+    Returns
+    ---------
+    A list of triangle indices or the index of the nearest point
+    """
     p = DataPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
@@ -144,7 +175,10 @@ def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint):
         return closest_i
 
 
-def calculate_barycentric_weights(info: DatasetInfo, triangle_i: List[int], x: DataPoint):
+def calculate_barycentric_weights(info: DatasetInfo, triangle_i: List[int], x: DataPoint) -> Tuple[float, float, float]:
+    """
+    Calculates the barycentric coordinates of x with respect to the triangle defined by triangle_i.
+    """
     t1 = info.datapoints[triangle_i[0]]
     t2 = info.datapoints[triangle_i[1]]
     t3 = info.datapoints[triangle_i[2]]
@@ -156,7 +190,16 @@ def calculate_barycentric_weights(info: DatasetInfo, triangle_i: List[int], x: D
     return (w1, w2, w3)
 
 
-def calculate_hp_bounds(info: DatasetInfo, temp_field: TemperatureField):
+def calculate_hp_bounds(info: DatasetInfo, temp_field: TemperatureField) -> HPBounds:
+    """
+    Tries to estimate the size of a heat plume by calculating a box around the plume using a threshold temperature (info.threshold_temp).
+
+
+    Returns
+    ---------
+    bounds: HPBounds
+        Extend of the HP-box around info.hp_pos.
+    """
     bounds = HPBounds()
 
     for j in range(0, info.hp_pos[1]):
@@ -199,7 +242,10 @@ def calculate_hp_bounds(info: DatasetInfo, temp_field: TemperatureField):
     return bounds
 
 
-def get_result_bounds(bounds: List[HPBounds], weights: List[float]):
+def get_result_bounds(bounds: List[HPBounds], weights: List[float]) -> HPBounds:
+    """
+    Interpolates three HPBound-boxes.
+    """
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
     result_bounds.x1 = weights[0] * bounds[0].x1 + weights[1] * bounds[1].x1 + weights[2] * bounds[2].x1
@@ -208,7 +254,16 @@ def get_result_bounds(bounds: List[HPBounds], weights: List[float]):
     return result_bounds
 
 
-def interpolate_experimental(info: DatasetInfo, triangle_i: List[int], weights: List[float]):
+def interpolate_experimental(info: DatasetInfo, triangle_i: List[int], weights: List[float]) -> Dict[str, torch.Tensor]:
+    """
+    Combines three temperature fields by calculating and interpolating their bounding boxes, 
+    transforming them to the same size, and overlaying them using the weights.
+
+    Returns
+    ---------
+    A dictionary with only one entry at "Temperature [C]" to be compatible with the transformations in 1HP_NN.
+    Needs to be corrected: Remove redundant transformations and return temperature field of correct size!
+    """
     
     temp_fields = []
     bounds = []
@@ -227,7 +282,10 @@ def interpolate_experimental(info: DatasetInfo, triangle_i: List[int], weights: 
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
 
 
-def transform_fields(info: DatasetInfo, temp_fields: List[TemperatureField], bounds: List[HPBounds], result_bounds: List[HPBounds]):
+def transform_fields(info: DatasetInfo, temp_fields: List[TemperatureField], bounds: HPBounds, result_bounds: HPBounds) -> TemperatureField:
+    """
+    Distort all three temperature fields with the coordinate transformation that results from the interpolated bounds.
+    """
     t = TaylorInterpolatedField(info)
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
@@ -236,7 +294,10 @@ def transform_fields(info: DatasetInfo, temp_fields: List[TemperatureField], bou
     return t
 
 
-def get_sample_indices(hp_pos: list, i: int, j: int, bounds: HPBounds, result_bounds: HPBounds):
+def get_sample_indices(hp_pos: List[int], i: int, j: int, bounds: HPBounds, result_bounds: HPBounds) -> List[float]:
+    """
+    Transform coordinates so that the transformed input bounds equal result_bounds.
+    """
     it = hp_pos[0]
     jt = hp_pos[1]
     if i < hp_pos[0]:

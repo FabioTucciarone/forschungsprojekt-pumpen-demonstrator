@@ -13,10 +13,12 @@ import traceback
 from pathlib import Path
 from os import path
 from typing import Callable
+from typing import Dict, List, Tuple, Any, Union
 
 from groundtruth_data import DatasetInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
 import model_communication as mc
+
 
 def show_figure(figure: Figure):
     """

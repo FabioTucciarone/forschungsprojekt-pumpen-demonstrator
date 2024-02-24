@@ -1,9 +1,11 @@
 from flask import Flask, request, render_template
 from flask_caching import Cache
-import csv
-import model_communication as mc
-import os
 import time
+import csv
+import os
+from typing import Dict, List, Tuple, Any, Union
+
+import model_communication as mc
 
 # Global Variables:
 
@@ -19,7 +21,7 @@ cache.init_app(app)
 # Backend Interface:
 
 @app.route('/get_model_result', methods = ['POST'])
-def get_model_result():
+def get_model_result() -> dict:
     """
     Returns a JSON object of all three resulting images.
     The images are encoded as a base64 string.
@@ -51,7 +53,7 @@ def get_model_result():
 
 
 @app.route('/get_2hp_model_result', methods = ['POST'])
-def get_2hp_model_result():
+def get_2hp_model_result() -> dict:
     """
     Returns a base64 encoded images as a string.
 
@@ -77,7 +79,7 @@ def get_2hp_model_result():
 
 
 @app.route('/', methods=['GET', 'POST'])
-def browser_input():
+def browser_input() -> str:
     """
     Shows a small visually uninteresting browser-demonstrator for testing.
     Usage: Start server, open http://127.0.0.1:5000/ in your browser.
@@ -129,12 +131,12 @@ def browser_input():
 
 
 @app.route('/test_response', methods = ['GET'])
-def test_response():
+def test_response() -> str:
     return 'success'
 
 
 @app.route('/get_value_ranges', methods = ['GET'])
-def get_value_ranges():
+def get_value_ranges() -> dict:
     """
     Returns a JSON object containing the maximum and minimum permeability and pressure values that can be selected on the frontend.
     """
@@ -143,7 +145,7 @@ def get_value_ranges():
 
 
 @app.route('/get_highscore_and_name', methods = ['GET'])
-def get_highscore_and_name():
+def get_highscore_and_name() -> dict:
     """
     Returns the current highscore (maximum average error) and the name of the person who achieved it.
     """
@@ -157,7 +159,7 @@ def get_highscore_and_name():
 
 
 @app.route('/get_top_ten_list', methods = ['GET'])
-def get_top_ten_list():
+def get_top_ten_list() -> List[Tuple[str, float]]:
     """
     Possibly empty list of ten tuples.
     """
@@ -179,7 +181,7 @@ def save_highscore():
 
 
 @app.route('/get_2hp_field_shape', methods = ['GET'])
-def get_2hp_field_shape():
+def get_2hp_field_shape() -> List[int]:
     """
     Returns the size of the field in which the second HP can be positioned.
     See: get_2hp_model_result()
@@ -210,6 +212,7 @@ def insert_highscore(name: str, average_error: float):
             top_ten_list[9] = (name, average_error)
     top_ten_list = sorted(top_ten_list, key=lambda entry: entry[1], reverse=True)
     cache.set("top_ten_list", top_ten_list, timeout=0)
+
 
 def initialize_backend():
     """
