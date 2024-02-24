@@ -199,7 +199,7 @@ def calculate_hp_bounds(info: DatasetInfo, temp_field: TemperatureField):
     return bounds
 
 
-def get_result_bounds(bounds: list[HPBounds], weights: List[float]):
+def get_result_bounds(bounds: List[HPBounds], weights: List[float]):
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
     result_bounds.x1 = weights[0] * bounds[0].x1 + weights[1] * bounds[1].x1 + weights[2] * bounds[2].x1
