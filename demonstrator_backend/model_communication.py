@@ -10,7 +10,7 @@ import generate_groundtruth as gt
 from dataclasses import dataclass
 import base64
 from matplotlib.colors import LinearSegmentedColormap
-from typing import Any
+from typing import Any, Union
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -59,7 +59,7 @@ class ReturnData:
         return str(base64.b64encode(buffer.getbuffer()).decode("ascii"))
 
 
-    def set_figure(self, figure_name: str, pixel_data: type[np.ndarray | torch.Tensor], **imshowargs):
+    def set_figure(self, figure_name: str, pixel_data: Union[np.ndarray, torch.Tensor], **imshowargs):
         self.figures[figure_name] = Figure(dpi=200)
         axis = self.figures[figure_name].add_subplot(1, 1, 1)
         axis.invert_yaxis()

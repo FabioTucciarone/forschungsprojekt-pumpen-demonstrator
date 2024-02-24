@@ -6,6 +6,8 @@ from extrapolation import TemperatureField, TaylorInterpolatedField, PolyInterpo
 from multiprocessing import Pool
 from itertools import repeat
 
+from typing import Dict, List, Tuple
+
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     """
     return > 0 => b is left of a1->a2
@@ -23,7 +25,7 @@ def distance(a: DataPoint, b: DataPoint):
     return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
 
 
-def get_closest_point(p: DataPoint, datapoints: list):
+def get_closest_point(p: DataPoint, datapoints: List[DataPoint]):
     closest_i = 0
     min_distance = np.inf
     for i, x in enumerate(datapoints):
@@ -142,7 +144,7 @@ def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint):
         return closest_i
 
 
-def calculate_barycentric_weights(info: DatasetInfo, triangle_i: list, x: DataPoint):
+def calculate_barycentric_weights(info: DatasetInfo, triangle_i: List[int], x: DataPoint):
     t1 = info.datapoints[triangle_i[0]]
     t2 = info.datapoints[triangle_i[1]]
     t3 = info.datapoints[triangle_i[2]]
@@ -197,7 +199,7 @@ def calculate_hp_bounds(info: DatasetInfo, temp_field: TemperatureField):
     return bounds
 
 
-def get_result_bounds(bounds: list, weights: list):
+def get_result_bounds(bounds: list[HPBounds], weights: List[float]):
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
     result_bounds.x1 = weights[0] * bounds[0].x1 + weights[1] * bounds[1].x1 + weights[2] * bounds[2].x1
@@ -206,7 +208,7 @@ def get_result_bounds(bounds: list, weights: list):
     return result_bounds
 
 
-def interpolate_experimental(info: DatasetInfo, triangle_i: list, weights: list):
+def interpolate_experimental(info: DatasetInfo, triangle_i: List[int], weights: List[float]):
     
     temp_fields = []
     bounds = []
@@ -225,7 +227,7 @@ def interpolate_experimental(info: DatasetInfo, triangle_i: list, weights: list)
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
 
 
-def transform_fields(info: DatasetInfo, temp_fields: list, bounds: list, result_bounds: list):
+def transform_fields(info: DatasetInfo, temp_fields: List[TemperatureField], bounds: List[HPBounds], result_bounds: List[HPBounds]):
     t = TaylorInterpolatedField(info)
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
