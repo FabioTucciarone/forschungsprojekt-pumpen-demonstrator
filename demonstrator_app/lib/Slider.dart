@@ -35,13 +35,9 @@ class PressureSlider extends StatefulWidget {
 
 class _PressureSliderState extends State<PressureSlider> {
   final List<Color> colorsGradient = [
-    const Color.fromARGB(255, 182, 2, 2),
-    const Color.fromARGB(255, 255, 0, 0),
-    const Color.fromARGB(255, 244, 153, 153),
+    const Color.fromARGB(255, 204, 51, 51),
     const Color.fromARGB(255, 255, 255, 255),
-    const Color.fromARGB(255, 64, 141, 235),
-    const Color.fromARGB(255, 0, 115, 255),
-    const Color.fromARGB(255, 2, 69, 152),
+    const Color.fromARGB(255, 4, 48, 97),
   ];
   double sliderPos = 0;
 
