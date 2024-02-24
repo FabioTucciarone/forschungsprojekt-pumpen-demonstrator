@@ -1,19 +1,18 @@
 import time
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.image import AxesImage
 import numpy as np
-import sys
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm.auto import tqdm
 import random
 import requests
-import csv
 import traceback 
-from pathlib import Path
 from os import path
-from typing import Callable
-from typing import Dict, List, Tuple, Any, Union
+import sys
+import csv
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.image import AxesImage
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from pathlib import Path
+from typing import Dict, List, Tuple, Any, Union, Callable
 
 from groundtruth_data import DatasetInfo, DataPoint, load_temperature_field
 import generate_groundtruth as gt
@@ -379,4 +378,6 @@ def main():
    
     
 if __name__ == "__main__":
-    main()
+    test_1hp_model_communication(True)
+    test_2hp_model_communication(True)
+    #main()

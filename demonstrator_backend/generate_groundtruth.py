@@ -1,12 +1,11 @@
 import numpy as np
 import torch
+from multiprocessing import Pool
+from itertools import repeat
+from typing import Dict, List, Tuple, Any, Union
 
 from groundtruth_data import DataPoint, DatasetInfo, HPBounds, load_temperature_field_raw
 from extrapolation import TemperatureField, TaylorInterpolatedField, PolyInterpolatedField
-from multiprocessing import Pool
-from itertools import repeat
-
-from typing import Dict, List, Tuple, Any, Union
 
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint) -> float:
