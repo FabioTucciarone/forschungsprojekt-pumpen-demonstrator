@@ -27,7 +27,7 @@ class DatasetInfo:
     datapoints: list = None
     threshold_temp: float = None
     dims: list = None
-    hp_pos: tuple[int, int] = None
+    hp_pos: tuple = None
 
     def __post_init__(self):
         self.datapoints = load_data_points(self.dataset_path)

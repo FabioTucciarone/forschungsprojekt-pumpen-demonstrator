@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import scipy as sp
 from scipy.interpolate import RectBivariateSpline
 import numpy as np
 import os
@@ -19,15 +18,14 @@ class TemperatureField:
             self.T = load_temperature_field(info, run_index)
         self.info = info
 
-
     def at(self, i: float, j: float):
         pass
 
     def set(self, i: int, j: int, value: float):
         self.T[i][j] = value
 
+
 class PolyInterpolatedField(TemperatureField):
-    
     interp: RectBivariateSpline
     max: float
 
@@ -215,7 +213,6 @@ class TaylorInterpolatedField(TemperatureField):
             y += 1/2 * (idd * (i - i0)**2 + 2 * ijdd * (j - j0)*(i - i0) + jdd * (j - j0)**2) * h**2 
 
         return max(y, 10.6)
-
 
     def at(self, i: float, j: float):
         return self.get_values(i, j)

@@ -1,13 +1,10 @@
-import os
 import numpy as np
 import torch
 
 from groundtruth_data import DataPoint, DatasetInfo, HPBounds, load_temperature_field_raw
-from extrapolation import TaylorInterpolatedField, PolyInterpolatedField
+from extrapolation import TemperatureField, TaylorInterpolatedField, PolyInterpolatedField
 from multiprocessing import Pool
 from itertools import repeat
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint):
     """
@@ -157,7 +154,7 @@ def calculate_barycentric_weights(info: DatasetInfo, triangle_i: list, x: DataPo
     return (w1, w2, w3)
 
 
-def calculate_hp_bounds(info, temp_field):
+def calculate_hp_bounds(info: DatasetInfo, temp_field: TemperatureField):
     bounds = HPBounds()
 
     for j in range(0, info.hp_pos[1]):
@@ -200,7 +197,7 @@ def calculate_hp_bounds(info, temp_field):
     return bounds
 
 
-def get_result_bounds(bounds, weights):
+def get_result_bounds(bounds: list, weights: list):
     result_bounds = HPBounds()
     result_bounds.x0 = weights[0] * bounds[0].x0 + weights[1] * bounds[1].x0 + weights[2] * bounds[2].x0
     result_bounds.x1 = weights[0] * bounds[0].x1 + weights[1] * bounds[1].x1 + weights[2] * bounds[2].x1
@@ -228,7 +225,7 @@ def interpolate_experimental(info: DatasetInfo, triangle_i: list, weights: list)
     return {"Temperature [C]": torch.tensor(result).unsqueeze(2)}
 
 
-def transform_fields(info, temp_fields, bounds, result_bounds):
+def transform_fields(info: DatasetInfo, temp_fields: list, bounds: list, result_bounds: list):
     t = TaylorInterpolatedField(info)
     for j in range(info.dims[1]):
         for i in range(info.dims[0]):
@@ -237,7 +234,7 @@ def transform_fields(info, temp_fields, bounds, result_bounds):
     return t
 
 
-def get_sample_indices(hp_pos, i, j, bounds: HPBounds, result_bounds: HPBounds):
+def get_sample_indices(hp_pos: list, i: int, j: int, bounds: HPBounds, result_bounds: HPBounds):
     it = hp_pos[0]
     jt = hp_pos[1]
     if i < hp_pos[0]:

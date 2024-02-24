@@ -10,6 +10,7 @@ import generate_groundtruth as gt
 from dataclasses import dataclass
 import base64
 from matplotlib.colors import LinearSegmentedColormap
+from typing import Any
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
@@ -85,11 +86,11 @@ class ReturnData:
         return self.encode_image(image_bytes)
     
 
-    def set_return_value(self, key, value):
+    def set_return_value(self, key: str, value: Any):
         self.return_values[key] = value
     
 
-    def get_return_value(self, key):
+    def get_return_value(self, key: str):
         return self.return_values[key]
 
 
@@ -248,7 +249,7 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
     return return_data
 
 
-def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp):
+def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp: list):
     """
     Prepare a dataset and run the model of the second stage.
 
