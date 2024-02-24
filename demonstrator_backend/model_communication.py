@@ -217,7 +217,8 @@ class ModelConfiguration:
         return [k_info["min"], k_info["max"]], [p_info["min"], p_info["max"]]
 
 
-import prepare_and_visualize as prep_vis
+import prepare_input as pre
+import visualize_output as vis
 
 def get_1hp_model_results(config: ModelConfiguration, permeability: float, pressure: float) -> ReturnData:
     """
@@ -240,8 +241,8 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
 
     config.model_1hp.eval()
 
-    (x, y, method, norm) = prep_vis.prepare_demonstrator_input_1hp(config, permeability, pressure)
-    return_data = prep_vis.get_1hp_plots(config, x, y, norm)
+    (x, y, method, norm) = pre.prepare_demonstrator_input_1hp(config, permeability, pressure)
+    return_data = vis.get_1hp_plots(config, x, y, norm)
     return_data.set_return_value("groundtruth_method", method)
     return return_data
 
@@ -272,9 +273,10 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     pos_fix = [corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)]
     pos_var = [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]
 
+
     positions = (pos_fix, pos_var)
 
     config.model_2hp.to(config.device)
 
-    hp_inputs, corners_ll = prep_vis.prepare_demonstrator_input_2hp(config, pressure, permeability, positions)
-    return prep_vis.get_2hp_plots(config, hp_inputs, corners_ll, corner_dist)
+    hp_inputs, corners_ll = pre.prepare_demonstrator_input_2hp(config, pressure, permeability, positions)
+    return vis.get_2hp_plots(config, hp_inputs, corners_ll, corner_dist)
