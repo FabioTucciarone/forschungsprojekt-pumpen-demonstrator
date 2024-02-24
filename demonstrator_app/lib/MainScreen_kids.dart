@@ -17,7 +17,7 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
       fit: BoxFit.contain,
       child: SizedBox(
         width: 1350,
-        height: 750,
+        height: 720,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(

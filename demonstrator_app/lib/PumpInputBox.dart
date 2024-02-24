@@ -32,7 +32,6 @@ class PumpInputBox extends StatefulWidget {
 
 class _PumpInputBoxState extends State<PumpInputBox> {
   Offset pumpPos = const Offset(10, 10);
-  double opacity = 0.0;
   final ResponseDecoder responseDecoder = ResponseDecoder();
 
   @override
@@ -74,10 +73,12 @@ class _PumpInputBoxState extends State<PumpInputBox> {
 
   /// Builds a stack consisting of the output and the input box for the position of the second heat pump.
   /// The sending of the selected data is triggered when the pointer is released or clicked. The position is corrected
-  /// whenever the pointer is moved or the input box is clicked. The pointer appears when the cursor hovers over the input box.
+  /// whenever the pointer is moved or the input box is clicked.
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifierPhase2>().future;
+    double top = 41;
+    double left = 58;
     return SizedBox(
       width: 1600,
       height: 200,
@@ -90,38 +91,46 @@ class _PumpInputBoxState extends State<PumpInputBox> {
               Widget child;
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
-                  child = Container(
-                    width: widget.width,
-                    height: widget.height,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.red,
-                        width: 2,
+                  child = Positioned(
+                    top: top,
+                    left: left,
+                    child: Container(
+                      width: widget.width,
+                      height: widget.height,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.red,
+                          width: 2,
+                        ),
                       ),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'ERROR',
-                        style: TextStyle(color: Colors.red),
+                      child: const Center(
+                        child: Text(
+                          'ERROR',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ),
                   );
                   print('Error ${snapshot.error} occured');
                 } else {
                   if (snapshot.data == "keinWert") {
-                    child = Container(
-                      width: widget.width,
-                      height: widget.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Center(
-                        child: widget.children
-                            ? const Text(
-                                "Kein Wert bis jetzt",
-                              )
-                            : const Text('No value so far'),
+                    child = Positioned(
+                      top: top,
+                      left: left,
+                      child: Container(
+                        width: widget.width,
+                        height: widget.height,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: Center(
+                          child: widget.children
+                              ? const Text(
+                                  "Kein Wert bis jetzt",
+                                )
+                              : const Text('No value so far'),
+                        ),
                       ),
                     );
                   } else {
@@ -131,19 +140,23 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                   }
                 }
               } else {
-                child = Container(
-                  width: widget.width,
-                  height: widget.height,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: const SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: OurColors.accentColor,
+                child = Positioned(
+                  top: top,
+                  left: left,
+                  child: Container(
+                    width: widget.width,
+                    height: widget.height,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: const SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: OurColors.accentColor,
+                        ),
                       ),
                     ),
                   ),
@@ -153,15 +166,9 @@ class _PumpInputBoxState extends State<PumpInputBox> {
             },
           ),
           Positioned(
-            top: 21,
-            left: 78,
+            top: top,
+            left: left,
             child: MouseRegion(
-              onEnter: (event) => setState(() {
-                opacity = 1.0;
-              }),
-              onExit: (event) => setState(() {
-                opacity = 0.0;
-              }),
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onPanStart: (DragStartDetails details) {
@@ -198,7 +205,7 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                     border: Border.all(width: 0.5, color: Colors.black),
                   ),
                   child: CustomPaint(
-                    painter: PointerThumb(pumpPos, opacity),
+                    painter: PointerThumb(pumpPos),
                   ),
                 ),
               ),
@@ -213,15 +220,13 @@ class _PumpInputBoxState extends State<PumpInputBox> {
 /// Class for the appearance and position of the pointer.
 class PointerThumb extends CustomPainter {
   final Offset pos;
-  double opacity;
-  PointerThumb(this.pos, this.opacity);
+  PointerThumb(this.pos);
 
-  /// Paints the pointer in the shape of a circle. [pos] is used to put the pointer at the position
-  /// the user chooses and [opacity] determines whether the circle is visible or not.
+  /// Paints the pointer in the shape of a circle. [pos] is used to put the pointer at the position the user chooses.
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawCircle(
-        pos, 6, Paint()..color = Color.fromRGBO(255, 0, 0, opacity));
+        pos, 6, Paint()..color = const Color.fromRGBO(255, 0, 0, 0.8));
   }
 
   @override

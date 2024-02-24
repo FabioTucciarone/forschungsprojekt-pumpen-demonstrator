@@ -102,6 +102,13 @@ class _MainMaterialState extends State<MainMaterial> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Icon(
+                        Icons.person,
+                        color: OurColors.appBarTextColor,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
                       Text(
                         MainMaterial.name,
                         style: const TextStyle(
@@ -131,6 +138,9 @@ class _MainMaterialState extends State<MainMaterial> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.info),
+                    SizedBox(
+                      width: 8,
+                    ),
                     Text("Infotext"),
                   ],
                 ),
@@ -138,6 +148,9 @@ class _MainMaterialState extends State<MainMaterial> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.device_thermostat),
+                    const SizedBox(
+                      width: 6,
+                    ),
                     widget.widget.children
                         ? const Text("Eine Wärmepumpe")
                         : const Text('Single Heat Pump'),
@@ -148,6 +161,9 @@ class _MainMaterialState extends State<MainMaterial> {
                   children: [
                     const Icon(Icons.device_thermostat),
                     const Icon(Icons.device_thermostat),
+                    const SizedBox(
+                      width: 6,
+                    ),
                     widget.widget.children
                         ? const Text("Zwei Wärmepumpen")
                         : const Text('Interaction of heat plumes'),
@@ -234,7 +250,8 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
 }
 
 /// Mixin for the elements of the main screen consisting of 2 sliders for pressure and permeability and
-/// the output boxes for the ai generated output, groundtruth and difference field.
+/// the output boxes for the ai generated output, groundtruth and difference field or the pump input box
+/// if it is phase 2.
 mixin MainScreenElements {
   static PressureSlider pressureSlider = PressureSlider(
       900,
@@ -338,8 +355,8 @@ mixin MainScreenElements {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           heatPumpBox = PumpInputBox(
-              width: 1130,
-              height: 134,
+              width: 1157,
+              height: 94,
               valueRange: snapshot.data,
               children: false);
           child = heatPumpBox;

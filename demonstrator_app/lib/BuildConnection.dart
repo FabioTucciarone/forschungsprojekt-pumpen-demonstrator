@@ -65,7 +65,7 @@ class _RegisterState extends State<RegisterBox> {
                 controller: username,
                 decoration: InputDecoration(
                   hintText: 'Benutzername',
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person),
                   prefixIconColor: MaterialStateColor.resolveWith(
                       (Set<MaterialState> states) {
                     if (states.contains(MaterialState.focused)) {
@@ -122,7 +122,7 @@ class _RegisterState extends State<RegisterBox> {
                     }
                     return Colors.grey;
                   }),
-                  prefixIcon: Icon(Icons.key),
+                  prefixIcon: const Icon(Icons.key),
                   prefixIconColor: MaterialStateColor.resolveWith(
                       (Set<MaterialState> states) {
                     if (states.contains(MaterialState.focused)) {

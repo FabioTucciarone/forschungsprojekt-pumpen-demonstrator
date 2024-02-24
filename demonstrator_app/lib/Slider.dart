@@ -1,3 +1,4 @@
+import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/MainScreen.dart';
 
 import 'Layout.dart';
@@ -54,7 +55,7 @@ class _PressureSliderState extends State<PressureSlider> {
   double getStart() {
     double start = 0;
     if (widget.name == SliderType.pressure) {
-      start = widget.valueRange?["pressure_range"][0];
+      start = widget.valueRange?["pressure_range"][1];
     } else {
       start = widget.valueRange?["permeability_range"][0];
     }
@@ -65,7 +66,7 @@ class _PressureSliderState extends State<PressureSlider> {
   double getEnd() {
     double end = 0;
     if (widget.name == SliderType.pressure) {
-      end = widget.valueRange?["pressure_range"][1];
+      end = widget.valueRange?["pressure_range"][0];
     } else {
       end = widget.valueRange?["permeability_range"][1];
     }
@@ -100,8 +101,8 @@ class _PressureSliderState extends State<PressureSlider> {
   /// Gets the value and parameter name to display. If the slider is used for the children version then
   /// the parameter name is given in German otherwise in English. The number of the value's decimal places
   /// is limited to three.
-  Widget getDisplayOfValues(
-      SliderType name, double currentValue, bool children) {
+  Widget getDisplayOfValues(SliderType name, double currentValue, bool children,
+      bool displayIdentifier) {
     String identifier = '';
     String unit = '';
     if (name == SliderType.pressure) {
@@ -110,7 +111,7 @@ class _PressureSliderState extends State<PressureSlider> {
       } else {
         identifier = 'Pressure';
       }
-      unit = 'Pa';
+      unit = '';
     } else {
       if (children) {
         identifier = 'Durchlässigkeit';
@@ -125,12 +126,60 @@ class _PressureSliderState extends State<PressureSlider> {
       value = value * 10;
       exp++;
     }
-    currentValue =
-        (currentValue * pow(10, 3 + exp)).round().toDouble() / pow(10, 3 + exp);
-    return Text(
-      '$identifier: ${currentValue.abs()} $unit',
-      textScaleFactor: 1.2,
-    );
+    if (name == SliderType.pressure) {
+      currentValue = ((currentValue * pow(10, 2 + exp)).round().toDouble() /
+              pow(10, 2 + exp))
+          .abs();
+    } else {
+      currentValue = ((log(currentValue) / ln10) * 100).round() / 100;
+    }
+    if (displayIdentifier) {
+      return Text(
+        identifier,
+        style: const TextStyle(
+            fontWeight: FontWeight.bold, color: OurColors.textColor),
+        textScaleFactor: 1.2,
+      );
+    } else {
+      return Text(
+        '$currentValue $unit',
+        textScaleFactor: 1.2,
+      );
+    }
+  }
+
+  Widget getValueContainer(SliderType name, bool children) {
+    if (name != SliderType.dummy) {
+      if (children) {
+        return Container(
+          width: 60,
+          height: 30,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(200, 200, 200, 0.5),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: const Text(
+            'wenig',
+            textScaleFactor: 1.2,
+          ),
+        );
+      } else {
+        return Container(
+          width: 100,
+          height: 30,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(200, 200, 200, 0.5),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: getDisplayOfValues(
+              name, widget.currentValue, widget.children, false),
+        );
+      }
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   /// Builds a row consisting of the displayed value and the slider. The sending of the selected data is triggered
@@ -145,115 +194,144 @@ class _PressureSliderState extends State<PressureSlider> {
       children: <Widget>[
         (widget.name != SliderType.dummy)
             ? Container(
-                constraints: const BoxConstraints(minWidth: 250),
+                constraints: const BoxConstraints(minWidth: 150),
                 child: getDisplayOfValues(
-                    widget.name, widget.currentValue, widget.children))
+                    widget.name, widget.currentValue, widget.children, true),
+              )
             : const SizedBox.shrink(),
-        Center(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragStart: (DragStartDetails details) {
-              correctingPosition(details.localPosition.dx);
-            },
-            onHorizontalDragUpdate: (DragUpdateDetails details) {
-              correctingPosition(details.localPosition.dx);
-            },
-            onTapDown: (TapDownDetails details) {
-              correctingPosition(details.localPosition.dx);
-            },
-            onHorizontalDragEnd: (DragEndDetails details) {
-              if (widget.name == SliderType.pressure) {
-                if (widget.firstPhase) {
-                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                      .sendInputData(
-                          MainScreenElements.permeabilitySlider.getCurrent(),
-                          widget.currentValue,
-                          MainMaterial.getName()));
-                } else {
-                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
-                      .sendInputDataPhase2(
-                          MainScreenElements.permeabilitySlider.getCurrent(),
-                          widget.currentValue,
-                          MainMaterial.getName(), [
-                    MainScreenElements.heatPumpBox.getCurrent().dx,
-                    MainScreenElements.heatPumpBox.getCurrent().dy
-                  ]));
+        Row(
+          children: <Widget>[
+            getValueContainer(widget.name, widget.children),
+            const SizedBox(
+              width: 10,
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragStart: (DragStartDetails details) {
+                correctingPosition(details.localPosition.dx);
+              },
+              onHorizontalDragUpdate: (DragUpdateDetails details) {
+                correctingPosition(details.localPosition.dx);
+              },
+              onTapDown: (TapDownDetails details) {
+                correctingPosition(details.localPosition.dx);
+              },
+              onHorizontalDragEnd: (DragEndDetails details) {
+                if (widget.name == SliderType.pressure) {
+                  if (widget.firstPhase) {
+                    MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                        .sendInputData(
+                            MainScreenElements.permeabilitySlider.getCurrent(),
+                            widget.currentValue,
+                            MainMaterial.getName()));
+                  } else {
+                    MainSlide.futureNotifierPhase2.setFuture(
+                        useOfBackend.backend.sendInputDataPhase2(
+                            MainScreenElements.permeabilitySlider.getCurrent(),
+                            widget.currentValue,
+                            MainMaterial.getName(), [
+                      MainScreenElements.heatPumpBox.getCurrent().dx,
+                      MainScreenElements.heatPumpBox.getCurrent().dy
+                    ]));
+                  }
+                  MainSlide.restartTimer.restartTimer();
+                } else if (widget.name == SliderType.permeability) {
+                  if (widget.firstPhase) {
+                    MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                        .sendInputData(
+                            widget.currentValue,
+                            MainScreenElements.pressureSlider.getCurrent(),
+                            MainMaterial.getName()));
+                  } else {
+                    MainSlide.futureNotifierPhase2.setFuture(
+                        useOfBackend.backend.sendInputDataPhase2(
+                            widget.currentValue,
+                            MainScreenElements.pressureSlider.getCurrent(),
+                            MainMaterial.getName(), [
+                      MainScreenElements.heatPumpBox.getCurrent().dx,
+                      MainScreenElements.heatPumpBox.getCurrent().dy
+                    ]));
+                  }
+                  MainSlide.restartTimer.restartTimer();
                 }
-                MainSlide.restartTimer.restartTimer();
-              } else if (widget.name == SliderType.permeability) {
-                if (widget.firstPhase) {
-                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                      .sendInputData(
-                          widget.currentValue,
-                          MainScreenElements.pressureSlider.getCurrent(),
-                          MainMaterial.getName()));
-                } else {
-                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
-                      .sendInputDataPhase2(
-                          widget.currentValue,
-                          MainScreenElements.pressureSlider.getCurrent(),
-                          MainMaterial.getName(), [
-                    MainScreenElements.heatPumpBox.getCurrent().dx,
-                    MainScreenElements.heatPumpBox.getCurrent().dy
-                  ]));
+              },
+              onTapUp: (TapUpDetails details) {
+                if (widget.name == SliderType.pressure) {
+                  if (widget.firstPhase) {
+                    MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                        .sendInputData(
+                            MainScreenElements.permeabilitySlider.getCurrent(),
+                            widget.currentValue,
+                            MainMaterial.getName()));
+                  } else {
+                    MainSlide.futureNotifierPhase2.setFuture(
+                        useOfBackend.backend.sendInputDataPhase2(
+                            MainScreenElements.permeabilitySlider.getCurrent(),
+                            widget.currentValue,
+                            MainMaterial.getName(), [
+                      MainScreenElements.heatPumpBox.getCurrent().dx,
+                      MainScreenElements.heatPumpBox.getCurrent().dy
+                    ]));
+                  }
+                  MainSlide.restartTimer.restartTimer();
+                } else if (widget.name == SliderType.permeability) {
+                  if (widget.firstPhase) {
+                    MainSlide.futureNotifier.setFuture(useOfBackend.backend
+                        .sendInputData(
+                            widget.currentValue,
+                            MainScreenElements.pressureSlider.getCurrent(),
+                            MainMaterial.getName()));
+                  } else {
+                    MainSlide.futureNotifierPhase2.setFuture(
+                        useOfBackend.backend.sendInputDataPhase2(
+                            widget.currentValue,
+                            MainScreenElements.pressureSlider.getCurrent(),
+                            MainMaterial.getName(), [
+                      MainScreenElements.heatPumpBox.getCurrent().dx,
+                      MainScreenElements.heatPumpBox.getCurrent().dy
+                    ]));
+                  }
+                  MainSlide.restartTimer.restartTimer();
                 }
-                MainSlide.restartTimer.restartTimer();
-              }
-            },
-            onTapUp: (TapUpDetails details) {
-              if (widget.name == SliderType.pressure) {
-                if (widget.firstPhase) {
-                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                      .sendInputData(
-                          MainScreenElements.permeabilitySlider.getCurrent(),
-                          widget.currentValue,
-                          MainMaterial.getName()));
-                } else {
-                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
-                      .sendInputDataPhase2(
-                          MainScreenElements.permeabilitySlider.getCurrent(),
-                          widget.currentValue,
-                          MainMaterial.getName(), [
-                    MainScreenElements.heatPumpBox.getCurrent().dx,
-                    MainScreenElements.heatPumpBox.getCurrent().dy
-                  ]));
-                }
-                MainSlide.restartTimer.restartTimer();
-              } else if (widget.name == SliderType.permeability) {
-                if (widget.firstPhase) {
-                  MainSlide.futureNotifier.setFuture(useOfBackend.backend
-                      .sendInputData(
-                          widget.currentValue,
-                          MainScreenElements.pressureSlider.getCurrent(),
-                          MainMaterial.getName()));
-                } else {
-                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
-                      .sendInputDataPhase2(
-                          widget.currentValue,
-                          MainScreenElements.pressureSlider.getCurrent(),
-                          MainMaterial.getName(), [
-                    MainScreenElements.heatPumpBox.getCurrent().dx,
-                    MainScreenElements.heatPumpBox.getCurrent().dy
-                  ]));
-                }
-                MainSlide.restartTimer.restartTimer();
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Container(
-                width: widget.sliderWidth,
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.black),
-                  gradient: LinearGradient(colors: colorsGradient),
-                ),
-                child: CustomPaint(
-                  painter: SliderThumb(sliderPos),
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Container(
+                  width: widget.sliderWidth,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    gradient: LinearGradient(colors: colorsGradient),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Colors.grey, spreadRadius: 0.8, blurRadius: 8),
+                    ],
+                  ),
+                  child: CustomPaint(
+                    painter: SliderThumb(sliderPos),
+                  ),
                 ),
               ),
             ),
-          ),
+            const SizedBox(
+              width: 10,
+            ),
+            (widget.children && (widget.name != SliderType.dummy))
+                ? Container(
+                    width: 60,
+                    height: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(200, 200, 200, 0.5),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Text(
+                      'viel',
+                      textScaleFactor: 1.2,
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ],
         ),
       ],
     );
