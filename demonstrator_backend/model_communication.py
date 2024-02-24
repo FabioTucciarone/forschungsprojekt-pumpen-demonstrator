@@ -240,8 +240,8 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
 
     config.model_1hp.eval()
 
-    (x, y, method, norm) = prep_vis.prepare_demonstrator_input(config, permeability, pressure)
-    return_data = prep_vis.get_plots(config, x, y, norm)
+    (x, y, method, norm) = prep_vis.prepare_demonstrator_input_1hp(config, permeability, pressure)
+    return_data = prep_vis.get_1hp_plots(config, x, y, norm)
     return_data.set_return_value("groundtruth_method", method)
     return return_data
 

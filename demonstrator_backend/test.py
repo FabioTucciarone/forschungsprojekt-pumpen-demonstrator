@@ -378,6 +378,4 @@ def main():
    
     
 if __name__ == "__main__":
-    test_1hp_model_communication(True)
-    test_2hp_model_communication(True)
-    #main()
+    main()

@@ -1,35 +1,24 @@
 import sys
 import os
-import io
-from pathlib import Path
-import yaml
 import torch
 import numpy as np
-from matplotlib.figure import Figure
-from matplotlib.colors import LinearSegmentedColormap
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import base64
-from dataclasses import dataclass
 from typing import Dict, List, Tuple, Any, Union
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
-import generate_groundtruth as gt
-from networks.unet import UNet
-
+from generate_groundtruth import generate_groundtruth
 import utils.visualization as visualize
 import preprocessing.prepare_1ststage as prep_1hp
 import preprocessing.prepare_2ndstage as prep_2hp
-from data_stuff.transforms import (ComposeTransform, NormalizeTransform,
-                             PowerOfTwoTransform, ReduceTo2DTransform,
-                             SignedDistanceTransform, ToTensorTransform)
+from data_stuff.transforms import NormalizeTransform, ToTensorTransform
 from domain_classes.heat_pump import HeatPump
-from torch import stack, load, unsqueeze, save, Tensor
+from torch import stack, Tensor
 import domain_classes.domain as domain
 
 from model_communication import ModelConfiguration, ReturnData
 
-def prepare_demonstrator_input(config: ModelConfiguration, permeability: float, pressure: float):
+
+def prepare_demonstrator_input_1hp(config: ModelConfiguration, permeability: float, pressure: float) -> Tuple[dict, dict, str, NormalizeTransform]:
     """
     Generate a prepared dataset directly from the input parameters of the demonstrator app.
     The input preperation is based on the gksi-input with a fixed position.
@@ -49,7 +38,7 @@ def prepare_demonstrator_input(config: ModelConfiguration, permeability: float, 
     x["SDF"][9][23][0] = 2
     x["Material ID"] = x["SDF"]
 
-    y, method = gt.generate_groundtruth(config.dataset_info, permeability, pressure)
+    y, method = generate_groundtruth(config.dataset_info, permeability, pressure)
 
     loc_hp = prep_1hp.get_hp_location(x)
     x = transforms(x, loc_hp=loc_hp)
@@ -63,7 +52,8 @@ def prepare_demonstrator_input(config: ModelConfiguration, permeability: float, 
 
     return x, y, method, norm
 
-def prepare_demonstrator_input_2hp(config: ModelConfiguration, pressure: float, permeability: float, positions: list):
+
+def prepare_demonstrator_input_2hp(config: ModelConfiguration, pressure: float, permeability: float, positions: List[int]) -> Tuple[Tensor, list]:
     """
     assumptions:
     - 1hp-boxes are generated already
@@ -78,8 +68,8 @@ def prepare_demonstrator_input_2hp(config: ModelConfiguration, pressure: float, 
 
     return hp_inputs, corner_ll
 
-# Vorbedingung: # Pressure Gradient [-] oder Permeability X [m^2] in [0,1]
-def build_inputs(config, pressure, permeability, positions):
+
+def build_inputs(config: ModelConfiguration, pressure: float, permeability: float, positions: List[int]) -> Tuple[List[HeatPump], list]:
 
     pos_hps = [torch.tensor(positions[0]), torch.tensor(positions[1])]
 
@@ -100,7 +90,6 @@ def build_inputs(config, pressure, permeability, positions):
 
     norm = NormalizeTransform(config.model_1hp_info)
     inputs = norm(inputs, "Inputs")
-
 
     size_hp_box = torch.tensor([config.model_1hp_info["CellsNumber"][0], config.model_1hp_info["CellsNumber"][1],])
     distance_hp_corner = torch.tensor([config.model_1hp_info["PositionLastHP"][1], config.model_1hp_info["PositionLastHP"][0]-2])
@@ -138,7 +127,7 @@ def build_inputs(config, pressure, permeability, positions):
     return hp_boxes, corners_ll
 
 
-def prepare_hp_boxes_demonstrator(config, single_hps: List[HeatPump]):
+def prepare_hp_boxes_demonstrator(config: ModelConfiguration, single_hps: List[HeatPump]) -> Tensor:
     hp: prep_2hp.HeatPump
     hp_inputs = []
 
@@ -159,7 +148,7 @@ def prepare_hp_boxes_demonstrator(config, single_hps: List[HeatPump]):
     return stack(hp_inputs)
 
 
-def get_plots(config: ModelConfiguration, x: torch.Tensor, y: torch.Tensor, norm) -> ReturnData:
+def get_1hp_plots(config: ModelConfiguration, x: torch.Tensor, y: torch.Tensor, norm: NormalizeTransform) -> ReturnData:
 
     x = torch.unsqueeze(x, 0)
     y_out = config.model_1hp(x).to(config.device)
@@ -180,7 +169,6 @@ def get_plots(config: ModelConfiguration, x: torch.Tensor, y: torch.Tensor, norm
 
 
 def get_2hp_plots(config: ModelConfiguration, hp_inputs, corners_ll, corner_dist) -> ReturnData:
-    # TODO: Hier noch langsam
 
     size_hp_box = config.model_2hp_info["CellsNumberPrior"]
     image_shape = config.model_2hp_info["OutFieldShape"]
