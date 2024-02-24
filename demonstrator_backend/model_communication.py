@@ -1,25 +1,21 @@
+import sys
 import os
 import io
-import numpy as np
 from pathlib import Path
-import sys
-import torch
-from matplotlib.figure import Figure
 import yaml
-import generate_groundtruth as gt
-from dataclasses import dataclass
-import base64
+import torch
+import numpy as np
+from matplotlib.figure import Figure
 from matplotlib.colors import LinearSegmentedColormap
-from typing import Any, Union
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import base64
+from dataclasses import dataclass
+from typing import Dict, List, Tuple, Any, Union
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "1HP_NN"))
 
-import utils.visualization as visualize
+import generate_groundtruth as gt
 from networks.unet import UNet
-import preprocessing.prepare_1ststage as prep_1hp
-import preprocessing.prepare_2ndstage as prep_2hp
-from utils.prepare_paths import Paths2HP
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 @dataclass
@@ -103,10 +99,11 @@ class ModelConfiguration:
 
     device: str = "cpu"
     inputs: str = "gksi1000"
-    paths2HP: Paths2HP = None
     dataset_info: gt.DatasetInfo = None
     model_1hp_info: dict = None
     model_2hp_info: dict = None
+    model_1hp: UNet = None
+    model_2hp: UNet = None
     color_palette: ColorPalette = None
 
 
@@ -128,8 +125,6 @@ class ModelConfiguration:
         self.model_2hp = UNet(in_channels=2).float() # TODO: Achtung: Fest gekodet
         self.model_2hp.load(model_2hp_dir, self.device)
 
-        self.dataset_info = gt.DatasetInfo(self.paths2HP.raw_path, 10.6)
-
         size_hp_box = self.model_2hp_info["CellsNumberPrior"]
         domain_shape = self.model_2hp_info["CellsNumber"]
 
@@ -147,7 +142,7 @@ class ModelConfiguration:
         self.color_palette = ColorPalette()
 
 
-    def set_paths_and_settings(self):
+    def set_paths_and_settings(self) -> None:
         """
         Configures all paths of the project.
         - Read paths from paths.yaml if available.
@@ -202,16 +197,16 @@ class ModelConfiguration:
         if not os.path.exists(default_raw_1hp_dir / "inputs" / "settings.yaml"):
             raise FileNotFoundError(f'1HP raw dataset has no "{Path("inputs", "settings.yaml")}"') 
 
-        self.paths2HP = Paths2HP(default_raw_1hp_dir, "", "", model_1hp_dir, "")
+        self.dataset_info = gt.DatasetInfo(default_raw_1hp_dir, 10.6)
 
         return model_1hp_dir, model_2hp_dir
 
 
-    def set_color_palette(self, color_palette: ColorPalette):
+    def set_color_palette(self, color_palette: ColorPalette) -> None:
         self.color_palette = color_palette
 
 
-    def get_value_ranges(self):
+    def get_value_ranges(self) -> List[List[float]]:
         """
         Get the value ranges supported by the used model in the following format:
         [ [min permeability, max permeability], [min pressure, max pressure] ]
@@ -222,7 +217,10 @@ class ModelConfiguration:
         return [k_info["min"], k_info["max"]], [p_info["min"], p_info["max"]]
 
 
-def get_1hp_model_results(config: ModelConfiguration, permeability: float, pressure: float):
+import prepare_input as pre
+import visualize_output as vis
+
+def get_1hp_model_results(config: ModelConfiguration, permeability: float, pressure: float) -> ReturnData:
     """
     Prepare a dataset and run the model.
 
@@ -243,13 +241,13 @@ def get_1hp_model_results(config: ModelConfiguration, permeability: float, press
 
     config.model_1hp.eval()
 
-    (x, y, method, norm) = prep_1hp.prepare_demonstrator_input(config.paths2HP, config.dataset_info, permeability, pressure, config.model_1hp_info, config.device)
-    return_data = visualize.get_plots(config.model_1hp, x, y, config.model_1hp_info, norm, config.color_palette)
+    (x, y, method, norm) = pre.prepare_demonstrator_input_1hp(config, permeability, pressure)
+    return_data = vis.get_1hp_plots(config, x, y, norm)
     return_data.set_return_value("groundtruth_method", method)
     return return_data
 
 
-def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp: list):
+def get_2hp_model_results(config: ModelConfiguration, permeability: float, pressure: float, pos_2nd_hp: Tuple[int, int]) -> ReturnData:
     """
     Prepare a dataset and run the model of the second stage.
 
@@ -259,7 +257,7 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
         The permeability input parameter of the demonstrator app.
     pressure: float
         The pressure input parameter of the demonstrator app.
-    pos_2nd_hp: list[int]
+    pos_2nd_hp: tuple[int, int]
         Position describing the pixel position of the heat pump in the range of ModelConfiguration::model_2hp_info["OutFieldShape"]
 
     Returns
@@ -267,6 +265,7 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     return_data: ReturnData
         ReturnData object containing "model_result" (Figure)
     """
+
     corner_dist = [0, 0]
     corner_dist[0] = max(config.model_1hp_info["PositionLastHP"][0], config.model_2hp_info["OutFieldOffset"][0])
     corner_dist[1] = max(config.model_1hp_info["PositionLastHP"][1], config.model_2hp_info["OutFieldOffset"][1])
@@ -274,9 +273,10 @@ def get_2hp_model_results(config: ModelConfiguration, permeability: float, press
     pos_fix = [corner_dist[1] + min(field_shape_2hp[0], 50), corner_dist[0] + int(field_shape_2hp[1] / 2)]
     pos_var = [corner_dist[1] + pos_2nd_hp[0], corner_dist[0] + pos_2nd_hp[1]]
 
-    positions = [pos_fix, pos_var]
+
+    positions = (pos_fix, pos_var)
 
     config.model_2hp.to(config.device)
 
-    hp_inputs, corners_ll = prep_2hp.prepare_demonstrator_input_2hp(config.model_1hp_info, config.model_2hp_info, config.model_1hp, pressure, permeability, positions, config.device)
-    return visualize.get_2hp_plots(config.model_2hp, config.model_2hp_info, hp_inputs, corners_ll, corner_dist, config.color_palette, config.device)
+    hp_inputs, corners_ll = pre.prepare_demonstrator_input_2hp(config, pressure, permeability, positions)
+    return vis.get_2hp_plots(config, hp_inputs, corners_ll, corner_dist)

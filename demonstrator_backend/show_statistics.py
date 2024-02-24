@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import sys
 
+
 def load_groundtruth_measurements():
     files = {}
     files["Nächster"] = pd.read_csv("measurements/performance_closest.csv")
@@ -62,7 +63,7 @@ def generate_compare_datasets_boxplots(data: dict, fields: list, tick_distances:
         plt.show()
 
 
-def generate_dataset_boxplot(data: dict, fields: list, tick_distance: float, fig_size):
+def generate_dataset_boxplot(data: dict, fields: list, tick_distance: float, fig_size: tuple):
 
     plt.figure(figsize=fig_size)
     plt.grid(color='lightgray', linestyle='-', linewidth=0.5)

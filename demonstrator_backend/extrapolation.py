@@ -3,8 +3,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.interpolate import RectBivariateSpline
 import numpy as np
 import os
+from typing import Dict, List, Tuple, Any, Union
 
 from groundtruth_data import DatasetInfo, load_temperature_field
+
 
 
 class TemperatureField:
@@ -25,6 +27,7 @@ class TemperatureField:
         self.T[i][j] = value
 
 
+
 class PolyInterpolatedField(TemperatureField):
     interp: RectBivariateSpline
     max: float
@@ -35,8 +38,10 @@ class PolyInterpolatedField(TemperatureField):
         Y = list(range(info.dims[1]))
         self.interp = RectBivariateSpline(X, Y, self.T, kx=3, ky=3)
 
+
     def at(self, i: float, j: float):
         return max(10.6, self.interp(i,j))
+
 
     def interpolate_inner_pixel(self, x: float, y: float):
         x1 = int(np.floor(x)) 
@@ -60,7 +65,8 @@ class PolyInterpolatedField(TemperatureField):
         w22 = (x - x1) * (y - y1) / d
 
         return w11 * self.T[x1, y1] + w12 * self.T[x1, y2] + w21 * self.T[x2, y1] + w22 * self.T[x2, y2]
-    
+
+
 
 class TaylorInterpolatedField(TemperatureField):
     h = 1
@@ -90,6 +96,7 @@ class TaylorInterpolatedField(TemperatureField):
         
         return result
 
+
     def get_1st_derivative(self, it: int, jt: int):
         T = self.T
         h = self.h
@@ -105,6 +112,7 @@ class TaylorInterpolatedField(TemperatureField):
         else:           jd = (T[it, jt+1] - T[it, jt-1]) / (2*h)
 
         return id, jd
+
 
     def get_1st_derivative_filter(self, it: int, jt: int):
         T = self.T
@@ -122,6 +130,7 @@ class TaylorInterpolatedField(TemperatureField):
 
         return id, jd
 
+
     def get_2nd_derivative(self, it: int, jt: int):
         T = self.T
         h = self.h
@@ -137,6 +146,7 @@ class TaylorInterpolatedField(TemperatureField):
         else:           jd = (T[it, jt+1] - 2*T[it, jt]   + T[it, jt-1]) / h**2
 
         return id, jd
+
 
     def get_2nd_derivative_filter(self, it: int, jt: int):
         T = self.T
@@ -154,6 +164,7 @@ class TaylorInterpolatedField(TemperatureField):
 
         return id, jd
 
+
     def get_2nd_derivative_higher_order(self, it: int, jt: int):
         T = self.T
         h = self.h
@@ -170,6 +181,7 @@ class TaylorInterpolatedField(TemperatureField):
 
         return id, jd
     
+
     def get_values(self, i: float, j: float, method: int = 0, use_second_order: bool = False):
         T = self.T
         m = T.shape[0]
@@ -214,8 +226,10 @@ class TaylorInterpolatedField(TemperatureField):
 
         return max(y, 10.6)
 
+
     def at(self, i: float, j: float):
         return self.get_values(i, j)
+
 
 
 def main():
@@ -262,6 +276,7 @@ def main():
         plt.colorbar(image, cax = make_axes_locatable(axes[i + 1]).append_axes("right", size="5%", pad=0.05))
 
     plt.show()
+
 
 if __name__ == "__main__":
     main()
