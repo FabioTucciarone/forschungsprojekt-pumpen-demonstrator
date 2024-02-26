@@ -14,7 +14,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Union, Callable
 
-from groundtruth_data import DatasetInfo, DataPoint, load_temperature_field
+from groundtruth_data import DatasetInfo, ParameterPoint, load_temperature_field
+from model_communication import ModelConfiguration
 import generate_groundtruth as gt
 import model_communication as mc
 
@@ -72,7 +73,7 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
     print_all: Whether to print the error values
     """
 
-    model_configuration = mc.ModelConfiguration()
+    model_configuration = ModelConfiguration()
 
     info = model_configuration.dataset_info
     info.visualize = visualize
@@ -115,7 +116,7 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
     print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
 
 
-def test_interpolation_groundtruth(info: DatasetInfo, x: DataPoint, i: int, find_triangle: Callable):
+def test_interpolation_groundtruth(info: DatasetInfo, x: ParameterPoint, i: int, find_triangle: Callable):
     """
     Test some triangle finding algorithm of the input point x against the known data point with the index i.
 
@@ -195,7 +196,7 @@ def test_interpolation_groundtruth(info: DatasetInfo, x: DataPoint, i: int, find
     return average_error, min_error, max_error, b-a
         
 
-def test_closest_groundtruth(info: gt.DatasetInfo, x: gt.DataPoint, i: int):
+def test_closest_groundtruth(info: gt.DatasetInfo, x: ParameterPoint, i: int):
     """
     Exactly like test_interpolation_groundtruth(...) but uses the closest data point as a groundtruth.
     """
@@ -239,7 +240,7 @@ def test_closest_groundtruth(info: gt.DatasetInfo, x: gt.DataPoint, i: int):
 
 def test_1hp_model_communication(visualize: bool=True):
     st1 = time.time()
-    model_configuration = mc.ModelConfiguration()
+    model_configuration = ModelConfiguration()
     et1 = time.time()
 
     k = 7.350276541753949086e-10
@@ -261,7 +262,7 @@ def test_1hp_model_communication(visualize: bool=True):
 
 def test_2hp_model_communication(visualize: bool=True):
     st1 = time.time()
-    model_configuration = mc.ModelConfiguration()
+    model_configuration = ModelConfiguration()
     et1 = time.time()
 
     k = 1.053944076782911543e-09
@@ -312,7 +313,7 @@ def test_installation():
 
     print("TESTING: Initialization")
     try:
-        model_configuration = mc.ModelConfiguration()
+        model_configuration = ModelConfiguration()
         print(f"SUCCESS: All datasets and models found! No errors whilst initializing.")
     except:
         traceback.print_exc()

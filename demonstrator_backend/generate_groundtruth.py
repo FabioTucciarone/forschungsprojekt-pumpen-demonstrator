@@ -4,11 +4,11 @@ from multiprocessing import Pool
 from itertools import repeat
 from typing import Dict, List, Tuple, Any, Union
 
-from groundtruth_data import DataPoint, DatasetInfo, HPBounds, load_temperature_field_raw
+from groundtruth_data import ParameterPoint, DatasetInfo, HPBounds, load_temperature_field_raw
 from extrapolation import TemperatureField, TaylorInterpolatedField, PolyInterpolatedField
 
 
-def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint) -> float:
+def get_line_determinant(a1: ParameterPoint, a2: ParameterPoint, b: ParameterPoint) -> float:
     """
     return > 0 => b is left of a1->a2
     return < 0 => b is right of a1->a2
@@ -17,15 +17,15 @@ def get_line_determinant(a1: DataPoint, a2: DataPoint, b: DataPoint) -> float:
     return (a2.k - a1.k) * (b.p - a1.p) - (a2.p - a1.p) * (b.k - a1.k) #k=x, p=y
 
 
-def square_distance(a: DataPoint, b: DataPoint) -> float:
+def square_distance(a: ParameterPoint, b: ParameterPoint) -> float:
     return (b.k - a.k)**2 + (b.p - a.p)**2
 
 
-def distance(a: DataPoint, b: DataPoint) -> float:
+def distance(a: ParameterPoint, b: ParameterPoint) -> float:
     return np.sqrt((b.k - a.k)**2 + (b.p - a.p)**2)
 
 
-def get_closest_point(p: DataPoint, datapoints: List[DataPoint]) -> int:
+def get_closest_point(p: ParameterPoint, datapoints: List[ParameterPoint]) -> int:
     """
     Returns the dataset index of the closest datapoint to p in parameter space.
     """
@@ -40,7 +40,7 @@ def get_closest_point(p: DataPoint, datapoints: List[DataPoint]) -> int:
     return closest_i
 
 
-def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[int]]:
+def find_sequential_heuristic_triangle(info: DatasetInfo, p: ParameterPoint) -> Union[int, List[int]]:
     """
     Tries to find a triangle that encloses p.
     Heuristic that usualy finds more triangles than find_quadrant_heuristic_triangle().
@@ -52,7 +52,7 @@ def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union
     """
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
-    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
+    q = ParameterPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
 
     below_i = 0
     last_i = 0
@@ -97,7 +97,7 @@ def find_sequential_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union
         return closest_i
 
 
-def find_minimal_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[int]]:
+def find_minimal_triangle(info: DatasetInfo, p: ParameterPoint) -> Union[int, List[int]]:
     """
     Tries to find a triangle that encloses p.
     Minimizes the sum of distances from the corner points to p.
@@ -132,7 +132,7 @@ def find_minimal_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[in
         return c_i
 
 
-def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union[int, List[int]]:
+def find_quadrant_heuristic_triangle(info: DatasetInfo, p: ParameterPoint) -> Union[int, List[int]]:
     """
     Tries to find a triangle that encloses p.
     Heuristic that usualy finds more triangles than find_quadrant_heuristic_triangle().
@@ -142,10 +142,10 @@ def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union[i
     ---------
     A list of triangle indices or the index of the nearest point
     """
-    p = DataPoint(p.k, p.p)
+    p = ParameterPoint(p.k, p.p)
     closest_i = get_closest_point(p, info.datapoints)
     c = info.datapoints[closest_i]
-    q = DataPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
+    q = ParameterPoint(p.k + (p.p - c.p), p.p - (p.k - c.k))
     
     closest_left_i = 0
     closest_right_i = 0
@@ -174,7 +174,7 @@ def find_quadrant_heuristic_triangle(info: DatasetInfo, p: DataPoint) -> Union[i
         return closest_i
 
 
-def calculate_barycentric_weights(info: DatasetInfo, triangle_i: List[int], x: DataPoint) -> Tuple[float, float, float]:
+def calculate_barycentric_weights(info: DatasetInfo, triangle_i: List[int], x: ParameterPoint) -> Tuple[float, float, float]:
     """
     Calculates the barycentric coordinates of x with respect to the triangle defined by triangle_i.
     """
@@ -311,7 +311,7 @@ def get_sample_indices(hp_pos: List[int], i: int, j: int, bounds: HPBounds, resu
 
 
 def generate_groundtruth(info: DatasetInfo, permeability: float, pressure: float, use_interpolation: bool=True):
-    x = DataPoint(permeability * 1e10, pressure * 1e3)  # TODO: skalieren?
+    x = ParameterPoint(permeability * 1e10, pressure * 1e3)  # TODO: skalieren?
 
     if use_interpolation:
         triangle_i = find_sequential_heuristic_triangle(info, x)

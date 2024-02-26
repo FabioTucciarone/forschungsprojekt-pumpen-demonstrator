@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Any, Union
 
 @dataclass
-class DataPoint:
+class ParameterPoint:
     """
     Represents a data point in parameter space.
     """
@@ -71,7 +71,7 @@ def load_data_points(path_to_dataset: Path):
     with open(pressure_values_path) as file:
         pressure_values = [float(line.rstrip()) for line in file]
 
-    datapoints = [DataPoint(k * 1e10, p * 1e3) for k, p in zip(permeability_values, pressure_values)]
+    datapoints = [ParameterPoint(k * 1e10, p * 1e3) for k, p in zip(permeability_values, pressure_values)]
     return datapoints
 
 
