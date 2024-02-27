@@ -177,7 +177,10 @@ class _RegisterState extends State<RegisterBox> {
                   ),
                 );
               },
-              child: const Text('Verbinden'),
+              child: const Text(
+                'Verbinden',
+                style: TextStyle(color: OurColors.appBarTextColor),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -199,7 +202,10 @@ class _RegisterState extends State<RegisterBox> {
                   MaterialPageRoute(builder: (context) => Introduction()),
                 );
               },
-              child: const Text('Weiter im Debug Mode'),
+              child: const Text(
+                'Weiter im Debug Mode',
+                style: TextStyle(color: OurColors.appBarTextColor),
+              ),
             ),
           ],
         ),
