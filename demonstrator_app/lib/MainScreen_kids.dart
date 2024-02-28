@@ -17,9 +17,9 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
       fit: BoxFit.contain,
       child: SizedBox(
         width: 1350,
-        height: 720,
+        height: 730,
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Row(
@@ -173,7 +173,7 @@ class Phase2Kids extends StatelessWidget with MainScreenElements {
         width: 1350,
         height: 600,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,

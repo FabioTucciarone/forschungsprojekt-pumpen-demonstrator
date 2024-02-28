@@ -196,7 +196,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
         width: 1350,
         height: 600,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +227,7 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
         width: 1350,
         height: 600,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,

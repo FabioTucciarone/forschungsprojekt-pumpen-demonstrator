@@ -140,22 +140,6 @@ class IntroductionScience extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        Center(
-          child: ElevatedButton(
-            style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
-                )),
-            onPressed: () {
-              tabController.animateTo(1);
-            },
-            child: const Text(
-              "Understood",
-              style: TextStyle(color: OurColors.appBarTextColor),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -237,8 +221,14 @@ class _RobotIntroState extends State<RobotIntro> {
     if (times == 0) {
       return Center(
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: OurColors.appBarColor,
+          style: ButtonStyle(
+            foregroundColor:
+                MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+            backgroundColor: MaterialStateProperty.all<Color>(
+              OurColors.appBarColor,
+            ),
+            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.all(15)),
           ),
           onPressed: () {
             if (times == 8) {
@@ -249,8 +239,7 @@ class _RobotIntroState extends State<RobotIntro> {
           },
           child: const Text(
             "Start",
-            style: TextStyle(color: OurColors.appBarTextColor),
-            textScaleFactor: 3,
+            textScaleFactor: 2,
           ),
         ),
       );
@@ -261,16 +250,21 @@ class _RobotIntroState extends State<RobotIntro> {
         children: [
           Center(
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 previousState();
               },
               child: const Text(
                 "Zurück",
-                style: TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                textScaleFactor: 2,
               ),
             ),
           ),
@@ -279,8 +273,14 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 if (times == 8) {
@@ -291,8 +291,7 @@ class _RobotIntroState extends State<RobotIntro> {
               },
               child: const Text(
                 "Weiter",
-                style: TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                textScaleFactor: 2,
               ),
             ),
           ),
@@ -423,9 +422,8 @@ class _RobotIntroState extends State<RobotIntro> {
                             Slider(
                               value: volume,
                               thumbColor: OurColors.appBarColor,
-                              activeColor: OurColors.accentColor,
-                              inactiveColor:
-                                  const Color.fromARGB(174, 206, 135, 135),
+                              activeColor: OurColors.darkerAccentColor,
+                              inactiveColor: OurColors.accentColor,
                               onChanged: (value) => setState(() {
                                 volume = value;
                                 player.setVolume(volume);

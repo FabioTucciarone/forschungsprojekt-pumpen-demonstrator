@@ -44,12 +44,15 @@ class IntroHomeScaffold extends StatelessWidget {
             if (component == "content") {
               child = const Text("Server wurde nicht gestartet!");
             } else {
-              child = TextButton(
+              child = ElevatedButton(
                 style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                        OurColors.appBarTextColor),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        OurColors.appBarColor)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(OurColors.appBarColor),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -80,12 +83,15 @@ class IntroHomeScaffold extends StatelessWidget {
               )),
             );
           } else {
-            child = TextButton(
+            child = ElevatedButton(
               style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      OurColors.appBarTextColor),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(OurColors.appBarColor)),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarColor),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -136,24 +142,27 @@ class IntroHomeScaffold extends StatelessWidget {
                   TextSpan(
                       text:
                           "Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
-                ], style: TextStyle(fontSize: 30, color: OurColors.textColor))),
+                ], style: TextStyle(fontSize: 25, color: OurColors.textColor))),
           ),
           const SizedBox(
             height: 100,
           ),
           ElevatedButton(
             style: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.textColor),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
-                )),
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                OurColors.appBarColor,
+              ),
+              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  const EdgeInsets.all(15)),
+            ),
             onPressed: () {
               getStatus(context, false);
             },
             child: const Text(
               "Los geht's zur wissenschaftlichen Version",
-              style: TextStyle(color: OurColors.appBarTextColor),
+              style: TextStyle(fontSize: 20),
             ),
           ),
           const SizedBox(
@@ -161,17 +170,20 @@ class IntroHomeScaffold extends StatelessWidget {
           ),
           ElevatedButton(
               style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(OurColors.textColor),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    OurColors.appBarColor,
-                  )),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
+              ),
               onPressed: () {
                 getStatus(context, true);
               },
               child: const Text(
                 "Los geht's zur Kinderversion",
-                style: TextStyle(color: OurColors.appBarTextColor),
+                style: TextStyle(fontSize: 20),
               ))
         ],
       ),

@@ -116,8 +116,8 @@ class _HighscoreState extends State<Highscore> {
             Widget child;
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox(
-                width: 100,
-                height: 100,
+                width: 30,
+                height: 30,
                 child: Center(
                   child: CircularProgressIndicator(
                     color: OurColors.accentColor,
@@ -218,16 +218,20 @@ class HighscoreDialog extends StatelessWidget {
             title: const Text("Bestenliste"),
             content: getToptenList(),
             actions: <Widget>[
-              TextButton(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarTextColor),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarColor)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Schließen"))
+              ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(OurColors.appBarColor),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Schließen"),
+              ),
             ],
           );
         });
@@ -235,12 +239,15 @@ class HighscoreDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return ElevatedButton(
         style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(OurColors.darkerAccentColor)),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(OurColors.darkerAccentColor),
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+              const EdgeInsets.all(10)),
+        ),
         onPressed: () {
           showHighscores(context);
         },
