@@ -37,7 +37,7 @@ class _PressureSliderState extends State<PressureSlider> {
   final List<Color> colorsGradient = [
     const Color.fromARGB(255, 204, 51, 51),
     const Color.fromARGB(255, 255, 255, 255),
-    const Color.fromARGB(255, 20, 51, 127),
+    const Color.fromARGB(255, 4, 48, 97),
   ];
   double sliderPos = 0;
 
