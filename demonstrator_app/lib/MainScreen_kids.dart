@@ -102,14 +102,14 @@ class _RobotBoxState extends State<RobotBox> {
           if (snapshot.data != "keinWert") {
             responseDecoder.setResponse(snapshot.data);
             double averageError = responseDecoder.jsonDecoded["average_error"];
-            if (averageError > 0.1) {
+            if (averageError > 0.003) {
               text = midScore[randomScore];
               imageValue = 1;
             }
-            if (averageError > 0.2) {
+            if (averageError > 0.01) {
               imageValue = 0;
               text = highScore[randomScore];
-            } else if (averageError > 0.4) {
+            } else if (averageError > 0.08) {
               imageValue = 4;
               text = highScore[randomScore];
             }
