@@ -343,7 +343,7 @@ class _RobotIntroState extends State<RobotIntro> {
       return Positioned(
         top: 320,
         child: PressureSlider(
-          600,
+          350,
           const {
             "pressure_range": [0.0, 100.0],
             "permeability_range": [0.0, 100.0],
@@ -365,7 +365,7 @@ class _RobotIntroState extends State<RobotIntro> {
         width: 1400,
         height: 700,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -483,10 +483,10 @@ class Player {
 /// Class to acces all of our Colors throughout the App.
 class OurColors {
   static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
-  static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
+  static const Color appBarColor = Color.fromARGB(255, 84, 161, 224);
   static const Color textColor = Color.fromARGB(255, 0, 0, 0);
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
-  static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
-  static const Color darkerAccentColor = Color.fromARGB(174, 212, 47, 47);
+  static const Color accentColor = Color.fromARGB(172, 115, 192, 255);
+  static const Color darkerAccentColor = Color.fromARGB(172, 91, 153, 204);
   //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }
