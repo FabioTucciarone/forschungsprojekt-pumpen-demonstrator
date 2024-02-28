@@ -132,7 +132,7 @@ class IntroHomeScaffold extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
+            padding: const EdgeInsets.fromLTRB(120, 20, 120, 20),
             child: RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(children: <TextSpan>[
@@ -145,7 +145,7 @@ class IntroHomeScaffold extends StatelessWidget {
                 ], style: TextStyle(fontSize: 25, color: OurColors.textColor))),
           ),
           const SizedBox(
-            height: 100,
+            height: 40,
           ),
           ElevatedButton(
             style: ButtonStyle(

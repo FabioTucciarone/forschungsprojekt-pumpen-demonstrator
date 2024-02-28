@@ -134,14 +134,16 @@ class _MainMaterialState extends State<MainMaterial> {
               labelColor: OurColors.appBarTextColor,
               indicatorColor: OurColors.appBarTextColor,
               tabs: <Widget>[
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.info),
-                    SizedBox(
+                    const Icon(Icons.info),
+                    const SizedBox(
                       width: 8,
                     ),
-                    Text("Infotext"),
+                    widget.widget.children
+                        ? const Text("Einführung")
+                        : const Text("Infotext"),
                   ],
                 ),
                 Row(
