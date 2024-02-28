@@ -140,22 +140,6 @@ class IntroductionScience extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        Center(
-          child: ElevatedButton(
-            style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
-                )),
-            onPressed: () {
-              tabController.animateTo(1);
-            },
-            child: const Text(
-              "Understood",
-              style: TextStyle(color: OurColors.appBarTextColor),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -237,8 +221,14 @@ class _RobotIntroState extends State<RobotIntro> {
     if (times == 0) {
       return Center(
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: OurColors.appBarColor,
+          style: ButtonStyle(
+            foregroundColor:
+                MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+            backgroundColor: MaterialStateProperty.all<Color>(
+              OurColors.appBarColor,
+            ),
+            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.all(15)),
           ),
           onPressed: () {
             if (times == 8) {
@@ -249,8 +239,7 @@ class _RobotIntroState extends State<RobotIntro> {
           },
           child: const Text(
             "Start",
-            style: TextStyle(color: OurColors.appBarTextColor),
-            textScaleFactor: 3,
+            textScaleFactor: 2,
           ),
         ),
       );
@@ -261,16 +250,21 @@ class _RobotIntroState extends State<RobotIntro> {
         children: [
           Center(
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 previousState();
               },
               child: const Text(
                 "Zurück",
-                style: TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                textScaleFactor: 2,
               ),
             ),
           ),
@@ -279,8 +273,14 @@ class _RobotIntroState extends State<RobotIntro> {
           ),
           Center(
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  OurColors.appBarColor,
+                ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 if (times == 8) {
@@ -291,8 +291,7 @@ class _RobotIntroState extends State<RobotIntro> {
               },
               child: const Text(
                 "Weiter",
-                style: TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                textScaleFactor: 2,
               ),
             ),
           ),
@@ -344,7 +343,7 @@ class _RobotIntroState extends State<RobotIntro> {
       return Positioned(
         top: 320,
         child: PressureSlider(
-          600,
+          350,
           const {
             "pressure_range": [0.0, 100.0],
             "permeability_range": [0.0, 100.0],
@@ -366,7 +365,7 @@ class _RobotIntroState extends State<RobotIntro> {
         width: 1400,
         height: 700,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -423,9 +422,8 @@ class _RobotIntroState extends State<RobotIntro> {
                             Slider(
                               value: volume,
                               thumbColor: OurColors.appBarColor,
-                              activeColor: OurColors.accentColor,
-                              inactiveColor:
-                                  const Color.fromARGB(174, 206, 135, 135),
+                              activeColor: OurColors.darkerAccentColor,
+                              inactiveColor: OurColors.accentColor,
                               onChanged: (value) => setState(() {
                                 volume = value;
                                 player.setVolume(volume);
@@ -485,10 +483,10 @@ class Player {
 /// Class to acces all of our Colors throughout the App.
 class OurColors {
   static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
-  static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
+  static const Color appBarColor = Color.fromARGB(255, 84, 161, 224);
   static const Color textColor = Color.fromARGB(255, 0, 0, 0);
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
-  static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
-  static const Color darkerAccentColor = Color.fromARGB(174, 212, 47, 47);
+  static const Color accentColor = Color.fromARGB(172, 115, 192, 255);
+  static const Color darkerAccentColor = Color.fromARGB(172, 91, 153, 204);
   //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }

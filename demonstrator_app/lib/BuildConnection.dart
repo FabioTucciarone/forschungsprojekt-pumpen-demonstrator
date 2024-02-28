@@ -161,10 +161,12 @@ class _RegisterState extends State<RegisterBox> {
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.textColor),
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
                   OurColors.appBarColor,
                 ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 Navigator.push(
@@ -185,10 +187,12 @@ class _RegisterState extends State<RegisterBox> {
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.textColor),
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
                   OurColors.appBarColor,
                 ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 setState(() {
@@ -283,11 +287,15 @@ class _ResultState extends State<Result> {
                     ),
                   ),
                 ),
-                TextButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: OurColors.appBarColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                        OurColors.appBarTextColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarColor,
+                    ),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        const EdgeInsets.all(15)),
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -295,10 +303,7 @@ class _ResultState extends State<Result> {
                       MaterialPageRoute(builder: (context) => RegisterApp()),
                     );
                   },
-                  child: const Text(
-                    'Erneut versuchen',
-                    style: TextStyle(color: OurColors.appBarTextColor),
-                  ),
+                  child: const Text('Erneut versuchen'),
                 ),
               ],
             );

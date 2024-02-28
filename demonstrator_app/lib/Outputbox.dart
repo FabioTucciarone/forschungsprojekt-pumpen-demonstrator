@@ -26,19 +26,19 @@ class OutputBox extends StatelessWidget {
   String getName(ImageType name, bool children) {
     if (name == ImageType.aIGenerated) {
       if (children) {
-        return 'KI generiert';
+        return 'KAIs Berechnung';
       } else {
         return 'AI Generated';
       }
     } else if (name == ImageType.groundtruth) {
       if (children) {
-        return 'Grundwahrheit';
+        return 'Echte Lösung';
       } else {
         return 'Groundtruth';
       }
     }
     if (children) {
-      return 'Differenzfeld';
+      return 'Unterschied';
     } else {
       return 'Difference Field';
     }

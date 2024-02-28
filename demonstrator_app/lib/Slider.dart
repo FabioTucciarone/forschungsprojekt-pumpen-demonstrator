@@ -294,7 +294,7 @@ class _PressureSliderState extends State<PressureSlider> {
                 padding: const EdgeInsets.all(10),
                 child: Container(
                   width: widget.sliderWidth,
-                  height: 35,
+                  height: (widget.name != SliderType.dummy) ? 35 : 25,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(colors: colorsGradient),

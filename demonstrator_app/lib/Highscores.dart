@@ -213,16 +213,20 @@ class HighscoreDialog extends StatelessWidget {
             title: const Text("Bestenliste"),
             content: getToptenList(),
             actions: <Widget>[
-              TextButton(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarTextColor),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarColor)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Schließen"))
+              ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(OurColors.appBarColor),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Schließen"),
+              ),
             ],
           );
         });
@@ -230,12 +234,15 @@ class HighscoreDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return ElevatedButton(
         style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(OurColors.darkerAccentColor)),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(OurColors.darkerAccentColor),
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+              const EdgeInsets.all(10)),
+        ),
         onPressed: () {
           showHighscores(context);
         },
