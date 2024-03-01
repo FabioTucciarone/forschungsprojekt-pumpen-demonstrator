@@ -152,9 +152,12 @@ class HighscoreDialog extends StatelessWidget {
           Widget child;
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox(
-                child: CircularProgressIndicator(
-              color: OurColors.accentColor,
-            ));
+              width: 100,
+              height: 100,
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
+            );
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data != null) {
               List<dynamic> highscores = snapshot.data!;
