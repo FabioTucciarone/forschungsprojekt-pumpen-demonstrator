@@ -813,7 +813,7 @@ class Player {
   }
 
   void play(int state) async {
-    if (state == 8) {
+    if (state == 13) {
       await player.release();
     } else {
       await player.stop();
