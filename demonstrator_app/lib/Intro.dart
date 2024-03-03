@@ -47,6 +47,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
               textSelectionTheme: const TextSelectionThemeData(
                   selectionColor: OurColors.accentColor)),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ExpansionTile(
                 title: const Text(
@@ -149,18 +150,25 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                           path: "assets/CNN_Architektur.png",
                           textSpan: const TextSpan(
                             text: "The CNN",
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline),
                           ),
                         ),
                         const TextSpan(text: "approximates the "),
-                        TextSpan(
-                            text: "heat plume of a single heat pump",
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap =
-                                  () => widget.tabController.animateTo(1)),
+                        TooltipTextSpan(
+                          path: "assets/SingleHeatPump_Wissenschaft.png",
+                          textSpan: TextSpan(
+                              text: "heat plume of a single heat pump",
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap =
+                                    () => widget.tabController.animateTo(1)),
+                        ),
                         const TextSpan(
                             text: " based on the input parameters of "),
                         const TextSpan(
@@ -207,18 +215,26 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                           path: "assets/CNN_Architektur.png",
                           textSpan: const TextSpan(
                             text: "The CNN",
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline),
                           ),
                         ),
                         const TextSpan(text: "approximates the "),
-                        TextSpan(
-                            text: "interaction of heat plumes from two pumps",
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap =
-                                  () => widget.tabController.animateTo(2)),
+                        TooltipTextSpan(
+                          path:
+                              "assets/InteractionOfHeatPlumes_Wissenschaft.png",
+                          textSpan: TextSpan(
+                              text: "interaction of heat plumes from two pumps",
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap =
+                                    () => widget.tabController.animateTo(2)),
+                        ),
                         const TextSpan(
                           text:
                               " positioned relative to each other.\nFigure 3 illustrates an example of this interaction presented "

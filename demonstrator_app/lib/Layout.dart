@@ -132,7 +132,7 @@ class IntroHomeScaffold extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(120, 20, 120, 20),
+            padding: const EdgeInsets.fromLTRB(180, 20, 180, 20),
             child: RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(children: <TextSpan>[
@@ -141,7 +141,8 @@ class IntroHomeScaffold extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   TextSpan(
                       text:
-                          "Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde (dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
+                          "Auswählen welche Version \n ACHTUNG: keinen Weg zurückzukommen, wenn einmal die Version gewählt wurde "
+                          "(dass User keinen Zugriff auf Anmeldung etc. haben) \n Debug Mode für lokale Ausführung des Backends")
                 ], style: TextStyle(fontSize: 25, color: OurColors.textColor))),
           ),
           const SizedBox(

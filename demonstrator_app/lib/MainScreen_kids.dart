@@ -218,8 +218,10 @@ class Phase2Kids extends StatelessWidget with MainScreenElements {
                 height: 10,
               ),
               const Text(
-                "Ausgabe:",
-                textScaleFactor: 2,
+                "Position der zweiten Wärmepumpe:",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: OurColors.textColor),
+                textScaleFactor: 1.2,
               ),
               outputSecondPhase(),
             ],
