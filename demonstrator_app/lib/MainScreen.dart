@@ -155,7 +155,7 @@ class _MainMaterialState extends State<MainMaterial> {
                     ),
                     widget.widget.children
                         ? const Text("Eine Wärmepumpe")
-                        : const Text('Single Heat Pump'),
+                        : const Text('Single heat pump'),
                   ],
                 ),
                 Row(
@@ -207,8 +207,25 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
               const SizedBox(
                 height: 10,
               ),
-              const OutputHeader(),
-              ...output(false),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: OurColors.darkerAccentColor,
+                    width: 10,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      AverageError(false),
+                      ...output(false),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -239,8 +256,10 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
                 height: 10,
               ),
               const Text(
-                "Output:",
-                textScaleFactor: 2,
+                "Position of the second heat pump:",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: OurColors.textColor),
+                textScaleFactor: 1.2,
               ),
               outputSecondPhase(),
             ],
@@ -294,8 +313,8 @@ mixin MainScreenElements {
           }
         } else {
           child = const SizedBox(
-            width: 80,
-            height: 80,
+            width: 60,
+            height: 60,
             child: Center(
               child: CircularProgressIndicator(
                 color: OurColors.accentColor,
@@ -364,8 +383,8 @@ mixin MainScreenElements {
           child = heatPumpBox;
         } else {
           child = const SizedBox(
-            width: 100,
-            height: 100,
+            width: 60,
+            height: 60,
             child: Center(
               child: CircularProgressIndicator(
                 color: OurColors.accentColor,

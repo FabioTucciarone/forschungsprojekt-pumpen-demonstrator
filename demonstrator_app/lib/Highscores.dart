@@ -38,7 +38,7 @@ class AverageError extends StatelessWidget {
                     textScaleFactor: 2,
                   );
                 } else {
-                  averageError = double.parse(averageError.toStringAsFixed(6));
+                  averageError = double.parse(averageError.toStringAsFixed(4));
                   child = Text(
                     "$text $averageError °C",
                     textScaleFactor: 2,
@@ -58,6 +58,11 @@ class AverageError extends StatelessWidget {
                     textScaleFactor: 2,
                   ),
                   const SizedBox(
+                    width: 10,
+                  ),
+                  const SizedBox(
+                    height: 30,
+                    width: 30,
                     child: CircularProgressIndicator(
                       color: OurColors.accentColor,
                     ),
