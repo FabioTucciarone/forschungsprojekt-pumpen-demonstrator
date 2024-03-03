@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import 'MainScreen.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -376,39 +377,142 @@ class RobotIntro extends StatefulWidget {
 
 class _RobotIntroState extends State<RobotIntro> {
   bool speechBubble = false;
+  bool speechBubble2 = false;
   double volume = 1;
   Player player = Player();
   int times = 0;
+  late String name;
+  _RobotIntroState() {
+    name = MainMaterial.name;
+  }
   List<String> imagePaths = [
     'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
+    'assets/confused.jpeg',
+    'assets/happy.jpeg',
+    'assets/happy.jpeg',
     'assets/starry.jpeg',
+    'assets/happy.jpeg',
+    'assets/happy.jpeg',
+    'assets/starry.jpeg',
+    'assets/starry.jpeg',
+    'assets/happy.jpeg',
     'assets/confused.jpeg',
     'assets/happy.jpeg',
     'assets/starry.jpeg',
+    'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
     'assets/starry.jpeg',
   ];
   List<String> speeches = [
     "",
-    "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
-    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
-    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieht",
-    "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch und verändert die Temperatur des Wassers, verstehst du?",
-    "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
-    "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, hier unten ist so ein Schieberegler, probier ihn mal aus!",
-    "Hier siehst du, dass ich sehr schlecht war :( meine Wärmefahne (die obere) ist länger als sie sein soll. In der Mitte sieht man wie es eigentlich sein sollte und darunter den Unterschied. Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
-    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Wenn du willst kannst du später du auch oben auf den Tab ganz rechts gehen und schauen was dich da erwartet. Viel Erfolg!",
-    ""
+    "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz und dein heutiger Begleiter.",
+    "Ich mag's schön warm zuhause.\nIm Winter heize ich mit Wärmepumpen. Weißt du was das ist?",
+    "Eine Wärmepumpe entzieht Wärme aus dem Grundwasser und pumpt sie in dein Haus.\nDann kannst du zum Beispiel warm duschen!\nLinks kannst du sehen wie das funktioniert.",
+    "Eine Wärmepumpe ändert auch die Temperatur des Wassers untem im Boden. Von irgendwo muss die Wärme ja schließlich kommen!",
+    "Eine Wärmepumpe ändert auch die Temperatur des Wassers unten im Boden. Von irgendwo muss die Wärme ja schließlich kommen!",
+    "Wenn der Druck des Wassers oder die Durchlässigkeit des Bodens anders ist, verändert sich dieses Feld!",
+    "Wenn der Druck des Wassers oder die Durchlässigkeit des Bodens anders ist, verändert sich dieses Feld!",
+    "Aber leider bin ich noch ein wenig tollpatschig und meine Berechnungen sind noch nicht perfekt! Gleich kannst du sehen was ich meine.",
+    "Aber leider bin ich noch ein wenig tollpatschig und meine Berechnungen sind noch nicht perfekt! Gleich kannst du sehen was ich meine.",
+    "Ich kann mit deiner Hilfe aber auch dazulernen! Du sollst mir Fahnen zeigen bei denen ich wie gerade eben nicht so gut war, dann kann ich lernen!",
+    "Ich kann mit deiner Hilfe aber auch dazulernen! Du sollst mir Fahnen zeigen bei denen ich wie gerade eben nicht so gut war, dann kann ich lernen!",
+    "Wenn du Werte findest, bei denen ich mich verbessern kann kriegst du eine hohe Punktzahl. Schaffst du es 1000 Punkte zu bekommen?",
+    "Wenn du Werte findest, bei denen ich mich verbessern kann kriegst du eine hohe Punktzahl. Schaffst du es 1000 Punkte zu bekommen?",
   ];
+  List<String> speeches2 = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
+    "",
+    "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
+    "",
+    "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
+    "",
+    'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
+    "",
+    "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
+    "",
+    "",
+  ];
+
+  List<String> nextButtonSpeech = [
+    "",
+    "Hallo!",
+    "Zeig es mir!",
+    "Cool!",
+    "Klar",
+    "Interessant!",
+    "Logisch",
+    "Ist das so einfach?",
+    "Zeig es mir!",
+    "Ich verstehe",
+    "Ich helf dir gerne!",
+    "Und jetzt?",
+    "Ja, auf jeden Fall!",
+    "Los geht's!"
+  ];
+
+  List<String> lastButtonSpeech = [
+    "",
+    "Zurück",
+    "Wer bist du nochmal?",
+    "Erklär das nochmal",
+    "Zurück!",
+    "Einen Schritt zurück",
+    "Wie war das nochmal?",
+    "Zurück!",
+    "Einen Schritt zurück",
+    "Wie war das nochmal?",
+    "Zurück!",
+    "Einen Schritt zurück",
+    "Wie war das nochmal?",
+    "Einen Schritt zurück"
+  ];
+
+  Widget secondSpeechBubble() {
+    Widget bubble = Positioned(
+      top: 310,
+      left: 650,
+      width: 600,
+      height: 700,
+      child: AnimatedOpacity(
+        opacity: speechBubble2 ? 1.0 : 0,
+        duration: const Duration(milliseconds: 0),
+        child: BubbleSpecialThree(
+          text: speeches2[times],
+          color: OurColors.accentColor,
+          tail: true,
+          textStyle: const TextStyle(
+              color: Colors.black,
+              fontSize: 35,
+              decoration: TextDecoration.none,
+              fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+    return bubble;
+  }
 
   void nextState() {
     setState(() {
       speechBubble = true;
       player.play(times);
       times++;
+      if (times == 5 ||
+          times == 7 ||
+          times == 9 ||
+          times == 11 ||
+          times == 13) {
+        speechBubble2 = true;
+      } else {
+        speechBubble2 = false;
+      }
     });
   }
 
@@ -421,6 +525,15 @@ class _RobotIntroState extends State<RobotIntro> {
         } else {
           times--;
           player.play(times);
+        }
+        if (times == 5 ||
+            times == 7 ||
+            times == 9 ||
+            times == 11 ||
+            times == 13) {
+          speechBubble2 = true;
+        } else {
+          speechBubble2 = false;
         }
       }
     });
@@ -447,19 +560,20 @@ class _RobotIntroState extends State<RobotIntro> {
             }
           },
           child: const Text(
-            "Start",
-            textScaleFactor: 2,
+            "Los geht's!",
+            style: TextStyle(color: OurColors.appBarTextColor),
+            textScaleFactor: 3,
           ),
         ),
       );
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Center(
             child: ElevatedButton(
               style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(const Size(200, 0)),
                 foregroundColor:
                     MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
@@ -471,9 +585,10 @@ class _RobotIntroState extends State<RobotIntro> {
               onPressed: () {
                 previousState();
               },
-              child: const Text(
-                "Zurück",
-                textScaleFactor: 2,
+              child: Text(
+                lastButtonSpeech[times],
+                style: const TextStyle(color: OurColors.appBarTextColor),
+                textScaleFactor: 3,
               ),
             ),
           ),
@@ -483,6 +598,7 @@ class _RobotIntroState extends State<RobotIntro> {
           Center(
             child: ElevatedButton(
               style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(const Size(200, 0)),
                 foregroundColor:
                     MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
@@ -492,15 +608,16 @@ class _RobotIntroState extends State<RobotIntro> {
                     const EdgeInsets.all(15)),
               ),
               onPressed: () {
-                if (times == 8) {
+                if (times == 13) {
                   widget.tabController.animateTo(1);
                 } else {
                   nextState();
                 }
               },
-              child: const Text(
-                "Weiter",
-                textScaleFactor: 2,
+              child: Text(
+                nextButtonSpeech[times],
+                style: const TextStyle(color: OurColors.appBarTextColor),
+                textScaleFactor: 3,
               ),
             ),
           ),
@@ -511,48 +628,50 @@ class _RobotIntroState extends State<RobotIntro> {
 
   Widget introIllustration() {
     Widget child = Container();
-    if (times == 7) {
+    if (times == 9) {
       return Positioned(
-        top: 160,
+        top: 100,
+        left: -60,
         child: SizedBox(
-          width: 550,
-          height: 400,
+          width: 700,
+          height: 600,
           child: Image.asset(
             "assets/bigDifference.png",
             fit: BoxFit.contain,
           ),
         ),
       );
-    } else if (times == 2) {
+    } else if (times == 5) {
       return Positioned(
-        top: 250,
-        left: 0,
+        top: 400,
+        left: 400,
         child: SizedBox(
-            width: 250,
-            height: 250,
+            width: 1150,
+            height: 550,
             child: Image.asset(
-              "assets/heatpump.png",
+              "assets/examplePlume.png",
               fit: BoxFit.contain,
             )),
       );
     } else if (times == 3) {
       return Positioned(
-        top: 160,
-        left: 0,
+        top: 100,
+        left: -100,
         child: SizedBox(
           width: 800,
-          height: 400,
+          height: 500,
           child: Image.asset(
-            "assets/examplePlume.png",
+            "assets/watersource.gif",
             fit: BoxFit.contain,
           ),
         ),
       );
-    } else if (times == 6) {
+    } else if (times == 11) {
       return Positioned(
-        top: 320,
+        top: 700,
+        left: 400,
         child: PressureSlider(
-          350,
+          900,
           const {
             "pressure_range": [0.0, 100.0],
             "permeability_range": [0.0, 100.0],
@@ -568,34 +687,37 @@ class _RobotIntroState extends State<RobotIntro> {
 
   @override
   Widget build(BuildContext context) {
+    name = MainMaterial.name;
+    speeches2[13] =
+        "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist $name.";
     return FittedBox(
       fit: BoxFit.contain,
       child: SizedBox(
-        width: 1400,
-        height: 700,
+        width: 2000,
+        height: 1000,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Center(
                   child: SizedBox(
-                width: 700,
-                height: 500,
+                width: 1800,
+                height: 800,
                 child: Stack(
                   children: <Widget>[
                     Positioned(
-                      top: 20,
-                      left: 380,
+                      top: 100,
+                      left: 1300,
                       child: Container(
-                        height: 300,
-                        width: 300,
+                        height: 500,
+                        width: 500,
                         decoration: BoxDecoration(
                             border: Border.all(width: 5),
                             color: Colors.black,
-                            borderRadius: BorderRadius.circular(200)),
+                            borderRadius: BorderRadius.circular(500)),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(200),
+                          borderRadius: BorderRadius.circular(500),
                           child: Image.asset(
                             imagePaths[times],
                             fit: BoxFit.cover,
@@ -605,8 +727,8 @@ class _RobotIntroState extends State<RobotIntro> {
                     ),
                     Positioned(
                       top: 50,
-                      left: 0,
-                      width: 400,
+                      left: 650,
+                      width: 600,
                       height: 700,
                       child: AnimatedOpacity(
                         opacity: speechBubble ? 1.0 : 0,
@@ -617,33 +739,33 @@ class _RobotIntroState extends State<RobotIntro> {
                           tail: true,
                           textStyle: const TextStyle(
                               color: Colors.black,
-                              fontSize: 20,
-                              decoration: TextDecoration.none),
+                              fontSize: 35,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
-                    Positioned(
-                        top: 450,
-                        left: 250,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.volume_up_rounded),
-                            Slider(
-                              value: volume,
-                              thumbColor: OurColors.appBarColor,
-                              activeColor: OurColors.darkerAccentColor,
-                              inactiveColor: OurColors.accentColor,
-                              onChanged: (value) => setState(() {
-                                volume = value;
-                                player.setVolume(volume);
-                              }),
-                            ),
-                          ],
-                        )),
+                    secondSpeechBubble(),
                     introIllustration()
                   ],
                 ),
               )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.volume_up_rounded),
+                  Slider(
+                    value: volume,
+                    thumbColor: OurColors.appBarColor,
+                    activeColor: OurColors.accentColor,
+                    inactiveColor: const Color.fromARGB(174, 206, 135, 135),
+                    onChanged: (value) => setState(() {
+                      volume = value;
+                      player.setVolume(volume);
+                    }),
+                  ),
+                ],
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -660,6 +782,18 @@ class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
     "animalese1.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese1.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
     "animalese2.wav",
     "animalese0.wav",
     "animalese2.wav",
