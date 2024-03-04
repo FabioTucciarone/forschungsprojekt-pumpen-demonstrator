@@ -430,6 +430,7 @@ class FutureNotifier extends ChangeNotifier {
 
 class FutureNotifierPhase2 extends ChangeNotifier {
   static bool slider = true;
+  static bool clickedOnce = false;
   Future<String> future = Future.value("keinWert");
 
   Future<String> get getFuture => future;

@@ -198,15 +198,12 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                   Column(
                     children: [
                       Transform.translate(
-                        offset: Offset(90, 0),
+                        offset: const Offset(90, 0),
                         child: Container(
-                          constraints: BoxConstraints(minHeight: 200),
+                          constraints: const BoxConstraints(minHeight: 120),
                           width: 800,
                           child: const SpeechBubblePhase2(),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 50,
                       ),
                       ...input(500, true, false)
                     ],
@@ -253,6 +250,13 @@ class SpeechBubblePhase2 extends StatefulWidget {
 class _SpeechBubblePhase2State extends State<SpeechBubblePhase2> {
   int state = 0;
   bool slider = FutureNotifierPhase2.slider;
+  bool clickedOnce = FutureNotifierPhase2.clickedOnce;
+  Random random = Random();
+  String speech =
+      "Hallo ich bin es wieder. Wir wollen uns jetzt 2 Wärmepumpen anschauen!\n"
+      "Du kannst wie gewohnt zuerst die Schieberegler bewegen.\n"
+      "Du kannst jetzt aber auch direkt in das Feld unten reinklicken um die Position einer zweiten Wärmepumpe zu bestimmen! Probier es aus!";
+
   List<String> speeches = [
     "Hallo ich bin es wieder. Wir wollen uns jetzt 2 Wärmepumpen anschauen!\n"
         "Du kannst wie gewohnt zuerst die Schieberegler bewegen.\n"
@@ -264,22 +268,44 @@ class _SpeechBubblePhase2State extends State<SpeechBubblePhase2> {
       "Super, fällt dir schon was auf? Die Wärmepumpen beeinflussen sich, oder?\n"
       "Du kannst jetzt wie vorhin auch die Schieberegler anpassen und experimentieren!";
 
+  List<String> noClicksYet = [
+    "Klicke jetzt unten in das Feld irgendwo. \nDamit bestimmst du die Position der zweiten Wärmepumpe!",
+    "Genau! Jetzt klicke in die Wärmefahne unten um die Position zu ändern! \nWas passiert dann wohl?",
+    "Willst du ausprobieren wie sich die Wäremfahnen beeinflussen?\n"
+        "Dann klicke unten in das Feld und verändere die Position der zweiten Wärmepumpe!",
+  ];
+
+  List<String> restSpeeches = [
+    "Interessant, man sieht dass sich die Wärmefahnen beeinflussen, oder?\nWeiter so!",
+    "Genau so! Was kannst du erkennen? \nProbier es weiter aus!",
+    "Gut so! Erkennst du wie sich die Wärmefahnen beeinflussen? \nSehr interessant, oder?",
+    "Sehr gut! Verändern sich die Wärmefahnen etwa gegenseitig? \nWarum ist das wohl so?",
+    "Hmmmm, wenn man die Wärmefahnen so platziert, dann sieht das also so aus.\nKannst du irgendwas erkennen?",
+    "Wow! Hättest du das erwartet? \nInteressant wie die eine Wärmefahne die andere wärmer macht, oder?",
+    "Wie cool! Die Position einer Wärmepumpe hat also Auswirkungen auf eine andere Wärmepumpe? \nDas könnte bestimmt wichtig sein!"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
         future: context.watch<FutureNotifierPhase2>().future,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           Widget child;
+
           if (snapshot.connectionState == ConnectionState.done) {
             state++;
             slider = FutureNotifierPhase2.slider;
-          }
-          String speech = speeches[0];
-          if (state == 2) {
-            if (slider) {
-              speech = firstSlider;
-            } else {
-              speech = firstClick;
+            clickedOnce = FutureNotifierPhase2.clickedOnce;
+            if (state == 2) {
+              if (slider) {
+                speech = firstSlider;
+              } else {
+                speech = firstClick;
+              }
+            } else if (state > 2 && !clickedOnce) {
+              speech = noClicksYet[random.nextInt(noClicksYet.length)];
+            } else if (state > 2) {
+              speech = restSpeeches[random.nextInt(restSpeeches.length)];
             }
           }
 

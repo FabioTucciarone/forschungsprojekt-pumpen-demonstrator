@@ -90,6 +90,7 @@ class _PumpInputBoxState extends State<PumpInputBox> {
         },
         onPanEnd: (DragEndDetails details) {
           FutureNotifierPhase2.slider = false;
+          FutureNotifierPhase2.clickedOnce = true;
           MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
               .sendInputDataPhase2(
                   MainScreenElements.permeabilitySlider.getCurrent(),
@@ -100,6 +101,7 @@ class _PumpInputBoxState extends State<PumpInputBox> {
         },
         onTapUp: (TapUpDetails details) {
           FutureNotifierPhase2.slider = false;
+          FutureNotifierPhase2.clickedOnce = true;
           MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
               .sendInputDataPhase2(
                   MainScreenElements.permeabilitySlider.getCurrent(),
