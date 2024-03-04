@@ -221,6 +221,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             widget.currentValue,
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             MainScreenElements.permeabilitySlider.getCurrent(),
@@ -239,6 +240,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             MainScreenElements.pressureSlider.getCurrent(),
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             widget.currentValue,
@@ -260,6 +262,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             widget.currentValue,
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             MainScreenElements.permeabilitySlider.getCurrent(),
@@ -278,6 +281,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             MainScreenElements.pressureSlider.getCurrent(),
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             widget.currentValue,
