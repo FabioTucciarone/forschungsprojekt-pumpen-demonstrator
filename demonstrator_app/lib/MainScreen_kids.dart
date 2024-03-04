@@ -154,7 +154,8 @@ class _RobotBoxState extends State<RobotBox> {
                   textStyle: const TextStyle(
                       color: Colors.black,
                       fontSize: 20,
-                      decoration: TextDecoration.none),
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.w600),
                 ))
           ]),
         );
@@ -192,7 +193,7 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
@@ -200,10 +201,13 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                       Transform.translate(
                         offset: const Offset(90, 0),
                         child: Container(
-                          constraints: const BoxConstraints(minHeight: 120),
+                          constraints: const BoxConstraints(minHeight: 130),
                           width: 800,
                           child: const SpeechBubblePhase2(),
                         ),
+                      ),
+                      SizedBox(
+                        height: 20,
                       ),
                       ...input(500, true, false)
                     ],
