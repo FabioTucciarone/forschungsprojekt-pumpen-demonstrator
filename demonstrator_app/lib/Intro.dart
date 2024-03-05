@@ -573,61 +573,65 @@ class _RobotIntroState extends State<RobotIntro> {
         ),
       );
     } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: ElevatedButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(200, 0)),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: Row(
+          key: ValueKey<int>(times),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(const Size(200, 0)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
                 ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.all(15)),
-              ),
-              onPressed: () {
-                previousState();
-              },
-              child: Text(
-                lastButtonSpeech[times],
-                style: const TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                onPressed: () {
+                  previousState();
+                },
+                child: Text(
+                  lastButtonSpeech[times],
+                  style: const TextStyle(color: OurColors.appBarTextColor),
+                  textScaleFactor: 3,
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            width: 50,
-          ),
-          Center(
-            child: ElevatedButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(200, 0)),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
+            const SizedBox(
+              width: 50,
+            ),
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(const Size(200, 0)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
                 ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.all(15)),
-              ),
-              onPressed: () {
-                if (times == 13) {
-                  widget.tabController.animateTo(1);
-                } else {
-                  nextState();
-                }
-              },
-              child: Text(
-                nextButtonSpeech[times],
-                style: const TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                onPressed: () {
+                  if (times == 13) {
+                    widget.tabController.animateTo(1);
+                  } else {
+                    nextState();
+                  }
+                },
+                child: Text(
+                  nextButtonSpeech[times],
+                  style: const TextStyle(color: OurColors.appBarTextColor),
+                  textScaleFactor: 3,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
   }
