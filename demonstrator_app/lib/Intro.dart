@@ -394,7 +394,7 @@ class _RobotIntroState extends State<RobotIntro> {
     'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
-    'assets/happy.jpeg',
+    'assets/sad.jpeg',
     'assets/starry.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
