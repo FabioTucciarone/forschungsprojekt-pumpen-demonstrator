@@ -261,7 +261,7 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
                     fontWeight: FontWeight.bold, color: OurColors.textColor),
                 textScaleFactor: 1.2,
               ),
-              outputSecondPhase(),
+              outputSecondPhase(false),
             ],
           ),
         ),
@@ -369,7 +369,7 @@ mixin MainScreenElements {
   static PumpInputBox heatPumpBox = PumpInputBox(
       width: 1000, height: 200, valueRange: const [0, 1], children: false);
 
-  Widget outputSecondPhase() {
+  Widget outputSecondPhase(bool children) {
     return FutureBuilder(
       future: useOfBackend.backend.getOutputShape(),
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -379,7 +379,7 @@ mixin MainScreenElements {
               width: 1136,
               height: 94,
               valueRange: snapshot.data,
-              children: false);
+              children: children);
           child = heatPumpBox;
         } else {
           child = const SizedBox(
@@ -429,6 +429,8 @@ class FutureNotifier extends ChangeNotifier {
 }
 
 class FutureNotifierPhase2 extends ChangeNotifier {
+  static bool slider = true;
+  static bool clickedOnce = false;
   Future<String> future = Future.value("keinWert");
 
   Future<String> get getFuture => future;

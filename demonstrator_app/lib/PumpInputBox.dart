@@ -89,6 +89,8 @@ class _PumpInputBoxState extends State<PumpInputBox> {
           correctingPosition(details.localPosition);
         },
         onPanEnd: (DragEndDetails details) {
+          FutureNotifierPhase2.slider = false;
+          FutureNotifierPhase2.clickedOnce = true;
           MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
               .sendInputDataPhase2(
                   MainScreenElements.permeabilitySlider.getCurrent(),
@@ -98,6 +100,8 @@ class _PumpInputBoxState extends State<PumpInputBox> {
           MainSlide.restartTimer.restartTimer();
         },
         onTapUp: (TapUpDetails details) {
+          FutureNotifierPhase2.slider = false;
+          FutureNotifierPhase2.clickedOnce = true;
           MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
               .sendInputDataPhase2(
                   MainScreenElements.permeabilitySlider.getCurrent(),
@@ -180,9 +184,12 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                         child: Center(
                           child: widget.children
                               ? const Text(
-                                  "Kein Wert bis jetzt",
+                                  "Klick hier rein!",
+                                  textScaleFactor: 3,
                                 )
-                              : const Text('No value so far'),
+                              : const Text(
+                                  'No value so far',
+                                ),
                         ),
                       ),
                     ),

@@ -79,9 +79,11 @@ class _RobotBoxState extends State<RobotBox> {
     "Ganz okay..."
   ];
   List<String> highScore = [
-    "WOWWWW",
-    "YIPPIE jetzt kann ich mich verbessern",
-    "DANKESCHÖN"
+    "Oh, hier muss ich mich noch verbessern, danke!",
+    "Yay, jetzt lerne ich dazu!",
+    "Upsi, hier war ich noch nicht so gut!",
+    "Gut machst du das!",
+    "Genau so! Jetzt weiß ich, wo ich falsch liege!"
   ];
 
   Random random = Random();
@@ -152,7 +154,8 @@ class _RobotBoxState extends State<RobotBox> {
                   textStyle: const TextStyle(
                       color: Colors.black,
                       fontSize: 20,
-                      decoration: TextDecoration.none),
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.w600),
                 ))
           ]),
         );
@@ -162,16 +165,27 @@ class _RobotBoxState extends State<RobotBox> {
   }
 }
 
-class Phase2Kids extends StatelessWidget with MainScreenElements {
-  const Phase2Kids({super.key});
+class Phase2Kids extends StatefulWidget with MainScreenElements {
+  Phase2Kids({super.key});
+
+  @override
+  State<Phase2Kids> createState() => _Phase2KidsState();
+}
+
+class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
+  int state = 0;
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      state++;
+    });
+
     return FittedBox(
       fit: BoxFit.contain,
       child: SizedBox(
         width: 1350,
-        height: 600,
+        height: 700,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -179,23 +193,21 @@ class Phase2Kids extends StatelessWidget with MainScreenElements {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
                     children: [
-                      Container(
-                        width: 800,
-                        child: const BubbleSpecialThree(
-                          text:
-                              "Hallo, ich bin es wieder! Hier kannst du sehen wie sich 2 Wärmepumpen zueinander verhalten. Du musst zuerst einmal die Schieberegler wie vorhin bewegen und dann kannst du unten in das Ergebnis reinklicken und die Position der zweiten Pumpe anpassen! Weil ich hier schon effizienter als andere bin, gibt es hier keine Grundwahrheit mit der ich verglichen werden kann. Tob dich aus!",
-                          color: OurColors.accentColor,
-                          tail: true,
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              decoration: TextDecoration.none),
+                      Transform.translate(
+                        offset: const Offset(90, 0),
+                        child: Container(
+                          constraints: const BoxConstraints(minHeight: 130),
+                          width: 800,
+                          child: const SpeechBubblePhase2(),
                         ),
+                      ),
+                      SizedBox(
+                        height: 20,
                       ),
                       ...input(500, true, false)
                     ],
@@ -223,11 +235,95 @@ class Phase2Kids extends StatelessWidget with MainScreenElements {
                     fontWeight: FontWeight.bold, color: OurColors.textColor),
                 textScaleFactor: 1.2,
               ),
-              outputSecondPhase(),
+              outputSecondPhase(true),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class SpeechBubblePhase2 extends StatefulWidget {
+  const SpeechBubblePhase2({super.key});
+
+  @override
+  State<SpeechBubblePhase2> createState() => _SpeechBubblePhase2State();
+}
+
+class _SpeechBubblePhase2State extends State<SpeechBubblePhase2> {
+  int state = 0;
+  bool slider = FutureNotifierPhase2.slider;
+  bool clickedOnce = FutureNotifierPhase2.clickedOnce;
+  Random random = Random();
+  String speech =
+      "Hallo ich bin es wieder. Wir wollen uns jetzt 2 Wärmepumpen anschauen!\n"
+      "Du kannst wie gewohnt zuerst die Schieberegler bewegen.\n"
+      "Du kannst jetzt aber auch direkt in das Feld unten reinklicken um die Position einer zweiten Wärmepumpe zu bestimmen! Probier es aus!";
+
+  List<String> speeches = [
+    "Hallo ich bin es wieder. Wir wollen uns jetzt 2 Wärmepumpen anschauen!\n"
+        "Du kannst wie gewohnt zuerst die Schieberegler bewegen.\n"
+        "Du kannst jetzt aber auch direkt in das Feld unten reinklicken um die Position einer zweiten Wärmepumpe zu bestimmen! Probier es aus!"
+  ];
+  String firstSlider =
+      "Super, klicke jetzt unten irgendwo in das Feld rein und ändere die Position der zweiten Wärmepumpe!";
+  String firstClick =
+      "Super, fällt dir schon was auf? Die Wärmepumpen beeinflussen sich, oder?\n"
+      "Du kannst jetzt wie vorhin auch die Schieberegler anpassen und experimentieren!";
+
+  List<String> noClicksYet = [
+    "Klicke jetzt unten in das Feld irgendwo. \nDamit bestimmst du die Position der zweiten Wärmepumpe!",
+    "Genau! Jetzt klicke in die Wärmefahne unten um die Position zu ändern! \nWas passiert dann wohl?",
+    "Willst du ausprobieren wie sich die Wäremfahnen beeinflussen?\n"
+        "Dann klicke unten in das Feld und verändere die Position der zweiten Wärmepumpe!",
+  ];
+
+  List<String> restSpeeches = [
+    "Interessant, man sieht dass sich die Wärmefahnen beeinflussen, oder?\nWeiter so!",
+    "Genau so! Was kannst du erkennen? \nProbier es weiter aus!",
+    "Gut so! Erkennst du wie sich die Wärmefahnen beeinflussen? \nSehr interessant, oder?",
+    "Sehr gut! Verändern sich die Wärmefahnen etwa gegenseitig? \nWarum ist das wohl so?",
+    "Hmmmm, wenn man die Wärmefahnen so platziert, dann sieht das also so aus.\nKannst du irgendwas erkennen?",
+    "Wow! Hättest du das erwartet? \nInteressant wie die eine Wärmefahne die andere wärmer macht, oder?",
+    "Wie cool! Die Position einer Wärmepumpe hat also Auswirkungen auf eine andere Wärmepumpe? \nDas könnte bestimmt wichtig sein!"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+        future: context.watch<FutureNotifierPhase2>().future,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          Widget child;
+
+          if (snapshot.connectionState == ConnectionState.done) {
+            state++;
+            slider = FutureNotifierPhase2.slider;
+            clickedOnce = FutureNotifierPhase2.clickedOnce;
+            if (state == 2) {
+              if (slider) {
+                speech = firstSlider;
+              } else {
+                speech = firstClick;
+              }
+            } else if (state > 2 && !clickedOnce) {
+              speech = noClicksYet[random.nextInt(noClicksYet.length)];
+            } else if (state > 2) {
+              speech = restSpeeches[random.nextInt(restSpeeches.length)];
+            }
+          }
+
+          child = BubbleSpecialThree(
+            text: speech,
+            color: OurColors.accentColor,
+            tail: true,
+            textStyle: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.none),
+          );
+          return child;
+        });
   }
 }
