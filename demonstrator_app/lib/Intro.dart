@@ -429,15 +429,15 @@ class _RobotIntroState extends State<RobotIntro> {
     "",
     "",
     "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
-    "",
+    "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
     "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
-    "",
+    "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
     "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
-    "",
+    "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
     'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
-    "",
+    'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
     "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
-    "",
+    "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
     "",
   ];
 
@@ -483,7 +483,7 @@ class _RobotIntroState extends State<RobotIntro> {
       height: 700,
       child: AnimatedOpacity(
         opacity: speechBubble2 ? 1.0 : 0,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 300),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: BubbleSpecialThree(
@@ -633,7 +633,6 @@ class _RobotIntroState extends State<RobotIntro> {
   }
 
   Widget introIllustration() {
-    Widget child = Container();
     if (times == 9) {
       return Positioned(
         top: 100,
@@ -688,7 +687,8 @@ class _RobotIntroState extends State<RobotIntro> {
         ),
       );
     }
-    return child;
+
+    return Container();
   }
 
   @override
@@ -746,7 +746,7 @@ class _RobotIntroState extends State<RobotIntro> {
                       height: 700,
                       child: AnimatedOpacity(
                         opacity: speechBubble ? 1.0 : 0,
-                        duration: const Duration(milliseconds: 500),
+                        duration: const Duration(milliseconds: 300),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 200),
                           child: BubbleSpecialThree(
