@@ -483,16 +483,22 @@ class _RobotIntroState extends State<RobotIntro> {
       height: 700,
       child: AnimatedOpacity(
         opacity: speechBubble2 ? 1.0 : 0,
-        duration: const Duration(milliseconds: 0),
-        child: BubbleSpecialThree(
-          text: speeches2[times],
-          color: OurColors.accentColor,
-          tail: true,
-          textStyle: const TextStyle(
+        duration: const Duration(milliseconds: 500),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: BubbleSpecialThree(
+            key: ValueKey<int>(
+                times), // Use a ValueKey to ensure proper animation when the key changes
+            text: speeches2[times],
+            color: OurColors.accentColor,
+            tail: true,
+            textStyle: const TextStyle(
               color: Colors.black,
               fontSize: 35,
               decoration: TextDecoration.none,
-              fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
@@ -706,25 +712,33 @@ class _RobotIntroState extends State<RobotIntro> {
                 height: 800,
                 child: Stack(
                   children: <Widget>[
-                    Positioned(
-                      top: 100,
-                      left: 1300,
-                      child: Container(
-                        height: 500,
-                        width: 500,
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 5),
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(500)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(500),
-                          child: Image.asset(
-                            imagePaths[times],
-                            fit: BoxFit.cover,
+                    AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        top: 100,
+                        left: speechBubble ? 1300 : 650,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Container(
+                            key: ValueKey<int>(
+                                times), // Use a ValueKey to ensure proper animation when the key changes
+                            height: 500,
+                            width: 500,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 5),
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(500),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(500),
+                              child: Image.asset(
+                                imagePaths[times],
+                                key: ValueKey<int>(
+                                    times), // Use a ValueKey to ensure proper animation when the key changes
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
+                        )),
                     Positioned(
                       top: 50,
                       left: 650,
@@ -733,15 +747,21 @@ class _RobotIntroState extends State<RobotIntro> {
                       child: AnimatedOpacity(
                         opacity: speechBubble ? 1.0 : 0,
                         duration: const Duration(milliseconds: 500),
-                        child: BubbleSpecialThree(
-                          text: speeches[times],
-                          color: OurColors.accentColor,
-                          tail: true,
-                          textStyle: const TextStyle(
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: BubbleSpecialThree(
+                            key: ValueKey<int>(
+                                times), // Use a ValueKey to ensure proper animation when the key changes
+                            text: speeches[times],
+                            color: OurColors.accentColor,
+                            tail: true,
+                            textStyle: const TextStyle(
                               color: Colors.black,
                               fontSize: 35,
                               decoration: TextDecoration.none,
-                              fontWeight: FontWeight.w600),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
                     ),
