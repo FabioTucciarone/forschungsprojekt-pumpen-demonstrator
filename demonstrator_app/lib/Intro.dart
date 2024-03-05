@@ -757,8 +757,8 @@ class _RobotIntroState extends State<RobotIntro> {
                   Slider(
                     value: volume,
                     thumbColor: OurColors.appBarColor,
-                    activeColor: OurColors.accentColor,
-                    inactiveColor: const Color.fromARGB(174, 206, 135, 135),
+                    activeColor: OurColors.darkerAccentColor,
+                    inactiveColor: OurColors.accentColor,
                     onChanged: (value) => setState(() {
                       volume = value;
                       player.setVolume(volume);

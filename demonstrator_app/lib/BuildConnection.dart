@@ -83,6 +83,9 @@ class _RegisterState extends State<RegisterBox> {
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (portNumber.text == "") {
+                        portNumber.text = "5000";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -141,14 +144,18 @@ class _RegisterState extends State<RegisterBox> {
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (portNumber.text == "") {
+                        portNumber.text = "5000";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ResultApp(
-                                  username: username.text,
-                                  password: password.text,
-                                  portNumber: int.parse(portNumber.text),
-                                )),
+                          builder: (context) => ResultApp(
+                            username: username.text,
+                            password: password.text,
+                            portNumber: int.parse(portNumber.text),
+                          ),
+                        ),
                       );
                       return KeyEventResult.handled;
                     } else {
@@ -181,14 +188,18 @@ class _RegisterState extends State<RegisterBox> {
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (portNumber.text == "") {
+                        portNumber.text = "5000";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ResultApp(
-                                  username: username.text,
-                                  password: password.text,
-                                  portNumber: int.parse(portNumber.text),
-                                )),
+                          builder: (context) => ResultApp(
+                            username: username.text,
+                            password: password.text,
+                            portNumber: int.parse(portNumber.text),
+                          ),
+                        ),
                       );
                       return KeyEventResult.handled;
                     } else {
@@ -212,6 +223,9 @@ class _RegisterState extends State<RegisterBox> {
                     const EdgeInsets.all(15)),
               ),
               onPressed: () {
+                if (portNumber.text == "") {
+                  portNumber.text = "5000";
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(
