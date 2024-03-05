@@ -162,12 +162,20 @@ class _RegisterState extends State<RegisterBox> {
               padding: const EdgeInsets.all(15),
               child: TextFormField(
                 controller: portNumber,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Portnummer',
-                  focusedBorder: UnderlineInputBorder(
+                  focusedBorder: const UnderlineInputBorder(
                     borderSide:
                         BorderSide(color: OurColors.accentColor, width: 2),
                   ),
+                  prefixIcon: const Icon(Icons.router),
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return OurColors.appBarColor;
+                    }
+                    return Colors.grey;
+                  }),
                 ),
                 cursorColor: OurColors.accentColor,
                 focusNode: FocusNode(
