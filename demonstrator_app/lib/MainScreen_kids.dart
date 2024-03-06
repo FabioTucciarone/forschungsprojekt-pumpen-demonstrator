@@ -54,11 +54,11 @@ class RobotBox extends StatefulWidget {
 
 class _RobotBoxState extends State<RobotBox> {
   List<String> imagePaths = [
-    'assets/happy.jpeg',
-    'assets/bored.jpeg',
-    'assets/confused.jpeg',
-    'assets/mad.jpeg',
-    'assets/starry.jpeg'
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/bored.jpeg',
+    'assets/KAI/confused.jpeg',
+    'assets/KAI/mad.jpeg',
+    'assets/KAI/starry.jpeg'
   ];
   List<String> loading = [
     "Hmmmmm",
@@ -222,7 +222,7 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(1000),
                         child:
-                            Image.asset('assets/happy.jpeg', fit: BoxFit.cover),
+                            Image.asset('assets/KAI/happy.jpeg', fit: BoxFit.cover),
                       )),
                 ],
               ),

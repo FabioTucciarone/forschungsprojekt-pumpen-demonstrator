@@ -386,25 +386,25 @@ class _RobotIntroState extends State<RobotIntro> {
     name = MainMaterial.name;
   }
   List<String> imagePaths = [
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/confused.jpeg',
-    'assets/happy.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/sad.jpeg',
-    'assets/starry.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/confused.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/confused.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/sad.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/confused.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
   ];
   List<String> speeches = [
     "",
@@ -805,30 +805,23 @@ class _RobotIntroState extends State<RobotIntro> {
 class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
-    "animalese1.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese1.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
+    "animalese/animalese1.wav",
+    "animalese/animalese2.wav",
+    "animalese/animalese3.wav",
+    "animalese/animalese4.wav",
+    "animalese/animalese5.wav",
+    "animalese/animalese6.wav",
+    "animalese/animalese7.wav",
+    "animalese/animalese8.wav",
+    "animalese/animalese9.wav",
+    "animalese/animalese10.wav",
+    "animalese/animalese11.wav",
+    "animalese/animalese12.wav",
+    "animalese/animalese13.wav",
   ];
 
   Player() {
-    player.setSource(AssetSource("animalese0.wav"));
+    player.setSource(AssetSource("animalese/animalese1.wav"));
     player.setVolume(50);
   }
 
