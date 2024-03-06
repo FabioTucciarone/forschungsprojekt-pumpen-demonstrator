@@ -33,8 +33,16 @@ class PumpInputBox extends StatefulWidget {
 class _PumpInputBoxState extends State<PumpInputBox> {
   Offset pumpPos = const Offset(10, 10);
   final ResponseDecoder responseDecoder = ResponseDecoder();
-  double top = 41;
-  double left = 58;
+  double top = 30;
+  double left = 85;
+  Widget lastOutput = Container(
+    width: 1105,
+    height: 88,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: Colors.white),
+    ),
+  );
 
   @override
   void initState() {
@@ -205,34 +213,29 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                     getGestureDetectorWidget(const Color.fromRGBO(0, 0, 0, 0)),
                   ],
                 );
+                lastOutput =
+                    Image.memory(responseDecoder.getBytes("model_result"));
               }
             }
           } else {
             child = Stack(
               alignment: AlignmentDirectional.center,
               children: <Widget>[
-                Positioned(
-                  top: top,
-                  left: left,
-                  child: Container(
-                    width: widget.width,
-                    height: widget.height,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.white),
-                    ),
-                    child: const SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: OurColors.accentColor,
-                        ),
+                lastOutput,
+                const Positioned(
+                  top: 22,
+                  left: 600,
+                  child: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: OurColors.accentColor,
                       ),
                     ),
                   ),
                 ),
-                getGestureDetectorWidget(Colors.black),
+                getGestureDetectorWidget(const Color.fromRGBO(0, 0, 0, 0)),
               ],
             );
           }

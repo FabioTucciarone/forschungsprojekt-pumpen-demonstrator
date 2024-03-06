@@ -17,7 +17,7 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
       fit: BoxFit.contain,
       child: SizedBox(
         width: 1350,
-        height: 730,
+        height: 818,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -206,7 +206,7 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                           child: const SpeechBubblePhase2(),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       ...input(500, true, false)
@@ -225,9 +225,6 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                             Image.asset('assets/happy.jpeg', fit: BoxFit.cover),
                       )),
                 ],
-              ),
-              const SizedBox(
-                height: 10,
               ),
               const Text(
                 "Position der zweiten Wärmepumpe:",
