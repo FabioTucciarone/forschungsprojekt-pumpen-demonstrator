@@ -7,6 +7,9 @@ import torch
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.axes import Axes
+from mpl_toolkits.axes_grid1.axes_divider import AxesDivider
+from matplotlib.colorbar import Colorbar
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import base64
 from dataclasses import dataclass
@@ -57,20 +60,25 @@ class ReturnData:
 
     def set_figure(self, figure_name: str, pixel_data: Union[np.ndarray, torch.Tensor], **imshowargs):
         self.figures[figure_name] = Figure(dpi=200)
-        axis = self.figures[figure_name].add_subplot(1, 1, 1)
+        axis: Axes = self.figures[figure_name].add_subplot(1, 1, 1)
         axis.invert_yaxis()
         axis.tick_params(labelsize=6)
         axis.tick_params(colors=self.color_palette.text_color)
+        axis.set_xlabel("m")
+        axis.set_ylabel("m")
+        axis.yaxis.get_label().set_fontsize(7)
+        axis.xaxis.get_label().set_fontsize(7)
         self.figures[figure_name].patch.set_facecolor(self.color_palette.background_color)
-        self.figures[figure_name].tight_layout()
-        colorbar_axis = make_axes_locatable(self.figures[figure_name].gca()).append_axes("right", size=0.3, pad=0.05)
+        colorbar_axis: Axes = make_axes_locatable(self.figures[figure_name].gca()).append_axes("right", size=0.15, pad=0.05)
         colorbar_axis.yaxis.set_tick_params(colors=self.color_palette.text_color, labelsize=6)
 
         if self.color_map is not None:
             imshowargs['cmap'] = self.color_map
         axes_image = axis.imshow(pixel_data, **imshowargs)
-        self.figures[figure_name].colorbar(axes_image, cax=colorbar_axis)
-
+        colorbar: Colorbar = self.figures[figure_name].colorbar(axes_image, cax=colorbar_axis)
+        colorbar.set_label('°C')
+        colorbar.ax.yaxis.get_label().set_fontsize(7)
+        self.figures[figure_name].tight_layout()
 
     def get_figure(self, figure_name: str):
         return self.figures[figure_name]
