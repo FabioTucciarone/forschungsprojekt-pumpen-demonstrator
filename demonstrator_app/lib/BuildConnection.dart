@@ -47,6 +47,7 @@ class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
   final portNumber = TextEditingController();
+  final server = TextEditingController();
   bool passwordVisible = true;
 
   @override
@@ -86,6 +87,9 @@ class _RegisterState extends State<RegisterBox> {
                       if (portNumber.text == "") {
                         portNumber.text = "5000";
                       }
+                      if (server.text == "") {
+                        portNumber.text = "pcsgs08";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -93,6 +97,7 @@ class _RegisterState extends State<RegisterBox> {
                                   username: username.text,
                                   password: password.text,
                                   portNumber: int.parse(portNumber.text),
+                                  server: server.text,
                                 )),
                       );
                       return KeyEventResult.handled;
@@ -153,6 +158,7 @@ class _RegisterState extends State<RegisterBox> {
                           builder: (context) => ResultApp(
                             username: username.text,
                             password: password.text,
+                            server: server.text,
                             portNumber: int.parse(portNumber.text),
                           ),
                         ),
@@ -165,50 +171,98 @@ class _RegisterState extends State<RegisterBox> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: TextFormField(
-                controller: portNumber,
-                decoration: InputDecoration(
-                  hintText: 'Portnummer',
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: OurColors.accentColor, width: 2),
-                  ),
-                  prefixIcon: const Icon(Icons.router),
-                  prefixIconColor: MaterialStateColor.resolveWith(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused)) {
-                      return OurColors.appBarColor;
-                    }
-                    return Colors.grey;
-                  }),
-                ),
-                cursorColor: OurColors.accentColor,
-                focusNode: FocusNode(
-                  onKeyEvent: (node, event) {
-                    if (event.logicalKey == LogicalKeyboardKey.enter) {
-                      if (portNumber.text == "") {
-                        portNumber.text = "5000";
+            Row(children: [
+              Flexible( child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: TextFormField(
+                  controller: server,
+                  decoration: InputDecoration(
+                    hintText: 'Server (pcsgs08)',
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: OurColors.accentColor, width: 2),
+                    ),
+                    prefixIcon: const Icon(Icons.router),
+                    prefixIconColor: MaterialStateColor.resolveWith(
+                        (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.focused)) {
+                        return OurColors.appBarColor;
                       }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ResultApp(
-                            username: username.text,
-                            password: password.text,
-                            portNumber: int.parse(portNumber.text),
+                      return Colors.grey;
+                    }),
+                  ),
+                  cursorColor: OurColors.accentColor,
+                  focusNode: FocusNode(
+                    onKeyEvent: (node, event) {
+                      if (event.logicalKey == LogicalKeyboardKey.enter) {
+                        if (portNumber.text == "") {
+                          portNumber.text = "5000";
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ResultApp(
+                              username: username.text,
+                              password: password.text,
+                              server: server.text,
+                              portNumber: int.parse(portNumber.text),
+                            ),
                           ),
-                        ),
-                      );
-                      return KeyEventResult.handled;
-                    } else {
-                      return KeyEventResult.ignored;
-                    }
-                  },
+                        );
+                        return KeyEventResult.handled;
+                      } else {
+                        return KeyEventResult.ignored;
+                      }
+                    },
+                  ),
                 ),
-              ),
-            ),
+              )),
+              Flexible( child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: TextFormField(
+                  controller: portNumber,
+                  decoration: InputDecoration(
+                    hintText: 'Port (5000)',
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: OurColors.accentColor, width: 2),
+                    ),
+                    prefixIcon: const Icon(Icons.router),
+                    prefixIconColor: MaterialStateColor.resolveWith(
+                        (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.focused)) {
+                        return OurColors.appBarColor;
+                      }
+                      return Colors.grey;
+                    }),
+                  ),
+                  cursorColor: OurColors.accentColor,
+                  focusNode: FocusNode(
+                    onKeyEvent: (node, event) {
+                      if (event.logicalKey == LogicalKeyboardKey.enter) {
+                        if (portNumber.text == "") {
+                          portNumber.text = "5000";
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ResultApp(
+                              username: username.text,
+                              password: password.text,
+                              server: server.text,
+                              portNumber: int.parse(portNumber.text),
+                            ),
+                          ),
+                        );
+                        return KeyEventResult.handled;
+                      } else {
+                        return KeyEventResult.ignored;
+                      }
+                    },
+                  ),
+                ),
+              )),
+            ],),
             const SizedBox(
               height: 20,
             ),
@@ -232,6 +286,7 @@ class _RegisterState extends State<RegisterBox> {
                     builder: (context) => ResultApp(
                       username: username.text,
                       password: password.text,
+                      server: server.text,
                       portNumber: int.parse(portNumber.text),
                     ),
                   ),
@@ -275,10 +330,13 @@ class ResultApp extends StatelessWidget {
       {super.key,
       required this.username,
       required this.password,
-      required this.portNumber});
+      required this.server,
+      required this.portNumber
+      });
 
   final String username;
   final String password;
+  final String server;
   final int portNumber;
 
   @override
@@ -302,6 +360,7 @@ class ResultApp extends StatelessWidget {
         child: Result(
           username: username,
           password: password,
+          server: server,
           portNumber: portNumber,
         ),
       ),
@@ -312,12 +371,14 @@ class ResultApp extends StatelessWidget {
 class Result extends StatefulWidget {
   final String username;
   final String password;
+  final String server;
   final int portNumber;
   const Result(
       {super.key,
       required this.username,
       required this.password,
-      required this.portNumber});
+      required this.portNumber,
+      required this.server});
 
   @override
   State<Result> createState() => _ResultState();
@@ -398,7 +459,7 @@ class _ResultState extends State<Result> {
               print('HTTP requests can be send now.');
             });
             useOfBackend.backend
-                .forwardConnection('pcsgs08', widget.portNumber);
+                .forwardConnection(widget.server, widget.portNumber);
             Future.delayed(const Duration(seconds: 1), () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
