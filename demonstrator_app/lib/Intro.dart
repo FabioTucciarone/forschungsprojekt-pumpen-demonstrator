@@ -394,7 +394,7 @@ class _RobotIntroState extends State<RobotIntro> {
     'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
-    'assets/happy.jpeg',
+    'assets/sad.jpeg',
     'assets/starry.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
@@ -429,15 +429,15 @@ class _RobotIntroState extends State<RobotIntro> {
     "",
     "",
     "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
-    "",
+    "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
     "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
-    "",
+    "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
     "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
-    "",
+    "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
     'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
-    "",
+    'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
     "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
-    "",
+    "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
     "",
   ];
 
@@ -483,16 +483,22 @@ class _RobotIntroState extends State<RobotIntro> {
       height: 700,
       child: AnimatedOpacity(
         opacity: speechBubble2 ? 1.0 : 0,
-        duration: const Duration(milliseconds: 0),
-        child: BubbleSpecialThree(
-          text: speeches2[times],
-          color: OurColors.accentColor,
-          tail: true,
-          textStyle: const TextStyle(
+        duration: const Duration(milliseconds: 300),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: BubbleSpecialThree(
+            key: ValueKey<int>(
+                times), // Use a ValueKey to ensure proper animation when the key changes
+            text: speeches2[times],
+            color: OurColors.accentColor,
+            tail: true,
+            textStyle: const TextStyle(
               color: Colors.black,
               fontSize: 35,
               decoration: TextDecoration.none,
-              fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
@@ -567,67 +573,70 @@ class _RobotIntroState extends State<RobotIntro> {
         ),
       );
     } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: ElevatedButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(200, 0)),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: Row(
+          key: ValueKey<int>(times),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(const Size(200, 0)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
                 ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.all(15)),
-              ),
-              onPressed: () {
-                previousState();
-              },
-              child: Text(
-                lastButtonSpeech[times],
-                style: const TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                onPressed: () {
+                  previousState();
+                },
+                child: Text(
+                  lastButtonSpeech[times],
+                  style: const TextStyle(color: OurColors.appBarTextColor),
+                  textScaleFactor: 3,
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            width: 50,
-          ),
-          Center(
-            child: ElevatedButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(200, 0)),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
+            const SizedBox(
+              width: 50,
+            ),
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(const Size(200, 0)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
                 ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.all(15)),
-              ),
-              onPressed: () {
-                if (times == 13) {
-                  widget.tabController.animateTo(1);
-                } else {
-                  nextState();
-                }
-              },
-              child: Text(
-                nextButtonSpeech[times],
-                style: const TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+                onPressed: () {
+                  if (times == 13) {
+                    widget.tabController.animateTo(1);
+                  } else {
+                    nextState();
+                  }
+                },
+                child: Text(
+                  nextButtonSpeech[times],
+                  style: const TextStyle(color: OurColors.appBarTextColor),
+                  textScaleFactor: 3,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
   }
 
   Widget introIllustration() {
-    Widget child = Container();
     if (times == 9) {
       return Positioned(
         top: 100,
@@ -682,7 +691,8 @@ class _RobotIntroState extends State<RobotIntro> {
         ),
       );
     }
-    return child;
+
+    return Container();
   }
 
   @override
@@ -706,25 +716,33 @@ class _RobotIntroState extends State<RobotIntro> {
                 height: 800,
                 child: Stack(
                   children: <Widget>[
-                    Positioned(
-                      top: 100,
-                      left: 1300,
-                      child: Container(
-                        height: 500,
-                        width: 500,
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 5),
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(500)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(500),
-                          child: Image.asset(
-                            imagePaths[times],
-                            fit: BoxFit.cover,
+                    AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        top: 100,
+                        left: speechBubble ? 1300 : 650,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Container(
+                            key: ValueKey<int>(
+                                times), // Use a ValueKey to ensure proper animation when the key changes
+                            height: 500,
+                            width: 500,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 5),
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(500),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(500),
+                              child: Image.asset(
+                                imagePaths[times],
+                                key: ValueKey<int>(
+                                    times), // Use a ValueKey to ensure proper animation when the key changes
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
+                        )),
                     Positioned(
                       top: 50,
                       left: 650,
@@ -732,16 +750,22 @@ class _RobotIntroState extends State<RobotIntro> {
                       height: 700,
                       child: AnimatedOpacity(
                         opacity: speechBubble ? 1.0 : 0,
-                        duration: const Duration(milliseconds: 500),
-                        child: BubbleSpecialThree(
-                          text: speeches[times],
-                          color: OurColors.accentColor,
-                          tail: true,
-                          textStyle: const TextStyle(
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: BubbleSpecialThree(
+                            key: ValueKey<int>(
+                                times), // Use a ValueKey to ensure proper animation when the key changes
+                            text: speeches[times],
+                            color: OurColors.accentColor,
+                            tail: true,
+                            textStyle: const TextStyle(
                               color: Colors.black,
                               fontSize: 35,
                               decoration: TextDecoration.none,
-                              fontWeight: FontWeight.w600),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
                     ),

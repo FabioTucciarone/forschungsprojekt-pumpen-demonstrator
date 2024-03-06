@@ -35,11 +35,14 @@ class PressureSlider extends StatefulWidget {
 
 class _PressureSliderState extends State<PressureSlider> {
   final List<Color> colorsGradient = [
-    const Color.fromARGB(255, 204, 51, 51),
-    const Color.fromARGB(255, 255, 255, 255),
     const Color.fromARGB(255, 4, 48, 97),
+    const Color.fromARGB(255, 255, 255, 255),
+    const Color.fromARGB(255, 204, 51, 51),
   ];
   double sliderPos = 0;
+  Color shadowColor = Colors.grey;
+  double spreadRadius = 0.8;
+  double spreadRadiusChildren = 4;
 
   @override
   void initState() {
@@ -205,12 +208,30 @@ class _PressureSliderState extends State<PressureSlider> {
               behavior: HitTestBehavior.opaque,
               onHorizontalDragStart: (DragStartDetails details) {
                 correctingPosition(details.localPosition.dx);
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = OurColors.appBarColor;
+                    spreadRadius = spreadRadiusChildren;
+                  });
+                }
               },
               onHorizontalDragUpdate: (DragUpdateDetails details) {
                 correctingPosition(details.localPosition.dx);
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = OurColors.appBarColor;
+                    spreadRadius = spreadRadiusChildren;
+                  });
+                }
               },
               onTapDown: (TapDownDetails details) {
                 correctingPosition(details.localPosition.dx);
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = OurColors.appBarColor;
+                    spreadRadius = spreadRadiusChildren;
+                  });
+                }
               },
               onHorizontalDragEnd: (DragEndDetails details) {
                 if (widget.name == SliderType.pressure) {
@@ -251,6 +272,12 @@ class _PressureSliderState extends State<PressureSlider> {
                     ]));
                   }
                   MainSlide.restartTimer.restartTimer();
+                }
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = Colors.grey;
+                    spreadRadius = 0.8;
+                  });
                 }
               },
               onTapUp: (TapUpDetails details) {
@@ -293,6 +320,12 @@ class _PressureSliderState extends State<PressureSlider> {
                   }
                   MainSlide.restartTimer.restartTimer();
                 }
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = Colors.grey;
+                    spreadRadius = 0.8;
+                  });
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(10),
@@ -302,9 +335,11 @@ class _PressureSliderState extends State<PressureSlider> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(colors: colorsGradient),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                          color: Colors.grey, spreadRadius: 0.8, blurRadius: 8),
+                          color: shadowColor,
+                          spreadRadius: spreadRadius,
+                          blurRadius: 8),
                     ],
                   ),
                   child: CustomPaint(

@@ -8,7 +8,7 @@ class RestartTimer extends ChangeNotifier {
   late Timer timer;
 
   RestartTimer() {
-    timer = Timer(const Duration(seconds: 60), () {
+    timer = Timer(const Duration(seconds: 180), () {
       resetValues();
       notifyListeners();
     });
@@ -16,7 +16,7 @@ class RestartTimer extends ChangeNotifier {
 
   void restartTimer() {
     timer.cancel();
-    timer = Timer(const Duration(seconds: 60), () {
+    timer = Timer(const Duration(seconds: 180), () {
       resetValues();
       notifyListeners();
     });
