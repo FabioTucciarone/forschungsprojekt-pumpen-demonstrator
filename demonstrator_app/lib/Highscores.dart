@@ -38,7 +38,7 @@ class AverageError extends StatelessWidget {
                     textScaleFactor: 2,
                   );
                 } else {
-                  averageError = double.parse(averageError.toStringAsFixed(6));
+                  averageError = double.parse(averageError.toStringAsFixed(4));
                   child = Text(
                     "$text $averageError °C",
                     textScaleFactor: 2,
@@ -58,6 +58,11 @@ class AverageError extends StatelessWidget {
                     textScaleFactor: 2,
                   ),
                   const SizedBox(
+                    width: 10,
+                  ),
+                  const SizedBox(
+                    height: 30,
+                    width: 30,
                     child: CircularProgressIndicator(
                       color: OurColors.accentColor,
                     ),
@@ -115,14 +120,9 @@ class _HighscoreState extends State<Highscore> {
               AsyncSnapshot<Map<String, dynamic>> snapshot) {
             Widget child;
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox(
-                width: 100,
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: OurColors.accentColor,
-                  ),
-                ),
+              return child = Text(
+                "Highscore: $highscore von $name",
+                textScaleFactor: 2,
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.data != null) {
@@ -157,9 +157,12 @@ class HighscoreDialog extends StatelessWidget {
           Widget child;
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox(
-                child: CircularProgressIndicator(
-              color: OurColors.accentColor,
-            ));
+              width: 100,
+              height: 100,
+              child: CircularProgressIndicator(
+                color: OurColors.accentColor,
+              ),
+            );
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data != null) {
               List<dynamic> highscores = snapshot.data!;
@@ -218,16 +221,20 @@ class HighscoreDialog extends StatelessWidget {
             title: const Text("Bestenliste"),
             content: getToptenList(),
             actions: <Widget>[
-              TextButton(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarTextColor),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          OurColors.appBarColor)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Schließen"))
+              ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(OurColors.appBarColor),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Schließen"),
+              ),
             ],
           );
         });
@@ -235,12 +242,15 @@ class HighscoreDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return ElevatedButton(
         style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(OurColors.darkerAccentColor)),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(OurColors.darkerAccentColor),
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+              const EdgeInsets.all(10)),
+        ),
         onPressed: () {
           showHighscores(context);
         },
@@ -263,10 +273,9 @@ class ScoreBoard extends StatelessWidget {
         Container(
             decoration: BoxDecoration(
                 color: OurColors.accentColor,
-                border: Border.all(color: OurColors.accentColor, width: 4.0),
                 borderRadius: BorderRadius.circular(20)),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 0, 4.0, 0),
+              padding: const EdgeInsets.fromLTRB(12.0, 4, 12.0, 4),
               child: AverageError(true),
             )),
         const HighscoreDialog(),
@@ -274,10 +283,9 @@ class ScoreBoard extends StatelessWidget {
             constraints: const BoxConstraints(minWidth: 300),
             decoration: BoxDecoration(
                 color: OurColors.accentColor,
-                border: Border.all(color: OurColors.accentColor, width: 4.0),
                 borderRadius: BorderRadius.circular(20)),
             child: const Padding(
-              padding: EdgeInsets.fromLTRB(4.0, 0, 4.0, 0),
+              padding: EdgeInsets.fromLTRB(12.0, 4, 12.0, 4),
               child: Highscore(),
             )),
       ],

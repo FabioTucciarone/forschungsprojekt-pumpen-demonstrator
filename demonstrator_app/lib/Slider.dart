@@ -35,11 +35,14 @@ class PressureSlider extends StatefulWidget {
 
 class _PressureSliderState extends State<PressureSlider> {
   final List<Color> colorsGradient = [
-    const Color.fromARGB(255, 204, 51, 51),
-    const Color.fromARGB(255, 255, 255, 255),
     const Color.fromARGB(255, 4, 48, 97),
+    const Color.fromARGB(255, 255, 255, 255),
+    const Color.fromARGB(255, 204, 51, 51),
   ];
   double sliderPos = 0;
+  Color shadowColor = Colors.grey;
+  double spreadRadius = 0.8;
+  double spreadRadiusChildren = 4;
 
   @override
   void initState() {
@@ -105,14 +108,14 @@ class _PressureSliderState extends State<PressureSlider> {
       if (children) {
         identifier = 'Druck';
       } else {
-        identifier = 'Pressure';
+        identifier = 'Pressure Gradient';
       }
       unit = '';
     } else {
       if (children) {
         identifier = 'Durchlässigkeit';
       } else {
-        identifier = 'Permeability';
+        identifier = 'Logarithm of Permeability';
       }
       unit = 'm\u00B2';
     }
@@ -148,7 +151,7 @@ class _PressureSliderState extends State<PressureSlider> {
     if (name != SliderType.dummy) {
       if (children) {
         return Container(
-          width: 60,
+          width: 70,
           height: 30,
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -156,7 +159,7 @@ class _PressureSliderState extends State<PressureSlider> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: const Text(
-            'wenig',
+            'niedrig',
             textScaleFactor: 1.2,
           ),
         );
@@ -205,12 +208,30 @@ class _PressureSliderState extends State<PressureSlider> {
               behavior: HitTestBehavior.opaque,
               onHorizontalDragStart: (DragStartDetails details) {
                 correctingPosition(details.localPosition.dx);
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = OurColors.appBarColor;
+                    spreadRadius = spreadRadiusChildren;
+                  });
+                }
               },
               onHorizontalDragUpdate: (DragUpdateDetails details) {
                 correctingPosition(details.localPosition.dx);
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = OurColors.appBarColor;
+                    spreadRadius = spreadRadiusChildren;
+                  });
+                }
               },
               onTapDown: (TapDownDetails details) {
                 correctingPosition(details.localPosition.dx);
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = OurColors.appBarColor;
+                    spreadRadius = spreadRadiusChildren;
+                  });
+                }
               },
               onHorizontalDragEnd: (DragEndDetails details) {
                 if (widget.name == SliderType.pressure) {
@@ -221,6 +242,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             widget.currentValue,
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             MainScreenElements.permeabilitySlider.getCurrent(),
@@ -239,6 +261,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             MainScreenElements.pressureSlider.getCurrent(),
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             widget.currentValue,
@@ -249,6 +272,12 @@ class _PressureSliderState extends State<PressureSlider> {
                     ]));
                   }
                   MainSlide.restartTimer.restartTimer();
+                }
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = Colors.grey;
+                    spreadRadius = 0.8;
+                  });
                 }
               },
               onTapUp: (TapUpDetails details) {
@@ -260,6 +289,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             widget.currentValue,
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             MainScreenElements.permeabilitySlider.getCurrent(),
@@ -278,6 +308,7 @@ class _PressureSliderState extends State<PressureSlider> {
                             MainScreenElements.pressureSlider.getCurrent(),
                             MainMaterial.getName()));
                   } else {
+                    FutureNotifierPhase2.slider = true;
                     MainSlide.futureNotifierPhase2.setFuture(
                         useOfBackend.backend.sendInputDataPhase2(
                             widget.currentValue,
@@ -289,18 +320,26 @@ class _PressureSliderState extends State<PressureSlider> {
                   }
                   MainSlide.restartTimer.restartTimer();
                 }
+                if (widget.children) {
+                  setState(() {
+                    shadowColor = Colors.grey;
+                    spreadRadius = 0.8;
+                  });
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Container(
                   width: widget.sliderWidth,
-                  height: 35,
+                  height: (widget.name != SliderType.dummy) ? 35 : 25,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(colors: colorsGradient),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                          color: Colors.grey, spreadRadius: 0.8, blurRadius: 8),
+                          color: shadowColor,
+                          spreadRadius: spreadRadius,
+                          blurRadius: 8),
                     ],
                   ),
                   child: CustomPaint(
@@ -314,7 +353,7 @@ class _PressureSliderState extends State<PressureSlider> {
             ),
             (widget.children && (widget.name != SliderType.dummy))
                 ? Container(
-                    width: 60,
+                    width: 70,
                     height: 30,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
@@ -322,7 +361,7 @@ class _PressureSliderState extends State<PressureSlider> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: const Text(
-                      'viel',
+                      'hoch',
                       textScaleFactor: 1.2,
                     ),
                   )

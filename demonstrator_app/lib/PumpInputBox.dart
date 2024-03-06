@@ -33,6 +33,8 @@ class PumpInputBox extends StatefulWidget {
 class _PumpInputBoxState extends State<PumpInputBox> {
   Offset pumpPos = const Offset(10, 10);
   final ResponseDecoder responseDecoder = ResponseDecoder();
+  double top = 41;
+  double left = 58;
 
   @override
   void initState() {
@@ -71,27 +73,76 @@ class _PumpInputBoxState extends State<PumpInputBox> {
     });
   }
 
+  Widget getGestureDetectorWidget(Color color) {
+    return Positioned(
+      top: top,
+      left: left,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onPanStart: (DragStartDetails details) {
+          correctingPosition(details.localPosition);
+        },
+        onPanUpdate: (DragUpdateDetails details) {
+          correctingPosition(details.localPosition);
+        },
+        onTapDown: (TapDownDetails details) {
+          correctingPosition(details.localPosition);
+        },
+        onPanEnd: (DragEndDetails details) {
+          FutureNotifierPhase2.slider = false;
+          FutureNotifierPhase2.clickedOnce = true;
+          MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+              .sendInputDataPhase2(
+                  MainScreenElements.permeabilitySlider.getCurrent(),
+                  MainScreenElements.pressureSlider.getCurrent(),
+                  MainMaterial.getName(),
+                  [widget.currentValue.dx, widget.currentValue.dy]));
+          MainSlide.restartTimer.restartTimer();
+        },
+        onTapUp: (TapUpDetails details) {
+          FutureNotifierPhase2.slider = false;
+          FutureNotifierPhase2.clickedOnce = true;
+          MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
+              .sendInputDataPhase2(
+                  MainScreenElements.permeabilitySlider.getCurrent(),
+                  MainScreenElements.pressureSlider.getCurrent(),
+                  MainMaterial.getName(),
+                  [widget.currentValue.dx, widget.currentValue.dy]));
+          MainSlide.restartTimer.restartTimer();
+        },
+        child: Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            border: Border.all(width: 0.5, color: color),
+          ),
+          child: CustomPaint(
+            painter: PointerThumb(pumpPos),
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Builds a stack consisting of the output and the input box for the position of the second heat pump.
   /// The sending of the selected data is triggered when the pointer is released or clicked. The position is corrected
   /// whenever the pointer is moved or the input box is clicked.
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifierPhase2>().future;
-    double top = 41;
-    double left = 58;
     return SizedBox(
       width: 1600,
       height: 200,
-      child: Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          FutureBuilder<String>(
-            future: future,
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              Widget child;
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  child = Positioned(
+      child: FutureBuilder<String>(
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          Widget child;
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              child = Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  Positioned(
                     top: top,
                     left: left,
                     child: Container(
@@ -110,11 +161,17 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                         ),
                       ),
                     ),
-                  );
-                  print('Error ${snapshot.error} occured');
-                } else {
-                  if (snapshot.data == "keinWert") {
-                    child = Positioned(
+                  ),
+                  getGestureDetectorWidget(const Color.fromRGBO(255, 0, 0, 0)),
+                ],
+              );
+              print('Error ${snapshot.error} occured');
+            } else {
+              if (snapshot.data == "keinWert") {
+                child = Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    Positioned(
                       top: top,
                       left: left,
                       child: Container(
@@ -127,20 +184,34 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                         child: Center(
                           child: widget.children
                               ? const Text(
-                                  "Kein Wert bis jetzt",
+                                  "Klick hier rein!",
+                                  textScaleFactor: 3,
                                 )
-                              : const Text('No value so far'),
+                              : const Text(
+                                  'No value so far',
+                                ),
                         ),
                       ),
-                    );
-                  } else {
-                    responseDecoder.setResponse(snapshot.data);
-                    child =
-                        Image.memory(responseDecoder.getBytes("model_result"));
-                  }
-                }
+                    ),
+                    getGestureDetectorWidget(Colors.black),
+                  ],
+                );
               } else {
-                child = Positioned(
+                responseDecoder.setResponse(snapshot.data);
+                child = Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    Image.memory(responseDecoder.getBytes("model_result")),
+                    getGestureDetectorWidget(const Color.fromRGBO(0, 0, 0, 0)),
+                  ],
+                );
+              }
+            }
+          } else {
+            child = Stack(
+              alignment: AlignmentDirectional.center,
+              children: <Widget>[
+                Positioned(
                   top: top,
                   left: left,
                   child: Container(
@@ -160,58 +231,13 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                       ),
                     ),
                   ),
-                );
-              }
-              return child;
-            },
-          ),
-          Positioned(
-            top: top,
-            left: left,
-            child: MouseRegion(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onPanStart: (DragStartDetails details) {
-                  correctingPosition(details.localPosition);
-                },
-                onPanUpdate: (DragUpdateDetails details) {
-                  correctingPosition(details.localPosition);
-                },
-                onTapDown: (TapDownDetails details) {
-                  correctingPosition(details.localPosition);
-                },
-                onPanEnd: (DragEndDetails details) {
-                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
-                      .sendInputDataPhase2(
-                          MainScreenElements.permeabilitySlider.getCurrent(),
-                          MainScreenElements.pressureSlider.getCurrent(),
-                          MainMaterial.getName(),
-                          [widget.currentValue.dx, widget.currentValue.dy]));
-                  MainSlide.restartTimer.restartTimer();
-                },
-                onTapUp: (TapUpDetails details) {
-                  MainSlide.futureNotifierPhase2.setFuture(useOfBackend.backend
-                      .sendInputDataPhase2(
-                          MainScreenElements.permeabilitySlider.getCurrent(),
-                          MainScreenElements.pressureSlider.getCurrent(),
-                          MainMaterial.getName(),
-                          [widget.currentValue.dx, widget.currentValue.dy]));
-                  MainSlide.restartTimer.restartTimer();
-                },
-                child: Container(
-                  width: widget.width,
-                  height: widget.height,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 0.5, color: Colors.black),
-                  ),
-                  child: CustomPaint(
-                    painter: PointerThumb(pumpPos),
-                  ),
                 ),
-              ),
-            ),
-          ),
-        ],
+                getGestureDetectorWidget(Colors.black),
+              ],
+            );
+          }
+          return child;
+        },
       ),
     );
   }

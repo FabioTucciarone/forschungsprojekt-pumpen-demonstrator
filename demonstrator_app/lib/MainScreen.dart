@@ -134,14 +134,16 @@ class _MainMaterialState extends State<MainMaterial> {
               labelColor: OurColors.appBarTextColor,
               indicatorColor: OurColors.appBarTextColor,
               tabs: <Widget>[
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.info),
-                    SizedBox(
+                    const Icon(Icons.info),
+                    const SizedBox(
                       width: 8,
                     ),
-                    Text("Infotext"),
+                    widget.widget.children
+                        ? const Text("Einführung")
+                        : const Text("Infotext"),
                   ],
                 ),
                 Row(
@@ -153,7 +155,7 @@ class _MainMaterialState extends State<MainMaterial> {
                     ),
                     widget.widget.children
                         ? const Text("Eine Wärmepumpe")
-                        : const Text('Single Heat Pump'),
+                        : const Text('Single heat pump'),
                   ],
                 ),
                 Row(
@@ -196,7 +198,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
         width: 1350,
         height: 600,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,8 +207,25 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
               const SizedBox(
                 height: 10,
               ),
-              const OutputHeader(),
-              ...output(false),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: OurColors.darkerAccentColor,
+                    width: 10,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      AverageError(false),
+                      ...output(false),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -227,7 +246,7 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
         width: 1350,
         height: 600,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,10 +256,12 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
                 height: 10,
               ),
               const Text(
-                "Output:",
-                textScaleFactor: 2,
+                "Position of the second heat pump:",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: OurColors.textColor),
+                textScaleFactor: 1.2,
               ),
-              outputSecondPhase(),
+              outputSecondPhase(false),
             ],
           ),
         ),
@@ -292,8 +313,8 @@ mixin MainScreenElements {
           }
         } else {
           child = const SizedBox(
-            width: 80,
-            height: 80,
+            width: 60,
+            height: 60,
             child: Center(
               child: CircularProgressIndicator(
                 color: OurColors.accentColor,
@@ -348,22 +369,22 @@ mixin MainScreenElements {
   static PumpInputBox heatPumpBox = PumpInputBox(
       width: 1000, height: 200, valueRange: const [0, 1], children: false);
 
-  Widget outputSecondPhase() {
+  Widget outputSecondPhase(bool children) {
     return FutureBuilder(
       future: useOfBackend.backend.getOutputShape(),
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           heatPumpBox = PumpInputBox(
-              width: 1157,
+              width: 1136,
               height: 94,
               valueRange: snapshot.data,
-              children: false);
+              children: children);
           child = heatPumpBox;
         } else {
           child = const SizedBox(
-            width: 100,
-            height: 100,
+            width: 60,
+            height: 60,
             child: Center(
               child: CircularProgressIndicator(
                 color: OurColors.accentColor,
@@ -408,6 +429,8 @@ class FutureNotifier extends ChangeNotifier {
 }
 
 class FutureNotifierPhase2 extends ChangeNotifier {
+  static bool slider = true;
+  static bool clickedOnce = false;
   Future<String> future = Future.value("keinWert");
 
   Future<String> get getFuture => future;

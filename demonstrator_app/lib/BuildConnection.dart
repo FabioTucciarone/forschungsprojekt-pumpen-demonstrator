@@ -46,6 +46,7 @@ class RegisterBox extends StatefulWidget {
 class _RegisterState extends State<RegisterBox> {
   final username = TextEditingController();
   final password = TextEditingController();
+  final portNumber = TextEditingController();
   bool passwordVisible = true;
 
   @override
@@ -82,12 +83,16 @@ class _RegisterState extends State<RegisterBox> {
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (portNumber.text == "") {
+                        portNumber.text = "5000";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ResultApp(
                                   username: username.text,
                                   password: password.text,
+                                  portNumber: int.parse(portNumber.text),
                                 )),
                       );
                       return KeyEventResult.handled;
@@ -139,13 +144,62 @@ class _RegisterState extends State<RegisterBox> {
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (portNumber.text == "") {
+                        portNumber.text = "5000";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ResultApp(
-                                  username: username.text,
-                                  password: password.text,
-                                )),
+                          builder: (context) => ResultApp(
+                            username: username.text,
+                            password: password.text,
+                            portNumber: int.parse(portNumber.text),
+                          ),
+                        ),
+                      );
+                      return KeyEventResult.handled;
+                    } else {
+                      return KeyEventResult.ignored;
+                    }
+                  },
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: TextFormField(
+                controller: portNumber,
+                decoration: InputDecoration(
+                  hintText: 'Portnummer',
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: OurColors.accentColor, width: 2),
+                  ),
+                  prefixIcon: const Icon(Icons.router),
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return OurColors.appBarColor;
+                    }
+                    return Colors.grey;
+                  }),
+                ),
+                cursorColor: OurColors.accentColor,
+                focusNode: FocusNode(
+                  onKeyEvent: (node, event) {
+                    if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (portNumber.text == "") {
+                        portNumber.text = "5000";
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ResultApp(
+                            username: username.text,
+                            password: password.text,
+                            portNumber: int.parse(portNumber.text),
+                          ),
+                        ),
                       );
                       return KeyEventResult.handled;
                     } else {
@@ -161,18 +215,24 @@ class _RegisterState extends State<RegisterBox> {
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.textColor),
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
                   OurColors.appBarColor,
                 ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
+                if (portNumber.text == "") {
+                  portNumber.text = "5000";
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ResultApp(
                       username: username.text,
                       password: password.text,
+                      portNumber: int.parse(portNumber.text),
                     ),
                   ),
                 );
@@ -185,10 +245,12 @@ class _RegisterState extends State<RegisterBox> {
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.textColor),
+                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
                 backgroundColor: MaterialStateProperty.all<Color>(
                   OurColors.appBarColor,
                 ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.all(15)),
               ),
               onPressed: () {
                 setState(() {
@@ -209,10 +271,15 @@ class _RegisterState extends State<RegisterBox> {
 }
 
 class ResultApp extends StatelessWidget {
-  const ResultApp({super.key, required this.username, required this.password});
+  const ResultApp(
+      {super.key,
+      required this.username,
+      required this.password,
+      required this.portNumber});
 
   final String username;
   final String password;
+  final int portNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +291,7 @@ class ResultApp extends StatelessWidget {
         backgroundColor: OurColors.appBarColor,
         leading: IconButton(
             color: OurColors.appBarTextColor,
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => RegisterApp()));
@@ -235,6 +302,7 @@ class ResultApp extends StatelessWidget {
         child: Result(
           username: username,
           password: password,
+          portNumber: portNumber,
         ),
       ),
     );
@@ -244,7 +312,12 @@ class ResultApp extends StatelessWidget {
 class Result extends StatefulWidget {
   final String username;
   final String password;
-  const Result({super.key, required this.username, required this.password});
+  final int portNumber;
+  const Result(
+      {super.key,
+      required this.username,
+      required this.password,
+      required this.portNumber});
 
   @override
   State<Result> createState() => _ResultState();
@@ -283,11 +356,15 @@ class _ResultState extends State<Result> {
                     ),
                   ),
                 ),
-                TextButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: OurColors.appBarColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                        OurColors.appBarTextColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarColor,
+                    ),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        const EdgeInsets.all(15)),
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -295,10 +372,7 @@ class _ResultState extends State<Result> {
                       MaterialPageRoute(builder: (context) => RegisterApp()),
                     );
                   },
-                  child: const Text(
-                    'Erneut versuchen',
-                    style: TextStyle(color: OurColors.appBarTextColor),
-                  ),
+                  child: const Text('Erneut versuchen'),
                 ),
               ],
             );
@@ -323,7 +397,8 @@ class _ResultState extends State<Result> {
             useOfBackend.backend.addListener(() {
               print('HTTP requests can be send now.');
             });
-            useOfBackend.backend.forwardConnection('pcsgs08', 5000);
+            useOfBackend.backend
+                .forwardConnection('pcsgs08', widget.portNumber);
             Future.delayed(const Duration(seconds: 1), () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));

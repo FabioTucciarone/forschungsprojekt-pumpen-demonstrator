@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import 'MainScreen.dart';
 import 'Slider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -18,147 +20,339 @@ class IntroductionScience extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Center(
-            child: Column(
-              children: [
-                Theme(
-                  data: Theme.of(context).copyWith(
-                      textSelectionTheme: const TextSelectionThemeData(
-                          selectionColor: OurColors.accentColor)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SelectableText.rich(
-                        TextSpan(
-                          style: TextStyle(
-                              fontSize: 18, color: Colors.black, height: 2),
-                          children: [
-                            TextSpan(
-                                text:
-                                    "Open-loop groundwater heat pumps represent a renewable approach for cooling and heating buildings.\n"),
-                            TextSpan(
-                                text:
-                                    "Understanding the environmental impact of these systems, particularly in terms of their heat contribution to the groundwater, is crucial for "),
-                            TextSpan(
-                                text: "effective city planning",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(
-                                text:
-                                    " since heat pumps can influence the heating or cooling process of other pumps if they are installed too close. \n"),
-                            TextSpan(
-                                text:
-                                    "Figure 1 illustrates an exemplary heat plume presented as a heatmap.\n"),
-                            TextSpan(
-                                text:
-                                    "Since fully resolved simulations would be too computationally expensive, we have developed a convolutional neural network "),
-                            TextSpan(
-                              text: "(CNN) to approximate these plumes.\n",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Tooltip(
-                        richMessage: WidgetSpan(
-                          child: Container(
-                            constraints: const BoxConstraints(
-                                maxHeight: 500, maxWidth: 700),
-                            child: Image.asset("assets/CNN_Architektur.png"),
-                          ),
-                        ),
-                        child: const Text(
-                          "The CNN:",
-                          style: TextStyle(
-                              fontSize: 18, color: Colors.black, height: 2),
-                        ),
-                      ),
-                      SelectableText.rich(
-                        TextSpan(
-                          style: const TextStyle(
-                              fontSize: 18, color: Colors.black, height: 2),
-                          children: [
-                            const TextSpan(text: "a) approximates the "),
-                            TextSpan(
-                                text: "heat plume of a single heat pump",
-                                style: const TextStyle(
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () => tabController.animateTo(1)),
-                            const TextSpan(
-                                text: " based on the input parameters of "),
-                            const TextSpan(
-                                text: "pressure and permeability.\n",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const TextSpan(
-                                text:
-                                    "The CNN can be tested with varying input parameters which can be selected using the sliders. The output consists of the AI-generated heat plume, the groundtruth and the difference field between these two heat plumes.\n"),
-                            const TextSpan(
-                                text:
-                                    "As a groundtruth, we interpolate between previously simulated data points.\n"),
-                            const TextSpan(text: "b) approximates the "),
-                            TextSpan(
-                                text:
-                                    "interaction of heat plumes from two pumps",
-                                style: const TextStyle(
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () => tabController.animateTo(2)),
-                            const TextSpan(
-                                text: " positioned relative to each other.\n"),
-                            const TextSpan(text: "The CNN can be tested with "),
-                            const TextSpan(
-                                text: "varying pressure and permeability ",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const TextSpan(
-                                text:
-                                    "which can be selected using the sliders and with "),
-                            const TextSpan(
-                                text: "varying position ",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const TextSpan(
-                                text:
-                                    "of the second heat pump which can be selected on the output field.\n"),
-                            const TextSpan(
-                                text:
-                                    "For this scenario, we chose not to generate a groundtruth so that the input parameters are freely selectable, and thus, only the AI-generated results are provided.\n"),
-                            const TextSpan(
-                                text:
-                                    "\nFeel free to play around with this app to get a feeling for how far artificial intelligence has come in terms of real life simulation.\n"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Image.asset('assets/examplePlume.png'),
-                const Text("Figure 1: An example heat plume")
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Center(
-          child: ElevatedButton(
-            style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
-                )),
-            onPressed: () {
-              tabController.animateTo(1);
-            },
-            child: const Text(
-              "Understood",
-              style: TextStyle(color: OurColors.appBarTextColor),
+            child: IntroScienceText(
+              tabController: tabController,
             ),
           ),
         ),
       ],
     );
   }
+}
+
+class IntroScienceText extends StatefulWidget {
+  final TabController tabController;
+  const IntroScienceText({super.key, required this.tabController});
+
+  @override
+  State<IntroScienceText> createState() => _IntroScienceTextState();
+}
+
+class _IntroScienceTextState extends State<IntroScienceText> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Theme(
+          data: Theme.of(context).copyWith(
+              textSelectionTheme: const TextSelectionThemeData(
+                  selectionColor: OurColors.accentColor)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ExpansionTile(
+                title: const Text(
+                  "General information",
+                  style: TextStyle(
+                      fontSize: 18, color: OurColors.textColor, height: 2),
+                ),
+                subtitle: const Text(""),
+                controlAffinity: ListTileControlAffinity.leading,
+                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                        width: 650,
+                        child: Wrap(
+                          children: [
+                            SelectableText.rich(
+                              TextSpan(
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: OurColors.textColor,
+                                  height: 2,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        "Open-loop groundwater heat pumps represent a ",
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        "renewable method for cooling and heating ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "buildings.\n"
+                                        "They extract groundwater of which the temperature is constant and pass it through a heat exchanger. "
+                                        "Afterwards the now cooler water (or warmer if the system is used for cooling) is reinjected into "
+                                        "the groundwater. Figure 1 illustrates this process.\n"
+                                        "Understanding the environmental impact of these systems, particularly their heat contribution to "
+                                        "the groundwater, is crucial for ",
+                                  ),
+                                  TextSpan(
+                                    text: "effective city planning",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        " since heat pumps can exceed the maximal allowed groundwater temperature or can influence the heating or cooling process "
+                                        "of other pumps if they are installed too close.\n"
+                                        "Since fully resolved simulations would be too computationally expensive, we have developed a convolutional neural network ",
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        "(CNN) to approximate the heat plumes of heat pumps.\n",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Center(
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/HeatPumpFunctionalty.png',
+                              scale: 2,
+                            ),
+                            const Text(
+                                "Figure 1: Functionalty of an open-loop groundwater heat pump"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              ExpansionTile(
+                title: const Text(
+                  "Single heat pump",
+                  style: TextStyle(
+                      fontSize: 18, color: OurColors.textColor, height: 2),
+                ),
+                subtitle: const Text(""),
+                controlAffinity: ListTileControlAffinity.leading,
+                children: [
+                  SelectableText.rich(
+                    TextSpan(
+                      style: const TextStyle(
+                          fontSize: 18, color: OurColors.textColor, height: 2),
+                      children: [
+                        TooltipTextSpan(
+                          path: "assets/CNN_Architektur.png",
+                          textSpan: const TextSpan(
+                            text: "The CNN",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline),
+                          ),
+                        ),
+                        const TextSpan(text: "approximates the "),
+                        TooltipTextSpan(
+                          path: "assets/SingleHeatPump_Wissenschaft.png",
+                          textSpan: TextSpan(
+                              text: "heat plume of a single heat pump",
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap =
+                                    () => widget.tabController.animateTo(1)),
+                        ),
+                        const TextSpan(
+                            text: " based on the input parameters of "),
+                        const TextSpan(
+                            text: "pressure and permeability.\n",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        const TextSpan(
+                          text:
+                              "Figure 2 illustrates an exemplary heat plume of a single heat pump presented as a heatmap.\n"
+                              "The CNN can be tested with varying input parameters, which can be selected using the sliders. "
+                              "The output includes the AI-generated heat plume, the groundtruth and the difference field between "
+                              "these two heat plumes.\nThe groundtruth is obtained by interpolating between previously simulated data points.\n",
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/examplePlume.png',
+                          scale: 1.2,
+                        ),
+                        const Text("Figure 2: An example heat plume"),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              ExpansionTile(
+                title: const Text(
+                  "Interaction of heat plumes",
+                  style: TextStyle(
+                      fontSize: 18, color: OurColors.textColor, height: 2),
+                ),
+                subtitle: const Text(""),
+                controlAffinity: ListTileControlAffinity.leading,
+                children: [
+                  SelectableText.rich(
+                    TextSpan(
+                      style: const TextStyle(
+                          fontSize: 18, color: OurColors.textColor, height: 2),
+                      children: [
+                        TooltipTextSpan(
+                          path: "assets/CNN_Architektur.png",
+                          textSpan: const TextSpan(
+                            text: "The CNN",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline),
+                          ),
+                        ),
+                        const TextSpan(text: "approximates the "),
+                        TooltipTextSpan(
+                          path:
+                              "assets/InteractionOfHeatPlumes_Wissenschaft.png",
+                          textSpan: TextSpan(
+                              text: "interaction of heat plumes from two pumps",
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap =
+                                    () => widget.tabController.animateTo(2)),
+                        ),
+                        const TextSpan(
+                          text:
+                              " positioned relative to each other.\nFigure 3 illustrates an example of this interaction presented "
+                              "as a heatmap.\nThe CNN can be tested with varying ",
+                        ),
+                        const TextSpan(
+                            text: "pressure and permeability",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        const TextSpan(
+                            text:
+                                ", which can be selected using the sliders. Additionally, the "),
+                        const TextSpan(
+                            text: "position ",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        const TextSpan(
+                          text:
+                              // position of first pump is determined
+                              "of the second heat pump can be selected on the output field via point and click or drag and drop of the red "
+                              "pointer while the position of the first pump is fixed.\nFor this scenario, we chose not to generate a groundtruth "
+                              "so that the input parameters are freely selectable, and thus, only the AI-generated results are provided.\n",
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/examplePhase2.png',
+                          scale: 1.6,
+                        ),
+                        const Text(
+                            "Figure 3: An example of the interaction of two heat plumes"),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SelectableText.rich(
+                TextSpan(
+                  style: TextStyle(
+                      fontSize: 18, color: OurColors.textColor, height: 2),
+                  children: [
+                    TextSpan(
+                        text:
+                            "\nFeel free to play around with this app to get an idea of how far artificial intelligence has come in terms of real-life simulation.\n"),
+                  ],
+                ),
+              ),
+              ExpansionTile(
+                title: const Text(
+                  "Quellen",
+                  style: TextStyle(
+                      fontSize: 18, color: OurColors.textColor, height: 2),
+                ),
+                subtitle: const Text(""),
+                controlAffinity: ListTileControlAffinity.leading,
+                children: [
+                  SelectableText.rich(
+                    TextSpan(
+                      style: const TextStyle(
+                          fontSize: 18, color: OurColors.textColor, height: 2),
+                      children: [
+                        const TextSpan(
+                          text:
+                              "Pelzer, Julia und Schulte, Miriam (2024). “Two-Stage Learning of the Interaction of Heat Plumes of Geothermal Heat Pumps”. In: Elsevier (unveröffentlicht).\n",
+                        ),
+                        TextSpan(
+                          text: "https://www.bbc.com/news/uk-wales-49579094 \n",
+                          style: const TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => launchUrlString(
+                                "https://www.bbc.com/news/uk-wales-49579094"),
+                        ),
+                        TextSpan(
+                          text:
+                              "https://www.energy.gov/energysaver/geothermal-heat-pumps \n",
+                          style: const TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => launchUrlString(
+                                "https://www.energy.gov/energysaver/geothermal-heat-pumps"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Class for a textspan that shows an image when hovering over the text.
+/// The String variable path is the path of the image and textSpan the text which can be hovered over.
+class TooltipTextSpan extends WidgetSpan {
+  TooltipTextSpan({
+    required String path,
+    required TextSpan textSpan,
+  }) : super(
+          child: Tooltip(
+            richMessage: WidgetSpan(
+              child: Container(
+                constraints:
+                    const BoxConstraints(maxHeight: 500, maxWidth: 700),
+                child: Image.asset(path),
+              ),
+            ),
+            child: SelectableText.rich(textSpan),
+          ),
+        );
 }
 
 /// Class for the introduction of the children version with a roboter animation.
@@ -183,39 +377,148 @@ class RobotIntro extends StatefulWidget {
 
 class _RobotIntroState extends State<RobotIntro> {
   bool speechBubble = false;
+  bool speechBubble2 = false;
   double volume = 1;
   Player player = Player();
   int times = 0;
+  late String name;
+  _RobotIntroState() {
+    name = MainMaterial.name;
+  }
   List<String> imagePaths = [
     'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
+    'assets/confused.jpeg',
+    'assets/happy.jpeg',
+    'assets/happy.jpeg',
     'assets/starry.jpeg',
+    'assets/happy.jpeg',
+    'assets/sad.jpeg',
+    'assets/starry.jpeg',
+    'assets/starry.jpeg',
+    'assets/happy.jpeg',
     'assets/confused.jpeg',
     'assets/happy.jpeg',
     'assets/starry.jpeg',
+    'assets/happy.jpeg',
     'assets/starry.jpeg',
     'assets/happy.jpeg',
     'assets/starry.jpeg',
   ];
   List<String> speeches = [
     "",
-    "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz",
-    "Mir wurde beigebracht Wärmefahnen von Grundwasser-Wärmepumpen zu berechnen. Wärmepumpen sind super, weil sie meine Wohnung im Winter heizen und sie gut für die Umwelt sind! Mega cool, oder?",
-    "Eine Wärmefahne ist sozusagen das Feld, in dem sich die Wärme um die Pumpe herum ausbreitet. Schau mal, da unten kannst du sehen wie so etwas aussieht",
-    "Ihr könnt euch das wie eine Fahne im Wind vorstellen, genauso folgt die Wärmefahne der Richtung des Grundwassers unterirdisch und verändert die Temperatur des Wassers, verstehst du?",
-    "Leider bin ich noch jung und tollpatschig. Kannst du mir helfen mich zu verbessern?",
-    "Du wirst gleich durch Schieberegler Eingaben machen können, dadurch berechne ich dann die Wärmefahnen. Je stärker mein Ergebnis von der Realität abweicht, desto höher wird deine Punktzahl sein. Schau mal, hier unten ist so ein Schieberegler, probier ihn mal aus!",
-    "Hier siehst du, dass ich sehr schlecht war :( meine Wärmefahne (die obere) ist länger als sie sein soll. In der Mitte sieht man wie es eigentlich sein sollte und darunter den Unterschied. Das heißt für dich aber eine hohe Punktzahl, da ich jetzt weiß, was ich noch besser machen muss :)",
-    "Dir wird automatisch ein Nutzername gegeben, damit man dich auf der Bestenliste verewigen kann. Dein Name wird oben rechts angezeigt. Wenn du willst kannst du später du auch oben auf den Tab ganz rechts gehen und schauen was dich da erwartet. Viel Erfolg!",
-    ""
+    "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz und dein heutiger Begleiter.",
+    "Ich mag's schön warm zuhause.\nIm Winter heize ich mit Wärmepumpen. Weißt du was das ist?",
+    "Eine Wärmepumpe entzieht Wärme aus dem Grundwasser und pumpt sie in dein Haus.\nDann kannst du zum Beispiel warm duschen!\nLinks kannst du sehen wie das funktioniert.",
+    "Eine Wärmepumpe ändert auch die Temperatur des Wassers untem im Boden. Von irgendwo muss die Wärme ja schließlich kommen!",
+    "Eine Wärmepumpe ändert auch die Temperatur des Wassers unten im Boden. Von irgendwo muss die Wärme ja schließlich kommen!",
+    "Wenn der Druck des Wassers oder die Durchlässigkeit des Bodens anders ist, verändert sich dieses Feld!",
+    "Wenn der Druck des Wassers oder die Durchlässigkeit des Bodens anders ist, verändert sich dieses Feld!",
+    "Aber leider bin ich noch ein wenig tollpatschig und meine Berechnungen sind noch nicht perfekt! Gleich kannst du sehen was ich meine.",
+    "Aber leider bin ich noch ein wenig tollpatschig und meine Berechnungen sind noch nicht perfekt! Gleich kannst du sehen was ich meine.",
+    "Ich kann mit deiner Hilfe aber auch dazulernen! Du sollst mir Fahnen zeigen bei denen ich wie gerade eben nicht so gut war, dann kann ich lernen!",
+    "Ich kann mit deiner Hilfe aber auch dazulernen! Du sollst mir Fahnen zeigen bei denen ich wie gerade eben nicht so gut war, dann kann ich lernen!",
+    "Wenn du Werte findest, bei denen ich mich verbessern kann kriegst du eine hohe Punktzahl. Schaffst du es 1000 Punkte zu bekommen?",
+    "Wenn du Werte findest, bei denen ich mich verbessern kann kriegst du eine hohe Punktzahl. Schaffst du es 1000 Punkte zu bekommen?",
   ];
+  List<String> speeches2 = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
+    "Unten kannst du sehen, wie sich die Temperatur verändert. Rot steht hier für Wärme. Die Wärme breitet sich in Flussrichtung aus.",
+    "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
+    "Und da komm ich ins Spiel! Ich kann das nämlich ausrechnen! Beziehungsweise versuche ich das.",
+    "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
+    "Oben ist meine Berechnung. In der Mitte siehst du die richtige Lösung. Der Unterschied (unten) ist leider groß, man kann sich also noch nicht auf mich verlassen.",
+    'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
+    'Du kannst gleich mit Schiebereglern die Werte "Druck" und "Durchlässigkeit" anpassen um mir Sachen zum Rechnen zu geben! Unten siehst du so einen Schieberegler.',
+    "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
+    "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist ...",
+    "",
+  ];
+
+  List<String> nextButtonSpeech = [
+    "",
+    "Hallo!",
+    "Zeig es mir!",
+    "Cool!",
+    "Klar",
+    "Interessant!",
+    "Logisch",
+    "Ist das so einfach?",
+    "Zeig es mir!",
+    "Ich verstehe",
+    "Ich helf dir gerne!",
+    "Und jetzt?",
+    "Ja, auf jeden Fall!",
+    "Los geht's!"
+  ];
+
+  List<String> lastButtonSpeech = [
+    "",
+    "Zurück",
+    "Wer bist du nochmal?",
+    "Erklär das nochmal",
+    "Zurück!",
+    "Einen Schritt zurück",
+    "Wie war das nochmal?",
+    "Zurück!",
+    "Einen Schritt zurück",
+    "Wie war das nochmal?",
+    "Zurück!",
+    "Einen Schritt zurück",
+    "Wie war das nochmal?",
+    "Einen Schritt zurück"
+  ];
+
+  Widget secondSpeechBubble() {
+    Widget bubble = Positioned(
+      top: 310,
+      left: 650,
+      width: 600,
+      height: 700,
+      child: AnimatedOpacity(
+        opacity: speechBubble2 ? 1.0 : 0,
+        duration: const Duration(milliseconds: 300),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: BubbleSpecialThree(
+            key: ValueKey<int>(
+                times), // Use a ValueKey to ensure proper animation when the key changes
+            text: speeches2[times],
+            color: OurColors.accentColor,
+            tail: true,
+            textStyle: const TextStyle(
+              color: Colors.black,
+              fontSize: 35,
+              decoration: TextDecoration.none,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+    return bubble;
+  }
 
   void nextState() {
     setState(() {
       speechBubble = true;
       player.play(times);
       times++;
+      if (times == 5 ||
+          times == 7 ||
+          times == 9 ||
+          times == 11 ||
+          times == 13) {
+        speechBubble2 = true;
+      } else {
+        speechBubble2 = false;
+      }
     });
   }
 
@@ -229,6 +532,15 @@ class _RobotIntroState extends State<RobotIntro> {
           times--;
           player.play(times);
         }
+        if (times == 5 ||
+            times == 7 ||
+            times == 9 ||
+            times == 11 ||
+            times == 13) {
+          speechBubble2 = true;
+        } else {
+          speechBubble2 = false;
+        }
       }
     });
   }
@@ -237,8 +549,14 @@ class _RobotIntroState extends State<RobotIntro> {
     if (times == 0) {
       return Center(
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: OurColors.appBarColor,
+          style: ButtonStyle(
+            foregroundColor:
+                MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+            backgroundColor: MaterialStateProperty.all<Color>(
+              OurColors.appBarColor,
+            ),
+            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.all(15)),
           ),
           onPressed: () {
             if (times == 8) {
@@ -248,103 +566,121 @@ class _RobotIntroState extends State<RobotIntro> {
             }
           },
           child: const Text(
-            "Start",
+            "Los geht's!",
             style: TextStyle(color: OurColors.appBarTextColor),
             textScaleFactor: 3,
           ),
         ),
       );
     } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
-              ),
-              onPressed: () {
-                previousState();
-              },
-              child: const Text(
-                "Zurück",
-                style: TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
-              ),
-            ),
-          ),
-          const SizedBox(
-            width: 50,
-          ),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: OurColors.appBarColor,
-              ),
-              onPressed: () {
-                if (times == 8) {
-                  widget.tabController.animateTo(1);
-                } else {
-                  nextState();
-                }
-              },
-              child: const Text(
-                "Weiter",
-                style: TextStyle(color: OurColors.appBarTextColor),
-                textScaleFactor: 3,
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: Row(
+          key: ValueKey<int>(times),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(const Size(200, 0)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
+                ),
+                onPressed: () {
+                  previousState();
+                },
+                child: Text(
+                  lastButtonSpeech[times],
+                  style: const TextStyle(color: OurColors.appBarTextColor),
+                  textScaleFactor: 3,
+                ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(
+              width: 50,
+            ),
+            Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(const Size(200, 0)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      OurColors.appBarTextColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    OurColors.appBarColor,
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(15)),
+                ),
+                onPressed: () {
+                  if (times == 13) {
+                    widget.tabController.animateTo(1);
+                  } else {
+                    nextState();
+                  }
+                },
+                child: Text(
+                  nextButtonSpeech[times],
+                  style: const TextStyle(color: OurColors.appBarTextColor),
+                  textScaleFactor: 3,
+                ),
+              ),
+            ),
+          ],
+        ),
       );
     }
   }
 
   Widget introIllustration() {
-    Widget child = Container();
-    if (times == 7) {
+    if (times == 9) {
       return Positioned(
-        top: 160,
+        top: 100,
+        left: -60,
         child: SizedBox(
-          width: 550,
-          height: 400,
+          width: 700,
+          height: 600,
           child: Image.asset(
             "assets/bigDifference.png",
             fit: BoxFit.contain,
           ),
         ),
       );
-    } else if (times == 2) {
+    } else if (times == 5) {
       return Positioned(
-        top: 250,
-        left: 0,
+        top: 400,
+        left: 400,
         child: SizedBox(
-            width: 250,
-            height: 250,
+            width: 1150,
+            height: 550,
             child: Image.asset(
-              "assets/heatpump.png",
+              "assets/examplePlume.png",
               fit: BoxFit.contain,
             )),
       );
     } else if (times == 3) {
       return Positioned(
-        top: 160,
-        left: 0,
+        top: 100,
+        left: -100,
         child: SizedBox(
           width: 800,
-          height: 400,
+          height: 500,
           child: Image.asset(
-            "assets/examplePlume.png",
+            "assets/watersource.gif",
             fit: BoxFit.contain,
           ),
         ),
       );
-    } else if (times == 6) {
+    } else if (times == 11) {
       return Positioned(
-        top: 320,
+        top: 700,
+        left: 400,
         child: PressureSlider(
-          600,
+          900,
           const {
             "pressure_range": [0.0, 100.0],
             "permeability_range": [0.0, 100.0],
@@ -355,16 +691,20 @@ class _RobotIntroState extends State<RobotIntro> {
         ),
       );
     }
-    return child;
+
+    return Container();
   }
 
   @override
   Widget build(BuildContext context) {
+    name = MainMaterial.name;
+    speeches2[13] =
+        "Um dich auf der Bestenliste verewigen zu können, wird dir ein Name gegeben. Du bist $name.";
     return FittedBox(
       fit: BoxFit.contain,
       child: SizedBox(
-        width: 1400,
-        height: 700,
+        width: 2000,
+        height: 1000,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -372,71 +712,84 @@ class _RobotIntroState extends State<RobotIntro> {
             children: [
               Center(
                   child: SizedBox(
-                width: 700,
-                height: 500,
+                width: 1800,
+                height: 800,
                 child: Stack(
                   children: <Widget>[
+                    AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        top: 100,
+                        left: speechBubble ? 1300 : 650,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Container(
+                            key: ValueKey<int>(
+                                times), // Use a ValueKey to ensure proper animation when the key changes
+                            height: 500,
+                            width: 500,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 5),
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(500),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(500),
+                              child: Image.asset(
+                                imagePaths[times],
+                                key: ValueKey<int>(
+                                    times), // Use a ValueKey to ensure proper animation when the key changes
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        )),
                     Positioned(
-                      top: 20,
-                      left: 380,
-                      child: Container(
-                        height: 300,
-                        width: 300,
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 5),
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(200)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(200),
-                          child: Image.asset(
-                            imagePaths[times],
-                            fit: BoxFit.cover,
+                      top: 50,
+                      left: 650,
+                      width: 600,
+                      height: 700,
+                      child: AnimatedOpacity(
+                        opacity: speechBubble ? 1.0 : 0,
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: BubbleSpecialThree(
+                            key: ValueKey<int>(
+                                times), // Use a ValueKey to ensure proper animation when the key changes
+                            text: speeches[times],
+                            color: OurColors.accentColor,
+                            tail: true,
+                            textStyle: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 35,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: 50,
-                      left: 0,
-                      width: 400,
-                      height: 700,
-                      child: AnimatedOpacity(
-                        opacity: speechBubble ? 1.0 : 0,
-                        duration: const Duration(milliseconds: 500),
-                        child: BubbleSpecialThree(
-                          text: speeches[times],
-                          color: OurColors.accentColor,
-                          tail: true,
-                          textStyle: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              decoration: TextDecoration.none),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                        top: 450,
-                        left: 250,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.volume_up_rounded),
-                            Slider(
-                              value: volume,
-                              thumbColor: OurColors.appBarColor,
-                              activeColor: OurColors.accentColor,
-                              inactiveColor:
-                                  const Color.fromARGB(174, 206, 135, 135),
-                              onChanged: (value) => setState(() {
-                                volume = value;
-                                player.setVolume(volume);
-                              }),
-                            ),
-                          ],
-                        )),
+                    secondSpeechBubble(),
                     introIllustration()
                   ],
                 ),
               )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.volume_up_rounded),
+                  Slider(
+                    value: volume,
+                    thumbColor: OurColors.appBarColor,
+                    activeColor: OurColors.darkerAccentColor,
+                    inactiveColor: OurColors.accentColor,
+                    onChanged: (value) => setState(() {
+                      volume = value;
+                      player.setVolume(volume);
+                    }),
+                  ),
+                ],
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -460,6 +813,18 @@ class Player {
     "animalese2.wav",
     "animalese0.wav",
     "animalese2.wav",
+    "animalese1.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
+    "animalese0.wav",
+    "animalese2.wav",
   ];
 
   Player() {
@@ -472,7 +837,7 @@ class Player {
   }
 
   void play(int state) async {
-    if (state == 8) {
+    if (state == 13) {
       await player.release();
     } else {
       await player.stop();
@@ -485,10 +850,10 @@ class Player {
 /// Class to acces all of our Colors throughout the App.
 class OurColors {
   static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
-  static const Color appBarColor = Color.fromARGB(255, 184, 44, 44);
+  static const Color appBarColor = Color.fromARGB(255, 84, 161, 224);
   static const Color textColor = Color.fromARGB(255, 0, 0, 0);
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
-  static const Color accentColor = Color.fromARGB(176, 215, 80, 80);
-  static const Color darkerAccentColor = Color.fromARGB(174, 212, 47, 47);
+  static const Color accentColor = Color.fromARGB(172, 115, 192, 255);
+  static const Color darkerAccentColor = Color.fromARGB(172, 91, 153, 204);
   //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }
