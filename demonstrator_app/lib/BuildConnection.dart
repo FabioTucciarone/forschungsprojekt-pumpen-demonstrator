@@ -152,6 +152,9 @@ class _RegisterState extends State<RegisterBox> {
                       if (portNumber.text == "") {
                         portNumber.text = "5000";
                       }
+                      if (server.text == "") {
+                        server.text = "pcsgs08";
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -198,6 +201,9 @@ class _RegisterState extends State<RegisterBox> {
                         if (portNumber.text == "") {
                           portNumber.text = "5000";
                         }
+                        if (server.text == "") {
+                          server.text = "pcsgs08";
+                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -243,6 +249,9 @@ class _RegisterState extends State<RegisterBox> {
                         if (portNumber.text == "") {
                           portNumber.text = "5000";
                         }
+                        if (server.text == "") {
+                          server.text = "pcsgs08";
+                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -279,6 +288,9 @@ class _RegisterState extends State<RegisterBox> {
               onPressed: () {
                 if (portNumber.text == "") {
                   portNumber.text = "5000";
+                }
+                if (server.text == "") {
+                  server.text = "pcsgs08";
                 }
                 Navigator.push(
                   context,
