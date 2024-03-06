@@ -15,6 +15,14 @@ class OutputBox extends StatelessWidget {
   final ImageType name;
   final bool children;
   final ResponseDecoder responseDecoder = ResponseDecoder();
+  Widget lastOutput = Container(
+    width: 940,
+    height: 100,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: Colors.black),
+    ),
+  );
 
   Widget textWidget(ImageType name, bool children) {
     if (name == ImageType.groundtruth && children == false) {
@@ -28,7 +36,7 @@ class OutputBox extends StatelessWidget {
       if (children) {
         return 'KAIs Berechnung';
       } else {
-        return 'AI Generated';
+        return 'AI generated';
       }
     } else if (name == ImageType.groundtruth) {
       if (children) {
@@ -40,7 +48,7 @@ class OutputBox extends StatelessWidget {
     if (children) {
       return 'Unterschied';
     } else {
-      return 'Difference Field';
+      return 'Difference field';
     }
   }
 
@@ -51,7 +59,7 @@ class OutputBox extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
-          height: 100,
+          height: 130,
           child: FutureBuilder<String>(
             future: future,
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -97,32 +105,36 @@ class OutputBox extends StatelessWidget {
                     if (name == ImageType.aIGenerated) {
                       child = Image.memory(
                           responseDecoder.getBytes("model_result"));
+                      lastOutput = child;
                     } else if (name == ImageType.groundtruth) {
                       child =
                           Image.memory(responseDecoder.getBytes("groundtruth"));
+                      lastOutput = child;
                     } else {
                       child = Image.memory(
                           responseDecoder.getBytes("error_measure"));
+                      lastOutput = child;
                     }
                   }
                 }
               } else {
-                child = Container(
-                  width: 940,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: const SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: OurColors.accentColor,
+                child = Stack(
+                  children: <Widget>[
+                    lastOutput,
+                    const Positioned(
+                      top: -6,
+                      left: 450,
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: OurColors.accentColor,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 );
               }
               return child;
@@ -159,7 +171,7 @@ class _GroundtruthTextState extends State<GroundtruthText> {
                 String methodName =
                     responseDecoder.jsonDecoded["groundtruth_method"];
                 if (methodName == "closest") {
-                  method = ": Closest Datapoint";
+                  method = ": Closest parameter point";
                 } else {
                   method = ": Interpolation";
                 }

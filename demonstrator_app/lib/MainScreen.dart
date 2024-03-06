@@ -195,8 +195,8 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
     return FittedBox(
       fit: BoxFit.contain,
       child: SizedBox(
-        width: 1350,
-        height: 600,
+        width: 1450,
+        height: 640,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -313,8 +313,8 @@ mixin MainScreenElements {
           }
         } else {
           child = const SizedBox(
-            width: 60,
-            height: 60,
+            width: 50,
+            height: 50,
             child: Center(
               child: CircularProgressIndicator(
                 color: OurColors.accentColor,
@@ -376,15 +376,15 @@ mixin MainScreenElements {
         Widget child;
         if (snapshot.connectionState == ConnectionState.done) {
           heatPumpBox = PumpInputBox(
-              width: 1136,
-              height: 94,
+              width: 1105,
+              height: 88,
               valueRange: snapshot.data,
               children: children);
           child = heatPumpBox;
         } else {
           child = const SizedBox(
-            width: 60,
-            height: 60,
+            width: 50,
+            height: 50,
             child: Center(
               child: CircularProgressIndicator(
                 color: OurColors.accentColor,

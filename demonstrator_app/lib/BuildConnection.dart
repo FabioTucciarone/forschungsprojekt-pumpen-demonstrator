@@ -93,12 +93,13 @@ class _RegisterState extends State<RegisterBox> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ResultApp(
-                                  username: username.text,
-                                  password: password.text,
-                                  portNumber: int.parse(portNumber.text),
-                                  server: server.text,
-                                )),
+                          builder: (context) => ResultApp(
+                            username: username.text,
+                            password: password.text,
+                            portNumber: int.parse(portNumber.text),
+                            server: server.text,
+                          ),
+                        ),
                       );
                       return KeyEventResult.handled;
                     } else {
@@ -174,104 +175,108 @@ class _RegisterState extends State<RegisterBox> {
                 ),
               ),
             ),
-            Row(children: [
-              Flexible( child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: TextFormField(
-                  controller: server,
-                  decoration: InputDecoration(
-                    hintText: 'Server (pcsgs08)',
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: OurColors.accentColor, width: 2),
+            Row(
+              children: [
+                Flexible(
+                    child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: TextFormField(
+                    controller: server,
+                    decoration: InputDecoration(
+                      hintText: 'Server (pcsgs08)',
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide:
+                            BorderSide(color: OurColors.accentColor, width: 2),
+                      ),
+                      prefixIcon: const Icon(Icons.router),
+                      prefixIconColor: MaterialStateColor.resolveWith(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.focused)) {
+                          return OurColors.appBarColor;
+                        }
+                        return Colors.grey;
+                      }),
                     ),
-                    prefixIcon: const Icon(Icons.router),
-                    prefixIconColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.focused)) {
-                        return OurColors.appBarColor;
-                      }
-                      return Colors.grey;
-                    }),
-                  ),
-                  cursorColor: OurColors.accentColor,
-                  focusNode: FocusNode(
-                    onKeyEvent: (node, event) {
-                      if (event.logicalKey == LogicalKeyboardKey.enter) {
-                        if (portNumber.text == "") {
-                          portNumber.text = "5000";
-                        }
-                        if (server.text == "") {
-                          server.text = "pcsgs08";
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResultApp(
-                              username: username.text,
-                              password: password.text,
-                              server: server.text,
-                              portNumber: int.parse(portNumber.text),
+                    cursorColor: OurColors.accentColor,
+                    focusNode: FocusNode(
+                      onKeyEvent: (node, event) {
+                        if (event.logicalKey == LogicalKeyboardKey.enter) {
+                          if (portNumber.text == "") {
+                            portNumber.text = "5000";
+                          }
+                          if (server.text == "") {
+                            server.text = "pcsgs08";
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ResultApp(
+                                username: username.text,
+                                password: password.text,
+                                server: server.text,
+                                portNumber: int.parse(portNumber.text),
+                              ),
                             ),
-                          ),
-                        );
-                        return KeyEventResult.handled;
-                      } else {
-                        return KeyEventResult.ignored;
-                      }
-                    },
-                  ),
-                ),
-              )),
-              Flexible( child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: TextFormField(
-                  controller: portNumber,
-                  decoration: InputDecoration(
-                    hintText: 'Port (5000)',
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: OurColors.accentColor, width: 2),
+                          );
+                          return KeyEventResult.handled;
+                        } else {
+                          return KeyEventResult.ignored;
+                        }
+                      },
                     ),
-                    prefixIcon: const Icon(Icons.router),
-                    prefixIconColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.focused)) {
-                        return OurColors.appBarColor;
-                      }
-                      return Colors.grey;
-                    }),
                   ),
-                  cursorColor: OurColors.accentColor,
-                  focusNode: FocusNode(
-                    onKeyEvent: (node, event) {
-                      if (event.logicalKey == LogicalKeyboardKey.enter) {
-                        if (portNumber.text == "") {
-                          portNumber.text = "5000";
+                )),
+                Flexible(
+                    child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: TextFormField(
+                    controller: portNumber,
+                    decoration: InputDecoration(
+                      hintText: 'Port (5000)',
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide:
+                            BorderSide(color: OurColors.accentColor, width: 2),
+                      ),
+                      prefixIcon: const Icon(Icons.router),
+                      prefixIconColor: MaterialStateColor.resolveWith(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.focused)) {
+                          return OurColors.appBarColor;
                         }
-                        if (server.text == "") {
-                          server.text = "pcsgs08";
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResultApp(
-                              username: username.text,
-                              password: password.text,
-                              server: server.text,
-                              portNumber: int.parse(portNumber.text),
+                        return Colors.grey;
+                      }),
+                    ),
+                    cursorColor: OurColors.accentColor,
+                    focusNode: FocusNode(
+                      onKeyEvent: (node, event) {
+                        if (event.logicalKey == LogicalKeyboardKey.enter) {
+                          if (portNumber.text == "") {
+                            portNumber.text = "5000";
+                          }
+                          if (server.text == "") {
+                            server.text = "pcsgs08";
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ResultApp(
+                                username: username.text,
+                                password: password.text,
+                                server: server.text,
+                                portNumber: int.parse(portNumber.text),
+                              ),
                             ),
-                          ),
-                        );
-                        return KeyEventResult.handled;
-                      } else {
-                        return KeyEventResult.ignored;
-                      }
-                    },
+                          );
+                          return KeyEventResult.handled;
+                        } else {
+                          return KeyEventResult.ignored;
+                        }
+                      },
+                    ),
                   ),
-                ),
-              )),
-            ],),
+                )),
+              ],
+            ),
             const SizedBox(
               height: 20,
             ),
@@ -343,8 +348,7 @@ class ResultApp extends StatelessWidget {
       required this.username,
       required this.password,
       required this.server,
-      required this.portNumber
-      });
+      required this.portNumber});
 
   final String username;
   final String password;
