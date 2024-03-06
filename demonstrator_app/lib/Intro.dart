@@ -101,8 +101,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                                   ),
                                   TextSpan(
                                     text:
-                                        " since heat pumps can exceed the maximal allowed groundwater temperature or can influence the heating or cooling process "
-                                        "of other pumps if they are installed too close.\n"
+                                        ". This is because heat pumps can exceed the maximum allowed groundwater temperature or affect the heating or cooling process "
+                                        "of nearby pumps if they are installed too close.\n"
                                         "Since fully resolved simulations would be too computationally expensive, we have developed a convolutional neural network ",
                                   ),
                                   TextSpan(
@@ -173,7 +173,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                         const TextSpan(
                             text: " based on the input parameters of "),
                         const TextSpan(
-                            text: "pressure and permeability.\n",
+                            text: "pressure gradient and permeability.\n",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         const TextSpan(
                           text:
@@ -242,7 +242,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                               "as a heatmap.\nThe CNN can be tested with varying ",
                         ),
                         const TextSpan(
-                            text: "pressure and permeability",
+                            text: "pressure gradient and permeability",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         const TextSpan(
                             text:
@@ -287,7 +287,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
               ),
               ExpansionTile(
                 title: const Text(
-                  "Quellen",
+                  "Sources",
                   style: TextStyle(
                       fontSize: 18, color: OurColors.textColor, height: 2),
                 ),
@@ -301,7 +301,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                       children: [
                         const TextSpan(
                           text:
-                              "Pelzer, Julia und Schulte, Miriam (2024). “Two-Stage Learning of the Interaction of Heat Plumes of Geothermal Heat Pumps”. In: Elsevier (unveröffentlicht).\n",
+                              "Pelzer, Julia and Schulte, Miriam (2024). “Two-Stage Learning of the Interaction of Heat Plumes of Geothermal Heat Pumps”. In: Elsevier (unpublished).\n",
                         ),
                         TextSpan(
                           text: "https://www.bbc.com/news/uk-wales-49579094 \n",

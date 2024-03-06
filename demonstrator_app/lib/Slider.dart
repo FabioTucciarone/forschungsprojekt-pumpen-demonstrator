@@ -108,14 +108,14 @@ class _PressureSliderState extends State<PressureSlider> {
       if (children) {
         identifier = 'Druck';
       } else {
-        identifier = 'Pressure Gradient';
+        identifier = 'Pressure gradient';
       }
       unit = '';
     } else {
       if (children) {
         identifier = 'Durchlässigkeit';
       } else {
-        identifier = 'Logarithm of Permeability';
+        identifier = 'Logarithm of permeability';
       }
       unit = 'm\u00B2';
     }
@@ -331,7 +331,7 @@ class _PressureSliderState extends State<PressureSlider> {
                 padding: const EdgeInsets.all(10),
                 child: Container(
                   width: widget.sliderWidth,
-                  height: (widget.name != SliderType.dummy) ? 35 : 25,
+                  height: 30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(colors: colorsGradient),
