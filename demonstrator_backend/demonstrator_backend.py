@@ -246,8 +246,6 @@ def initialize_backend():
 
 # Start Debug Server:
 
-print(__name__)
-
 if __name__ == '__main__':
     initialize_backend()
     print("INFO: Debug-Server Initialized")
