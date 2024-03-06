@@ -244,15 +244,14 @@ def initialize_backend():
     else:
         cache.set("top_ten_list", [], timeout=0)
 
-    print("INFO: Server Initialized")
-
 # Start Debug Server:
 
 print(__name__)
 
 if __name__ == '__main__':
     initialize_backend()
+    print("INFO: Debug-Server Initialized")
     app.run(port=5000, host='127.0.0.1', threaded=True)
-else:
+elif __name__ == 'demonstrator_backend':
     initialize_backend()
-    print("Initialized")
+    print("INFO: Procuction-Server Initialized")
