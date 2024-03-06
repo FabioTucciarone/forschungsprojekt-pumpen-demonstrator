@@ -244,13 +244,14 @@ def initialize_backend():
     else:
         cache.set("top_ten_list", [], timeout=0)
 
-    # TODO: Pfade Variabel machen
+    print("INFO: Server Initialized")
 
 # Start Debug Server:
 
+print(__name__)
+
 if __name__ == '__main__':
     initialize_backend()
-    print("Flask-Debug: Initialized")
     app.run(port=5000, host='127.0.0.1', threaded=True)
 else:
     initialize_backend()
