@@ -327,6 +327,15 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(
+                    "assets/unistuttgart_logo_englisch_cmyk-01.png",
+                    scale: 3,
+                  ),
+                ],
+              ),
             ],
           ),
         ),
