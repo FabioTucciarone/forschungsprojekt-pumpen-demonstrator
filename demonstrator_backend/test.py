@@ -116,7 +116,7 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
             if print_all: 
                 print(f"> Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
     
-    rmse = rmse / (info.dims[0] * info.dims[1]) / successful_runs
+    rmse = np.sqrt(rmse / (info.dims[0] * info.dims[1]) / successful_runs)
     print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis mittlerer Fehler: {average_error_ges / successful_runs}, RMSE: {rmse}")
 
 
