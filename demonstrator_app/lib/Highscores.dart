@@ -11,13 +11,14 @@ import 'Outputbox.dart';
 class AverageError extends StatelessWidget {
   final bool children;
   AverageError(this.children, {super.key});
-  ResponseDecoder responseDecoder = ResponseDecoder();
+  final ResponseDecoder responseDecoder = ResponseDecoder();
   static dynamic publicError = 0;
 
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifier>().future;
-    final String text = children ? "Punktzahl:" : "Average Error:";
+    final String text =
+        children ? "Punktzahl:" : "Average error of the AI generated output:";
     return Container(
       constraints: const BoxConstraints(minWidth: 300),
       child: FutureBuilder(
@@ -35,19 +36,19 @@ class AverageError extends StatelessWidget {
                   publicError = roundedError;
                   child = Text(
                     "$text $roundedError",
-                    textScaleFactor: 2,
+                    textScaleFactor: 1.8,
                   );
                 } else {
                   averageError = double.parse(averageError.toStringAsFixed(4));
                   child = Text(
                     "$text $averageError °C",
-                    textScaleFactor: 2,
+                    textScaleFactor: 1.8,
                   );
                 }
               } else {
                 child = Text(
                   "$text -",
-                  textScaleFactor: 2,
+                  textScaleFactor: 1.8,
                 );
               }
             } else {
@@ -55,7 +56,7 @@ class AverageError extends StatelessWidget {
                 children: [
                   Text(
                     text,
-                    textScaleFactor: 2,
+                    textScaleFactor: 1.8,
                   ),
                   const SizedBox(
                     width: 10,
@@ -109,7 +110,7 @@ class _HighscoreState extends State<Highscore> {
     if (!update) {
       return Text(
         "Highscore: $highscore von $name",
-        textScaleFactor: 2,
+        textScaleFactor: 1.8,
       );
     } else {
       Future<Map<String, dynamic>> futureMap =
@@ -122,7 +123,7 @@ class _HighscoreState extends State<Highscore> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return child = Text(
                 "Highscore: $highscore von $name",
-                textScaleFactor: 2,
+                textScaleFactor: 1.8,
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.data != null) {
@@ -133,7 +134,7 @@ class _HighscoreState extends State<Highscore> {
               }
               child = Text(
                 "Highscore: $highscore von $name",
-                textScaleFactor: 2,
+                textScaleFactor: 1.8,
               );
             } else {
               child = const Text("FEHLER");
@@ -247,7 +248,7 @@ class HighscoreDialog extends StatelessWidget {
           foregroundColor:
               MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
           backgroundColor:
-              MaterialStateProperty.all<Color>(OurColors.darkerAccentColor),
+              MaterialStateProperty.all<Color>(OurColors.accentColor),
           padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
               const EdgeInsets.all(10)),
         ),
@@ -256,15 +257,15 @@ class HighscoreDialog extends StatelessWidget {
         },
         child: const Text(
           "Bestenliste",
-          textScaleFactor: 2,
+          textScaleFactor: 1.8,
         ));
   }
 }
 
 //combines all 3 Widgets for Children Mainscreen
 class ScoreBoard extends StatelessWidget {
-  bool children;
-  ScoreBoard(this.children, {super.key});
+  final bool children;
+  const ScoreBoard(this.children, {super.key});
   @override
   Widget build(BuildContext context) {
     return Row(

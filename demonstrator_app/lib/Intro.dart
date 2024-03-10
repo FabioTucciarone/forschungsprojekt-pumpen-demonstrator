@@ -101,8 +101,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                                   ),
                                   TextSpan(
                                     text:
-                                        " since heat pumps can exceed the maximal allowed groundwater temperature or can influence the heating or cooling process "
-                                        "of other pumps if they are installed too close.\n"
+                                        ". This is because heat pumps can exceed the maximum allowed groundwater temperature or affect the heating or cooling process "
+                                        "of nearby pumps if they are installed too close.\n"
                                         "Since fully resolved simulations would be too computationally expensive, we have developed a convolutional neural network ",
                                   ),
                                   TextSpan(
@@ -173,7 +173,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                         const TextSpan(
                             text: " based on the input parameters of "),
                         const TextSpan(
-                            text: "pressure and permeability.\n",
+                            text: "pressure gradient and permeability.\n",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         const TextSpan(
                           text:
@@ -242,7 +242,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                               "as a heatmap.\nThe CNN can be tested with varying ",
                         ),
                         const TextSpan(
-                            text: "pressure and permeability",
+                            text: "pressure gradient and permeability",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         const TextSpan(
                             text:
@@ -287,7 +287,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
               ),
               ExpansionTile(
                 title: const Text(
-                  "Quellen",
+                  "Sources",
                   style: TextStyle(
                       fontSize: 18, color: OurColors.textColor, height: 2),
                 ),
@@ -301,7 +301,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                       children: [
                         const TextSpan(
                           text:
-                              "Pelzer, Julia und Schulte, Miriam (2024). “Two-Stage Learning of the Interaction of Heat Plumes of Geothermal Heat Pumps”. In: Elsevier (unveröffentlicht).\n",
+                              "Pelzer, Julia and Schulte, Miriam (2024). “Two-Stage Learning of the Interaction of Heat Plumes of Geothermal Heat Pumps”. In: Elsevier (unpublished).\n",
                         ),
                         TextSpan(
                           text: "https://www.bbc.com/news/uk-wales-49579094 \n",
@@ -324,6 +324,15 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                         ),
                       ],
                     ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(
+                    "assets/unistuttgart_logo_englisch_cmyk-01.png",
+                    scale: 3,
                   ),
                 ],
               ),
@@ -386,25 +395,25 @@ class _RobotIntroState extends State<RobotIntro> {
     name = MainMaterial.name;
   }
   List<String> imagePaths = [
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/confused.jpeg',
-    'assets/happy.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/sad.jpeg',
-    'assets/starry.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/confused.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
-    'assets/happy.jpeg',
-    'assets/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/confused.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/sad.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/confused.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/starry.jpeg',
   ];
   List<String> speeches = [
     "",
@@ -805,30 +814,23 @@ class _RobotIntroState extends State<RobotIntro> {
 class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
-    "animalese1.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese1.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
-    "animalese0.wav",
-    "animalese2.wav",
+    "animalese/animalese1.wav",
+    "animalese/animalese2.wav",
+    "animalese/animalese3.wav",
+    "animalese/animalese4.wav",
+    "animalese/animalese5.wav",
+    "animalese/animalese6.wav",
+    "animalese/animalese7.wav",
+    "animalese/animalese8.wav",
+    "animalese/animalese9.wav",
+    "animalese/animalese10.wav",
+    "animalese/animalese11.wav",
+    "animalese/animalese12.wav",
+    "animalese/animalese13.wav",
   ];
 
   Player() {
-    player.setSource(AssetSource("animalese0.wav"));
+    player.setSource(AssetSource("animalese/animalese1.wav"));
     player.setVolume(50);
   }
 

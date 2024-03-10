@@ -17,7 +17,7 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
       fit: BoxFit.contain,
       child: SizedBox(
         width: 1350,
-        height: 730,
+        height: 818,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -54,11 +54,11 @@ class RobotBox extends StatefulWidget {
 
 class _RobotBoxState extends State<RobotBox> {
   List<String> imagePaths = [
-    'assets/happy.jpeg',
-    'assets/bored.jpeg',
-    'assets/confused.jpeg',
-    'assets/mad.jpeg',
-    'assets/starry.jpeg'
+    'assets/KAI/happy.jpeg',
+    'assets/KAI/bored.jpeg',
+    'assets/KAI/confused.jpeg',
+    'assets/KAI/mad.jpeg',
+    'assets/KAI/starry.jpeg'
   ];
   List<String> loading = [
     "Hmmmmm",
@@ -206,7 +206,7 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                           child: const SpeechBubblePhase2(),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       ...input(500, true, false)
@@ -222,12 +222,9 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(1000),
                         child:
-                            Image.asset('assets/happy.jpeg', fit: BoxFit.cover),
+                            Image.asset('assets/KAI/happy.jpeg', fit: BoxFit.cover),
                       )),
                 ],
-              ),
-              const SizedBox(
-                height: 10,
               ),
               const Text(
                 "Position der zweiten Wärmepumpe:",

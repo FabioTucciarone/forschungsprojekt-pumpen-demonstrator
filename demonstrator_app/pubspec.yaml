@@ -27,3 +27,5 @@ flutter:
 
   assets:
     - assets/
+    - assets/animalese/
+    - assets/KAI/
