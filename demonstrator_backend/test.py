@@ -80,6 +80,7 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
 
     average_error_ges = 0
     successful_runs = 0
+    rmse = 0
 
     Path("measurements").mkdir(exist_ok=True)
 
@@ -92,20 +93,22 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
             info.datapoints[i] = None
 
             if type == "interp_seq_heuristic":
-                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_sequential_heuristic_triangle)
+                total_square_error, average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_sequential_heuristic_triangle)
             elif type == "interp_min":
-                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_minimal_triangle)
+                total_square_error, average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_minimal_triangle)
             elif type == "interp_quad_heuristic":
-                average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_quadrant_heuristic_triangle)
+                total_square_error, average_error, min_error, max_error, time = test_interpolation_groundtruth(info, x, i, gt.find_quadrant_heuristic_triangle)
             elif type == "closest":
-                average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
+                total_square_error, average_error, min_error, max_error, time = test_closest_groundtruth(info, x, i)
             else:
                 print("> Interpolationstyp existiert nicht")
                 break
 
+
             if not time == np.inf: csv_writer.writerow([average_error, min_error, max_error, time])
 
             if not average_error == None:
+                rmse += total_square_error
                 average_error_ges += average_error
                 successful_runs += 1
             info.datapoints[i] = x
@@ -113,7 +116,8 @@ def test_groundtruth(n_from: int, n_to: int, type: str="interp_heuristic", visua
             if print_all: 
                 print(f"> Datenpunkt {i : <2}: av = {str(average_error) + ',' : <23} min = {str(min_error) + ',' : <23} max = {str(max_error) + ',' : <23}")
     
-    print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis: {average_error_ges / successful_runs}")
+    rmse = rmse / (info.dims[0] * info.dims[1]) / successful_runs
+    print(f"> Erfolgreiche Durchläufe: {successful_runs},  Gesamtergebnis mittlerer Fehler: {average_error_ges / successful_runs}, RMSE: {rmse}")
 
 
 def test_interpolation_groundtruth(info: DatasetInfo, x: ParameterPoint, i: int, find_triangle: Callable):
@@ -139,6 +143,7 @@ def test_interpolation_groundtruth(info: DatasetInfo, x: ParameterPoint, i: int,
     min_error = None
     max_error = None
     average_error = None
+    total_square_error = None
 
     a = time.perf_counter()
     b = np.inf
@@ -159,6 +164,7 @@ def test_interpolation_groundtruth(info: DatasetInfo, x: ParameterPoint, i: int,
 
         max_temp = np.max(true_result)
         average_error = np.average(error)
+        total_square_error = np.sum(error**2)
         min_error = np.min(error)
         max_error = np.max(error)
 
@@ -193,7 +199,7 @@ def test_interpolation_groundtruth(info: DatasetInfo, x: ParameterPoint, i: int,
 
             plt.show()
 
-    return average_error, min_error, max_error, b-a
+    return total_square_error, average_error, min_error, max_error, b-a
         
 
 def test_closest_groundtruth(info: gt.DatasetInfo, x: ParameterPoint, i: int):
@@ -213,6 +219,7 @@ def test_closest_groundtruth(info: gt.DatasetInfo, x: ParameterPoint, i: int):
             
     max_temp = np.max(true_result)
     average_error = np.average(error)
+    total_square_error = np.sum(error**2)
     min_error = np.min(error)
     max_error = np.max(error)
 
@@ -235,7 +242,7 @@ def test_closest_groundtruth(info: gt.DatasetInfo, x: ParameterPoint, i: int):
 
         plt.show()
 
-    return average_error, min_error, max_error, b-a
+    return total_square_error, average_error, min_error, max_error, b-a
 
 
 def test_1hp_model_communication(visualize: bool=True):
