@@ -141,7 +141,9 @@ def get_value_ranges() -> dict:
     Returns a JSON object containing the maximum and minimum permeability and pressure values that can be selected on the frontend.
     """
     k_range, p_range = cache.get("model_configuration").get_value_ranges()
-    return {"permeability_range": k_range, "pressure_range": p_range}
+    p1 = (k_range[1] - k_range[0]) * 0.1
+    p2 = (p_range[1] - p_range[0]) * 0.1
+    return {"permeability_range": [k_range[0] + p1, k_range[1] - p1], "pressure_range": [p_range[0] + p2, p_range[1] - p2]}
 
 
 @app.route('/get_highscore_and_name', methods = ['GET'])
