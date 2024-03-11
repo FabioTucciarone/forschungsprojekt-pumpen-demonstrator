@@ -292,6 +292,18 @@ def test_2hp_model_communication(visualize: bool=True):
         show_figure(return_data.get_figure("model_result"))
 
 
+def test_communication_time():
+
+    print("1hp_comm,2hp_comm")
+    for i in range(100):
+        t1 = time.time()
+        r = requests.post(url = "http://127.0.0.1:5000/get_model_result",     json ={"permeability": 1e-9, "pressure": -1e-3, "name": "test.py"})
+        t2 = time.time()
+        r = requests.post(url = "http://127.0.0.1:5000/get_2hp_model_result", json = {"permeability": 1e-9, "pressure": -1e-3, "pos": [10, 10]})
+        t3 = time.time()
+        print(f"{t2-t1},{t3-t2}")
+
+
 def test_flask_interface():
     localhost = "http://127.0.0.1:5000/"
 
@@ -386,4 +398,5 @@ def main():
    
     
 if __name__ == "__main__":
+    test_communication_time()
     main()

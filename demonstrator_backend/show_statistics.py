@@ -18,16 +18,26 @@ def load_groundtruth_measurements():
 
 def load_1hp_response_measurements():
     data = pd.read_csv("measurements/performance_1hp.csv")
-    fields = ["groundtruth", "prepare", "model", "total"]
+    fields = ["groundtruth", "prepare", "model", "visu", "total"]
     tick_distance = 0.05
     fig_size = (7, 3)
+    data["visu"] = data["total"] - data["groundtruth"] - data["prepare"] - data["model"]
     return data, fields, tick_distance, fig_size
 
 
 def load_2hp_response_measurements():
     data = pd.read_csv("measurements/performance_2hp.csv")
-    fields = ["model_1hp", "model_2hp", "prepare", "total"]
+    fields = ["model_1hp", "model_2hp", "prepare", "visu", "total"]
     tick_distance = 0.01
+    fig_size = (7, 3)
+    data["visu"] = data["total"] - data["model_1hp"] - data["model_2hp"] - data["prepare"]
+    return data, fields, tick_distance, fig_size
+
+
+def load_server_response_measurements():
+    data = pd.read_csv("measurements/communication.csv")
+    fields = ["1hp_comm", "2hp_comm"]
+    tick_distance = 0.1
     fig_size = (7, 3)
     return data, fields, tick_distance, fig_size
 
@@ -121,6 +131,11 @@ def main():
                 data, fields, tick_distance, fig_size = load_2hp_response_measurements()
                 print("\n2 HP response time:")
                 print_statistics({"2 HP" : data}, fields)
+                generate_dataset_boxplot(data, fields, tick_distance, fig_size)
+
+                data, fields, tick_distance, fig_size = load_server_response_measurements()
+                print("\nServer response time:")
+                print_statistics({"Server" : data}, fields)
                 generate_dataset_boxplot(data, fields, tick_distance, fig_size)
 
                 print("Could not find measurements. Run test.py -m <number> on 'messung' branch.")
