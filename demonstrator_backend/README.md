@@ -12,7 +12,7 @@ Es ist jeweils nur einer der beiden Schritte notwendig.
 ## 1. Python Pakete und Git-Repositories
 
 - Erstelle einen Zielordner (`<Forschungsprojekt-Ordner>`).
-- Klone diese [Demonstrator Projekt](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator).
+- Klone [Demonstrator Projekt](https://github.com/FabioTucciarone/forschungsprojekt-pumpen-demonstrator).
 - Klone einen [Fork des 1HP_NN Projekts](https://github.com/FabioTucciarone/1HP_NN/tree/baforschungsprojekt_23) von Julia Pelzer.
 Hier muss vom Zweig "baforschungsprojekt_23" gepullt werden.
 - `install_server.sh` ausführen um Paktete in eine virtuelle Pythonumgebung zu installieren.
@@ -90,7 +90,7 @@ Wird das Backend zum ersten Mal gestartet, sollten folgende Schritte durchgefüh
 1. **Testen der Installation:** Führe `test.py -t installation` aus. Endet das Programm fehlerfrei, ist alles korrekt installiert.
 
 2. **Server starten:** Es ist je nach Installation nur einer der beiden Schritte notwendig.
-   - **Produktionsserver starten (Serverinstallation):** Um das Backend zu starten, muss `start_production_server.sh'` ausgeführt werden. 
+   - **Produktionsserver starten (Serverinstallation):** Um das Backend zu starten, muss `start_production_server.sh <port>` ausgeführt werden. 
    - **Debugserver starten (lokale Installation):** Ein Flask Debugserver kann durch Ausführen von `python3 demonstrator_backend.py` unter Port 5000 gestartet werden.
 
 3. **Bereit:** Nachdem der Server gestartet wurde, kann er auf HTTP-Anfragen antworten.
@@ -99,7 +99,7 @@ Die Schnittstelle hierzu ist in der Dokumentation von `demonstrator_backend.py` 
 ### Reguläre Ausführung
 
 **Server starten:** Es ist je nach Installation nur einer der beiden Schritte notwendig.
-- Führe bei Serverinstallation `start_production_server.sh'` aus.
+- Führe bei Serverinstallation `start_production_server.sh <port>` aus.
 - Führe bei lokaler Installation  `python3 demonstrator_backend.py` aus.
 
 ### Zusätzliche Ausführungsinformationen
