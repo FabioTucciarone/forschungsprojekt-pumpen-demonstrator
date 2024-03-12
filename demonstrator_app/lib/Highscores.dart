@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'Intro.dart';
-import 'Layout.dart';
+import 'AdminPage.dart';
 import 'MainScreen.dart';
 import 'Outputbox.dart';
 
 //Widget that outputs the average Error of the Output.
-//If for children the value gets rounded and multiplied by 1000
+//If for children the value gets rounded and multiplied by 10000
 class AverageError extends StatelessWidget {
   final bool children;
   AverageError(this.children, {super.key});

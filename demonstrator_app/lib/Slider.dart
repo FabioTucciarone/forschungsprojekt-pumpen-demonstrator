@@ -1,7 +1,7 @@
 import 'package:demonstrator_app/Intro.dart';
 import 'package:demonstrator_app/MainScreen.dart';
 
-import 'Layout.dart';
+import 'AdminPage.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 

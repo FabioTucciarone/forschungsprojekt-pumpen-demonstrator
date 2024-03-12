@@ -22,7 +22,7 @@ class NamePicker {
 
   static String getRandomName() {
     if (names == null || names.isEmpty) {
-      return 'No names loaded.';
+      return 'Error: No names loaded.';
     }
     final random = Random();
     final randomIndex = random.nextInt(names.length);

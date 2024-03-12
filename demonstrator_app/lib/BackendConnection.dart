@@ -23,7 +23,7 @@ class BackendConnection with ChangeNotifier {
   /// [username]: IPVS-account username.
   /// [password]: IPVS-account password.
   ///
-  /// Theows exception if client cannot be authenticated.
+  /// Throws exception if client cannot be authenticated.
   Future<void> connectToSSHServer(String username, String password) async {
     if (debugEnabled) return;
     SSHSocket socket = await SSHSocket.connect(
@@ -63,18 +63,17 @@ class BackendConnection with ChangeNotifier {
 
     await for (final socket in serverSocket!) {
       if (client == null || client!.isClosed) {
-        serverSocket!.close(); //TODO: Notwendig? Testen!
+        serverSocket!.close(); 
         break;
       }
       final SSHForwardChannel forward = await client!.forwardLocal(
           "$ipvsServerName.informatik.uni-stuttgart.de",
-          serverPort); //TODO: Fehlerbehandlung hinzufügen?
+          serverPort); 
       forward.stream
           .cast<List<int>>()
           .pipe(socket)
           .onError((error, stackTrace) {
         print("Warning: Transmission of data via forwarding failed.\n$error");
-        //TODO: Können Fehler Auftreten? Log-Warnung falls Fehler.
       });
       socket.cast<Uint8List>().pipe(forward.sink);
     }
