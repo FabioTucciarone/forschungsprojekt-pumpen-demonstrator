@@ -11,6 +11,7 @@ Bestimme die Version.
 
 ### 2. Linux (Unsupported)
 Warnung! Design nicht für Linux ausgelegt und getestet. 
+
 Öffne [demonstrator_app](/Releases/Linux/demonstrator_app).
 
 Melde dich an oder wähle lokale Ausführung.
