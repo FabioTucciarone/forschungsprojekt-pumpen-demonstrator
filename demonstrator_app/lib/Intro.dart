@@ -385,11 +385,11 @@ class RobotIntro extends StatefulWidget {
 }
 
 class _RobotIntroState extends State<RobotIntro> {
-  bool speechBubble = false;
-  bool speechBubble2 = false;
+  bool speechBubble = false; //visibility of first speechbubble
+  bool speechBubble2 = false; //visibility of second speechbubble
   double volume = 1;
   Player player = Player();
-  int times = 0;
+  int times = 0; //initial state
   late String name;
   _RobotIntroState() {
     name = MainMaterial.name;
@@ -514,6 +514,8 @@ class _RobotIntroState extends State<RobotIntro> {
     return bubble;
   }
 
+
+  //sets next state and decides which speechbubbles are seen
   void nextState() {
     setState(() {
       speechBubble = true;
@@ -530,7 +532,7 @@ class _RobotIntroState extends State<RobotIntro> {
       }
     });
   }
-
+  //sets previous state and decides which speechbubbles are seen
   void previousState() {
     setState(() {
       if (times != 0) {
@@ -554,6 +556,7 @@ class _RobotIntroState extends State<RobotIntro> {
     });
   }
 
+  //returns the buttons with different text depending on state
   Widget getButtons() {
     if (times == 0) {
       return Center(
@@ -645,6 +648,8 @@ class _RobotIntroState extends State<RobotIntro> {
     }
   }
 
+
+  //shows the illustrations depending on state
   Widget introIllustration() {
     if (times == 9) {
       return Positioned(
@@ -811,6 +816,8 @@ class _RobotIntroState extends State<RobotIntro> {
   }
 }
 
+
+//custom AudioPlayer that plays the different Sounds depending on state
 class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
@@ -857,5 +864,4 @@ class OurColors {
   static const Color appBarTextColor = Color.fromARGB(255, 0, 0, 0);
   static const Color accentColor = Color.fromARGB(172, 115, 192, 255);
   static const Color darkerAccentColor = Color.fromARGB(172, 91, 153, 204);
-  //backup red Color i didn't want to just delete: Color.fromARGB(176, 215, 80, 80) AND Color.fromARGB(255, 221, 115, 115)
 }

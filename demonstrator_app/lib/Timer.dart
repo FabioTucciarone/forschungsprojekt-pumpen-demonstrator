@@ -6,9 +6,10 @@ import 'MainScreen.dart';
 //Timer for Timeouts in Kinder Version
 class RestartTimer extends ChangeNotifier {
   late Timer timer;
+  final int timeout = 180;
 
   RestartTimer() {
-    timer = Timer(const Duration(seconds: 180), () {
+    timer = Timer(Duration(seconds: timeout), () {
       resetValues();
       notifyListeners();
     });
@@ -16,12 +17,13 @@ class RestartTimer extends ChangeNotifier {
 
   void restartTimer() {
     timer.cancel();
-    timer = Timer(const Duration(seconds: 180), () {
+    timer = Timer(Duration(seconds: timeout), () {
       resetValues();
       notifyListeners();
     });
   }
 
+  //resets values after a timeout
   void resetValues() {
     AverageError.publicError = 0;
     MainSlide.futureNotifier.setFuture(Future(() => "keinWert"));

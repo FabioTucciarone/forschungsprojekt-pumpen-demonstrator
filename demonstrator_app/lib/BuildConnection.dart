@@ -1,8 +1,7 @@
 import 'package:demonstrator_app/Intro.dart';
-import 'package:demonstrator_app/Layout.dart';
+import 'package:demonstrator_app/AdminPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'BackendConnection.dart';
 
 /// Class for the login of the ssh account.
 class RegisterApp extends StatelessWidget {

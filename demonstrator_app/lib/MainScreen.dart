@@ -1,5 +1,5 @@
 import 'package:demonstrator_app/Intro.dart';
-import 'package:demonstrator_app/Layout.dart';
+import 'package:demonstrator_app/AdminPage.dart';
 import 'package:demonstrator_app/MainScreen_kids.dart';
 import 'package:demonstrator_app/NamePicker.dart';
 import 'package:demonstrator_app/Outputbox.dart';
@@ -417,6 +417,10 @@ class OutputHeader extends StatelessWidget {
   }
 }
 
+
+
+
+//main way of notifying other widgets of the new future
 class FutureNotifier extends ChangeNotifier {
   Future<String> future = Future.value("keinWert");
 
@@ -429,8 +433,8 @@ class FutureNotifier extends ChangeNotifier {
 }
 
 class FutureNotifierPhase2 extends ChangeNotifier {
-  static bool slider = true;
-  static bool clickedOnce = false;
+  static bool slider = true; //children only, sets whether the slider has been used first instead of the position
+  static bool clickedOnce = false; //children only, sets whether the position has been used once
   Future<String> future = Future.value("keinWert");
 
   Future<String> get getFuture => future;

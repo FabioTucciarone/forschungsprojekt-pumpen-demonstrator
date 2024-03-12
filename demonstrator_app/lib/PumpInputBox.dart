@@ -1,5 +1,5 @@
 import 'package:demonstrator_app/MainScreen.dart';
-import 'Layout.dart';
+import 'AdminPage.dart';
 import 'Intro.dart';
 import 'Outputbox.dart';
 
