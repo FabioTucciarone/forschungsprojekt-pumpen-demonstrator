@@ -15,6 +15,11 @@ from torch import stack, Tensor
 import domain_classes.domain as domain
 
 from model_communication import ModelConfiguration
+import matplotlib.pyplot as plt
+
+from data_stuff.transforms import (ComposeTransform, NormalizeTransform,
+                             PowerOfTwoTransform, ReduceTo2DTransform,
+                             SignedDistanceTransform, ToTensorTransform)
 
 
 def prepare_demonstrator_input_1hp(config: ModelConfiguration, permeability: float, pressure: float) -> Tuple[dict, dict, str, NormalizeTransform]:
@@ -39,15 +44,21 @@ def prepare_demonstrator_input_1hp(config: ModelConfiguration, permeability: flo
 
     y, method = generate_groundtruth(config.dataset_info, permeability, pressure)
 
+    # print(f"##### Vor Normalisierung 1 (1HP) #####:\n\n{x}\n\n")
+
     loc_hp = prep_1hp.get_hp_location(x)
     x = transforms(x, loc_hp=loc_hp)
     x = tensor_transform(x).to(config.device)
     y = transforms(y, loc_hp=loc_hp)
     y = tensor_transform(y)
 
+    # print(f"##### Vor Normalisierung 2 (1HP) #####:\n\n{x}\n\n")
+
     norm = NormalizeTransform(config.model_1hp_info)
     x = norm(x, "Inputs")
     y = norm(y, "Labels")
+
+    # print(f"##### Nach Normalisierung (1HP) #####:\n\n{x}\n\n")
 
     return x, y, method, norm
 
@@ -86,6 +97,13 @@ def build_inputs(config: ModelConfiguration, pressure: float, permeability: floa
     inputs[material_id_idx][pos_hps[0][0], pos_hps[0][1]] = 2
     inputs[material_id_idx][pos_hps[1][0], pos_hps[1][1]] = 2
     material_ids = inputs[material_id_idx]
+
+    sdf_idx = config.model_1hp_info["Inputs"]["SDF"]["index"]
+
+    sdf_x = torch.linalg.vector_norm(torch.tensor(np.moveaxis(np.mgrid[:inputs[sdf_idx].shape[0],:inputs[sdf_idx].shape[1]], 0, -1)).float() - pos_hps[0], dim=2)
+    sdf_y = torch.linalg.vector_norm(torch.tensor(np.moveaxis(np.mgrid[:inputs[sdf_idx].shape[0],:inputs[sdf_idx].shape[1]], 0, -1)).float() - pos_hps[1], dim=2)
+    inputs[sdf_idx] = torch.linalg.vector_norm(stack((sdf_x, sdf_y), dim=2), dim=2)
+    inputs[sdf_idx] = 1 - inputs[sdf_idx] / inputs[sdf_idx].max()
 
     norm = NormalizeTransform(config.model_1hp_info)
     inputs = norm(inputs, "Inputs")
@@ -132,7 +150,7 @@ def prepare_hp_boxes_demonstrator(config: ModelConfiguration, single_hps: List[H
 
     for hp in single_hps:   
         hp.primary_temp_field = hp.apply_nn(config.model_1hp)
-        hp.primary_temp_field = prep_2hp.reverse_temperature_norm(hp.primary_temp_field, config.model_2hp_info)
+        hp.primary_temp_field = prep_2hp.reverse_temperature_norm(hp.primary_temp_field, config.model_1hp_info)
 
     for hp in single_hps:
         hp.get_other_temp_field(single_hps)
