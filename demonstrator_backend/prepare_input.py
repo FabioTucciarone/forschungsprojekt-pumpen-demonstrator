@@ -44,21 +44,15 @@ def prepare_demonstrator_input_1hp(config: ModelConfiguration, permeability: flo
 
     y, method = generate_groundtruth(config.dataset_info, permeability, pressure)
 
-    # print(f"##### Vor Normalisierung 1 (1HP) #####:\n\n{x}\n\n")
-
     loc_hp = prep_1hp.get_hp_location(x)
     x = transforms(x, loc_hp=loc_hp)
     x = tensor_transform(x).to(config.device)
     y = transforms(y, loc_hp=loc_hp)
     y = tensor_transform(y)
 
-    # print(f"##### Vor Normalisierung 2 (1HP) #####:\n\n{x}\n\n")
-
     norm = NormalizeTransform(config.model_1hp_info)
     x = norm(x, "Inputs")
     y = norm(y, "Labels")
-
-    # print(f"##### Nach Normalisierung (1HP) #####:\n\n{x}\n\n")
 
     return x, y, method, norm
 
@@ -80,7 +74,6 @@ def prepare_demonstrator_input_2hp(config: ModelConfiguration, pressure: float, 
 
 
 def build_inputs(config: ModelConfiguration, pressure: float, permeability: float, positions: List[int]) -> Tuple[List[HeatPump], list]:
-
     pos_hps = [torch.tensor(positions[0]), torch.tensor(positions[1])]
 
     field_size = config.model_2hp_info["CellsNumber"]
@@ -156,8 +149,8 @@ def prepare_hp_boxes_demonstrator(config: ModelConfiguration, single_hps: List[H
         hp.get_other_temp_field(single_hps)
 
     for hp in single_hps:
-        hp.primary_temp_field = prep_2hp.norm_temperature(hp.primary_temp_field, config.model_2hp_info)
-        hp.other_temp_field = prep_2hp.norm_temperature(hp.other_temp_field, config.model_2hp_info)
+        hp.primary_temp_field = prep_2hp.norm_temperature(hp.primary_temp_field, config.model_1hp_info)
+        hp.other_temp_field = prep_2hp.norm_temperature(hp.other_temp_field, config.model_1hp_info)
         inputs = stack([hp.primary_temp_field, hp.other_temp_field])
 
         hp_inputs.append(inputs)
