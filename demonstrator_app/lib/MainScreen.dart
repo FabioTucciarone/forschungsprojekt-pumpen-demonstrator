@@ -97,6 +97,7 @@ class _MainMaterialState extends State<MainMaterial> {
           backgroundColor: OurColors.appBarColor,
           titleTextStyle:
               const TextStyle(color: OurColors.appBarTextColor, fontSize: 25),
+          // Display of the username for the children version with an icon in the top right corner.
           actions: widget.widget.children
               ? [
                   Row(
@@ -121,6 +122,8 @@ class _MainMaterialState extends State<MainMaterial> {
                   )
                 ]
               : [],
+          // Tab bar for selecting a section. Depending on whether the version is for children,
+          // the title of the section is in German or English.
           bottom: TabBar(
               controller: widget._tabController,
               unselectedLabelStyle: const TextStyle(
@@ -174,6 +177,7 @@ class _MainMaterialState extends State<MainMaterial> {
               ]),
         ),
         backgroundColor: OurColors.backgroundColor,
+        // Depending on whether the version is for children, the correct content (introduction, phase 1 or phase 2) is shown.
         body: TabBarView(controller: widget._tabController, children: <Widget>[
           widget.widget.children
               ? IntroKids(widget._tabController)
@@ -207,6 +211,7 @@ class MainScreenContent extends StatelessWidget with MainScreenElements {
               const SizedBox(
                 height: 10,
               ),
+              // Decorative border around the average error and the output images in order to indicate the output.
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -272,7 +277,8 @@ class SciencePhase2 extends StatelessWidget with MainScreenElements {
 
 /// Mixin for the elements of the main screen consisting of 2 sliders for pressure and permeability and
 /// the output boxes for the ai generated output, groundtruth and difference field or the pump input box
-/// if it is phase 2.
+/// if it is phase 2. This mixin is used in order to use the same elements in both versions and so
+/// avoid redundant code.
 mixin MainScreenElements {
   static PressureSlider pressureSlider = PressureSlider(
       900,
@@ -294,6 +300,9 @@ mixin MainScreenElements {
       false,
       true);
 
+  /// Returns slider with given [type] (pressure or permeability), [width], whether it is for [children] and
+  /// whether is used for the [firstPhase]. A future builder is used to await the response of the server
+  /// which is the value range of the slider.
   Widget getSliderWidget(
       double width, SliderType type, bool children, bool firstPhase) {
     return FutureBuilder(
@@ -301,6 +310,7 @@ mixin MainScreenElements {
       builder:
           (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         Widget child;
+        // Response of the server, so the value range, is available. Thus the slider of given type is displayed.
         if (snapshot.connectionState == ConnectionState.done) {
           if (type == SliderType.pressure) {
             pressureSlider = PressureSlider(
@@ -311,6 +321,7 @@ mixin MainScreenElements {
                 width, snapshot.data, type, children, firstPhase);
             child = permeabilitySlider;
           }
+          // Response isn't available yet, so a loading circle is shown.
         } else {
           child = const SizedBox(
             width: 50,
@@ -327,6 +338,7 @@ mixin MainScreenElements {
     );
   }
 
+  /// Returns input area consisting of the sliders for pressure and permeability.
   List<Widget> input(double width, bool children, bool firstPhase) {
     return <Widget>[
       getSliderWidget(width, SliderType.pressure, children, firstPhase),
@@ -337,6 +349,7 @@ mixin MainScreenElements {
     ];
   }
 
+  /// Returns output area consisting of the AI generated output, groundtruth and difference field.
   List<Widget> output(bool children) {
     return <Widget>[
       const SizedBox(
@@ -369,11 +382,15 @@ mixin MainScreenElements {
   static PumpInputBox heatPumpBox = PumpInputBox(
       width: 1000, height: 200, valueRange: const [0, 1], children: false);
 
+  /// Returns the input box for selecting the position of the second heat pump which is also the output of the AI:
+  /// [children] indicates whether this widget is used for the children version. A future builder is used to
+  /// await the response of the server which is the value range/shape of the box.
   Widget outputSecondPhase(bool children) {
     return FutureBuilder(
       future: useOfBackend.backend.getOutputShape(),
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         Widget child;
+        // Response of the server, so the value range, is available. Thus the pump input box is displayed.
         if (snapshot.connectionState == ConnectionState.done) {
           heatPumpBox = PumpInputBox(
               width: 1105,
@@ -381,6 +398,7 @@ mixin MainScreenElements {
               valueRange: snapshot.data,
               children: children);
           child = heatPumpBox;
+          // Response isn't available yet, so a loading circle is shown.
         } else {
           child = const SizedBox(
             width: 50,
@@ -417,10 +435,7 @@ class OutputHeader extends StatelessWidget {
   }
 }
 
-
-
-
-//main way of notifying other widgets of the new future
+/// Main way of notifying other widgets of the new future.
 class FutureNotifier extends ChangeNotifier {
   Future<String> future = Future.value("keinWert");
 
@@ -433,8 +448,10 @@ class FutureNotifier extends ChangeNotifier {
 }
 
 class FutureNotifierPhase2 extends ChangeNotifier {
-  static bool slider = true; //children only, sets whether the slider has been used first instead of the position
-  static bool clickedOnce = false; //children only, sets whether the position has been used once
+  static bool slider =
+      true; // Children only, sets whether the slider has been used first instead of the position.
+  static bool clickedOnce =
+      false; // Children only, sets whether the position has been used once.
   Future<String> future = Future.value("keinWert");
 
   Future<String> get getFuture => future;
