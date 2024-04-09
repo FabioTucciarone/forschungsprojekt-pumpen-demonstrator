@@ -44,6 +44,8 @@ Bestimme die Version.
 
 ## Projektstruktur
 
+![Beziehung zwischen den Klassen](Frontend_Projektstruktur.png)
+
 Beschreibung der [Dart-Dateien](lib/):
 - **main.dart**: Hier wird die App mit RegisterApp (Anmeldeseite) gestartet.
 - **BackendConnection.dart**: Die Datei enthält Methoden, die für die Anmeldung zum IPVS-Server benutzt werden, und die HTTP-Anfragen an den Server. 
