@@ -63,12 +63,11 @@ class BackendConnection with ChangeNotifier {
 
     await for (final socket in serverSocket!) {
       if (client == null || client!.isClosed) {
-        serverSocket!.close(); 
+        serverSocket!.close();
         break;
       }
       final SSHForwardChannel forward = await client!.forwardLocal(
-          "$ipvsServerName.informatik.uni-stuttgart.de",
-          serverPort); 
+          "$ipvsServerName.informatik.uni-stuttgart.de", serverPort);
       forward.stream
           .cast<List<int>>()
           .pipe(socket)
@@ -163,6 +162,8 @@ class BackendConnection with ChangeNotifier {
     }
   }
 
+  /// Send a http-get request via the specified ssh tunnel. Returns the value ranges
+  /// of the parameters pressure and permeability, which are used for the sliders.
   Future<Map<String, dynamic>> getValueRanges() async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
@@ -176,6 +177,8 @@ class BackendConnection with ChangeNotifier {
     }
   }
 
+  /// Send a http-get request via the specified ssh tunnel. Returns the shape/size
+  /// of the output of the second phase, which is used for the pump input box.
   Future<List<dynamic>> getOutputShape() async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
@@ -189,6 +192,8 @@ class BackendConnection with ChangeNotifier {
     }
   }
 
+  /// Send a http-get request via the specified ssh tunnel. Returns the highscore and the corresponding name,
+  /// which is used for the phase 1 of the children version.
   Future<Map<String, dynamic>> getHighscoreAndName() async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
@@ -203,6 +208,8 @@ class BackendConnection with ChangeNotifier {
     }
   }
 
+  /// Send a http-get request via the specified ssh tunnel. Returns the top ten list,
+  /// which is used for the phase 1 of children version.
   Future<List<dynamic>> getTopTenList() async {
     if (!readyForHTTPRequests && !debugEnabled) {
       throw "Error: No SSH-port forwarding established.";
@@ -217,7 +224,7 @@ class BackendConnection with ChangeNotifier {
   }
 
   /// If [debug] is true then all ssh methods will be ignored and http-requests will be sent to http://localhost:5000.
-  /// This is useful for testing the backend with a flask debug-server on the lokal machine.
+  /// This is useful for testing the backend with a flask debug-server on the local machine.
   void setDebugMode(bool enabled) {
     debugEnabled = enabled;
   }

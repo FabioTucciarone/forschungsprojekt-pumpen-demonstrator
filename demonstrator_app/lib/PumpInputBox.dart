@@ -6,14 +6,15 @@ import 'Outputbox.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-/// Class for a box which is above the output picture and where you can change the position of the second heat pump.
-/// It can be adjusted by its width, height and a boolean indicating whether the slider is for the children version.
+/// Class for a box which is above the output image and where you can change the position of the second heat pump.
+/// It can be adjusted by its [width], [height] and a boolean indicating whether the slider is for the [children] version.
 class PumpInputBox extends StatefulWidget {
   final double width;
   final double height;
-  final List<dynamic>? valueRange;
+  final List<dynamic>?
+      valueRange; // Possible range of the position of the heat pump.
   final bool children;
-  Offset currentValue = const Offset(0, 0);
+  Offset currentValue = const Offset(0, 0); // Current Position of the pump.
   PumpInputBox({
     super.key,
     required this.width,
@@ -31,11 +32,13 @@ class PumpInputBox extends StatefulWidget {
 }
 
 class _PumpInputBoxState extends State<PumpInputBox> {
-  Offset pumpPos = const Offset(10, 10);
+  Offset pumpPos = const Offset(10,
+      10); // Selected position that can be corrected if it is outside the box. Initiated with position (10,10).
   final ResponseDecoder responseDecoder = ResponseDecoder();
-  double top = 30;
-  double left = 85;
-  Widget lastOutput = Container(
+  double top = 30; // Used to position the gesture detector and messages.
+  double left = 85; // Used to position the gesture detector and messages.
+  // latest output that is used to show a loading circle over this image while waiting for the next output.
+  Widget latestOutput = Container(
     width: 1105,
     height: 88,
     decoration: BoxDecoration(
@@ -50,7 +53,8 @@ class _PumpInputBoxState extends State<PumpInputBox> {
     widget.currentValue = determineValue(pumpPos);
   }
 
-  /// Determines the value that the position of the thumb represents.
+  /// Determines the actual position within the heat pump field (currentValue) that the position of
+  /// the thumb represents ([pumpPos]).
   Offset determineValue(Offset pumpPos) {
     int endX = widget.valueRange?[0];
     int endY = widget.valueRange?[1];
@@ -81,12 +85,16 @@ class _PumpInputBoxState extends State<PumpInputBox> {
     });
   }
 
+  /// Returns the gesture detector widget that corrects and processes the gestures made by the user.
+  /// [color] is the color of the border of this widget and changeable since the border shouldn't be
+  /// visible when an output is available.
   Widget getGestureDetectorWidget(Color color) {
     return Positioned(
       top: top,
       left: left,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
+        // When the pointer is moved or clicked to a position, it is corrected to avoid leaving the box.
         onPanStart: (DragStartDetails details) {
           correctingPosition(details.localPosition);
         },
@@ -96,6 +104,8 @@ class _PumpInputBoxState extends State<PumpInputBox> {
         onTapDown: (TapDownDetails details) {
           correctingPosition(details.localPosition);
         },
+        // When the pointer stops moving and is released, the inputs are send to the backend and
+        // the output is displayed.
         onPanEnd: (DragEndDetails details) {
           FutureNotifierPhase2.slider = false;
           FutureNotifierPhase2.clickedOnce = true;
@@ -107,6 +117,8 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                   [widget.currentValue.dx, widget.currentValue.dy]));
           MainSlide.restartTimer.restartTimer();
         },
+        // When a spot on the pump input box is clicked, the inputs are send to the backend and
+        // the output is displayed.
         onTapUp: (TapUpDetails details) {
           FutureNotifierPhase2.slider = false;
           FutureNotifierPhase2.clickedOnce = true;
@@ -132,9 +144,10 @@ class _PumpInputBoxState extends State<PumpInputBox> {
     );
   }
 
-  /// Builds a stack consisting of the output and the input box for the position of the second heat pump.
+  /// Builds a stack consisting of the output and the input box for the position of the second heat pump (gesture detector widget).
   /// The sending of the selected data is triggered when the pointer is released or clicked. The position is corrected
   /// whenever the pointer is moved or the input box is clicked.
+  /// A future builder is used to await the response of the server (the output of the AI).
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifierPhase2>().future;
@@ -145,7 +158,9 @@ class _PumpInputBoxState extends State<PumpInputBox> {
         future: future,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           Widget child;
+          // Response of the server, so the output, is available.
           if (snapshot.connectionState == ConnectionState.done) {
+            // An error occured, so a corresponding message is displayed.
             if (snapshot.hasError) {
               child = Stack(
                 alignment: AlignmentDirectional.center,
@@ -174,7 +189,10 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                 ],
               );
               print('Error ${snapshot.error} occured');
+              // No error occured.
             } else {
+              // The user hasn't selected values yet, so this fact is displayed in the science version or
+              // an instruction is shown in the children version.
               if (snapshot.data == "keinWert") {
                 child = Stack(
                   alignment: AlignmentDirectional.center,
@@ -204,6 +222,7 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                     getGestureDetectorWidget(Colors.black),
                   ],
                 );
+                // The user already has selected values, so the output is shown.
               } else {
                 responseDecoder.setResponse(snapshot.data);
                 child = Stack(
@@ -213,15 +232,16 @@ class _PumpInputBoxState extends State<PumpInputBox> {
                     getGestureDetectorWidget(const Color.fromRGBO(0, 0, 0, 0)),
                   ],
                 );
-                lastOutput =
+                latestOutput =
                     Image.memory(responseDecoder.getBytes("model_result"));
               }
             }
+            // Response isn't available yet, so a loading circle over the latest output is shown.
           } else {
             child = Stack(
               alignment: AlignmentDirectional.center,
               children: <Widget>[
-                lastOutput,
+                latestOutput,
                 const Positioned(
                   top: 22,
                   left: 600,

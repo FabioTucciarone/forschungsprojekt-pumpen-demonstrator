@@ -6,81 +6,87 @@ import 'AdminPage.dart';
 import 'MainScreen.dart';
 import 'Outputbox.dart';
 
-//Widget that outputs the average Error of the Output.
-//If for children the value gets rounded and multiplied by 10000
+/// Widget that outputs the average Error of the Output.
+/// If for children the value gets rounded and multiplied by 10000.
 class AverageError extends StatelessWidget {
   final bool children;
   AverageError(this.children, {super.key});
   final ResponseDecoder responseDecoder = ResponseDecoder();
   static dynamic publicError = 0;
 
+  /// A future builder is used to await the response of the server (the average error).
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifier>().future;
-    final String text =
-        children ? "Punktzahl:" : "Average error of the AI generated output:";
+    final String text = children
+        ? "Punktzahl:"
+        : "Average error of the AI generated output:"; // label for the average error which is "Punktzahl" in the children version.
     return Container(
       constraints: const BoxConstraints(minWidth: 300),
       child: FutureBuilder(
-          future: future,
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            Widget child;
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data != "keinWert") {
-                responseDecoder.setResponse(snapshot.data);
-                double averageError =
-                    responseDecoder.jsonDecoded["average_error"];
-                publicError = averageError;
-                if (children) {
-                  int roundedError = (averageError * 10000).round();
-                  publicError = roundedError;
-                  child = Text(
-                    "$text $roundedError",
-                    textScaleFactor: 1.8,
-                  );
-                } else {
-                  averageError = double.parse(averageError.toStringAsFixed(4));
-                  child = Text(
-                    "$text $averageError °C",
-                    textScaleFactor: 1.8,
-                  );
-                }
-              } else {
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          Widget child;
+          // Response of the server, so the average error, is available.
+          if (snapshot.connectionState == ConnectionState.done) {
+            // The user already has selected values, so the average error is rounded and displayed.
+            if (snapshot.data != "keinWert") {
+              responseDecoder.setResponse(snapshot.data);
+              double averageError =
+                  responseDecoder.jsonDecoded["average_error"];
+              publicError = averageError;
+              if (children) {
+                int roundedError = (averageError * 10000).round();
+                publicError = roundedError;
                 child = Text(
-                  "$text -",
+                  "$text $roundedError",
+                  textScaleFactor: 1.8,
+                );
+              } else {
+                averageError = double.parse(averageError.toStringAsFixed(4));
+                child = Text(
+                  "$text $averageError °C",
                   textScaleFactor: 1.8,
                 );
               }
+              // The user hasn't selected values yet, so "-" is displayed instead of a number.
             } else {
-              child = Row(
-                children: [
-                  Text(
-                    text,
-                    textScaleFactor: 1.8,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: CircularProgressIndicator(
-                      color: OurColors.accentColor,
-                    ),
-                  ),
-                ],
+              child = Text(
+                "$text -",
+                textScaleFactor: 1.8,
               );
             }
-
-            return child;
-          }),
+            // Response isn't available yet, so a loading circle is shown.
+          } else {
+            child = Row(
+              children: [
+                Text(
+                  text,
+                  textScaleFactor: 1.8,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: CircularProgressIndicator(
+                    color: OurColors.accentColor,
+                  ),
+                ),
+              ],
+            );
+          }
+          return child;
+        },
+      ),
     );
   }
 }
 
-//Widget that outputs the Highscore
-//only for children
-//Doesnt update if the averageError is smaller than the current Highscore
+/// Widget that outputs the Highscore.
+/// Only for children.
+/// Doesnt update if the averageError is smaller than the current Highscore.
 class Highscore extends StatefulWidget {
   const Highscore({super.key});
 
@@ -145,10 +151,12 @@ class _HighscoreState extends State<Highscore> {
   }
 }
 
-//Highscore Dialog for the Top 10 Highscores Button
+/// Highscore Dialog for the Top 10 Highscores Button.
 class HighscoreDialog extends StatelessWidget {
   const HighscoreDialog({super.key});
 
+  /// Returns the top ten list which is used in the children version.
+  /// A future builder is used to await the response of the server (the top ten list).
   Widget getToptenList() {
     Future<List<dynamic>> topTen = useOfBackend.backend.getTopTenList();
 
@@ -156,6 +164,7 @@ class HighscoreDialog extends StatelessWidget {
         future: topTen,
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           Widget child;
+          // Response of the server, so the top ten list, isn't available yet.
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox(
               width: 100,
@@ -164,6 +173,7 @@ class HighscoreDialog extends StatelessWidget {
                 color: OurColors.accentColor,
               ),
             );
+            // The top ten list is available.
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data != null) {
               List<dynamic> highscores = snapshot.data!;
@@ -214,6 +224,7 @@ class HighscoreDialog extends StatelessWidget {
         });
   }
 
+  /// Method to display the dialog for the top ten list and a close button.
   void showHighscores(BuildContext context) {
     showDialog(
         context: context,
@@ -241,28 +252,30 @@ class HighscoreDialog extends StatelessWidget {
         });
   }
 
+  /// Builds a "Bestenliste" button that shows the top ten list when it is pressed.
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        style: ButtonStyle(
-          foregroundColor:
-              MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-          backgroundColor:
-              MaterialStateProperty.all<Color>(OurColors.accentColor),
-          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-              const EdgeInsets.all(10)),
-        ),
-        onPressed: () {
-          showHighscores(context);
-        },
-        child: const Text(
-          "Bestenliste",
-          textScaleFactor: 1.8,
-        ));
+      style: ButtonStyle(
+        foregroundColor:
+            MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+        backgroundColor:
+            MaterialStateProperty.all<Color>(OurColors.accentColor),
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+            const EdgeInsets.all(10)),
+      ),
+      onPressed: () {
+        showHighscores(context);
+      },
+      child: const Text(
+        "Bestenliste",
+        textScaleFactor: 1.8,
+      ),
+    );
   }
 }
 
-//combines all 3 Widgets for Children Mainscreen
+/// Combines all 3 Widgets for Children Mainscreen.
 class ScoreBoard extends StatelessWidget {
   final bool children;
   const ScoreBoard(this.children, {super.key});

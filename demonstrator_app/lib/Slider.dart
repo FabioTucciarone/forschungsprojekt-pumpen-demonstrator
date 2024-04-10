@@ -8,8 +8,9 @@ import 'dart:math';
 /// Specifies what kind of parameter the slider represents.
 enum SliderType { pressure, permeability, dummy }
 
-/// Class for a slider which can be adjusted by its width, range of possible values, type of parameter,
-/// current value of the thumb and a boolean indicating whether the slider is for the children version.
+/// Class for a slider which can be adjusted by its [sliderWidth], range of possible values ([valueRange]), [name] of parameter,
+/// [currentValue] of the thumb, a boolean indicating whether the slider is for the [children] version and a boolean indicating
+/// whether the slider is used for the [firstPhase].
 class PressureSlider extends StatefulWidget {
   final double sliderWidth;
   final Map<String, dynamic>? valueRange;
@@ -34,15 +35,18 @@ class PressureSlider extends StatefulWidget {
 }
 
 class _PressureSliderState extends State<PressureSlider> {
+  // Colors of which the color gradient is used for the slider track.
   final List<Color> colorsGradient = [
     const Color.fromARGB(255, 4, 48, 97),
     const Color.fromARGB(255, 255, 255, 255),
     const Color.fromARGB(255, 204, 51, 51),
   ];
-  double sliderPos = 0;
-  Color shadowColor = Colors.grey;
-  double spreadRadius = 0.8;
-  double spreadRadiusChildren = 4;
+  double sliderPos =
+      0; // Selected position that can be corrected if it is outside the track. Initiated with position 0.
+  Color shadowColor = Colors.grey; // Color of the shadow of the slider track.
+  double spreadRadius = 0.8; // Spread radius of the shadow of the slider track.
+  double spreadRadiusChildren =
+      4; // Spread radius of the shadow of the slider track in the children version.
 
   @override
   void initState() {
@@ -100,6 +104,7 @@ class _PressureSliderState extends State<PressureSlider> {
   /// Gets the value and parameter name to display. If the slider is used for the children version then
   /// the parameter name is given in German otherwise in English. The number of the value's decimal places
   /// is limited to three.
+  /// [displayIdentifier] indicates whether the identifier should be returned or the value.
   Widget getDisplayOfValues(SliderType name, double currentValue, bool children,
       bool displayIdentifier) {
     String identifier = '';
@@ -125,10 +130,12 @@ class _PressureSliderState extends State<PressureSlider> {
       value = value * 10;
       exp++;
     }
+    // The pressure value is given as positive to make the value more comprehensible.
     if (name == SliderType.pressure) {
       currentValue = ((currentValue * pow(10, 2 + exp)).round().toDouble() /
               pow(10, 2 + exp))
           .abs();
+      // The permeability value is given as its logarithm to make the value more comprehensible.
     } else {
       currentValue = ((log(currentValue) / ln10) * 100).round() / 100;
     }
@@ -147,6 +154,8 @@ class _PressureSliderState extends State<PressureSlider> {
     }
   }
 
+  /// Returns the display of the value (container to the left of the slider), which is just given
+  /// as "niedrig" in the children version and not present in the dummy version.
   Widget getValueContainer(SliderType name, bool children) {
     if (name != SliderType.dummy) {
       if (children) {
@@ -191,6 +200,7 @@ class _PressureSliderState extends State<PressureSlider> {
           ? MainAxisAlignment.spaceBetween
           : MainAxisAlignment.center,
       children: <Widget>[
+        // If the type of the slider is dummy (used as an example slider in the children introduction), no identifier/label is displayed.
         (widget.name != SliderType.dummy)
             ? Container(
                 constraints: const BoxConstraints(minWidth: 150),
@@ -204,8 +214,12 @@ class _PressureSliderState extends State<PressureSlider> {
             const SizedBox(
               width: 10,
             ),
+            // Use a gesture detector to correct and process the gestures made by the user.
+            // In the children version the slider additionally reacts to gestures by glowing blue,
+            // by turning the shadow color blue and increasing the size/radius of the shadow.
             GestureDetector(
               behavior: HitTestBehavior.opaque,
+              // When the thumb is moved or clicked to a position, it is corrected to avoid leaving the track.
               onHorizontalDragStart: (DragStartDetails details) {
                 correctingPosition(details.localPosition.dx);
                 if (widget.children) {
@@ -233,6 +247,8 @@ class _PressureSliderState extends State<PressureSlider> {
                   });
                 }
               },
+              // When the thumb stops moving and is released, the inputs are send to the backend and
+              // the outputs are displayed.
               onHorizontalDragEnd: (DragEndDetails details) {
                 if (widget.name == SliderType.pressure) {
                   if (widget.firstPhase) {
@@ -280,6 +296,8 @@ class _PressureSliderState extends State<PressureSlider> {
                   });
                 }
               },
+              // When a spot on the track is clicked, the inputs are send to the backend and
+              // the outputs are displayed.
               onTapUp: (TapUpDetails details) {
                 if (widget.name == SliderType.pressure) {
                   if (widget.firstPhase) {
@@ -327,6 +345,7 @@ class _PressureSliderState extends State<PressureSlider> {
                   });
                 }
               },
+              // Slider track with color gradient and (changeable) shadow.
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Container(
@@ -351,6 +370,8 @@ class _PressureSliderState extends State<PressureSlider> {
             const SizedBox(
               width: 10,
             ),
+            // If the slider is used in the children version, a value display, namely "hoch" is added to
+            // the right side of the slider.
             (widget.children && (widget.name != SliderType.dummy))
                 ? Container(
                     width: 70,

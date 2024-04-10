@@ -34,12 +34,19 @@ class IntroHomeScaffold extends StatelessWidget {
     );
   }
 
+  /// Gets the content and actions of the dialog depending on [component] and [children].
+  /// [component] indicates whether a content (message) or an action (button) is needed
+  /// and [children] is propagated in case it goes to another page.
+  /// A future builder is used to await the response of the server.
   Widget getDialogComponents(String component, bool children) {
     return FutureBuilder<bool>(
       future: useOfBackend.backend.testServerStatus(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         Widget child;
+        // Response of the server, so its status, is available.
         if (snapshot.connectionState == ConnectionState.done) {
+          // Server isn't available, so if the requested component is a content a corresponding message
+          // is displayed and if the component is an action a "Verstanden" button is displayed.
           if (snapshot.data == false) {
             if (component == "content") {
               child = const Text("Server wurde nicht gestartet!");
@@ -59,6 +66,8 @@ class IntroHomeScaffold extends StatelessWidget {
                 child: const Text("Verstanden"),
               );
             }
+            // Server is available, so if the requested component is a content no message
+            // is displayed and if the component is an action no button is displayed.
           } else {
             if (component == "content") {
               child = const Text("");
@@ -72,6 +81,8 @@ class IntroHomeScaffold extends StatelessWidget {
                       builder: (context) => MainSlide(children: children)));
             });
           }
+          // Response isn't yet available, so if the requested component is a content a loading circle
+          // is displayed and if the component is an action a "Abbrechen" button is displayed.
         } else {
           if (component == "content") {
             child = const SizedBox(
@@ -108,6 +119,7 @@ class IntroHomeScaffold extends StatelessWidget {
     super.key,
   });
 
+  /// Admin page with instructions and the selection of the version.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,6 +143,7 @@ class IntroHomeScaffold extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Instructions for the admin.
           Padding(
             padding: const EdgeInsets.fromLTRB(180, 20, 180, 20),
             child: RichText(
@@ -148,6 +161,7 @@ class IntroHomeScaffold extends StatelessWidget {
           const SizedBox(
             height: 40,
           ),
+          // Button to continue to the science version.
           ElevatedButton(
             style: ButtonStyle(
               foregroundColor:
@@ -169,23 +183,25 @@ class IntroHomeScaffold extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
+          // Button to continue to the children version.
           ElevatedButton(
-              style: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  OurColors.appBarColor,
-                ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.all(15)),
+            style: ButtonStyle(
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(OurColors.appBarTextColor),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                OurColors.appBarColor,
               ),
-              onPressed: () {
-                getStatus(context, true);
-              },
-              child: const Text(
-                "Los geht's zur Kinderversion",
-                style: TextStyle(fontSize: 20),
-              ))
+              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  const EdgeInsets.all(15)),
+            ),
+            onPressed: () {
+              getStatus(context, true);
+            },
+            child: const Text(
+              "Los geht's zur Kinderversion",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
         ],
       ),
     );

@@ -47,9 +47,11 @@ class _IntroScienceTextState extends State<IntroScienceText> {
           data: Theme.of(context).copyWith(
               textSelectionTheme: const TextSelectionThemeData(
                   selectionColor: OurColors.accentColor)),
+          // Information text with with expandable sections.
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // First expandable section "General information".
               ExpansionTile(
                 title: const Text(
                   "General information",
@@ -60,6 +62,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                 controlAffinity: ListTileControlAffinity.leading,
                 expandedCrossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Row and a SizedBox around the text is used to display the text next to the image.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -67,6 +70,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                         width: 650,
                         child: Wrap(
                           children: [
+                            // Textspans with SelectableText are used to make the text selectable and specific parts bold.
                             SelectableText.rich(
                               TextSpan(
                                 style: TextStyle(
@@ -117,6 +121,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                           ],
                         ),
                       ),
+                      // Image of the functionality of a heat pump with a caption.
                       Center(
                         child: Column(
                           children: [
@@ -133,6 +138,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                   ),
                 ],
               ),
+              // Second expandable section "Single heat pump".
               ExpansionTile(
                 title: const Text(
                   "Single heat pump",
@@ -142,6 +148,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                 subtitle: const Text(""),
                 controlAffinity: ListTileControlAffinity.leading,
                 children: [
+                  // Textspans with SelectableText are used to make the text selectable, specific parts bold
+                  // and together with TooltipTextSpan enable the display of an image when hovering over a specific textspan.
                   SelectableText.rich(
                     TextSpan(
                       style: const TextStyle(
@@ -158,6 +166,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                           ),
                         ),
                         const TextSpan(text: "approximates the "),
+                        // This TextSpan can show the preview of the single heat pump page when hovering over the text
+                        // "heat plume of a single heat pump" and switch to this page when clicking on the text.
                         TooltipTextSpan(
                           path: "assets/SingleHeatPump_Wissenschaft.png",
                           textSpan: TextSpan(
@@ -185,6 +195,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                       ],
                     ),
                   ),
+                  // Image of the heat plume of a single heat pump with a caption.
                   Center(
                     child: Column(
                       children: [
@@ -198,6 +209,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                   ),
                 ],
               ),
+              // Third expandable section "Interaction of heat plumes".
               ExpansionTile(
                 title: const Text(
                   "Interaction of heat plumes",
@@ -207,6 +219,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                 subtitle: const Text(""),
                 controlAffinity: ListTileControlAffinity.leading,
                 children: [
+                  // Textspans with SelectableText are used to make the text selectable, specific parts bold
+                  // and together with TooltipTextSpan enable the display of an image when hovering over a specific textspan.
                   SelectableText.rich(
                     TextSpan(
                       style: const TextStyle(
@@ -223,6 +237,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                           ),
                         ),
                         const TextSpan(text: "approximates the "),
+                        // This TextSpan can show the preview of the interaction of heat plumes page when hovering over the text
+                        // "interaction of heat plumes from two pumps" and switch to this page when clicking on the text.
                         TooltipTextSpan(
                           path:
                               "assets/InteractionOfHeatPlumes_Wissenschaft.png",
@@ -252,7 +268,6 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         const TextSpan(
                           text:
-                              // position of first pump is determined
                               "of the second heat pump can be selected on the output field via point and click or drag and drop of the red "
                               "pointer while the position of the first pump is fixed.\nFor this scenario, we chose not to generate a groundtruth "
                               "so that the input parameters are freely selectable, and thus, only the AI-generated results are provided.\n",
@@ -260,6 +275,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                       ],
                     ),
                   ),
+                  // Image of the the interaction of heat plumes of two heat pumps with a caption.
                   Center(
                     child: Column(
                       children: [
@@ -274,6 +290,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                   ),
                 ],
               ),
+              // Text outside of the expandable sections.
               const SelectableText.rich(
                 TextSpan(
                   style: TextStyle(
@@ -285,6 +302,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                   ],
                 ),
               ),
+              // Forth expandable section "Sources".
               ExpansionTile(
                 title: const Text(
                   "Sources",
@@ -294,6 +312,8 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                 subtitle: const Text(""),
                 controlAffinity: ListTileControlAffinity.leading,
                 children: [
+                  // Textspans with SelectableText are used to make the text selectable, specific parts bold
+                  // and together with TooltipTextSpan enable the display of an image when hovering over a specific textspan.
                   SelectableText.rich(
                     TextSpan(
                       style: const TextStyle(
@@ -303,6 +323,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                           text:
                               "Pelzer, Julia and Schulte, Miriam (2024). “Two-Stage Learning of the Interaction of Heat Plumes of Geothermal Heat Pumps”. In: Elsevier (unpublished).\n",
                         ),
+                        // This TextSpan can open the page (given URL) when clicking on the text.
                         TextSpan(
                           text: "https://www.bbc.com/news/uk-wales-49579094 \n",
                           style: const TextStyle(
@@ -312,6 +333,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                             ..onTap = () => launchUrlString(
                                 "https://www.bbc.com/news/uk-wales-49579094"),
                         ),
+                        // This TextSpan can open the page (given URL) when clicking on the text.
                         TextSpan(
                           text:
                               "https://www.energy.gov/energysaver/geothermal-heat-pumps \n",
@@ -327,6 +349,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
                   ),
                 ],
               ),
+              // Image of the logo of the University Stuttgart.
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -345,7 +368,7 @@ class _IntroScienceTextState extends State<IntroScienceText> {
 }
 
 /// Class for a textspan that shows an image when hovering over the text.
-/// The String variable path is the path of the image and textSpan the text which can be hovered over.
+/// The String variable [path] is the path of the image and [textSpan] the text which can be hovered over.
 class TooltipTextSpan extends WidgetSpan {
   TooltipTextSpan({
     required String path,
@@ -385,11 +408,11 @@ class RobotIntro extends StatefulWidget {
 }
 
 class _RobotIntroState extends State<RobotIntro> {
-  bool speechBubble = false; //visibility of first speechbubble
-  bool speechBubble2 = false; //visibility of second speechbubble
+  bool speechBubble = false; // Visibility of first speechbubble.
+  bool speechBubble2 = false; // Visibility of second speechbubble.
   double volume = 1;
   Player player = Player();
-  int times = 0; //initial state
+  int times = 0; // Initial state.
   late String name;
   _RobotIntroState() {
     name = MainMaterial.name;
@@ -415,6 +438,7 @@ class _RobotIntroState extends State<RobotIntro> {
     'assets/KAI/happy.jpeg',
     'assets/KAI/starry.jpeg',
   ];
+  // Text for the first speechbubble.
   List<String> speeches = [
     "",
     "Hallo mein Name ist Kai. Ich bin eine künstliche Intelligenz und dein heutiger Begleiter.",
@@ -431,6 +455,7 @@ class _RobotIntroState extends State<RobotIntro> {
     "Wenn du Werte findest, bei denen ich mich verbessern kann kriegst du eine hohe Punktzahl. Schaffst du es 1000 Punkte zu bekommen?",
     "Wenn du Werte findest, bei denen ich mich verbessern kann kriegst du eine hohe Punktzahl. Schaffst du es 1000 Punkte zu bekommen?",
   ];
+  // Text for the second speechbubble below.
   List<String> speeches2 = [
     "",
     "",
@@ -484,6 +509,7 @@ class _RobotIntroState extends State<RobotIntro> {
     "Einen Schritt zurück"
   ];
 
+  /// Returns Widget that shows the second speechbubble. The visibility depends on [speechBubble2].
   Widget secondSpeechBubble() {
     Widget bubble = Positioned(
       top: 310,
@@ -497,7 +523,7 @@ class _RobotIntroState extends State<RobotIntro> {
           duration: const Duration(milliseconds: 200),
           child: BubbleSpecialThree(
             key: ValueKey<int>(
-                times), // Use a ValueKey to ensure proper animation when the key changes
+                times), // Use a ValueKey to ensure proper animation when the key changes.
             text: speeches2[times],
             color: OurColors.accentColor,
             tail: true,
@@ -514,8 +540,7 @@ class _RobotIntroState extends State<RobotIntro> {
     return bubble;
   }
 
-
-  //sets next state and decides which speechbubbles are seen
+  /// Sets next state and decides which speechbubbles are seen.
   void nextState() {
     setState(() {
       speechBubble = true;
@@ -532,7 +557,8 @@ class _RobotIntroState extends State<RobotIntro> {
       }
     });
   }
-  //sets previous state and decides which speechbubbles are seen
+
+  /// Sets previous state and decides which speechbubbles are seen.
   void previousState() {
     setState(() {
       if (times != 0) {
@@ -556,7 +582,7 @@ class _RobotIntroState extends State<RobotIntro> {
     });
   }
 
-  //returns the buttons with different text depending on state
+  /// Returns the buttons with different text depending on state.
   Widget getButtons() {
     if (times == 0) {
       return Center(
@@ -648,8 +674,7 @@ class _RobotIntroState extends State<RobotIntro> {
     }
   }
 
-
-  //shows the illustrations depending on state
+  /// Shows the illustrations depending on state.
   Widget introIllustration() {
     if (times == 9) {
       return Positioned(
@@ -730,6 +755,7 @@ class _RobotIntroState extends State<RobotIntro> {
                 height: 800,
                 child: Stack(
                   children: <Widget>[
+                    // Shows robot with circular border.
                     AnimatedPositioned(
                         duration: const Duration(milliseconds: 300),
                         top: 100,
@@ -738,7 +764,7 @@ class _RobotIntroState extends State<RobotIntro> {
                           duration: const Duration(milliseconds: 200),
                           child: Container(
                             key: ValueKey<int>(
-                                times), // Use a ValueKey to ensure proper animation when the key changes
+                                times), // Use a ValueKey to ensure proper animation when the key changes.
                             height: 500,
                             width: 500,
                             decoration: BoxDecoration(
@@ -751,12 +777,13 @@ class _RobotIntroState extends State<RobotIntro> {
                               child: Image.asset(
                                 imagePaths[times],
                                 key: ValueKey<int>(
-                                    times), // Use a ValueKey to ensure proper animation when the key changes
+                                    times), // Use a ValueKey to ensure proper animation when the key changes.
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ),
                         )),
+                    // Shows first speechbubble.
                     Positioned(
                       top: 50,
                       left: 650,
@@ -769,7 +796,7 @@ class _RobotIntroState extends State<RobotIntro> {
                           duration: const Duration(milliseconds: 200),
                           child: BubbleSpecialThree(
                             key: ValueKey<int>(
-                                times), // Use a ValueKey to ensure proper animation when the key changes
+                                times), // Use a ValueKey to ensure proper animation when the key changes.
                             text: speeches[times],
                             color: OurColors.accentColor,
                             tail: true,
@@ -788,6 +815,7 @@ class _RobotIntroState extends State<RobotIntro> {
                   ],
                 ),
               )),
+              // Volume Control with suitable icon.
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -816,8 +844,7 @@ class _RobotIntroState extends State<RobotIntro> {
   }
 }
 
-
-//custom AudioPlayer that plays the different Sounds depending on state
+/// Custom AudioPlayer that plays the different Sounds depending on state.
 class Player {
   final player = AudioPlayer();
   List<String> soundPaths = [
@@ -856,7 +883,7 @@ class Player {
   }
 }
 
-/// Class to acces all of our Colors throughout the App.
+/// Class to access all of our Colors throughout the App.
 class OurColors {
   static const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
   static const Color appBarColor = Color.fromARGB(255, 84, 161, 224);

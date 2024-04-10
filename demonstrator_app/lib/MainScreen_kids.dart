@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
+/// Class for the phase 1 simulation in the children version.
 class Phase1Kids extends StatelessWidget with MainScreenElements {
   Phase1Kids({super.key});
 
@@ -22,6 +23,7 @@ class Phase1Kids extends StatelessWidget with MainScreenElements {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
+              // Input area consisting of the sliders and the robot.
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,6 +92,8 @@ class _RobotBoxState extends State<RobotBox> {
   int imageValue = 0;
   String text = "";
   final ResponseDecoder responseDecoder = ResponseDecoder();
+
+  /// A future builder is used to await the response of the server (the output of the AI).
   @override
   Widget build(BuildContext context) {
     final Future<String> future = context.watch<FutureNotifier>().future;
@@ -97,10 +101,12 @@ class _RobotBoxState extends State<RobotBox> {
       future: future,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         Widget child;
+        // Response of the server, so the output, is available. Thus the robot shows a suitable reaction.
         if (snapshot.connectionState == ConnectionState.done) {
           int randomScore = random.nextInt(lowScore.length);
           text = lowScore[randomScore];
           imageValue = 3;
+          // The user already has selected values, so the reaction is shown.
           if (snapshot.data != "keinWert") {
             responseDecoder.setResponse(snapshot.data);
             double averageError = responseDecoder.jsonDecoded["average_error"];
@@ -115,15 +121,18 @@ class _RobotBoxState extends State<RobotBox> {
               imageValue = 4;
               text = highScore[randomScore];
             }
+            // The user hasn't selected values yet, so the robot gives instructions.
           } else {
             text = "Hey los geht's! Bewege die Schieberegler um loszulegen!";
             imageValue = 0;
           }
+          // Response isn't available yet, so the message of the robot indicates that the output is loading.
         } else {
           int randomLoading = random.nextInt(loading.length);
           imageValue = 2;
           text = loading[randomLoading];
         }
+        // Robot with speechbubble that contains the text from the future builder.
         child = SizedBox(
           width: 450,
           height: 300,
@@ -165,6 +174,7 @@ class _RobotBoxState extends State<RobotBox> {
   }
 }
 
+/// Class for the phase 2 simulation with 2 heat pumps in the children version.
 class Phase2Kids extends StatefulWidget with MainScreenElements {
   Phase2Kids({super.key});
 
@@ -192,6 +202,7 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Input area consisting of the sliders, the robot and his speechbubble.
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,8 +232,8 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
                           borderRadius: BorderRadius.circular(200)),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(1000),
-                        child:
-                            Image.asset('assets/KAI/happy.jpeg', fit: BoxFit.cover),
+                        child: Image.asset('assets/KAI/happy.jpeg',
+                            fit: BoxFit.cover),
                       )),
                 ],
               ),
@@ -241,6 +252,7 @@ class _Phase2KidsState extends State<Phase2Kids> with MainScreenElements {
   }
 }
 
+/// Class for the speechbubble of the robot in phase 2.
 class SpeechBubblePhase2 extends StatefulWidget {
   const SpeechBubblePhase2({super.key});
 

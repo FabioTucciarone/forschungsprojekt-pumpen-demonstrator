@@ -41,12 +41,14 @@ class RegisterBox extends StatefulWidget {
   State<RegisterBox> createState() => _RegisterState();
 }
 
-/// Class for the entry form with the fields username and password to be filled.
+/// Class for the entry form with the fields [username], [password], [portNumber] and [server] to be filled.
 class _RegisterState extends State<RegisterBox> {
-  final username = TextEditingController();
-  final password = TextEditingController();
-  final portNumber = TextEditingController();
-  final server = TextEditingController();
+  final username = TextEditingController(); // Username of the IPVS account.
+  final password = TextEditingController(); // Password of the IPVS account.
+  final portNumber =
+      TextEditingController(); // Number of the port the server is running on.
+  final server =
+      TextEditingController(); // Name of the IPVS server the server is running on.
   bool passwordVisible = true;
 
   @override
@@ -60,6 +62,7 @@ class _RegisterState extends State<RegisterBox> {
               'Anmelden',
               textScaleFactor: 2,
             ),
+            // Entry field for the username with OurColors.appBarColor as focus color.
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextFormField(
@@ -80,6 +83,8 @@ class _RegisterState extends State<RegisterBox> {
                   ),
                 ),
                 cursorColor: OurColors.accentColor,
+                // When the enter key is pressed, the login takes place with the current entries.
+                // If no port number is given 5000 is used and if no server is given pcsgs08 is used.
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
@@ -108,6 +113,7 @@ class _RegisterState extends State<RegisterBox> {
                 ),
               ),
             ),
+            // Entry field for the password with a visibility button/icon and OurColors.appBarColor as focus color.
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextFormField(
@@ -146,6 +152,8 @@ class _RegisterState extends State<RegisterBox> {
                   ),
                 ),
                 cursorColor: OurColors.accentColor,
+                // When the enter key is pressed, the login takes place with the current entries.
+                // If no port number is given 5000 is used and if no server is given pcsgs08 is used.
                 focusNode: FocusNode(
                   onKeyEvent: (node, event) {
                     if (event.logicalKey == LogicalKeyboardKey.enter) {
@@ -177,108 +185,117 @@ class _RegisterState extends State<RegisterBox> {
             Row(
               children: [
                 Flexible(
-                    child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: TextFormField(
-                    controller: server,
-                    decoration: InputDecoration(
-                      hintText: 'Server (pcsgs08)',
-                      focusedBorder: const UnderlineInputBorder(
-                        borderSide:
-                            BorderSide(color: OurColors.accentColor, width: 2),
+                  // Entry field for the server name with OurColors.appBarColor as focus color.
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: TextFormField(
+                      controller: server,
+                      decoration: InputDecoration(
+                        hintText: 'Server (pcsgs08)',
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: OurColors.accentColor, width: 2),
+                        ),
+                        prefixIcon: const Icon(Icons.router),
+                        prefixIconColor: MaterialStateColor.resolveWith(
+                            (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.focused)) {
+                            return OurColors.appBarColor;
+                          }
+                          return Colors.grey;
+                        }),
                       ),
-                      prefixIcon: const Icon(Icons.router),
-                      prefixIconColor: MaterialStateColor.resolveWith(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.focused)) {
-                          return OurColors.appBarColor;
-                        }
-                        return Colors.grey;
-                      }),
-                    ),
-                    cursorColor: OurColors.accentColor,
-                    focusNode: FocusNode(
-                      onKeyEvent: (node, event) {
-                        if (event.logicalKey == LogicalKeyboardKey.enter) {
-                          if (portNumber.text == "") {
-                            portNumber.text = "5000";
-                          }
-                          if (server.text == "") {
-                            server.text = "pcsgs08";
-                          }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ResultApp(
-                                username: username.text,
-                                password: password.text,
-                                server: server.text,
-                                portNumber: int.parse(portNumber.text),
+                      cursorColor: OurColors.accentColor,
+                      // When the enter key is pressed, the login takes place with the current entries.
+                      // If no port number is given 5000 is used and if no server is given pcsgs08 is used.
+                      focusNode: FocusNode(
+                        onKeyEvent: (node, event) {
+                          if (event.logicalKey == LogicalKeyboardKey.enter) {
+                            if (portNumber.text == "") {
+                              portNumber.text = "5000";
+                            }
+                            if (server.text == "") {
+                              server.text = "pcsgs08";
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ResultApp(
+                                  username: username.text,
+                                  password: password.text,
+                                  server: server.text,
+                                  portNumber: int.parse(portNumber.text),
+                                ),
                               ),
-                            ),
-                          );
-                          return KeyEventResult.handled;
-                        } else {
-                          return KeyEventResult.ignored;
-                        }
-                      },
+                            );
+                            return KeyEventResult.handled;
+                          } else {
+                            return KeyEventResult.ignored;
+                          }
+                        },
+                      ),
                     ),
                   ),
-                )),
+                ),
                 Flexible(
-                    child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: TextFormField(
-                    controller: portNumber,
-                    decoration: InputDecoration(
-                      hintText: 'Port (5000)',
-                      focusedBorder: const UnderlineInputBorder(
-                        borderSide:
-                            BorderSide(color: OurColors.accentColor, width: 2),
+                  // Entry field for the port number with OurColors.appBarColor as focus color.
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: TextFormField(
+                      controller: portNumber,
+                      decoration: InputDecoration(
+                        hintText: 'Port (5000)',
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: OurColors.accentColor, width: 2),
+                        ),
+                        prefixIcon: const Icon(Icons.router),
+                        prefixIconColor: MaterialStateColor.resolveWith(
+                            (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.focused)) {
+                            return OurColors.appBarColor;
+                          }
+                          return Colors.grey;
+                        }),
                       ),
-                      prefixIcon: const Icon(Icons.router),
-                      prefixIconColor: MaterialStateColor.resolveWith(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.focused)) {
-                          return OurColors.appBarColor;
-                        }
-                        return Colors.grey;
-                      }),
-                    ),
-                    cursorColor: OurColors.accentColor,
-                    focusNode: FocusNode(
-                      onKeyEvent: (node, event) {
-                        if (event.logicalKey == LogicalKeyboardKey.enter) {
-                          if (portNumber.text == "") {
-                            portNumber.text = "5000";
-                          }
-                          if (server.text == "") {
-                            server.text = "pcsgs08";
-                          }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ResultApp(
-                                username: username.text,
-                                password: password.text,
-                                server: server.text,
-                                portNumber: int.parse(portNumber.text),
+                      cursorColor: OurColors.accentColor,
+                      // When the enter key is pressed, the login takes place with the current entries.
+                      // If no port number is given 5000 is used and if no server is given pcsgs08 is used.
+                      focusNode: FocusNode(
+                        onKeyEvent: (node, event) {
+                          if (event.logicalKey == LogicalKeyboardKey.enter) {
+                            if (portNumber.text == "") {
+                              portNumber.text = "5000";
+                            }
+                            if (server.text == "") {
+                              server.text = "pcsgs08";
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ResultApp(
+                                  username: username.text,
+                                  password: password.text,
+                                  server: server.text,
+                                  portNumber: int.parse(portNumber.text),
+                                ),
                               ),
-                            ),
-                          );
-                          return KeyEventResult.handled;
-                        } else {
-                          return KeyEventResult.ignored;
-                        }
-                      },
+                            );
+                            return KeyEventResult.handled;
+                          } else {
+                            return KeyEventResult.ignored;
+                          }
+                        },
+                      ),
                     ),
                   ),
-                )),
+                ),
               ],
             ),
             const SizedBox(
               height: 20,
             ),
+            // Button to start the login. If no port number is given 5000 is used and if no server is given pcsgs08 is used.
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
@@ -313,6 +330,7 @@ class _RegisterState extends State<RegisterBox> {
             const SizedBox(
               height: 20,
             ),
+            // Button to continue to the admin page. No login takes place and the entries are not used.
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
@@ -341,6 +359,7 @@ class _RegisterState extends State<RegisterBox> {
   }
 }
 
+/// Class for the page that displays the feedback whether the login was successful.
 class ResultApp extends StatelessWidget {
   const ResultApp(
       {super.key,
@@ -399,10 +418,12 @@ class Result extends StatefulWidget {
   State<Result> createState() => _ResultState();
 }
 
-/// This class is used for showing whether the login was successful.
+/// This class is used for showing the message whether the login was successful.
 class _ResultState extends State<Result> {
-  bool errorSSHConnect = false;
+  bool errorSSHConnect =
+      false; // Whether an error occured during the log in (connect to ssh server).
 
+  /// A future builder is used to await whether an error occured during the login or whether it was successful.
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -412,6 +433,7 @@ class _ResultState extends State<Result> {
             .catchError((error) => {errorSSHConnect = true}),
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           Widget child;
+          // An error occured during connectToSSHServer(), so a corresponding message is displayed.
           if (errorSSHConnect) {
             child = Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -432,6 +454,7 @@ class _ResultState extends State<Result> {
                     ),
                   ),
                 ),
+                // Button to repeat the log in.
                 ElevatedButton(
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(
@@ -453,6 +476,7 @@ class _ResultState extends State<Result> {
               ],
             );
             print('Client authentication failed.');
+            // No error occured and the response of the server is available, so the message "Anmeldung erfolgreich" is shown.
           } else if (snapshot.connectionState == ConnectionState.done) {
             child = Container(
               width: 300,
@@ -479,6 +503,7 @@ class _ResultState extends State<Result> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Introduction()));
             });
+            // No error occured but the connection to ssh server hasn't finished yet, so a loading circle is displayed.
           } else {
             child = const SizedBox(
               width: 60,
